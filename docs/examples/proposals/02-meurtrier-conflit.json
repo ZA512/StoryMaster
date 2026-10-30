@@ -1,0 +1,467 @@
+{
+  "specificationVersion": "0.2-proposed",
+  "targetPhase": "MVP pour opérations et conflit ; règle temporelle avancée V1",
+  "scenario": "Incohérence temporelle d’un meurtrier",
+  "preconditions": {
+    "actor": "human author pour proposition ; human owner pour approve/merge",
+    "projectId": "prj_demo"
+  },
+  "initialState": {
+    "objects": [
+      {
+        "id": "evt_depart",
+        "projectId": "prj_demo",
+        "typeKey": "event",
+        "schemaVersion": 1,
+        "name": "Départ de Lyon",
+        "revision": 2,
+        "attributes": {
+          "description": "Départ à 20 h, repère humain non interprété par le moteur MVP.",
+          "chronologyPosition": 10,
+          "temporalExpression": {
+            "kind": "ordinal",
+            "position": 10
+          }
+        },
+        "status": "active"
+      },
+      {
+        "id": "evt_crime",
+        "projectId": "prj_demo",
+        "typeKey": "event",
+        "schemaVersion": 1,
+        "name": "Meurtre à Grenoble",
+        "revision": 4,
+        "attributes": {
+          "description": "Meurtre à 20 h 47.",
+          "chronologyPosition": 11,
+          "temporalExpression": {
+            "kind": "ordinal",
+            "position": 11
+          }
+        },
+        "status": "active"
+      }
+    ]
+  },
+  "temporalConstraint": {
+    "kind": "min_travel_minutes",
+    "departureEventId": "evt_depart",
+    "arrivalEventId": "evt_crime",
+    "minimumMinutes": 70,
+    "source": "Règle explicite de l’auteur dans ce jeu fictif, pas distance réelle calculée.",
+    "initialTimes": {
+      "departure": "20:00",
+      "crime": "20:47"
+    },
+    "initialCheck": "47 < 70",
+    "proposedTimes": {
+      "departure": "19:30",
+      "crime": "20:47"
+    },
+    "proposedCheck": "77 >= 70",
+    "afterConcurrentChange": "80 >= 70",
+    "engineScope": "Calcul de fixture et diagnostic illustratif ; aucune opération de solveur ou de contrainte temporelle persistante ajoutée au MVP."
+  },
+  "createRequest": {
+    "method": "POST",
+    "path": "/api/v1/projects/prj_demo/proposals",
+    "headers": {
+      "Idempotency-Key": "create-meurtre-01"
+    },
+    "body": {
+      "title": "Rendre le trajet du meurtrier possible",
+      "description": "Déplacer le départ à 19 h 30 pour laisser 77 min avant le meurtre.",
+      "operations": [
+        {
+          "operationId": "op_depart",
+          "kind": "update_object",
+          "targetId": "evt_depart",
+          "expectedRevision": 2,
+          "payload": {
+            "set": {
+              "attributes": {
+                "description": "Départ à 19 h 30, après l’interrogatoire.",
+                "chronologyPosition": 10,
+                "temporalExpression": {
+                  "kind": "ordinal",
+                  "position": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "operationId": "op_crime",
+          "kind": "update_object",
+          "targetId": "evt_crime",
+          "expectedRevision": 4,
+          "payload": {
+            "set": {
+              "attributes": {
+                "description": "Meurtre à 20 h 47, confirmé par le témoin.",
+                "chronologyPosition": 11,
+                "temporalExpression": {
+                  "kind": "ordinal",
+                  "position": 11
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dependencyRevisions": []
+    }
+  },
+  "createResponse": {
+    "data": {
+      "id": "prp_meurtre",
+      "projectId": "prj_demo",
+      "origin": "human",
+      "proposalRevision": 1,
+      "stateVersion": 1,
+      "status": "draft",
+      "createdByActor": {
+        "actorType": "human",
+        "userId": "usr_alice"
+      },
+      "title": "Rendre le trajet du meurtrier possible",
+      "description": "Déplacer le départ à 19 h 30 pour laisser 77 min avant le meurtre.",
+      "operations": [
+        {
+          "operationId": "op_depart",
+          "kind": "update_object",
+          "targetId": "evt_depart",
+          "expectedRevision": 2,
+          "payload": {
+            "set": {
+              "attributes": {
+                "description": "Départ à 19 h 30, après l’interrogatoire.",
+                "chronologyPosition": 10,
+                "temporalExpression": {
+                  "kind": "ordinal",
+                  "position": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "operationId": "op_crime",
+          "kind": "update_object",
+          "targetId": "evt_crime",
+          "expectedRevision": 4,
+          "payload": {
+            "set": {
+              "attributes": {
+                "description": "Meurtre à 20 h 47, confirmé par le témoin.",
+                "chronologyPosition": 11,
+                "temporalExpression": {
+                  "kind": "ordinal",
+                  "position": 11
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dependencyRevisions": []
+    }
+  },
+  "firstSubmission": {
+    "method": "POST",
+    "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/submit",
+    "headers": {
+      "If-Match": "\"p1-s1\"",
+      "Idempotency-Key": "submit-meurtre-01"
+    },
+    "body": {
+      "expectedProposalRevision": 1
+    }
+  },
+  "firstApproval": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/approve",
+      "headers": {
+        "If-Match": "\"p1-s2\"",
+        "Idempotency-Key": "approve-meurtre-01"
+      },
+      "body": {
+        "expectedProposalRevision": 1
+      }
+    },
+    "reviewId": "rev_meurtre_1",
+    "approvedProposalRevision": 1,
+    "validity": "effective",
+    "resultingStateVersion": 3
+  },
+  "concurrentChange": {
+    "resourceBefore": {
+      "id": "evt_crime",
+      "projectId": "prj_demo",
+      "typeKey": "event",
+      "schemaVersion": 1,
+      "name": "Meurtre à Grenoble",
+      "revision": 4,
+      "attributes": {
+        "description": "Meurtre à 20 h 47.",
+        "chronologyPosition": 11,
+        "temporalExpression": {
+          "kind": "ordinal",
+          "position": 11
+        }
+      },
+      "status": "active"
+    },
+    "resourceAfter": {
+      "id": "evt_crime",
+      "projectId": "prj_demo",
+      "typeKey": "event",
+      "schemaVersion": 1,
+      "name": "Meurtre à Grenoble",
+      "revision": 5,
+      "attributes": {
+        "description": "Meurtre à 20 h 50 selon le rapport corrigé.",
+        "chronologyPosition": 11,
+        "temporalExpression": {
+          "kind": "ordinal",
+          "position": 11
+        }
+      },
+      "status": "active"
+    },
+    "effect": "ChangeSet humain indépendant ; proposition encore approved mais devient effectivement conflictuelle."
+  },
+  "failedMerge": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/merge",
+      "headers": {
+        "If-Match": "\"p1-s3\"",
+        "Idempotency-Key": "merge-meurtre-01"
+      },
+      "body": {
+        "expectedProposalRevision": 1
+      }
+    },
+    "status": 409,
+    "body": {
+      "error": {
+        "code": "PROPOSAL_CONFLICT",
+        "message": "L’événement du meurtre a été modifié.",
+        "correlationId": "req_conflict",
+        "retryable": false,
+        "details": {
+          "proposalId": "prp_meurtre",
+          "effectiveStatus": "conflicted",
+          "conflicts": [
+            {
+              "resourceType": "object",
+              "resourceId": "evt_crime",
+              "expectedRevision": 4,
+              "currentRevision": 5
+            }
+          ]
+        }
+      }
+    },
+    "persistedProposalStatus": "approved",
+    "effectiveStatus": "conflicted",
+    "assertions": {
+      "departureRevisionStill": 2,
+      "crimeRevisionStill": 5,
+      "mergeChangeSetsCreated": 0,
+      "mergeOutboxEventsCreated": 0
+    }
+  },
+  "revisionRequest": {
+    "method": "PUT",
+    "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/operations",
+    "headers": {
+      "If-Match": "\"p1-s3\""
+    },
+    "body": {
+      "expectedProposalRevision": 1,
+      "operations": [
+        {
+          "operationId": "op_depart",
+          "kind": "update_object",
+          "targetId": "evt_depart",
+          "expectedRevision": 2,
+          "payload": {
+            "set": {
+              "attributes": {
+                "description": "Départ à 19 h 30, après l’interrogatoire.",
+                "chronologyPosition": 10,
+                "temporalExpression": {
+                  "kind": "ordinal",
+                  "position": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "operationId": "op_crime",
+          "kind": "update_object",
+          "targetId": "evt_crime",
+          "expectedRevision": 5,
+          "payload": {
+            "set": {
+              "attributes": {
+                "description": "Meurtre à 20 h 50, rapport corrigé conservé ; départ à 19 h 30.",
+                "chronologyPosition": 11,
+                "temporalExpression": {
+                  "kind": "ordinal",
+                  "position": 11
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dependencyRevisions": []
+    }
+  },
+  "revisionResponse": {
+    "proposalRevision": 2,
+    "stateVersion": 4,
+    "status": "draft",
+    "reviews": [
+      {
+        "reviewId": "rev_meurtre_1",
+        "proposalRevision": 1,
+        "validity": "invalidated",
+        "reason": "proposal_revised"
+      }
+    ]
+  },
+  "resubmission": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/submit",
+      "headers": {
+        "If-Match": "\"p2-s4\"",
+        "Idempotency-Key": "submit-meurtre-02"
+      },
+      "body": {
+        "expectedProposalRevision": 2
+      }
+    },
+    "expectedStatus": "submitted",
+    "expectedStateVersion": 5,
+    "effectiveApprovals": 0
+  },
+  "prematureMergeWithOldApproval": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/merge",
+      "headers": {
+        "If-Match": "\"p2-s5\"",
+        "Idempotency-Key": "merge-meurtre-early"
+      },
+      "body": {
+        "expectedProposalRevision": 2
+      }
+    },
+    "expectedCode": "INVALID_STATE_TRANSITION",
+    "canonUnchanged": true
+  },
+  "secondApproval": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/approve",
+      "headers": {
+        "If-Match": "\"p2-s5\"",
+        "Idempotency-Key": "approve-meurtre-02"
+      },
+      "body": {
+        "expectedProposalRevision": 2
+      }
+    },
+    "reviewId": "rev_meurtre_2",
+    "approvedProposalRevision": 2,
+    "stateVersion": 6
+  },
+  "successfulMerge": {
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/merge",
+      "headers": {
+        "If-Match": "\"p2-s6\"",
+        "Idempotency-Key": "merge-meurtre-02"
+      },
+      "body": {
+        "expectedProposalRevision": 2
+      }
+    },
+    "response": {
+      "data": {
+        "proposalId": "prp_meurtre",
+        "proposalRevision": 2,
+        "proposalStatus": "merged",
+        "stateVersion": 7,
+        "changeSetId": "chg_meurtre",
+        "mergedAt": "2026-10-30T21:20:00Z",
+        "temporaryIds": {},
+        "resourceRevisions": [
+          {
+            "resourceType": "object",
+            "resourceId": "evt_depart",
+            "revision": 3
+          },
+          {
+            "resourceType": "object",
+            "resourceId": "evt_crime",
+            "revision": 6
+          }
+        ]
+      }
+    }
+  },
+  "finalState": {
+    "objects": [
+      {
+        "id": "evt_depart",
+        "projectId": "prj_demo",
+        "typeKey": "event",
+        "schemaVersion": 1,
+        "name": "Départ de Lyon",
+        "revision": 3,
+        "attributes": {
+          "description": "Départ à 19 h 30, après l’interrogatoire.",
+          "chronologyPosition": 10,
+          "temporalExpression": {
+            "kind": "ordinal",
+            "position": 10
+          }
+        },
+        "status": "active"
+      },
+      {
+        "id": "evt_crime",
+        "projectId": "prj_demo",
+        "typeKey": "event",
+        "schemaVersion": 1,
+        "name": "Meurtre à Grenoble",
+        "revision": 6,
+        "attributes": {
+          "description": "Meurtre à 20 h 50, rapport corrigé conservé ; départ à 19 h 30.",
+          "chronologyPosition": 11,
+          "temporalExpression": {
+            "kind": "ordinal",
+            "position": 11
+          }
+        },
+        "status": "active"
+      }
+    ]
+  },
+  "forbiddenEffects": [
+    "Départ changé au premier merge échoué",
+    "Écrasement du rapport corrigé sans examen",
+    "Approbation r1 utilisée pour r2",
+    "Réécriture de l’historique de revue"
+  ]
+}

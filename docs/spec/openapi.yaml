@@ -1,0 +1,3513 @@
+openapi: 3.1.1
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: StoryMaster — contrats de spécification
+  version: 0.2.0-proposed
+  description: Conception sans serveur ; décisions proposées au 30 octobre 2026. OpenAPI 3.1.1 choisi pour outillage,
+    sans prétendre être la dernière version.
+servers:
+- url: https://storymaster.example/api/v1
+  description: Exemple réservé, aucun service déployé
+security:
+- webSession: []
+- bearerAuth: []
+paths:
+  /projects:
+    parameters: []
+    get:
+      operationId: projectList
+      summary: Lister les projets autorisés
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProjectPage'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - &id002
+        $ref: '#/components/parameters/Limit'
+      - &id003
+        $ref: '#/components/parameters/Cursor'
+  /projects/{projectId}:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: &id001
+        type: string
+        minLength: 1
+        maxLength: 128
+        pattern: ^[A-Za-z0-9_-]+$
+    get:
+      operationId: projectGet
+      summary: Lire un projet privé
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /projects/{projectId}/context:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    get:
+      operationId: projectGetContext
+      summary: Lire le contexte borné du projet
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProjectContext'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /projects/{projectId}/search:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    get:
+      operationId: entitySearch
+      summary: Rechercher scènes et fiches autorisées
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SearchPage'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 1000
+      - name: types
+        in: query
+        schema:
+          type: array
+          maxItems: 4
+          items:
+            enum:
+            - scene
+            - character
+            - place
+            - event
+      - *id002
+      - *id003
+  /projects/{projectId}/objects/{objectId}:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: objectId
+      in: path
+      required: true
+      schema: *id001
+    get:
+      operationId: entityGet
+      summary: Lire une fiche et sa révision
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Entity'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - name: revision
+        in: query
+        schema: &id004
+          type: integer
+          minimum: 1
+  /projects/{projectId}/scenes/{sceneId}:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: sceneId
+      in: path
+      required: true
+      schema: *id001
+    get:
+      operationId: sceneRead
+      summary: Lire une scène et sa révision
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Scene'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - name: revision
+        in: query
+        schema: *id004
+  /projects/{projectId}/objects/{objectId}/relations:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: objectId
+      in: path
+      required: true
+      schema: *id001
+    get:
+      operationId: relationList
+      summary: Lire les relations autorisées
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RelationPage'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - *id002
+      - *id003
+  /projects/{projectId}/timeline:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    get:
+      operationId: timelineList
+      summary: Lire la chronologie simple
+      x-permission: project.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TimelinePage'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - *id002
+      - *id003
+  /projects/{projectId}/proposals:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalCreate
+      summary: Créer un brouillon sans changer le canon
+      x-permission: proposal.write
+      x-audit: A1
+      responses:
+        '201':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Proposal'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalCreate'
+  /projects/{projectId}/proposals/{proposalId}:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    get:
+      operationId: proposalGet
+      summary: Lire une proposition
+      x-permission: proposal.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Proposal'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+    patch:
+      operationId: proposalUpdate
+      summary: Réviser titre ou description et invalider les approbations
+      x-permission: proposal.write
+      x-audit: A1
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Proposal'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema: &id005
+          type: string
+          minLength: 8
+          maxLength: 200
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalUpdate'
+  /projects/{projectId}/proposals/{proposalId}/operations:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    put:
+      operationId: proposalSetOperations
+      summary: Réviser les opérations et bases
+      x-permission: proposal.write
+      x-audit: A1
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Proposal'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema: *id005
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalSetOperations'
+  /projects/{projectId}/proposals/{proposalId}/preview:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalPreview
+      summary: Prévisualiser une proposition
+      x-permission: proposal.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Preview'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalAction'
+  /projects/{projectId}/proposals/{proposalId}/validate:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalValidate
+      summary: Valider une proposition
+      x-permission: proposal.read
+      x-audit: A0
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ValidationReport'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalAction'
+  /projects/{projectId}/proposals/{proposalId}/submit:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalSubmit
+      summary: Soumettre une proposition
+      x-permission: proposal.submit
+      x-audit: A1
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Proposal'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalAction'
+  /projects/{projectId}/proposals/{proposalId}/reviews:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalReviews
+      summary: Examiner une proposition
+      x-permission: proposal.review
+      x-audit: A1
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReviewResult'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalReview'
+  /projects/{projectId}/proposals/{proposalId}/approve:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalApprove
+      summary: Approuver une proposition
+      x-permission: proposal.approve
+      x-audit: A1
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReviewResult'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalApprove'
+  /projects/{projectId}/proposals/{proposalId}/reject:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalReject
+      summary: Rejeter une proposition
+      x-permission: proposal.approve
+      x-audit: A1
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReviewResult'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalReject'
+  /projects/{projectId}/proposals/{proposalId}/merge:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema: *id001
+    - name: proposalId
+      in: path
+      required: true
+      schema: *id001
+    post:
+      operationId: proposalMerge
+      summary: Fusionner une proposition
+      x-permission: proposal.merge + narrative.write + human
+      x-audit: A2
+      responses:
+        '200':
+          description: Résultat métier autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/MergeResult'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: Révision ressource ou pN-sN pour proposition
+            Cache-Control:
+              schema:
+                type: string
+              description: private,no-store pour contenu privé
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalAction'
+components:
+  schemas:
+    Id:
+      type: string
+      minLength: 1
+      maxLength: 128
+      pattern: ^[A-Za-z0-9_-]+$
+    Revision:
+      type: integer
+      minimum: 1
+    ObjectRef:
+      oneOf:
+      - type: object
+        properties:
+          id:
+            type: string
+            minLength: 1
+            maxLength: 128
+            pattern: ^[A-Za-z0-9_-]+$
+        required:
+        - id
+        additionalProperties: false
+      - type: object
+        properties:
+          tempId:
+            type: string
+            minLength: 1
+            maxLength: 128
+            pattern: ^[A-Za-z0-9_-]+$
+        required:
+        - tempId
+        additionalProperties: false
+    RichNode:
+      type: object
+      properties:
+        type:
+          enum:
+          - doc
+          - paragraph
+          - text
+          - heading
+          - bulletList
+          - orderedList
+          - listItem
+          - blockquote
+          - hardBreak
+        text:
+          type: string
+          maxLength: 1000000
+        attrs:
+          type: object
+        marks:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                enum:
+                - bold
+                - italic
+                - strike
+                - link
+              attrs:
+                type: object
+            required:
+            - type
+            additionalProperties: false
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/RichNode'
+      required:
+      - type
+      additionalProperties: false
+    RichDocument:
+      allOf:
+      - $ref: '#/components/schemas/RichNode'
+      - properties:
+          type:
+            const: doc
+        required:
+        - content
+    SceneReferenceInput:
+      type: object
+      properties:
+        objectRef:
+          oneOf:
+          - type: object
+            properties:
+              id:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+            required:
+            - id
+            additionalProperties: false
+          - type: object
+            properties:
+              tempId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+            required:
+            - tempId
+            additionalProperties: false
+        referenceType:
+          enum:
+          - present
+          - mentioned
+          - point_of_view
+          - setting
+          - depicts_event
+        metadata:
+          type: object
+          properties: {}
+          required: []
+          additionalProperties: false
+      required:
+      - objectRef
+      - referenceType
+      additionalProperties: false
+    DependencyRevision:
+      type: object
+      properties:
+        resourceType:
+          enum:
+          - object
+          - scene
+          - chapter
+          - manuscript
+          - relation
+          - module
+        resourceId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        revision:
+          type: integer
+          minimum: 1
+      required:
+      - resourceType
+      - resourceId
+      - revision
+      additionalProperties: false
+    CharacterAttributes:
+      type: object
+      properties:
+        aliases:
+          type: array
+          items:
+            type: string
+            maxLength: 200
+          maxItems: 100
+        description:
+          type: string
+          maxLength: 20000
+        goals:
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+          maxItems: 100
+        healthSummary:
+          type: string
+          maxLength: 4000
+        conditionEventRefs:
+          type: array
+          items:
+            oneOf:
+            - type: object
+              properties:
+                id:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                  pattern: ^[A-Za-z0-9_-]+$
+              required:
+              - id
+              additionalProperties: false
+            - type: object
+              properties:
+                tempId:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                  pattern: ^[A-Za-z0-9_-]+$
+              required:
+              - tempId
+              additionalProperties: false
+          maxItems: 100
+      required: []
+      additionalProperties: false
+    PlaceAttributes:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 20000
+        category:
+          type: string
+          maxLength: 200
+        parentPlaceRef:
+          oneOf:
+          - type: object
+            properties:
+              id:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+            required:
+            - id
+            additionalProperties: false
+          - type: object
+            properties:
+              tempId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+            required:
+            - tempId
+            additionalProperties: false
+      required: []
+      additionalProperties: false
+    EventAttributes:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 20000
+        chronologyPosition:
+          type: number
+        temporalExpression:
+          oneOf:
+          - type: object
+            properties:
+              kind:
+                const: unknown
+            required:
+            - kind
+            additionalProperties: false
+          - type: object
+            properties:
+              kind:
+                const: ordinal
+              position:
+                type: number
+            required:
+            - kind
+            - position
+            additionalProperties: false
+      required: []
+      additionalProperties: false
+    CreateObject:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: create_object
+        tempId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        payload:
+          type: object
+          properties:
+            typeKey:
+              enum:
+              - character
+              - place
+              - event
+            schemaVersion:
+              const: 1
+            name:
+              type: string
+              minLength: 1
+              maxLength: 200
+            summary:
+              type: string
+              maxLength: 4000
+            notes:
+              type: string
+              maxLength: 20000
+            attributes:
+              type: object
+          required:
+          - typeKey
+          - schemaVersion
+          - name
+          - attributes
+          additionalProperties: false
+          allOf:
+          - if:
+              properties:
+                typeKey:
+                  const: character
+              required:
+              - typeKey
+            then:
+              properties:
+                attributes:
+                  type: object
+                  properties:
+                    aliases:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 200
+                      maxItems: 100
+                    description:
+                      type: string
+                      maxLength: 20000
+                    goals:
+                      type: array
+                      items:
+                        type: string
+                        maxLength: 1000
+                      maxItems: 100
+                    healthSummary:
+                      type: string
+                      maxLength: 4000
+                    conditionEventRefs:
+                      type: array
+                      items:
+                        oneOf:
+                        - type: object
+                          properties:
+                            id:
+                              type: string
+                              minLength: 1
+                              maxLength: 128
+                              pattern: ^[A-Za-z0-9_-]+$
+                          required:
+                          - id
+                          additionalProperties: false
+                        - type: object
+                          properties:
+                            tempId:
+                              type: string
+                              minLength: 1
+                              maxLength: 128
+                              pattern: ^[A-Za-z0-9_-]+$
+                          required:
+                          - tempId
+                          additionalProperties: false
+                      maxItems: 100
+                  required: []
+                  additionalProperties: false
+          - if:
+              properties:
+                typeKey:
+                  const: place
+              required:
+              - typeKey
+            then:
+              properties:
+                attributes:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      maxLength: 20000
+                    category:
+                      type: string
+                      maxLength: 200
+                    parentPlaceRef:
+                      oneOf:
+                      - type: object
+                        properties:
+                          id:
+                            type: string
+                            minLength: 1
+                            maxLength: 128
+                            pattern: ^[A-Za-z0-9_-]+$
+                        required:
+                        - id
+                        additionalProperties: false
+                      - type: object
+                        properties:
+                          tempId:
+                            type: string
+                            minLength: 1
+                            maxLength: 128
+                            pattern: ^[A-Za-z0-9_-]+$
+                        required:
+                        - tempId
+                        additionalProperties: false
+                  required: []
+                  additionalProperties: false
+          - if:
+              properties:
+                typeKey:
+                  const: event
+              required:
+              - typeKey
+            then:
+              properties:
+                attributes:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      maxLength: 20000
+                    chronologyPosition:
+                      type: number
+                    temporalExpression:
+                      oneOf:
+                      - type: object
+                        properties:
+                          kind:
+                            const: unknown
+                        required:
+                        - kind
+                        additionalProperties: false
+                      - type: object
+                        properties:
+                          kind:
+                            const: ordinal
+                          position:
+                            type: number
+                        required:
+                        - kind
+                        - position
+                        additionalProperties: false
+                  required: []
+                  additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - tempId
+      - payload
+      additionalProperties: false
+    UpdateObject:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: update_object
+        targetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        payload:
+          type: object
+          properties:
+            set:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                summary:
+                  type: string
+                  maxLength: 4000
+                notes:
+                  type: string
+                  maxLength: 20000
+                attributes:
+                  type: object
+              required: []
+              additionalProperties: false
+              minProperties: 1
+          required:
+          - set
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - targetId
+      - expectedRevision
+      - payload
+      additionalProperties: false
+    ArchiveObject:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: archive_object
+        targetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        payload:
+          type: object
+          properties: {}
+          required: []
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - targetId
+      - expectedRevision
+      - payload
+      additionalProperties: false
+    CreateRelation:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: create_relation
+        tempId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        payload:
+          type: object
+          properties:
+            sourceRef:
+              oneOf:
+              - type: object
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                    maxLength: 128
+                    pattern: ^[A-Za-z0-9_-]+$
+                required:
+                - id
+                additionalProperties: false
+              - type: object
+                properties:
+                  tempId:
+                    type: string
+                    minLength: 1
+                    maxLength: 128
+                    pattern: ^[A-Za-z0-9_-]+$
+                required:
+                - tempId
+                additionalProperties: false
+            targetRef:
+              oneOf:
+              - type: object
+                properties:
+                  id:
+                    type: string
+                    minLength: 1
+                    maxLength: 128
+                    pattern: ^[A-Za-z0-9_-]+$
+                required:
+                - id
+                additionalProperties: false
+              - type: object
+                properties:
+                  tempId:
+                    type: string
+                    minLength: 1
+                    maxLength: 128
+                    pattern: ^[A-Za-z0-9_-]+$
+                required:
+                - tempId
+                additionalProperties: false
+            relationType:
+              enum:
+              - related_to
+              - knows
+              - located_in
+              - participates_in
+              - precedes
+            attributes:
+              type: object
+              properties:
+                description:
+                  type: string
+                  maxLength: 4000
+              required: []
+              additionalProperties: false
+          required:
+          - sourceRef
+          - targetRef
+          - relationType
+          - attributes
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - tempId
+      - payload
+      additionalProperties: false
+    UpdateRelation:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: update_relation
+        targetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        payload:
+          type: object
+          properties:
+            set:
+              type: object
+              properties:
+                relationType:
+                  enum:
+                  - related_to
+                  - knows
+                  - located_in
+                  - participates_in
+                  - precedes
+                attributes:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      maxLength: 4000
+                  required: []
+                  additionalProperties: false
+              required: []
+              additionalProperties: false
+          required:
+          - set
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - targetId
+      - expectedRevision
+      - payload
+      additionalProperties: false
+    RemoveRelation:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: remove_relation
+        targetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        payload:
+          type: object
+          properties: {}
+          required: []
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - targetId
+      - expectedRevision
+      - payload
+      additionalProperties: false
+    ReplaceSceneContent:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: replace_scene_content
+        targetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        payload:
+          type: object
+          properties:
+            content:
+              $ref: '#/components/schemas/RichDocument'
+            contentFormatVersion:
+              const: 1
+          required:
+          - content
+          - contentFormatVersion
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - targetId
+      - expectedRevision
+      - payload
+      additionalProperties: false
+    UpdateSceneMetadata:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: update_scene_metadata
+        targetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        payload:
+          type: object
+          properties:
+            set:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 200
+                summary:
+                  type: string
+                  maxLength: 4000
+                status:
+                  enum:
+                  - draft
+                  - revising
+                  - final
+                references:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      objectRef:
+                        oneOf:
+                        - type: object
+                          properties:
+                            id:
+                              type: string
+                              minLength: 1
+                              maxLength: 128
+                              pattern: ^[A-Za-z0-9_-]+$
+                          required:
+                          - id
+                          additionalProperties: false
+                        - type: object
+                          properties:
+                            tempId:
+                              type: string
+                              minLength: 1
+                              maxLength: 128
+                              pattern: ^[A-Za-z0-9_-]+$
+                          required:
+                          - tempId
+                          additionalProperties: false
+                      referenceType:
+                        enum:
+                        - present
+                        - mentioned
+                        - point_of_view
+                        - setting
+                        - depicts_event
+                      metadata:
+                        type: object
+                        properties: {}
+                        required: []
+                        additionalProperties: false
+                    required:
+                    - objectRef
+                    - referenceType
+                    additionalProperties: false
+                  maxItems: 1000
+              required: []
+              additionalProperties: false
+              minProperties: 1
+          required:
+          - set
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - targetId
+      - expectedRevision
+      - payload
+      additionalProperties: false
+    MoveScene:
+      type: object
+      properties:
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        kind:
+          const: move_scene
+        targetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        payload:
+          type: object
+          properties:
+            chapterId:
+              type: string
+              minLength: 1
+              maxLength: 128
+              pattern: ^[A-Za-z0-9_-]+$
+            position:
+              type: number
+          required:
+          - chapterId
+          - position
+          additionalProperties: false
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - operationId
+      - kind
+      - targetId
+      - expectedRevision
+      - payload
+      additionalProperties: false
+    Operation:
+      oneOf:
+      - $ref: '#/components/schemas/CreateObject'
+      - $ref: '#/components/schemas/UpdateObject'
+      - $ref: '#/components/schemas/ArchiveObject'
+      - $ref: '#/components/schemas/CreateRelation'
+      - $ref: '#/components/schemas/UpdateRelation'
+      - $ref: '#/components/schemas/RemoveRelation'
+      - $ref: '#/components/schemas/ReplaceSceneContent'
+      - $ref: '#/components/schemas/UpdateSceneMetadata'
+      - $ref: '#/components/schemas/MoveScene'
+    ActorIdentity:
+      type: object
+      properties:
+        actorType:
+          enum:
+          - human
+          - integrated_ai
+          - external_ai
+          - system
+        userId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        clientId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        grantId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        executionId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+      required:
+      - actorType
+      - userId
+      additionalProperties: false
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        proposalRevision:
+          type: integer
+          minimum: 1
+        contentHash:
+          type: string
+          maxLength: 100
+        reviewerId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        decision:
+          enum:
+          - comment
+          - request_changes
+          - approve
+          - reject
+        validity:
+          enum:
+          - effective
+          - invalidated
+        comment:
+          type: string
+          maxLength: 4000
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - proposalRevision
+      - contentHash
+      - reviewerId
+      - decision
+      - validity
+      - createdAt
+      additionalProperties: false
+    SceneReference:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        projectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        sceneId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        objectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        referenceType:
+          enum:
+          - present
+          - mentioned
+          - point_of_view
+          - setting
+          - depicts_event
+        metadata:
+          type: object
+          properties: {}
+          required: []
+          additionalProperties: false
+        revision:
+          type: integer
+          minimum: 1
+      required:
+      - id
+      - projectId
+      - sceneId
+      - objectId
+      - referenceType
+      - revision
+      additionalProperties: false
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        name:
+          type: string
+          maxLength: 200
+        revision:
+          type: integer
+          minimum: 1
+        status:
+          enum:
+          - active
+          - archived
+          - pending_deletion
+        visibility:
+          const: private
+        language:
+          type: string
+          maxLength: 20
+      required:
+      - id
+      - name
+      - revision
+      - status
+      - visibility
+      additionalProperties: false
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        projectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        typeKey:
+          enum:
+          - character
+          - place
+          - event
+        schemaVersion:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          maxLength: 200
+        attributes:
+          type: object
+        summary:
+          type: string
+          maxLength: 4000
+        notes:
+          type: string
+          maxLength: 20000
+        revision:
+          type: integer
+          minimum: 1
+        status:
+          enum:
+          - active
+          - archived
+          - deleted
+      required:
+      - id
+      - projectId
+      - typeKey
+      - schemaVersion
+      - name
+      - attributes
+      - revision
+      additionalProperties: false
+    Scene:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        projectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        chapterId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        title:
+          type: string
+          maxLength: 200
+        summary:
+          type: string
+          maxLength: 4000
+        status:
+          type: string
+          maxLength: 40
+        revision:
+          type: integer
+          minimum: 1
+        contentFormatVersion:
+          const: 1
+        content:
+          $ref: '#/components/schemas/RichDocument'
+        references:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              projectId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              sceneId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              objectId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              referenceType:
+                enum:
+                - present
+                - mentioned
+                - point_of_view
+                - setting
+                - depicts_event
+              metadata:
+                type: object
+                properties: {}
+                required: []
+                additionalProperties: false
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - id
+            - projectId
+            - sceneId
+            - objectId
+            - referenceType
+            - revision
+            additionalProperties: false
+      required:
+      - id
+      - projectId
+      - chapterId
+      - title
+      - revision
+      - contentFormatVersion
+      - content
+      - references
+      additionalProperties: false
+    Proposal:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        projectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 4000
+        origin:
+          enum:
+          - human
+          - integrated_ai
+          - external_ai
+        proposalRevision:
+          type: integer
+          minimum: 1
+        stateVersion:
+          type: integer
+          minimum: 1
+        status:
+          enum:
+          - draft
+          - submitted
+          - in_review
+          - approved
+          - conflicted
+          - rejected
+          - withdrawn
+          - merged
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Operation'
+          maxItems: 100
+        dependencyRevisions:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                enum:
+                - object
+                - scene
+                - chapter
+                - manuscript
+                - relation
+                - module
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - revision
+            additionalProperties: false
+          maxItems: 1000
+        contentHash:
+          type: string
+          maxLength: 100
+        mergedChangeSetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        createdByActor:
+          type: object
+          properties:
+            actorType:
+              enum:
+              - human
+              - integrated_ai
+              - external_ai
+              - system
+            userId:
+              type: string
+              minLength: 1
+              maxLength: 128
+              pattern: ^[A-Za-z0-9_-]+$
+            clientId:
+              type: string
+              minLength: 1
+              maxLength: 128
+              pattern: ^[A-Za-z0-9_-]+$
+            grantId:
+              type: string
+              minLength: 1
+              maxLength: 128
+              pattern: ^[A-Za-z0-9_-]+$
+            executionId:
+              type: string
+              minLength: 1
+              maxLength: 128
+              pattern: ^[A-Za-z0-9_-]+$
+          required:
+          - actorType
+          - userId
+          additionalProperties: false
+        reviews:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              proposalRevision:
+                type: integer
+                minimum: 1
+              contentHash:
+                type: string
+                maxLength: 100
+              reviewerId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              decision:
+                enum:
+                - comment
+                - request_changes
+                - approve
+                - reject
+              validity:
+                enum:
+                - effective
+                - invalidated
+              comment:
+                type: string
+                maxLength: 4000
+              createdAt:
+                type: string
+                format: date-time
+            required:
+            - id
+            - proposalRevision
+            - contentHash
+            - reviewerId
+            - decision
+            - validity
+            - createdAt
+            additionalProperties: false
+      required:
+      - id
+      - projectId
+      - title
+      - description
+      - origin
+      - proposalRevision
+      - stateVersion
+      - status
+      - operations
+      - dependencyRevisions
+      - createdByActor
+      additionalProperties: false
+    ResourceRevision:
+      type: object
+      properties:
+        resourceType:
+          type: string
+          maxLength: 40
+        resourceId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        revision:
+          type: integer
+          minimum: 1
+      required:
+      - resourceType
+      - resourceId
+      - revision
+      additionalProperties: false
+    Conflict:
+      type: object
+      properties:
+        resourceType:
+          type: string
+          maxLength: 40
+        resourceId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        expectedRevision:
+          type: integer
+          minimum: 1
+        currentRevision:
+          type: integer
+          minimum: 1
+      required:
+      - resourceType
+      - resourceId
+      - expectedRevision
+      - currentRevision
+      additionalProperties: false
+    Finding:
+      type: object
+      properties:
+        code:
+          type: string
+          maxLength: 80
+        message:
+          type: string
+          maxLength: 4000
+        operationId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        severity:
+          enum:
+          - error
+          - warning
+      required:
+      - code
+      - message
+      - severity
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              enum:
+              - UNAUTHENTICATED
+              - FORBIDDEN
+              - NOT_FOUND
+              - VALIDATION_FAILED
+              - REVISION_CONFLICT
+              - PROPOSAL_CONFLICT
+              - INVALID_STATE_TRANSITION
+              - MODULE_DISABLED
+              - RATE_LIMITED
+              - PROVIDER_UNAVAILABLE
+              - BUDGET_EXCEEDED
+              - PRECONDITION_REQUIRED
+              - IDEMPOTENCY_KEY_REUSED
+              - TEMPORARILY_UNAVAILABLE
+              - INTERNAL_ERROR
+            message:
+              type: string
+              maxLength: 4000
+            correlationId:
+              type: string
+              minLength: 1
+              maxLength: 128
+              pattern: ^[A-Za-z0-9_-]+$
+            retryable:
+              type: boolean
+            details:
+              type: object
+          required:
+          - code
+          - message
+          - correlationId
+          - retryable
+          additionalProperties: false
+      required:
+      - error
+      additionalProperties: false
+    ValidationReport:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                maxLength: 80
+              message:
+                type: string
+                maxLength: 4000
+              operationId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              severity:
+                enum:
+                - error
+                - warning
+            required:
+            - code
+            - message
+            - severity
+            additionalProperties: false
+        warnings:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                maxLength: 80
+              message:
+                type: string
+                maxLength: 4000
+              operationId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              severity:
+                enum:
+                - error
+                - warning
+            required:
+            - code
+            - message
+            - severity
+            additionalProperties: false
+        conflicts:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                type: string
+                maxLength: 40
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              expectedRevision:
+                type: integer
+                minimum: 1
+              currentRevision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - expectedRevision
+            - currentRevision
+            additionalProperties: false
+        validatedAgainst:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                type: string
+                maxLength: 40
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - revision
+            additionalProperties: false
+      required:
+      - valid
+      - errors
+      - warnings
+      - conflicts
+      - validatedAgainst
+      additionalProperties: false
+    Preview:
+      type: object
+      properties:
+        proposalId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        proposalRevision:
+          type: integer
+          minimum: 1
+        validatedAgainst:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                type: string
+                maxLength: 40
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - revision
+            additionalProperties: false
+        temporaryIds:
+          type: object
+          additionalProperties:
+            oneOf:
+            - type: object
+              properties:
+                id:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                  pattern: ^[A-Za-z0-9_-]+$
+              required:
+              - id
+              additionalProperties: false
+            - type: object
+              properties:
+                tempId:
+                  type: string
+                  minLength: 1
+                  maxLength: 128
+                  pattern: ^[A-Za-z0-9_-]+$
+              required:
+              - tempId
+              additionalProperties: false
+        affectedResources:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                type: string
+                maxLength: 40
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              change:
+                enum:
+                - create
+                - update
+                - archive
+                - remove
+            required:
+            - resourceType
+            - resourceId
+            - change
+            additionalProperties: false
+        diffs:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              kind:
+                enum:
+                - structured
+                - rich_text
+                - relation
+                - structure
+              baseRevision:
+                type: integer
+                minimum: 1
+              beforeText:
+                type: string
+                maxLength: 1000000
+              afterText:
+                type: string
+                maxLength: 1000000
+              before: {}
+              after: {}
+            required:
+            - resourceId
+            - kind
+            additionalProperties: false
+        validationFindings:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                maxLength: 80
+              message:
+                type: string
+                maxLength: 4000
+              operationId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              severity:
+                enum:
+                - error
+                - warning
+            required:
+            - code
+            - message
+            - severity
+            additionalProperties: false
+        conflicts:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                type: string
+                maxLength: 40
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              expectedRevision:
+                type: integer
+                minimum: 1
+              currentRevision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - expectedRevision
+            - currentRevision
+            additionalProperties: false
+        valid:
+          type: boolean
+      required:
+      - proposalId
+      - proposalRevision
+      - validatedAgainst
+      - temporaryIds
+      - affectedResources
+      - diffs
+      - validationFindings
+      - conflicts
+      - valid
+      additionalProperties: false
+    MergeResult:
+      type: object
+      properties:
+        proposalId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        proposalRevision:
+          type: integer
+          minimum: 1
+        proposalStatus:
+          const: merged
+        stateVersion:
+          type: integer
+          minimum: 1
+        changeSetId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        mergedAt:
+          type: string
+          format: date-time
+        temporaryIds:
+          type: object
+          additionalProperties:
+            type: string
+            minLength: 1
+            maxLength: 128
+            pattern: ^[A-Za-z0-9_-]+$
+        resourceRevisions:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                type: string
+                maxLength: 40
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - revision
+            additionalProperties: false
+      required:
+      - proposalId
+      - proposalRevision
+      - proposalStatus
+      - stateVersion
+      - changeSetId
+      - mergedAt
+      - temporaryIds
+      - resourceRevisions
+      additionalProperties: false
+    SearchHit:
+      type: object
+      properties:
+        resourceType:
+          enum:
+          - scene
+          - object
+        resourceId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        title:
+          type: string
+          maxLength: 200
+        excerpt:
+          type: string
+          maxLength: 4000
+        revision:
+          type: integer
+          minimum: 1
+        relevance:
+          type: number
+      required:
+      - resourceType
+      - resourceId
+      - title
+      - excerpt
+      - revision
+      additionalProperties: false
+    Relation:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        projectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        sourceObjectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        targetObjectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        relationType:
+          type: string
+          maxLength: 80
+        attributes:
+          type: object
+        revision:
+          type: integer
+          minimum: 1
+      required:
+      - id
+      - projectId
+      - sourceObjectId
+      - targetObjectId
+      - relationType
+      - revision
+      additionalProperties: false
+    ProjectPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+          maxItems: 100
+        nextCursor:
+          type:
+          - string
+          - 'null'
+        hasMore:
+          type: boolean
+      required:
+      - items
+      - nextCursor
+      - hasMore
+      additionalProperties: false
+    SearchPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+          maxItems: 100
+        nextCursor:
+          type:
+          - string
+          - 'null'
+        hasMore:
+          type: boolean
+      required:
+      - items
+      - nextCursor
+      - hasMore
+      additionalProperties: false
+    RelationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Relation'
+          maxItems: 100
+        nextCursor:
+          type:
+          - string
+          - 'null'
+        hasMore:
+          type: boolean
+      required:
+      - items
+      - nextCursor
+      - hasMore
+      additionalProperties: false
+    TimelinePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+          maxItems: 100
+        nextCursor:
+          type:
+          - string
+          - 'null'
+        hasMore:
+          type: boolean
+      required:
+      - items
+      - nextCursor
+      - hasMore
+      additionalProperties: false
+    ProjectContext:
+      type: object
+      properties:
+        project:
+          $ref: '#/components/schemas/Project'
+        manuscripts:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              title:
+                type: string
+                maxLength: 200
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - id
+            - title
+            - revision
+            additionalProperties: false
+        moduleVersions:
+          type: object
+          additionalProperties:
+            type: string
+            maxLength: 80
+      required:
+      - project
+      - manuscripts
+      - moduleVersions
+      additionalProperties: false
+    ProposalCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 4000
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Operation'
+          maxItems: 100
+        dependencyRevisions:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                enum:
+                - object
+                - scene
+                - chapter
+                - manuscript
+                - relation
+                - module
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - revision
+            additionalProperties: false
+          maxItems: 1000
+      required:
+      - title
+      - description
+      - operations
+      - dependencyRevisions
+      additionalProperties: false
+    ProposalSetOperations:
+      type: object
+      properties:
+        expectedProposalRevision:
+          type: integer
+          minimum: 1
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Operation'
+          maxItems: 100
+        dependencyRevisions:
+          type: array
+          items:
+            type: object
+            properties:
+              resourceType:
+                enum:
+                - object
+                - scene
+                - chapter
+                - manuscript
+                - relation
+                - module
+              resourceId:
+                type: string
+                minLength: 1
+                maxLength: 128
+                pattern: ^[A-Za-z0-9_-]+$
+              revision:
+                type: integer
+                minimum: 1
+            required:
+            - resourceType
+            - resourceId
+            - revision
+            additionalProperties: false
+          maxItems: 1000
+      required:
+      - expectedProposalRevision
+      - operations
+      - dependencyRevisions
+      additionalProperties: false
+    ProposalAction:
+      type: object
+      properties:
+        expectedProposalRevision:
+          type: integer
+          minimum: 1
+      required:
+      - expectedProposalRevision
+      additionalProperties: false
+    ProposalReview:
+      type: object
+      properties:
+        expectedProposalRevision:
+          type: integer
+          minimum: 1
+        decision:
+          enum:
+          - comment
+          - request_changes
+        body:
+          type: string
+          maxLength: 4000
+      required:
+      - expectedProposalRevision
+      - decision
+      - body
+      additionalProperties: false
+    ProposalUpdate:
+      type: object
+      properties:
+        expectedProposalRevision:
+          type: integer
+          minimum: 1
+        set:
+          type: object
+          properties:
+            title:
+              type: string
+              maxLength: 200
+            description:
+              type: string
+              maxLength: 4000
+          required: []
+          additionalProperties: false
+      required:
+      - expectedProposalRevision
+      - set
+      additionalProperties: false
+    ProposalApprove:
+      type: object
+      properties:
+        expectedProposalRevision:
+          type: integer
+          minimum: 1
+        comment:
+          type: string
+          maxLength: 4000
+      required:
+      - expectedProposalRevision
+      additionalProperties: false
+    ProposalReject:
+      type: object
+      properties:
+        expectedProposalRevision:
+          type: integer
+          minimum: 1
+        reason:
+          type: string
+          maxLength: 4000
+      required:
+      - expectedProposalRevision
+      - reason
+      additionalProperties: false
+    ReviewResult:
+      type: object
+      properties:
+        reviewId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        proposal:
+          $ref: '#/components/schemas/Proposal'
+      required:
+      - reviewId
+      - proposal
+      additionalProperties: false
+  parameters:
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema:
+        type: string
+      description: ETag fort rN ou pN-sN ; absent 428, obsolète 412.
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: *id005
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+  securitySchemes:
+    webSession:
+      type: apiKey
+      in: cookie
+      name: __Host-storymaster
+      description: Session OIDC serveur proposée ; CSRF et Origin requis pour mutation.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: OAuth access token
+      description: Issuer/aud/client/grant vérifiés ; jamais token IA ni ID token.
+  responses:
+    Error400:
+      description: VALIDATION_FAILED
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error401:
+      description: UNAUTHENTICATED
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error403:
+      description: FORBIDDEN
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error404:
+      description: NOT_FOUND
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error409:
+      description: PROPOSAL_CONFLICT / MODULE_DISABLED / INVALID_STATE_TRANSITION / IDEMPOTENCY_KEY_REUSED
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error412:
+      description: REVISION_CONFLICT
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error422:
+      description: VALIDATION_FAILED
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error428:
+      description: PRECONDITION_REQUIRED
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error429:
+      description: RATE_LIMITED / BUDGET_EXCEEDED
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error500:
+      description: INTERNAL_ERROR
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Error503:
+      description: TEMPORARILY_UNAVAILABLE / PROVIDER_UNAVAILABLE
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

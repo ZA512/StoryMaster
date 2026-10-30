@@ -1,0 +1,89 @@
+[
+  {
+    "findingId": "fnd_temps",
+    "analysisType": "temporal_consistency",
+    "classification": "mixed",
+    "severity": "major",
+    "confidence": 0.95,
+    "summary": "Le trajet entre les deux événements est incompatible avec la durée minimale déclarée.",
+    "evidence": [
+      {
+        "resourceType": "object",
+        "resourceId": "evt_depart",
+        "revision": 2,
+        "reference": "description : départ de Lyon à 20:00"
+      },
+      {
+        "resourceType": "object",
+        "resourceId": "evt_crime",
+        "revision": 4,
+        "reference": "description : meurtre à Grenoble à 20:47"
+      }
+    ],
+    "knownFacts": [
+      "Les descriptions épinglées indiquent 20:00 et 20:47.",
+      "L’auteur déclare dans cette fixture un minimum de 70 min."
+    ],
+    "assumptions": [
+      "Même jour et même axe temporel.",
+      "Le meurtrier est personnellement présent aux deux événements."
+    ],
+    "missingInformation": [
+      "Preuve de présence effective dans le texte.",
+      "Éventuelle exception de transport prévue par l’univers."
+    ],
+    "rule": "Si même axe et présence établis, arrival - departure >= 70 minutes ; 47 < 70.",
+    "explanation": "Le calcul sous hypothèses est déterministe. Extraction de présence et interprétation des descriptions par IA restent à vérifier ; confiance non calibrée, pas une probabilité de vérité.",
+    "suggestedResolutions": [
+      "Avancer le départ à 19:30.",
+      "Retarder le meurtre.",
+      "Préciser une exception ou corriger la présence."
+    ],
+    "status": "open",
+    "scope": "Exemple documentaire ; moteur temporel avancé V1 ; aucune correction appliquée."
+  },
+  {
+    "findingId": "fnd_twist",
+    "analysisType": "literary_critique",
+    "classification": "interpretative",
+    "severity": "minor",
+    "confidence": 0.6,
+    "summary": "La révélation peut sembler prévisible à certains lecteurs.",
+    "evidence": [
+      {
+        "resourceType": "scene",
+        "resourceId": "scn_clef",
+        "revision": 3,
+        "reference": "Paragraphe 2 : « Marc glissa la seule clé dans sa poche. »"
+      },
+      {
+        "resourceType": "scene",
+        "resourceId": "scn_aveu",
+        "revision": 6,
+        "reference": "Paragraphe 1 : « Personne, sauf Marc, ne pouvait entrer. »"
+      }
+    ],
+    "knownFacts": [
+      "Les deux formulations ci-dessus convergent vers Marc dans ce corpus fictif."
+    ],
+    "assumptions": [
+      "L’auteur souhaite préserver l’incertitude jusqu’au chapitre suivant."
+    ],
+    "missingInformation": [
+      "Intention réelle de l’auteur.",
+      "Réaction de lecteurs représentatifs.",
+      "Éventuelles fausses pistes ailleurs."
+    ],
+    "rule": null,
+    "explanation": "Aucune violation déterministe. La prévisibilité dépend du lectorat et de l’intention ; la confiance est une auto-évaluation non calibrée. L’auteur peut ignorer ce diagnostic.",
+    "suggestedResolutions": [
+      "Conserver la révélation si l’enjeu est le suspense plutôt que l’identité.",
+      "Rendre un indice ambigu.",
+      "Écarter la critique sans modifier le canon."
+    ],
+    "status": "open",
+    "suggestionIsCanonical": false,
+    "canIgnore": true,
+    "scope": "Comité critique V1, exemple de format uniquement."
+  }
+]

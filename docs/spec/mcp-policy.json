@@ -1,0 +1,399 @@
+{
+  "format": "storymaster-mcp-policy",
+  "version": "0.2-proposed",
+  "protocolVersion": "2026-07-28",
+  "status": "Proposée",
+  "description": "Métadonnées applicatives séparées du format officiel tools/list ; jamais une norme MCP.",
+  "tools": [
+    {
+      "name": "project_list",
+      "httpOperationId": "projectList",
+      "scope": "projects:read",
+      "additionalScopes": [],
+      "permission": "project.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "project_get_context",
+      "httpOperationId": "projectGetContext",
+      "scope": "project:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "project.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "entity_search",
+      "httpOperationId": "entitySearch",
+      "scope": "project:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "project.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "entity_get",
+      "httpOperationId": "entityGet",
+      "scope": "project:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "project.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "scene_read",
+      "httpOperationId": "sceneRead",
+      "scope": "project:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "project.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "relation_list",
+      "httpOperationId": "relationList",
+      "scope": "project:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "project.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "timeline_list",
+      "httpOperationId": "timelineList",
+      "scope": "project:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "project.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "proposal_create",
+      "httpOperationId": "proposalCreate",
+      "scope": "proposal:write",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "proposal.write",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "brouillon seulement",
+      "idempotency": "clé obligatoire",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR",
+        "REVISION_CONFLICT",
+        "PROPOSAL_CONFLICT",
+        "INVALID_STATE_TRANSITION",
+        "MODULE_DISABLED",
+        "IDEMPOTENCY_KEY_REUSED"
+      ],
+      "audit": "A1",
+      "transaction": "TX1",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "proposal_set_operations",
+      "httpOperationId": "proposalSetOperations",
+      "scope": "proposal:write",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "proposal.write",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "révision brouillon seulement",
+      "idempotency": "CAS ; clé optionnelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR",
+        "REVISION_CONFLICT",
+        "PROPOSAL_CONFLICT",
+        "INVALID_STATE_TRANSITION",
+        "MODULE_DISABLED",
+        "IDEMPOTENCY_KEY_REUSED"
+      ],
+      "audit": "A1",
+      "transaction": "TX1",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "proposal_preview",
+      "httpOperationId": "proposalPreview",
+      "scope": "proposal:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "proposal.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture / projection",
+      "idempotency": "naturelle, aucun état changé",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "proposal_validate",
+      "httpOperationId": "proposalValidate",
+      "scope": "proposal:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "proposal.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture / rapport",
+      "idempotency": "naturelle, aucun état changé",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "proposal_submit",
+      "httpOperationId": "proposalSubmit",
+      "scope": "proposal:submit",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "proposal.submit",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "statut de proposition seulement",
+      "idempotency": "clé obligatoire",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR",
+        "REVISION_CONFLICT",
+        "PROPOSAL_CONFLICT",
+        "INVALID_STATE_TRANSITION",
+        "MODULE_DISABLED",
+        "IDEMPOTENCY_KEY_REUSED"
+      ],
+      "audit": "A1",
+      "transaction": "TX1",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    },
+    {
+      "name": "proposal_get",
+      "httpOperationId": "proposalGet",
+      "scope": "proposal:read",
+      "additionalScopes": [
+        "project:read"
+      ],
+      "permission": "proposal.read",
+      "projectBoundary": "grant.projectIds ∩ memberships actifs",
+      "effects": "lecture",
+      "idempotency": "naturelle",
+      "errors": [
+        "UNAUTHENTICATED",
+        "FORBIDDEN",
+        "NOT_FOUND",
+        "VALIDATION_FAILED",
+        "RATE_LIMITED",
+        "TEMPORARILY_UNAVAILABLE",
+        "INTERNAL_ERROR"
+      ],
+      "audit": "A0",
+      "transaction": "TX0",
+      "actor": "identité serveur user/client/grant ; jamais clientInfo",
+      "ownership": "écriture de ses propres propositions pour les agents",
+      "limits": {
+        "maxOperations": 100,
+        "maxPageSize": 100
+      }
+    }
+  ]
+}

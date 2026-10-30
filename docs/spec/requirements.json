@@ -1,0 +1,1206 @@
+{
+  "status": "Proposée",
+  "source": "docs/PRD.md",
+  "requirements": [
+    {
+      "id": "OBJ-01",
+      "need": "Permettre à un utilisateur de gérer plusieurs projets littéraires indépendants",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 0
+    },
+    {
+      "id": "OBJ-02",
+      "need": "Permettre des projets individuels ou collaboratifs",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 3
+    },
+    {
+      "id": "OBJ-03",
+      "need": "Fournir un environnement de rédaction structuré en manuscrits, chapitres et scènes",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 1
+    },
+    {
+      "id": "OBJ-04",
+      "need": "Centraliser les informations relatives aux personnages, lieux et événements",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 2
+    },
+    {
+      "id": "OBJ-05",
+      "need": "Relier les éléments du manuscrit aux objets narratifs",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 2
+    },
+    {
+      "id": "OBJ-06",
+      "need": "Permettre l'activation progressive de modules spécialisés",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 2
+    },
+    {
+      "id": "OBJ-07",
+      "need": "Fournir à l'IA un accès contrôlé aux objets du projet, via l'application et MCP",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 6
+    },
+    {
+      "id": "OBJ-08",
+      "need": "Proposer, examiner et appliquer des changements multi-objets avec traçabilité",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 4
+    },
+    {
+      "id": "OBJ-09",
+      "need": "Prévenir les pertes de données et permettre la récupération des versions antérieures",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 1
+    },
+    {
+      "id": "OBJ-10",
+      "need": "Détecter et expliquer certaines incohérences narratives",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 5
+    },
+    {
+      "id": "OBJ-11",
+      "need": "Faciliter la collaboration simultanée sur le texte",
+      "priority": "SHOULD",
+      "phase": "V1",
+      "section": "3.1 Objectifs",
+      "lot": "V1"
+    },
+    {
+      "id": "OBJ-12",
+      "need": "Permettre l'export et la récupération des données dans des formats ouverts",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "3.1 Objectifs",
+      "lot": 7
+    },
+    {
+      "id": "MOD-01",
+      "need": "un projet peut activer ou désactiver un module autorisé.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "6.4 Règles de modularité",
+      "lot": 2
+    },
+    {
+      "id": "MOD-02",
+      "need": "un module désactivé conserve ses données, sauf suppression explicitement demandée et autorisée.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "6.4 Règles de modularité",
+      "lot": 2
+    },
+    {
+      "id": "MOD-03",
+      "need": "les références entre modules utilisent des identifiants stables.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "6.4 Règles de modularité",
+      "lot": 2
+    },
+    {
+      "id": "MOD-04",
+      "need": "la désactivation d'un module ne doit pas invalider silencieusement les objets d'autres modules.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "6.4 Règles de modularité",
+      "lot": 2
+    },
+    {
+      "id": "MOD-05",
+      "need": "un module peut déclarer ses dépendances fonctionnelles.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "6.4 Règles de modularité",
+      "lot": 2
+    },
+    {
+      "id": "MOD-06",
+      "need": "les objets spécialisés reposent autant que possible sur des capacités transversales communes : propriétés, relations, recherche, versionnement, permissions.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "6.4 Règles de modularité",
+      "lot": 2
+    },
+    {
+      "id": "MOD-07",
+      "need": "des modèles de projets peuvent présélectionner des modules selon le genre littéraire.",
+      "priority": "COULD",
+      "phase": "MVP",
+      "section": "6.4 Règles de modularité",
+      "lot": 2
+    },
+    {
+      "id": "PROJ-01",
+      "need": "Créer un compte et ouvrir une session sécurisée",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 0
+    },
+    {
+      "id": "PROJ-02",
+      "need": "Créer plusieurs projets depuis un même compte",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 0
+    },
+    {
+      "id": "PROJ-03",
+      "need": "Rendre tout nouveau projet privé par défaut",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 0
+    },
+    {
+      "id": "PROJ-04",
+      "need": "Consulter les projets dont l'utilisateur est membre",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 0
+    },
+    {
+      "id": "PROJ-05",
+      "need": "Modifier les informations générales d'un projet",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 0
+    },
+    {
+      "id": "PROJ-06",
+      "need": "Inviter et retirer des membres selon les permissions",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 3
+    },
+    {
+      "id": "PROJ-07",
+      "need": "Attribuer un rôle par projet",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 3
+    },
+    {
+      "id": "PROJ-08",
+      "need": "Archiver un projet sans détruire immédiatement son contenu",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 0
+    },
+    {
+      "id": "PROJ-09",
+      "need": "Activer les modules disponibles",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 2
+    },
+    {
+      "id": "PROJ-10",
+      "need": "Proposer des modèles de projets prédéfinis",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "7.1 Comptes et projets",
+      "lot": 0
+    },
+    {
+      "id": "EDIT-01",
+      "need": "Créer, renommer, déplacer et supprimer logiquement des manuscrits, chapitres et scènes",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-02",
+      "need": "Modifier le texte d'une scène dans un éditeur adapté à l'écriture longue",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-03",
+      "need": "Enregistrer automatiquement les modifications",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-04",
+      "need": "Restaurer une version antérieure d'une scène",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-05",
+      "need": "Réorganiser les scènes sans perdre leurs liens",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-06",
+      "need": "Afficher le plan du manuscrit",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-07",
+      "need": "Compter les mots au niveau scène, chapitre et manuscrit",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-08",
+      "need": "Associer des personnages, lieux et événements à une scène",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 2
+    },
+    {
+      "id": "EDIT-09",
+      "need": "Ajouter des commentaires et notes",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 3
+    },
+    {
+      "id": "EDIT-10",
+      "need": "Proposer un mode de rédaction sans distraction",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-11",
+      "need": "Gérer des statuts rédactionnels configurables",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "EDIT-12",
+      "need": "Comparer visuellement deux versions d'un texte",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "7.2 Rédaction",
+      "lot": 1
+    },
+    {
+      "id": "DATA-01",
+      "need": "Créer et modifier une fiche personnage",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-02",
+      "need": "Créer et modifier une fiche lieu",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-03",
+      "need": "Créer et modifier un événement",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-04",
+      "need": "Créer des relations entre objets",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-05",
+      "need": "Associer des objets à des scènes",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-06",
+      "need": "Naviguer depuis un objet vers ses références",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-07",
+      "need": "Rechercher les objets par nom, type et contenu",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-08",
+      "need": "Conserver un historique des modifications",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-09",
+      "need": "Détecter les références devenues invalides",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-10",
+      "need": "Ajouter des propriétés spécifiques à certains types d'objets",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-11",
+      "need": "Afficher une chronologie simple des événements",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.3 Référentiel narratif",
+      "lot": 2
+    },
+    {
+      "id": "DATA-12",
+      "need": "Gérer les dates partielles, durées et contraintes temporelles complexes",
+      "priority": "V1 — MUST",
+      "phase": "V1",
+      "section": "7.3 Référentiel narratif",
+      "lot": "V1"
+    },
+    {
+      "id": "SEARCH-01",
+      "need": "rechercher dans le manuscrit et les fiches accessibles.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.4 Recherche et navigation",
+      "lot": 2
+    },
+    {
+      "id": "SEARCH-02",
+      "need": "filtrer les résultats par projet et type d'objet.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.4 Recherche et navigation",
+      "lot": 2
+    },
+    {
+      "id": "SEARCH-03",
+      "need": "ouvrir directement un résultat.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.4 Recherche et navigation",
+      "lot": 2
+    },
+    {
+      "id": "SEARCH-04",
+      "need": "respecter les permissions dans les résultats, extraits et suggestions.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.4 Recherche et navigation",
+      "lot": 2
+    },
+    {
+      "id": "SEARCH-05",
+      "need": "afficher les objets liés à l'élément courant.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "7.4 Recherche et navigation",
+      "lot": 2
+    },
+    {
+      "id": "SEARCH-06",
+      "need": "proposer une recherche sémantique et contextuelle.",
+      "priority": "V1",
+      "phase": "V1",
+      "section": "7.4 Recherche et navigation",
+      "lot": "V1"
+    },
+    {
+      "id": "EXPORT-01",
+      "need": "exporter le texte du manuscrit en Markdown ou dans un autre format textuel ouvert documenté.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.5 Export",
+      "lot": 1
+    },
+    {
+      "id": "EXPORT-02",
+      "need": "exporter les données structurées d'un projet dans un format machine lisible, avec identifiants et relations.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.5 Export",
+      "lot": 7
+    },
+    {
+      "id": "EXPORT-03",
+      "need": "inclure dans l'export la version du schéma et une description des formats.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.5 Export",
+      "lot": 7
+    },
+    {
+      "id": "EXPORT-04",
+      "need": "permettre l'export uniquement aux utilisateurs autorisés.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "7.5 Export",
+      "lot": 7
+    },
+    {
+      "id": "EXPORT-05",
+      "need": "proposer des formats éditoriaux supplémentaires, notamment DOCX et EPUB.",
+      "priority": "V1",
+      "phase": "V1",
+      "section": "7.5 Export",
+      "lot": "V1"
+    },
+    {
+      "id": "EXPORT-06",
+      "need": "permettre la réimportation d'une archive produite par la plateforme.",
+      "priority": "V1",
+      "phase": "V1",
+      "section": "7.5 Export",
+      "lot": "V1"
+    },
+    {
+      "id": "COLLAB-01",
+      "need": "plusieurs utilisateurs peuvent participer au même projet.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "8.2 Collaboration",
+      "lot": 3
+    },
+    {
+      "id": "COLLAB-02",
+      "need": "les contributions sont attribuées à leur auteur.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "8.2 Collaboration",
+      "lot": 3
+    },
+    {
+      "id": "COLLAB-03",
+      "need": "les modifications concurrentes ne doivent pas écraser silencieusement des données.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "8.2 Collaboration",
+      "lot": 1
+    },
+    {
+      "id": "COLLAB-04",
+      "need": "les commentaires peuvent être associés à un objet ou à un passage du manuscrit.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "8.2 Collaboration",
+      "lot": 3
+    },
+    {
+      "id": "COLLAB-05",
+      "need": "les permissions sont appliquées à toutes les interfaces, y compris API et MCP.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "8.2 Collaboration",
+      "lot": 0
+    },
+    {
+      "id": "COLLAB-06",
+      "need": "plusieurs auteurs peuvent éditer simultanément une scène avec synchronisation en temps réel.",
+      "priority": "V1",
+      "phase": "V1",
+      "section": "8.2 Collaboration",
+      "lot": "V1"
+    },
+    {
+      "id": "COLLAB-07",
+      "need": "l'interface peut afficher la présence des autres contributeurs.",
+      "priority": "V1",
+      "phase": "V1",
+      "section": "8.2 Collaboration",
+      "lot": "V1"
+    },
+    {
+      "id": "COLLAB-08",
+      "need": "une notification informe les utilisateurs concernés des propositions, commentaires et validations.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "8.2 Collaboration",
+      "lot": 3
+    },
+    {
+      "id": "AI-01",
+      "need": "Interroger l'IA depuis le contexte d'un projet",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-02",
+      "need": "Sélectionner un fournisseur/modèle pris en charge",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-03",
+      "need": "Utiliser des identifiants de fournisseur configurés de manière sécurisée",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-04",
+      "need": "Rechercher les scènes et objets pertinents pour une demande",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-05",
+      "need": "Fournir à l'IA des références identifiables aux sources du projet",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-06",
+      "need": "Permettre à l'IA de préparer une proposition multi-objets",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-07",
+      "need": "Exposer un ensemble contrôlé d'opérations via MCP",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 6
+    },
+    {
+      "id": "AI-08",
+      "need": "Empêcher toute opération dépassant les permissions déléguées",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 6
+    },
+    {
+      "id": "AI-09",
+      "need": "Conserver la provenance des propositions IA",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-10",
+      "need": "Afficher les modifications avant leur application",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-11",
+      "need": "Imposer une validation humaine des propositions IA par défaut",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-12",
+      "need": "Permettre de limiter les dépenses ou appels IA",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-13",
+      "need": "Permettre l'annulation d'une opération IA en cours",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-14",
+      "need": "Afficher les données transmises au fournisseur IA ou leur périmètre",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "9.3 Capacités IA du MVP",
+      "lot": 5
+    },
+    {
+      "id": "AI-SEC-01",
+      "need": "les contenus narratifs ne doivent jamais être interprétés comme des instructions de sécurité ou d'autorisation.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.7 Risques spécifiques",
+      "lot": 5
+    },
+    {
+      "id": "AI-SEC-02",
+      "need": "les autorisations sont appliquées indépendamment du contenu des prompts.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.7 Risques spécifiques",
+      "lot": 6
+    },
+    {
+      "id": "AI-SEC-03",
+      "need": "les secrets et jetons ne doivent pas être inclus dans les contextes IA.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.7 Risques spécifiques",
+      "lot": 5
+    },
+    {
+      "id": "AI-SEC-04",
+      "need": "les appels externes sont soumis à des limites et à une journalisation adaptées.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.7 Risques spécifiques",
+      "lot": 5
+    },
+    {
+      "id": "AI-SEC-05",
+      "need": "les utilisateurs sont informés lorsque des contenus sont envoyés à un fournisseur IA tiers.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "9.7 Risques spécifiques",
+      "lot": 5
+    },
+    {
+      "id": "PROP-01",
+      "need": "Créer une proposition contenant plusieurs opérations",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-02",
+      "need": "Associer une justification et un auteur à la proposition",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-03",
+      "need": "Conserver la version de base des objets modifiés",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-04",
+      "need": "Afficher les différences proposées avant fusion",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-05",
+      "need": "Vérifier les permissions à la création et à la fusion",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-06",
+      "need": "Vérifier les conflits de version avant fusion",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-07",
+      "need": "Appliquer de manière atomique les modifications interdépendantes",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-08",
+      "need": "Conserver un historique des validations et refus",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-09",
+      "need": "Permettre les commentaires de revue",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-10",
+      "need": "Permettre la révision d'une proposition",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-11",
+      "need": "Détecter les impacts potentiels sur les objets liés",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "10.3 Exigences",
+      "lot": 4
+    },
+    {
+      "id": "PROP-12",
+      "need": "Permettre l'approbation partielle d'une proposition",
+      "priority": "V1 — SHOULD",
+      "phase": "V1",
+      "section": "10.3 Exigences",
+      "lot": "V1"
+    },
+    {
+      "id": "PROP-13",
+      "need": "Permettre des variantes narratives concurrentes",
+      "priority": "V2+",
+      "phase": "V2+",
+      "section": "10.3 Exigences",
+      "lot": "V2+"
+    },
+    {
+      "id": "PROP-14",
+      "need": "Configurer des règles de fusion automatique",
+      "priority": "V2+",
+      "phase": "V2+",
+      "section": "10.3 Exigences",
+      "lot": "V2+"
+    },
+    {
+      "id": "CRIT-01",
+      "need": "lancer une analyse sur une scène, un chapitre ou un manuscrit.",
+      "priority": "MUST",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "CRIT-02",
+      "need": "conserver les références aux éléments analysés.",
+      "priority": "MUST",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "CRIT-03",
+      "need": "distinguer observations objectives et interprétations.",
+      "priority": "MUST",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "CRIT-04",
+      "need": "présenter des suggestions sans les appliquer automatiquement.",
+      "priority": "MUST",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "CRIT-05",
+      "need": "convertir une suggestion en proposition de modification.",
+      "priority": "MUST",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "CRIT-06",
+      "need": "permettre de marquer un diagnostic comme accepté, ignoré ou résolu.",
+      "priority": "SHOULD",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "CRIT-07",
+      "need": "comparer les résultats avant et après correction.",
+      "priority": "SHOULD",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "CRIT-08",
+      "need": "éviter de répéter indéfiniment des critiques explicitement écartées par l'auteur.",
+      "priority": "SHOULD",
+      "phase": "V1",
+      "section": "12.4 Exigences V1",
+      "lot": "V1"
+    },
+    {
+      "id": "UX-01",
+      "need": "permettre d'accéder à une scène depuis le tableau de bord du projet avec un nombre raisonnable d'actions.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 1
+    },
+    {
+      "id": "UX-02",
+      "need": "distinguer visuellement les modifications enregistrées, en cours d'enregistrement et en erreur.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 1
+    },
+    {
+      "id": "UX-03",
+      "need": "ne jamais masquer un échec d'enregistrement.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 1
+    },
+    {
+      "id": "UX-04",
+      "need": "permettre de retrouver facilement les références d'un personnage ou d'un lieu.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 2
+    },
+    {
+      "id": "UX-05",
+      "need": "rendre les opérations destructives explicites et confirmables.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 1
+    },
+    {
+      "id": "UX-06",
+      "need": "proposer une interface utilisable au clavier pour les parcours essentiels.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 7
+    },
+    {
+      "id": "UX-07",
+      "need": "proposer un mode clair et un mode sombre.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 7
+    },
+    {
+      "id": "UX-08",
+      "need": "permettre de réduire les panneaux périphériques pendant la rédaction.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 1
+    },
+    {
+      "id": "UX-09",
+      "need": "permettre une personnalisation raisonnable des vues et des raccourcis.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 7
+    },
+    {
+      "id": "UX-10",
+      "need": "prévoir une architecture internationalisable, avec le français comme langue initiale possible.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "14.3 Exigences UX",
+      "lot": 7
+    },
+    {
+      "id": "SEC-01",
+      "need": "authentifier les utilisateurs avant tout accès privé.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.1 Authentification et autorisation",
+      "lot": 0
+    },
+    {
+      "id": "SEC-02",
+      "need": "appliquer les permissions côté serveur sur chaque opération.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.1 Authentification et autorisation",
+      "lot": 0
+    },
+    {
+      "id": "SEC-03",
+      "need": "empêcher tout accès interprojets non autorisé.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.1 Authentification et autorisation",
+      "lot": 0
+    },
+    {
+      "id": "SEC-04",
+      "need": "vérifier également les permissions lors de la recherche, de l'export, des traitements IA et des accès MCP.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.1 Authentification et autorisation",
+      "lot": 0
+    },
+    {
+      "id": "SEC-05",
+      "need": "permettre la révocation des sessions et accès externes.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.1 Authentification et autorisation",
+      "lot": 0
+    },
+    {
+      "id": "SEC-06",
+      "need": "proposer l'authentification multifacteur.",
+      "priority": "SHOULD",
+      "phase": "MVP",
+      "section": "15.1 Authentification et autorisation",
+      "lot": 0
+    },
+    {
+      "id": "SEC-07",
+      "need": "chiffrer les communications réseau.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 7
+    },
+    {
+      "id": "SEC-08",
+      "need": "protéger les secrets et clés API au repos.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 5
+    },
+    {
+      "id": "SEC-09",
+      "need": "exclure les secrets des journaux applicatifs.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 0
+    },
+    {
+      "id": "SEC-10",
+      "need": "limiter les données personnelles et contenus narratifs collectés dans les journaux.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 0
+    },
+    {
+      "id": "SEC-11",
+      "need": "prévoir des sauvegardes et vérifier leur restauration.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 7
+    },
+    {
+      "id": "SEC-12",
+      "need": "assurer la traçabilité des modifications importantes.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 0
+    },
+    {
+      "id": "SEC-13",
+      "need": "protéger l'éditeur et les rendus contre les contenus actifs malveillants.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 1
+    },
+    {
+      "id": "SEC-14",
+      "need": "prévoir des limites d'usage et de débit sur les API exposées.",
+      "priority": "MUST",
+      "phase": "MVP",
+      "section": "15.2 Protection des données",
+      "lot": 6
+    },
+    {
+      "id": "NFR-01",
+      "need": "Fiabilité",
+      "priority": "Aucun enregistrement confirmé ne doit être perdu silencieusement",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 1
+    },
+    {
+      "id": "NFR-02",
+      "need": "Performance",
+      "priority": "Réponse p95 inférieure à 500 ms pour les lectures métier simples, hors IA",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 7
+    },
+    {
+      "id": "NFR-03",
+      "need": "Recherche",
+      "priority": "Réponse p95 inférieure à 2 s sur un projet de référence de 10 000 objets, hors génération IA",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 7
+    },
+    {
+      "id": "NFR-04",
+      "need": "Édition",
+      "priority": "Retour visible d'enregistrement ou d'erreur dans un délai cible de 2 s en conditions normales",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 1
+    },
+    {
+      "id": "NFR-05",
+      "need": "Résilience",
+      "priority": "Sauvegardes automatisées et test de restauration documenté",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 7
+    },
+    {
+      "id": "NFR-06",
+      "need": "Disponibilité",
+      "priority": "Objectif initial de 99,5 % après stabilisation de la version de production",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 7
+    },
+    {
+      "id": "NFR-07",
+      "need": "Portabilité",
+      "priority": "Export complet des données métier essentielles dans des formats documentés",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 7
+    },
+    {
+      "id": "NFR-08",
+      "need": "Accessibilité",
+      "priority": "Viser WCAG 2.2 AA pour les parcours principaux",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 7
+    },
+    {
+      "id": "NFR-09",
+      "need": "Observabilité",
+      "priority": "Traces techniques et métriques sans exposition inutile des manuscrits",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 0
+    },
+    {
+      "id": "NFR-10",
+      "need": "Maintenabilité",
+      "priority": "Tests automatisés des règles métier et des permissions",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 0
+    },
+    {
+      "id": "NFR-11",
+      "need": "Évolutivité",
+      "priority": "Ajout de nouveaux types d'objets et modules sans refonte du socle",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 2
+    },
+    {
+      "id": "NFR-12",
+      "need": "Interopérabilité",
+      "priority": "API métier documentée et intégration MCP versionnée",
+      "phase": "MVP",
+      "section": "16. Exigences non fonctionnelles",
+      "lot": 6
+    }
+  ]
+}

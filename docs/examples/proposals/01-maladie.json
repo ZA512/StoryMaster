@@ -1,0 +1,745 @@
+{
+  "specificationVersion": "0.2-proposed",
+  "targetPhase": "MVP",
+  "scenario": "Maladie du protagoniste",
+  "preconditions": {
+    "projectId": "prj_demo",
+    "projectStatus": "active",
+    "modules": [
+      "characters",
+      "places",
+      "timeline"
+    ],
+    "actor": {
+      "actorType": "external_ai",
+      "userId": "usr_alice",
+      "clientId": "cli_test",
+      "grantId": "grt_propose",
+      "executionId": "aix_maladie"
+    },
+    "grantScopes": [
+      "project:read",
+      "proposal:read",
+      "proposal:write",
+      "proposal:submit"
+    ],
+    "humanReviewer": "usr_alice (owner ; auto-approbation humaine autorisée par la politique proposée)"
+  },
+  "initialState": {
+    "objects": [
+      {
+        "id": "chr_elise",
+        "projectId": "prj_demo",
+        "typeKey": "character",
+        "schemaVersion": 1,
+        "name": "Élise Marceau",
+        "revision": 3,
+        "attributes": {
+          "aliases": [],
+          "description": "Enquêtrice.",
+          "goals": [
+            "Interroger le témoin."
+          ],
+          "healthSummary": "Bonne santé.",
+          "conditionEventRefs": []
+        },
+        "status": "active"
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scn_quai",
+        "projectId": "prj_demo",
+        "chapterId": "chp_08",
+        "title": "Sur le quai",
+        "revision": 7,
+        "contentFormatVersion": 1,
+        "content": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Élise descend du train et presse le pas."
+                }
+              ]
+            }
+          ]
+        },
+        "references": [
+          {
+            "id": "ref_scn_quai_elise",
+            "projectId": "prj_demo",
+            "sceneId": "scn_quai",
+            "objectId": "chr_elise",
+            "referenceType": "present",
+            "revision": 1
+          }
+        ]
+      }
+    ],
+    "relations": []
+  },
+  "createRequest": {
+    "method": "POST",
+    "path": "/api/v1/projects/prj_demo/proposals",
+    "headers": {
+      "Idempotency-Key": "create-maladie-01"
+    },
+    "body": {
+      "title": "Introduire la maladie d’Élise sur le quai",
+      "description": "Option choisie par l’auteur : premiers symptômes discrets, sans hospitalisation.",
+      "operations": [
+        {
+          "operationId": "op_event",
+          "kind": "create_object",
+          "tempId": "illness",
+          "payload": {
+            "typeKey": "event",
+            "schemaVersion": 1,
+            "name": "Premiers symptômes sur le quai",
+            "attributes": {
+              "description": "Élise commence à ressentir une fièvre.",
+              "chronologyPosition": 12,
+              "temporalExpression": {
+                "kind": "ordinal",
+                "position": 12
+              }
+            }
+          },
+          "reason": "Introduire la maladie au moment choisi par l’auteur."
+        },
+        {
+          "operationId": "op_character",
+          "kind": "update_object",
+          "targetId": "chr_elise",
+          "expectedRevision": 3,
+          "payload": {
+            "set": {
+              "attributes": {
+                "aliases": [],
+                "description": "Enquêtrice.",
+                "goals": [
+                  "Interroger le témoin."
+                ],
+                "healthSummary": "Fièvre débutante au quai.",
+                "conditionEventRefs": [
+                  {
+                    "tempId": "illness"
+                  }
+                ]
+              }
+            }
+          },
+          "reason": "La fiche renvoie à l’événement nouveau."
+        },
+        {
+          "operationId": "op_scene",
+          "kind": "replace_scene_content",
+          "targetId": "scn_quai",
+          "expectedRevision": 7,
+          "payload": {
+            "contentFormatVersion": 1,
+            "content": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fiévreuse, Élise descend du train. Elle ralentit et s’appuie contre un pilier."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "reason": "Montrer les premiers symptômes sans imposer un diagnostic médical."
+        },
+        {
+          "operationId": "op_relation",
+          "kind": "create_relation",
+          "tempId": "illness_participation",
+          "payload": {
+            "sourceRef": {
+              "id": "chr_elise"
+            },
+            "targetRef": {
+              "tempId": "illness"
+            },
+            "relationType": "participates_in",
+            "attributes": {
+              "description": "Élise subit les premiers symptômes."
+            }
+          }
+        }
+      ],
+      "dependencyRevisions": []
+    }
+  },
+  "createResponse": {
+    "status": 201,
+    "etag": "\"p1-s1\"",
+    "body": {
+      "data": {
+        "id": "prp_maladie",
+        "projectId": "prj_demo",
+        "origin": "external_ai",
+        "proposalRevision": 1,
+        "stateVersion": 1,
+        "status": "draft",
+        "createdByActor": {
+          "actorType": "external_ai",
+          "userId": "usr_alice",
+          "clientId": "cli_test",
+          "grantId": "grt_propose",
+          "executionId": "aix_maladie"
+        },
+        "title": "Introduire la maladie d’Élise sur le quai",
+        "description": "Option choisie par l’auteur : premiers symptômes discrets, sans hospitalisation.",
+        "operations": [
+          {
+            "operationId": "op_event",
+            "kind": "create_object",
+            "tempId": "illness",
+            "payload": {
+              "typeKey": "event",
+              "schemaVersion": 1,
+              "name": "Premiers symptômes sur le quai",
+              "attributes": {
+                "description": "Élise commence à ressentir une fièvre.",
+                "chronologyPosition": 12,
+                "temporalExpression": {
+                  "kind": "ordinal",
+                  "position": 12
+                }
+              }
+            },
+            "reason": "Introduire la maladie au moment choisi par l’auteur."
+          },
+          {
+            "operationId": "op_character",
+            "kind": "update_object",
+            "targetId": "chr_elise",
+            "expectedRevision": 3,
+            "payload": {
+              "set": {
+                "attributes": {
+                  "aliases": [],
+                  "description": "Enquêtrice.",
+                  "goals": [
+                    "Interroger le témoin."
+                  ],
+                  "healthSummary": "Fièvre débutante au quai.",
+                  "conditionEventRefs": [
+                    {
+                      "tempId": "illness"
+                    }
+                  ]
+                }
+              }
+            },
+            "reason": "La fiche renvoie à l’événement nouveau."
+          },
+          {
+            "operationId": "op_scene",
+            "kind": "replace_scene_content",
+            "targetId": "scn_quai",
+            "expectedRevision": 7,
+            "payload": {
+              "contentFormatVersion": 1,
+              "content": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Fiévreuse, Élise descend du train. Elle ralentit et s’appuie contre un pilier."
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "reason": "Montrer les premiers symptômes sans imposer un diagnostic médical."
+          },
+          {
+            "operationId": "op_relation",
+            "kind": "create_relation",
+            "tempId": "illness_participation",
+            "payload": {
+              "sourceRef": {
+                "id": "chr_elise"
+              },
+              "targetRef": {
+                "tempId": "illness"
+              },
+              "relationType": "participates_in",
+              "attributes": {
+                "description": "Élise subit les premiers symptômes."
+              }
+            }
+          }
+        ],
+        "dependencyRevisions": []
+      }
+    }
+  },
+  "previewRequest": {
+    "method": "POST",
+    "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/preview",
+    "headers": {},
+    "body": {
+      "expectedProposalRevision": 1
+    }
+  },
+  "previewResponse": {
+    "data": {
+      "proposalId": "prp_maladie",
+      "proposalRevision": 1,
+      "validatedAgainst": [
+        {
+          "resourceType": "object",
+          "resourceId": "chr_elise",
+          "revision": 3
+        },
+        {
+          "resourceType": "scene",
+          "resourceId": "scn_quai",
+          "revision": 7
+        }
+      ],
+      "temporaryIds": {
+        "illness": {
+          "tempId": "illness"
+        },
+        "illness_participation": {
+          "tempId": "illness_participation"
+        }
+      },
+      "affectedResources": [
+        {
+          "resourceType": "object",
+          "resourceId": "illness",
+          "change": "create"
+        },
+        {
+          "resourceType": "object",
+          "resourceId": "chr_elise",
+          "change": "update"
+        },
+        {
+          "resourceType": "scene",
+          "resourceId": "scn_quai",
+          "change": "update"
+        },
+        {
+          "resourceType": "relation",
+          "resourceId": "illness_participation",
+          "change": "create"
+        }
+      ],
+      "diffs": [
+        {
+          "resourceId": "illness",
+          "kind": "structured",
+          "before": null,
+          "after": {
+            "typeKey": "event",
+            "schemaVersion": 1,
+            "name": "Premiers symptômes sur le quai",
+            "attributes": {
+              "description": "Élise commence à ressentir une fièvre.",
+              "chronologyPosition": 12,
+              "temporalExpression": {
+                "kind": "ordinal",
+                "position": 12
+              }
+            }
+          }
+        },
+        {
+          "resourceId": "chr_elise",
+          "kind": "structured",
+          "baseRevision": 3,
+          "before": {
+            "aliases": [],
+            "description": "Enquêtrice.",
+            "goals": [
+              "Interroger le témoin."
+            ],
+            "healthSummary": "Bonne santé.",
+            "conditionEventRefs": []
+          },
+          "after": {
+            "aliases": [],
+            "description": "Enquêtrice.",
+            "goals": [
+              "Interroger le témoin."
+            ],
+            "healthSummary": "Fièvre débutante au quai.",
+            "conditionEventRefs": [
+              {
+                "tempId": "illness"
+              }
+            ]
+          }
+        },
+        {
+          "resourceId": "scn_quai",
+          "kind": "rich_text",
+          "baseRevision": 7,
+          "before": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Élise descend du train et presse le pas."
+                  }
+                ]
+              }
+            ]
+          },
+          "after": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Fiévreuse, Élise descend du train. Elle ralentit et s’appuie contre un pilier."
+                  }
+                ]
+              }
+            ]
+          },
+          "beforeText": "Élise descend du train et presse le pas.",
+          "afterText": "Fiévreuse, Élise descend du train. Elle ralentit et s’appuie contre un pilier."
+        },
+        {
+          "resourceId": "illness_participation",
+          "kind": "relation",
+          "before": null,
+          "after": {
+            "sourceRef": {
+              "id": "chr_elise"
+            },
+            "targetRef": {
+              "tempId": "illness"
+            },
+            "relationType": "participates_in",
+            "attributes": {
+              "description": "Élise subit les premiers symptômes."
+            }
+          }
+        }
+      ],
+      "validationFindings": [],
+      "conflicts": [],
+      "valid": true
+    }
+  },
+  "temporaryIdResolution": {
+    "phase": "dans transaction de merge uniquement",
+    "mapping": {
+      "illness": "evt_fievre",
+      "illness_participation": "rel_symptomes"
+    },
+    "resolvedOperations": [
+      {
+        "operationId": "op_event",
+        "kind": "create_object",
+        "tempId": "illness",
+        "payload": {
+          "typeKey": "event",
+          "schemaVersion": 1,
+          "name": "Premiers symptômes sur le quai",
+          "attributes": {
+            "description": "Élise commence à ressentir une fièvre.",
+            "chronologyPosition": 12,
+            "temporalExpression": {
+              "kind": "ordinal",
+              "position": 12
+            }
+          }
+        },
+        "reason": "Introduire la maladie au moment choisi par l’auteur."
+      },
+      {
+        "operationId": "op_character",
+        "kind": "update_object",
+        "targetId": "chr_elise",
+        "expectedRevision": 3,
+        "payload": {
+          "set": {
+            "attributes": {
+              "aliases": [],
+              "description": "Enquêtrice.",
+              "goals": [
+                "Interroger le témoin."
+              ],
+              "healthSummary": "Fièvre débutante au quai.",
+              "conditionEventRefs": [
+                {
+                  "id": "evt_fievre"
+                }
+              ]
+            }
+          }
+        },
+        "reason": "La fiche renvoie à l’événement nouveau."
+      },
+      {
+        "operationId": "op_scene",
+        "kind": "replace_scene_content",
+        "targetId": "scn_quai",
+        "expectedRevision": 7,
+        "payload": {
+          "contentFormatVersion": 1,
+          "content": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Fiévreuse, Élise descend du train. Elle ralentit et s’appuie contre un pilier."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "reason": "Montrer les premiers symptômes sans imposer un diagnostic médical."
+      },
+      {
+        "operationId": "op_relation",
+        "kind": "create_relation",
+        "tempId": "illness_participation",
+        "payload": {
+          "sourceRef": {
+            "id": "chr_elise"
+          },
+          "targetRef": {
+            "id": "evt_fievre"
+          },
+          "relationType": "participates_in",
+          "attributes": {
+            "description": "Élise subit les premiers symptômes."
+          }
+        }
+      }
+    ],
+    "note": "Les tempId déclarés dans les créations restent des clés locales ; seules les références typées sont remplacées."
+  },
+  "workflow": [
+    {
+      "request": {
+        "method": "POST",
+        "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/submit",
+        "headers": {
+          "If-Match": "\"p1-s1\"",
+          "Idempotency-Key": "submit-maladie-01"
+        },
+        "body": {
+          "expectedProposalRevision": 1
+        }
+      },
+      "actor": "external_ai",
+      "expectedStatus": "submitted",
+      "expectedProposalRevision": 1,
+      "expectedStateVersion": 2
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/approve",
+        "headers": {
+          "If-Match": "\"p1-s2\"",
+          "Idempotency-Key": "approve-maladie-01"
+        },
+        "body": {
+          "expectedProposalRevision": 1
+        }
+      },
+      "actor": "human",
+      "expectedStatus": "approved",
+      "expectedProposalRevision": 1,
+      "expectedStateVersion": 3
+    },
+    {
+      "request": {
+        "method": "POST",
+        "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/merge",
+        "headers": {
+          "If-Match": "\"p1-s3\"",
+          "Idempotency-Key": "merge-maladie-01"
+        },
+        "body": {
+          "expectedProposalRevision": 1
+        }
+      },
+      "actor": "human",
+      "expectedStatus": "merged",
+      "expectedProposalRevision": 1,
+      "expectedStateVersion": 4
+    }
+  ],
+  "mergeResponse": {
+    "data": {
+      "proposalId": "prp_maladie",
+      "proposalRevision": 1,
+      "proposalStatus": "merged",
+      "stateVersion": 4,
+      "changeSetId": "chg_maladie",
+      "mergedAt": "2026-10-30T21:00:00Z",
+      "temporaryIds": {
+        "illness": "evt_fievre",
+        "illness_participation": "rel_symptomes"
+      },
+      "resourceRevisions": [
+        {
+          "resourceType": "object",
+          "resourceId": "evt_fievre",
+          "revision": 1
+        },
+        {
+          "resourceType": "object",
+          "resourceId": "chr_elise",
+          "revision": 4
+        },
+        {
+          "resourceType": "scene",
+          "resourceId": "scn_quai",
+          "revision": 8
+        },
+        {
+          "resourceType": "relation",
+          "resourceId": "rel_symptomes",
+          "revision": 1
+        }
+      ]
+    }
+  },
+  "stateAfterResolution": {
+    "objects": [
+      {
+        "id": "chr_elise",
+        "projectId": "prj_demo",
+        "typeKey": "character",
+        "schemaVersion": 1,
+        "name": "Élise Marceau",
+        "revision": 4,
+        "attributes": {
+          "aliases": [],
+          "description": "Enquêtrice.",
+          "goals": [
+            "Interroger le témoin."
+          ],
+          "healthSummary": "Fièvre débutante au quai.",
+          "conditionEventRefs": [
+            {
+              "id": "evt_fievre"
+            }
+          ]
+        },
+        "status": "active"
+      },
+      {
+        "id": "evt_fievre",
+        "projectId": "prj_demo",
+        "typeKey": "event",
+        "schemaVersion": 1,
+        "name": "Premiers symptômes sur le quai",
+        "revision": 1,
+        "attributes": {
+          "description": "Élise commence à ressentir une fièvre.",
+          "chronologyPosition": 12,
+          "temporalExpression": {
+            "kind": "ordinal",
+            "position": 12
+          }
+        },
+        "status": "active"
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scn_quai",
+        "projectId": "prj_demo",
+        "chapterId": "chp_08",
+        "title": "Sur le quai",
+        "revision": 8,
+        "contentFormatVersion": 1,
+        "content": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Fiévreuse, Élise descend du train. Elle ralentit et s’appuie contre un pilier."
+                }
+              ]
+            }
+          ]
+        },
+        "references": [
+          {
+            "id": "ref_scn_quai_elise",
+            "projectId": "prj_demo",
+            "sceneId": "scn_quai",
+            "objectId": "chr_elise",
+            "referenceType": "present",
+            "revision": 1
+          }
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "id": "rel_symptomes",
+        "projectId": "prj_demo",
+        "sourceObjectId": "chr_elise",
+        "targetObjectId": "evt_fievre",
+        "relationType": "participates_in",
+        "revision": 1,
+        "attributes": {
+          "description": "Élise subit les premiers symptômes."
+        }
+      }
+    ]
+  },
+  "expectedAudit": {
+    "proposalOrigin": {
+      "actorType": "external_ai",
+      "userId": "usr_alice",
+      "clientId": "cli_test",
+      "grantId": "grt_propose",
+      "executionId": "aix_maladie"
+    },
+    "reviewerUserId": "usr_alice",
+    "mergerUserId": "usr_alice",
+    "changeSetCount": 1,
+    "changeEventCount": 4,
+    "outboxCommitted": true,
+    "secretsLogged": false
+  },
+  "forbiddenEffects": [
+    "Canon modifié avant fusion",
+    "Identifiant définitif réservé par preview",
+    "Double événement sur retry",
+    "Fusion par le client IA"
+  ]
+}
