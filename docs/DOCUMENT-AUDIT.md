@@ -82,6 +82,12 @@ SEC-07..14, AI-SEC, objectifs chiffrés NFR, invitations sécurisées, accessibi
 
 PRD et recherches conservés sans modification. Traçabilité initiale remplacée car elle déclarait les recherches non analysées. Domaine, architecture, API et sécurité enrichis en sections de consolidation qui précisent leurs règles ouvertes ; seules les contradictions D10/D11 sont corrigées dans les passages d'origine. Cinq ADR conservés, complétés ; nouveaux ADR séparant stockage, éditeur et délégation. Tous restent Proposée.
 
+## Passe de correction et préparation des décisions humaines
+
+Anomalie corrigée : l'extraction initiale assimilait le troisième champ des tableaux NFR à une priorité, alors qu'il contient l'objectif ; le texte intégral manquait donc aussi dans les lignes NFR du backlog et de la matrice. Le registre v2 distingue type, priorité produit, priorité de réalisation, version, texte et domaine ; les priorités absentes restent `null`. Les 150 IDs et toutes les priorités explicites du PRD sont conservés. Les séparations vides internes au tableau de backlog ont été retirées pour rétablir son rendu Markdown.
+
+L'outillage de validation est désormais versionné dans `scripts/`, avec dépendances épinglées et tests de mutations ; aucune fonctionnalité applicative n'a été développée. [Deux patchs PRD](PRD-ALIGNMENT-PROPOSAL.md) restent non appliqués, [GO-00..02](HUMAN-DECISIONS.md) non décidés. Le risque R-CONT-01 explicite la sérialisation des scènes indépendantes ; le spike B est étendu, pas exécuté. PROP-10 demeure SHOULD.
+
 ## Risques et questions ouvertes
 
 Sur-spécification des modules, coût du moteur de propositions, contrats OAuth/client évolutifs. Les questions produit du PRD restent visibles dans le plan ; aucun arbitrage durable n'est présenté comme accepté.

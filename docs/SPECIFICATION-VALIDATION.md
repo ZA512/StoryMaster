@@ -1,31 +1,63 @@
 # Vérification des artefacts de spécification
 
-**Statut :** Contrôles documentaires réussis le 30 octobre 2026 ; aucun test produit exécuté.
-**Portée :** syntaxe, références, schémas, fixtures et couverture de ce dossier. **Références :** [rapport](CONSOLIDATED-REPORT.md), [contrats](API-CONTRACTS.md), [tests à implémenter](CONTRACT-TESTS.md).
+**Statut :** Contrôles documentaires réussis le 30 octobre 2026 ; aucune application ni mesure de contention exécutée.
+**Portée :** syntaxe, schémas, contenu PRD, couverture, parité des contrats et oracles des fixtures. **Références :** [commande CI](../scripts/README.md), [rapport](CONSOLIDATED-REPORT.md), [fiches GO](HUMAN-DECISIONS.md), [tests métier futurs](CONTRACT-TESTS.md).
 
-## Synthèse et analyse des résultats
+## Synthèse et anomalies corrigées
 
-Vérification effectuée dans un environnement Python temporaire hors dépôt, avec `openapi-spec-validator 0.9.0`, `jsonschema 4.26.0` et PyYAML. Aucun serveur, composant applicatif, migration ou test métier exécutable n'a été ajouté au dépôt. Les scripts temporaires de préparation ne constituent pas des livrables applicatifs.
+L'extracteur initial confondait `Exigence cible` et `Priorité` dans les lignes NFR. Le registre v2 sépare type, priorité produit, priorité de réalisation, version cible, texte intégral, domaine, source et lot. Les 150 IDs sont conservés ; les 12 NFR ont `priority:null`. Les autres priorités absentes restent également null ; les priorités explicitement indiquées dans le PRD sont inchangées, notamment PROP-10 SHOULD. Les libellés NFR du backlog et de la matrice reprennent désormais les objectifs complets ; les marqueurs V1/V2+ ne sont plus mélangés aux priorités.
 
-| Vérification effectivement exécutée | Résultat |
+Le tableau du backlog comportait des lignes vides entre ses lignes, empêchant son rendu comme tableau Markdown ; elles ont été retirées. L'ancienne vérification temporaire est remplacée par un script versionné, ses dépendances épinglées et ses propres tests de mutations.
+
+## Contrôles effectivement exécutés
+
+Environnement **neuf** `/tmp/storymaster-ci-check`, Python 3.14.8, installation depuis `scripts/requirements-validation.txt`. Versions principales : `openapi-spec-validator 0.9.0`, `jsonschema 4.26.0`, `PyYAML 6.0.3`. Aucun paquet ni serveur applicatif ajouté. Les commandes ont été exécutées localement ; aucune exécution distante de CI n'est revendiquée.
+
+| Contrôle | Résultat |
 |---|---|
-| Parsing de tous les JSON du dossier | 8 fichiers, sans erreur |
-| Parsing et validation OpenAPI 3.1.1 | 18 chemins, 19 opérations, document valide |
-| Schéma d'opérations Draft 2020-12 | Valide ; neuf types fermés |
-| Schémas MCP input/output Draft 2020-12 | 26 schémas valides, références autonomes |
-| Catalogue / politique MCP | Treize noms identiques, aucun approve/merge/SQL |
-| Équivalence des définitions HTTP/MCP embarquées | 92 définitions comparées après normalisation des références, sans divergence |
-| Cas négatifs de schéma | Six refus confirmés : kind inconnu, révision absente, actorType injecté, et actorType/origin/permissions dans entrée MCP |
-| Requêtes HTTP et opérations présentes dans les deux fixtures | Conformes aux schémas ; 18 occurrences d'opérations contrôlées, y compris copies résolues |
-| Réponses de création, preview, merge et erreur des fixtures | Conformes aux schémas correspondants |
-| Entrée MCP proposal_create et sortie MCP proposal_preview sur fixture maladie | Conformes |
-| Cohérence des révisions et invalidation de review | Vérifiée sur les oracles des deux fixtures |
-| Traçabilité des exigences | 150 identifiants uniques, une ligne de matrice et une ligne de backlog par identifiant |
-| Affectation des MUST MVP | 99 exigences affectées aux Lots 0..7 ; exigences V1/V2+ hors lots MVP |
-| Tests déclaratifs | CT-01..50 consécutifs ; champs acteur/préconditions/requête/résultat/effets/PRD présents |
-| Liens Markdown locaux hors blocs de code | Aucun fichier cible manquant |
-| Critères d'acceptation documentaires | Présents dans chacun des sept livrables principaux |
-| Conservation des trois sources initiales | Comparaison octet par octet réussie avec copie temporaire avant modification |
+| Installation isolée des dépendances épinglées, puis `pip check` | Réussite, aucune dépendance cassée |
+| Script `scripts/validate_specifications.py` | Code 0 ; vérifications ci-dessous réussies |
+| JSON stricts et schémas | 9 JSON parsés ; clés dupliquées/NaN interdits ; schéma de registre, schéma d'opérations et 26 schémas MCP valides ; références locales résolues |
+| OpenAPI | 18 chemins, 19 opérations ; document valide et operationId uniques |
+| Contenu des exigences | Chaque ID, texte intégral, section, sourceText, type, priorité produit et version comparé à une définition relue du PRD |
+| Valeurs et couverture | Enums fermés ; lots entiers 0..7 pour MVP, null pour V1/V2+ ; 150 IDs uniques ; 99 MUST MVP affectés ; fiche de lot, backlog et matrice rapprochés pour chaque exigence |
+| MCP ↔ HTTP | 13 noms et mappings autorisés ; propriétés/réquis des entrées, sorties, définitions, scopes, permissions, audit, transactions, erreurs et limites vérifiés |
+| Fixtures | Requêtes et opérations conformes ; bases initiales/révisées, mapping temporaire, états et MergeResult cohérents ; approbation antérieure invalidée ; aucune simulation de transaction métier |
+| Scénarios et documents | 50 scénarios JSON/Markdown rapprochés champ par champ ; références abrégées résolues ; liens locaux et critères documentaires vérifiés |
+| Tests du validateur | **19 tests réussis** ; mutations d'IDs/outils à décompte constant, priorité NFR erronée, promotion isolée de PROP-10, texte tronqué, affectation V1 dans MVP, divergence de lot, $ref absente, dérive MCP, mauvaise permission, révision finale/base incohérente et approval périmée détectées |
+| Code de sortie CI | Le test CLI provoque une anomalie dans une copie et confirme code 1 avec diagnostic, depuis un autre répertoire |
+| Patchs PRD | `git apply --check` réussi séparément pour les huit lots et PROP-10 ; aucun patch appliqué |
+| Diff | `git diff --check` réussi ; PRD actif et recherches inchangés |
+
+## Reproduction
+
+Les scripts nécessaires sont dans le dépôt, sans dépendance à un fichier temporaire de génération :
+
+```bash
+set -euo pipefail
+python -m venv /tmp/storymaster-validation
+/tmp/storymaster-validation/bin/python -m pip install -r scripts/requirements-validation.txt
+/tmp/storymaster-validation/bin/python -m pip check
+/tmp/storymaster-validation/bin/python scripts/validate_specifications.py
+PYTHONDONTWRITEBYTECODE=1 /tmp/storymaster-validation/bin/python -m unittest discover -s scripts/tests -v
+git apply --check docs/proposals/PRD-eight-lots.patch
+git apply --check docs/proposals/PRD-PROP-10.patch
+git diff --check
+```
+
+La validation est en lecture seule des artefacts ; les tests de mutation opèrent dans une copie jetable. L'acceptation humaine d'une modification du PRD doit précéder sa synchronisation avec le registre : le script n'applique pas automatiquement les patchs et ne peut attester l'identité du décideur.
+
+## Fichiers modifiés ou créés pendant cette passe
+
+| Groupe | Fichiers |
+|---|---|
+| Registre normalisé | [requirements.json](spec/requirements.json), [requirements.schema.json](spec/requirements.schema.json), [README des artefacts](spec/README.md) |
+| Couverture et contention | [IMPLEMENTATION-PLAN.md](IMPLEMENTATION-PLAN.md), [RESEARCH-TRACEABILITY.md](RESEARCH-TRACEABILITY.md), [ARCHITECTURE.md](ARCHITECTURE.md), [ADR-0003](adr/0003-propositions-transactionnelles.md) |
+| Décisions humaines et propositions non appliquées | [HUMAN-DECISIONS.md](HUMAN-DECISIONS.md), [PRD-ALIGNMENT-PROPOSAL.md](PRD-ALIGNMENT-PROPOSAL.md), [patch huit lots](proposals/PRD-eight-lots.patch), [patch PROP-10](proposals/PRD-PROP-10.patch) |
+| Outillage CI | [validate_specifications.py](../scripts/validate_specifications.py), [tests du validateur](../scripts/tests/test_validate_specifications.py), [dépendances épinglées](../scripts/requirements-validation.txt), [mode d'emploi](../scripts/README.md), [exclusion des caches Python](../scripts/.gitignore) |
+| Rapports synchronisés | [DOCUMENT-AUDIT.md](DOCUMENT-AUDIT.md), [CONSOLIDATED-REPORT.md](CONSOLIDATED-REPORT.md), présent rapport |
+
+Aucun changement de `docs/PRD.md`, des deux recherches, d'OpenAPI, du catalogue MCP ou des fixtures de propositions. Les patchs sont préparés pour revue, pas appliqués.
 
 ## Empreintes des sources conservées
 
@@ -35,40 +67,14 @@ Vérification effectuée dans un environnement Python temporaire hors dépôt, a
 | deep-research-analyse-fonction.md | `ad58f43695fb5e6bc9dbeb83a4f533bfe51f37481ec274ee48deed3bec636c70` |
 | deep-research-modele-fonctionnel.md | `d37150a328136fded4813d8457b37743b49686f4a3c74a363bcdea79acce7657` |
 
-## Reproduire les vérifications structurelles
+## Décisions proposées, alternatives et risques
 
-Depuis la racine du dépôt, dans un environnement jetable ; ces commandes ne lancent aucune application :
+La CI est un contrôle de cohérence, pas une validation des décisions produit. Les champs null évitent d'inventer une priorité ; le choix éventuel de prioriser les NFR exige une modification explicite de la source produit. Le verrou projet reste une hypothèse à qualifier via les sept cas du spike B, dont plusieurs scènes indépendantes, sans capacité garantie à ce stade.
 
-```bash
-python -m venv /tmp/storymaster-validation
-/tmp/storymaster-validation/bin/pip install openapi-spec-validator==0.9.0 jsonschema==4.26.0 PyYAML
-/tmp/storymaster-validation/bin/python -m openapi_spec_validator docs/spec/openapi.yaml
-```
+## Questions ouvertes et limites
 
-Exemple de contrôle JSON Schema et fixtures, sans serveur :
-
-```python
-import json
-from pathlib import Path
-from jsonschema import Draft202012Validator
-
-schema = json.loads(Path('docs/spec/operations.schema.json').read_text())
-Draft202012Validator.check_schema(schema)
-validator = Draft202012Validator(schema)
-for path in Path('docs/examples/proposals').glob('*.json'):
-    fixture = json.loads(path.read_text())
-    for operation in fixture['createRequest']['body']['operations']:
-        validator.validate(operation)
-```
-
-## Décisions proposées et alternatives
-
-Utiliser ces artefacts comme baseline de contrat ; compléter les routes secondaires et validations sémantiques au lot concerné. Un validateur syntaxique seul ne remplace pas une revue de domaine ni un test d'intégration transactionnel.
-
-## Risques et questions ouvertes
-
-Non vérifiés à ce stade : comportement réel de PostgreSQL sous concurrence, sécurité runtime, charge/NFR, compatibilité des clients MCP, boucle outils fournisseurs, rendu de l'éditeur, migrations et restauration de backup. Les diagrammes Mermaid ont fait l'objet d'une revue textuelle, pas d'un rendu automatisé. Les spikes A/B/C et les 50 scénarios restent à réaliser pendant les lots futurs. La validation du format MCP suit la spécification consultée et les JSON Schema ; aucun SDK serveur n'a été exécuté.
+Non exécutés : les 50 tests de contrat applicatifs, les spikes A/B/C, PostgreSQL concurrent, tests de charge/NFR, intégrations fournisseurs, runtime MCP, sauvegarde/restauration et rendu Mermaid automatisé. GO-00..02, PROP-10, IdP/hébergement et enveloppe de charge restent à décider. Une CI verte ne transforme aucune proposition en décision acceptée.
 
 ## Critères d'acceptation du document
 
-Les contrôles exécutés et non exécutés sont distingués ; versions d'outillage, décomptes et empreintes sont précis ; aucune réussite de tests applicatifs n'est inventée ; commandes minimales de reproduction fournies.
+Résultats effectivement exécutés distingués des scénarios futurs ; commande reproductible depuis un environnement neuf ; anomalies détectées sur le contenu, pas seulement les décomptes ; priorités produit et sources conservées ; limites et décisions humaines explicites.

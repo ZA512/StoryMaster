@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Registre des exigences StoryMaster — v2",
+  "type": "object",
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "status",
+    "source",
+    "requirements"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "const": "./requirements.schema.json"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "status": {
+      "const": "Proposée"
+    },
+    "source": {
+      "const": "docs/PRD.md"
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/Requirement"
+      }
+    }
+  },
+  "$defs": {
+    "Requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "requirementType",
+        "priority",
+        "targetVersion",
+        "targetVersionBasis",
+        "text",
+        "domain",
+        "section",
+        "sourceText",
+        "deliveryPriority",
+        "lot"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(OBJ|MOD|PROJ|EDIT|DATA|SEARCH|EXPORT|COLLAB|AI-SEC|AI|PROP|CRIT|UX|SEC|NFR)-[0-9]{2}$"
+        },
+        "requirementType": {
+          "enum": [
+            "objective",
+            "functional",
+            "non_functional",
+            "security",
+            "usability"
+          ]
+        },
+        "priority": {
+          "enum": [
+            "MUST",
+            "SHOULD",
+            "COULD",
+            null
+          ]
+        },
+        "deliveryPriority": {
+          "enum": [
+            "P0",
+            "P1",
+            "P2"
+          ]
+        },
+        "targetVersion": {
+          "enum": [
+            "MVP",
+            "V1",
+            "V2+"
+          ]
+        },
+        "targetVersionBasis": {
+          "enum": [
+            "explicit",
+            "section",
+            "cross_reference",
+            "proposed_mvp"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "domain": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceText": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lot": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 7
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "targetVersion": {
+                "const": "MVP"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "lot": {
+                "type": "integer"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "lot": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "requirementType": {
+                "const": "non_functional"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "domain": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

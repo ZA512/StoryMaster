@@ -97,6 +97,12 @@ Sérialisation autosave dans un projet, pertes de débit ; pas de merge textuel 
 
 Les recommandations ne prouvent ni performance ni sécurité d'une application absente. Les spikes et tests du lot concerné sont des conditions d'utilisation.
 
+### Risque de contention à qualifier
+
+Le verrou exclusif projet sérialise aussi des écritures de scènes indépendantes et des commentaires. Une transaction longue peut retarder tous les auteurs du projet ; ajouter des workers ne garantit pas davantage de débit. La stratégie reste proposée et conditionnelle aux cas B-01..07 du [spike B](../IMPLEMENTATION-PLAN.md), avec attente/détention mesurées séparément et contrôle interprojets. Des ressources indépendantes ne doivent pas subir un faux conflit de version dû au seul compteur global. Voir R-CONT-01 de l'architecture et [GO-01](../HUMAN-DECISIONS.md).
+
+Sans enveloppe de charge et mesures, aucune capacité n'est qualifiée. Si les cibles NFR sont incompatibles avec cette granularité, étudier verrous d'agrégats/contraintes ou SERIALIZABLE avant généralisation, sans affaiblir les invariants. L'acceptation du principe transactionnel ne vaut pas acceptation définitive de ce verrou.
+
 ### Niveau de confiance et autorité
 
 Élevé sur atomicité imposée ; moyen sur granularité de verrou recommandée à mesurer.

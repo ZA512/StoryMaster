@@ -1,0 +1,82 @@
+--- a/docs/PRD.md
++++ b/docs/PRD.md
+@@ -1254,7 +1254,7 @@
+ 
+ ## 19. Ordre recommandé des lots de développement
+ 
+-Les lots ci-dessous décrivent un ordre logique, sans imposer de durée.
++Les huit lots ci-dessous décrivent un ordre logique, sans imposer de durée.
+ 
+ ### Lot 0 — Fondations
+ 
+@@ -1269,7 +1269,7 @@
+ 
+ **Condition de sortie :** un utilisateur peut créer un projet privé et les tests prouvent qu'un autre utilisateur ne peut pas y accéder.
+ 
+-### Lot 1 — Écriture
++### Lot 1 — Manuscrit et éditeur
+ 
+ - manuscrits ;
+ - chapitres ;
+@@ -1294,33 +1294,48 @@
+ 
+ **Condition de sortie :** une scène peut référencer des objets stables, et l'utilisateur peut retrouver toutes les scènes liées à un personnage.
+ 
+-### Lot 3 — Collaboration et propositions
++### Lot 3 — Collaboration asynchrone
+ 
+ - invitations ;
+ - rôles ;
+ - commentaires ;
+-- propositions ;
+-- différences ;
++- attribution des contributions ;
++- protection contre les écrasements concurrents.
++
++**Condition de sortie :** deux utilisateurs peuvent contribuer et commenter selon leurs rôles sans écrasement silencieux ; les commentaires conservent leur contexte de passage.
++
++### Lot 4 — Propositions
++
++- propositions multi-objets ;
++- différences et prévisualisation ;
++- commentaires de revue ;
+ - validation ;
+ - conflits ;
+-- fusion atomique.
+-
+-**Condition de sortie :** deux utilisateurs peuvent travailler sur un projet sans écrasement silencieux, et une proposition multi-objets peut être revue puis fusionnée.
+-
+-### Lot 4 — IA intégrée et MCP
++- approbation et fusion atomique.
++
++**Condition de sortie :** une proposition multi-objets peut être revue puis fusionnée entièrement ou refusée sans modification partielle ; toute approbation porte sur une révision précise.
++
++### Lot 5 — Assistant IA intégré
+ 
+ - configuration des fournisseurs ;
+ - contexte IA ;
+ - conversation intégrée ;
+ - outils métier ;
+-- serveur MCP ;
+-- autorisations déléguées ;
+ - propositions IA ;
+ - traçabilité.
+ 
+-**Condition de sortie :** une IA externe ou intégrée peut lire les données autorisées et soumettre une proposition, mais ne peut pas contourner la validation.
+-
+-### Lot 5 — Consolidation MVP
++**Condition de sortie :** l'assistant intégré peut lire les données autorisées et préparer une proposition exploitable, sans pouvoir écrire directement le canon ni fusionner.
++
++### Lot 6 — MCP externe
++
++- adaptateur MCP vers les mêmes cas d'usage métier ;
++- autorisations déléguées ;
++- lectures et propositions contrôlées ;
++- révocation et traçabilité des accès externes.
++
++**Condition de sortie :** un client MCP peut lire et soumettre une proposition dans sa délégation, sans pouvoir approuver ou fusionner ; une révocation bloque les nouveaux appels.
++
++### Lot 7 — Consolidation / production
+ 
+ - tests de sécurité ;
+ - tests de charge ;

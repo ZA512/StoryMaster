@@ -148,6 +148,12 @@ Les décisions produit Q-01..Q-15 sont toutes reprises au plan ; les recommandat
 
 OpenAPI est validé avec `openapi-spec-validator`, JSON Schema avec `jsonschema` Draft 2020-12 ; requêtes et opérations des deux fixtures sont conformes. Les références documentaires locales et la couverture des 99 MUST MVP ont été contrôlées. Ces résultats valident les artefacts de conception, pas leur future exécution ni les NFR.
 
+## Passe de correction avant décisions humaines
+
+Le registre des 150 exigences est désormais normalisé v2 : type, priorité produit, version cible et texte intégral séparés ; les NFR portent leur objectif dans text et une priorité null faute de marquage PRD. Le backlog et la matrice reprennent leurs objectifs complets. Les priorités produit explicites, notamment PROP-10 SHOULD, n'ont pas été modifiées.
+
+La validation reproductible est versionnée : [script et commande CI](../scripts/README.md), schéma du registre et tests de mutations. [GO-00..02](HUMAN-DECISIONS.md) disposent de fiches courtes, et les [deux patchs PRD](PRD-ALIGNMENT-PROPOSAL.md) sont séparés et non appliqués. R-CONT-01 et le spike B couvrent désormais les autosaves de plusieurs scènes indépendantes et leurs temps d'attente. Aucune mesure de contention n'est encore revendiquée.
+
 ## Recommandation de passage à la phase suivante
 
 Le dossier est prêt pour **validation humaine du socle proposé**. Après validation GO-00..02, la prochaine demande peut être « implémenter le Lot 0 conformément aux contrats et invariants ». Les spikes et validations des lots suivants restent leurs prérequis, sans faire avancer leurs fonctions dans le Lot 0. La présente mission s'arrête aux spécifications.

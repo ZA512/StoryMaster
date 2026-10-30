@@ -1,0 +1,11 @@
+--- a/docs/PRD.md
++++ b/docs/PRD.md
+@@ -694,7 +694,7 @@
+ | PROP-07 | Appliquer de manière atomique les modifications interdépendantes | MUST |
+ | PROP-08 | Conserver un historique des validations et refus | MUST |
+ | PROP-09 | Permettre les commentaires de revue | MUST |
+-| PROP-10 | Permettre la révision d'une proposition | SHOULD |
++| PROP-10 | Permettre la révision d'une proposition | MUST |
+ | PROP-11 | Détecter les impacts potentiels sur les objets liés | SHOULD |
+ | PROP-12 | Permettre l'approbation partielle d'une proposition | V1 — SHOULD |
+ | PROP-13 | Permettre des variantes narratives concurrentes | V2+ |

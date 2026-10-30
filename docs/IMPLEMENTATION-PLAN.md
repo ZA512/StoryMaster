@@ -302,6 +302,26 @@ Aucun spike n'est implémenté pendant cette mission ; leurs jeux d'essai et pro
 | B — Fusion transactionnelle | Une transaction sous verrou projet protège état final, CAS et cardinalités | Jeu maladie : modifier scène r7→8 et personnage r3→4, créer événement et relation ; injecter échec sur chaque opération/snapshot/audit/outbox puis avant/après commit ; lancer écriture concurrente et révocation ; répéter merge après réponse perdue ; mesurer nombre de mutations partielles, doublons, conflits, attente de locks, retries | Soit toutes ressources + historique + mapping, soit aucun changement ; aucune approbation ancienne réutilisée | GO si zéro application partielle/doublon et tous conflits/révocations observés dans un ordre sérialisé ; NO-GO si invariant de graphe violé ou transaction dépend d'un effet externe |
 | C — API ↔ MCP | Deux adaptateurs utilisent strictement les mêmes cas d'usage et erreurs | Même ReadScene/Search/CreateProposal via HTTP et client SDK MCP moderne ; token lecture seule puis proposant, projet non délégué, token révoqué, identité clientInfo falsifiée ; vérifier version/header/enveloppe ; tester clients OpenAI/Claude visés avec versions enregistrées et compatibilité legacy si nécessaire | Même résultat métier après retrait enveloppe/correlationId ; audit canal distinct et identité humaine/client fiable | GO si parité droits/résultats, refus interprojets et merge impossible, au moins un client cible compatible ; NO-GO si fallback élargit droits ou exige un second moteur métier |
 
+### Complément obligatoire du spike B — scènes indépendantes et contention
+
+**Statut :** protocole uniquement ; aucune transaction ni mesure exécutée pendant cette passe. **Références :** risque R-CONT-01 de l'architecture, ADR-0003 et fiche GO-01. Hypothèse à éprouver : le verrou projet conserve l'intégrité mais peut empêcher un débit suffisant dès que plusieurs auteurs enregistrent des scènes distinctes.
+
+| Cas | Écritures et synchronisation proposées | Oracle d'intégrité / objectif de mesure |
+|---|---|---|
+| B-01 Témoin séquentiel | Scènes A r7 et B r11 du même projet ; sauvegardes l'une après l'autre | A r8, B r12 ; établir durée hors contention et durée de détention du verrou |
+| B-02 Deux scènes indépendantes | Deux connexions, une transaction par scène, chacune avec sa propre expectedRevision ; barrière de test maintient T1 après acquisition du verrou et démarre T2 avant libération | T2 attend ; après libération les deux commits réussissent sans conflit de révision artificiel ; A r8 et B r12, deux ChangeSets et aucun contenu perdu |
+| B-03 Plusieurs scènes indépendantes | 1, 2, 4, 8 puis 16 auteurs de test, chacun sur une scène distincte du même projet ; série de tailles/cadences déclarées, fenêtres de mesure identiques | Aucune perte, duplication, famine ou refus CAS dû au seul compteur projet ; débit, attente et latence par auteur ; p50/p95/p99 et saturation |
+| B-04 Scène partagée | Deux auteurs écrivent la même scène depuis la même révision avec arrivée synchronisée | Une réussite et un REVISION_CONFLICT, brouillon du perdant préservé ; comparer au cas B-02 sans confondre conflit légitime et contention |
+| B-05 Témoin interprojets | Même charge et scènes indépendantes réparties entre projets distincts | Pas de blocage par un verrou projet commun ; distinguer saturation DB/pool de la barrière applicative |
+| B-06 Merge contre autosave indépendant | Proposition touchant A/personnage/événement/relation ; autosaves B et C non ciblées pendant le merge ; injecter aussi échec avant commit | Attente possible mais ni perte ni conflit de version sur B/C ; merge complet ou rollback complet ; approbations et outbox cohérentes |
+| B-07 Révocation et timeout | Révocation concurrente avec B-02/B-06 ; variante avec attente dépassant le timeout de test explicitement configuré | Ordre d'autorisation sérialisé ; erreur transitoire explicite si timeout, aucun acquittement trompeur ; retry borné avec même clé, pas de doublon |
+
+**Paramètres à renseigner avant exécution :** versions PostgreSQL/API, CPU/RAM/disque, RTT, pool de connexions, taille des scènes/documents, nombre d'opérations par merge, durée/cadence d'autosave, nombre d'auteurs et durée de campagne. Les paliers proposés explorent la contention ; ils ne fixent pas une limite commerciale ni une capacité attendue. Le propriétaire doit désigner l'enveloppe de charge représentative avant la décision de qualification.
+
+**Protocole :** synchroniser les transactions par barrières explicites du harness et observer les locks ; ne pas ordonner les tests à l'aide de sleeps. Conserver les horaires demande/acquisition/commit et résultats par opération. Mesurer attente et détention séparément ; publier aussi erreurs, retries et taux de sauvegardes confirmées, pour qu'un p95 apparemment bon ne masque pas les échecs. Répéter les cas après rollback et après réponse de commit perdue avec les mêmes clés.
+
+**Go/no-go :** intégrité obligatoire dans tous les cas (zéro perte confirmée, zéro application partielle, zéro doublon, révocations respectées). La performance n'est qualifiée que sur une enveloppe déclarée : retour d'enregistrement/erreur selon NFR-04, lectures/recherche selon NFR-02/03, avec temps d'attente inclus et erreurs publiées. Si les scènes indépendantes ne respectent pas les cibles sous cette charge, ou si une famine/latence non bornée apparaît, **NO-GO pour généraliser cette granularité** : rapport de contention, option plus fine étudiée et ADR-0003 révisé avant Lot 4. Sans enveloppe ni mesures, résultat « non qualifié », jamais « GO par défaut ».
+
 Les preuves de spike sont versées dans un rapport ultérieur avec versions exactes, environnement, corpus, commandes, mesures et décision ADR. Si NO-GO, réviser le contrat/ADR avant développement du lot concerné ; jamais contourner la sécurité pour réussir une démonstration.
 
 ## Backlog résumé priorisé et couverture exhaustive
@@ -310,309 +330,159 @@ Le tableau associe chaque exigence à un lot principal ; les tests peuvent couvr
 
 | ID | Fonctionnalité | Exigence PRD | Lot | Priorité | Version | Dépendances | Risque | Critère d'acceptation | État de décision |
 |---|---|---|---|---|---|---|---|---|---|
-
 | BL-OBJ-01 | Permettre à un utilisateur de gérer plusieurs projets littéraires indépendants | OBJ-01 | 0 | P1 | MVP | GO-00..02 | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-02 | Permettre des projets individuels ou collaboratifs | OBJ-02 | 3 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-03 | Fournir un environnement de rédaction structuré en manuscrits, chapitres et scènes | OBJ-03 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-04 | Centraliser les informations relatives aux personnages, lieux et événements | OBJ-04 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-05 | Relier les éléments du manuscrit aux objets narratifs | OBJ-05 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-06 | Permettre l'activation progressive de modules spécialisés | OBJ-06 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-07 | Fournir à l'IA un accès contrôlé aux objets du projet, via l'application et MCP | OBJ-07 | 6 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-08 | Proposer, examiner et appliquer des changements multi-objets avec traçabilité | OBJ-08 | 4 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-09 | Prévenir les pertes de données et permettre la récupération des versions antérieures | OBJ-09 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-10 | Détecter et expliquer certaines incohérences narratives | OBJ-10 | 5 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-11 | Faciliter la collaboration simultanée sur le texte | OBJ-11 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-OBJ-12 | Permettre l'export et la récupération des données dans des formats ouverts | OBJ-12 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-01..12 | Proposé |
-
 | BL-MOD-01 | un projet peut activer ou désactiver un module autorisé. | MOD-01 | 2 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-09 | Proposé |
-
 | BL-MOD-02 | un module désactivé conserve ses données, sauf suppression explicitement demandée et autorisée. | MOD-02 | 2 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-09 | Proposé |
-
 | BL-MOD-03 | les références entre modules utilisent des identifiants stables. | MOD-03 | 2 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-09 | Proposé |
-
 | BL-MOD-04 | la désactivation d'un module ne doit pas invalider silencieusement les objets d'autres modules. | MOD-04 | 2 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-09 | Proposé |
-
 | BL-MOD-05 | un module peut déclarer ses dépendances fonctionnelles. | MOD-05 | 2 | P2 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-09 | Proposé |
-
 | BL-MOD-06 | les objets spécialisés reposent autant que possible sur des capacités transversales communes : propriétés, relations, recherche, versionnement, permissions. | MOD-06 | 2 | P2 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-09 | Proposé |
-
 | BL-MOD-07 | des modèles de projets peuvent présélectionner des modules selon le genre littéraire. | MOD-07 | 2 | P2 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-09 | Proposé |
-
 | BL-PROJ-01 | Créer un compte et ouvrir une session sécurisée | PROJ-01 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-02 | Créer plusieurs projets depuis un même compte | PROJ-02 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-03 | Rendre tout nouveau projet privé par défaut | PROJ-03 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-04 | Consulter les projets dont l'utilisateur est membre | PROJ-04 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-05 | Modifier les informations générales d'un projet | PROJ-05 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-06 | Inviter et retirer des membres selon les permissions | PROJ-06 | 3 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-07 | Attribuer un rôle par projet | PROJ-07 | 3 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-08 | Archiver un projet sans détruire immédiatement son contenu | PROJ-08 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-09 | Activer les modules disponibles | PROJ-09 | 2 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-PROJ-10 | Proposer des modèles de projets prédéfinis | PROJ-10 | 0 | P2 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01 | Proposé |
-
 | BL-EDIT-01 | Créer, renommer, déplacer et supprimer logiquement des manuscrits, chapitres et scènes | EDIT-01 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-02 | Modifier le texte d'une scène dans un éditeur adapté à l'écriture longue | EDIT-02 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-03 | Enregistrer automatiquement les modifications | EDIT-03 | 1 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-04 | Restaurer une version antérieure d'une scène | EDIT-04 | 1 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-05 | Réorganiser les scènes sans perdre leurs liens | EDIT-05 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-06 | Afficher le plan du manuscrit | EDIT-06 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-07 | Compter les mots au niveau scène, chapitre et manuscrit | EDIT-07 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-08 | Associer des personnages, lieux et événements à une scène | EDIT-08 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-09 | Ajouter des commentaires et notes | EDIT-09 | 3 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-10 | Proposer un mode de rédaction sans distraction | EDIT-10 | 1 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-11 | Gérer des statuts rédactionnels configurables | EDIT-11 | 1 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-EDIT-12 | Comparer visuellement deux versions d'un texte | EDIT-12 | 1 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-02/03/04 | Proposé |
-
 | BL-DATA-01 | Créer et modifier une fiche personnage | DATA-01 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-02 | Créer et modifier une fiche lieu | DATA-02 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-03 | Créer et modifier un événement | DATA-03 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-04 | Créer des relations entre objets | DATA-04 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-05 | Associer des objets à des scènes | DATA-05 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-06 | Naviguer depuis un objet vers ses références | DATA-06 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-07 | Rechercher les objets par nom, type et contenu | DATA-07 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-08 | Conserver un historique des modifications | DATA-08 | 2 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-03/16 | Proposé |
-
 | BL-DATA-09 | Détecter les références devenues invalides | DATA-09 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-10 | Ajouter des propriétés spécifiques à certains types d'objets | DATA-10 | 2 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-11 | Afficher une chronologie simple des événements | DATA-11 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-DATA-12 | Gérer les dates partielles, durées et contraintes temporelles complexes | DATA-12 | V1 | P1 | V1 | MVP stabilisé | Adoption / complexité | AC-03/16 | Proposé |
-
 | BL-SEARCH-01 | rechercher dans le manuscrit et les fiches accessibles. | SEARCH-01 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-11 | Proposé |
-
 | BL-SEARCH-02 | filtrer les résultats par projet et type d'objet. | SEARCH-02 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-11 | Proposé |
-
 | BL-SEARCH-03 | ouvrir directement un résultat. | SEARCH-03 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-11 | Proposé |
-
 | BL-SEARCH-04 | respecter les permissions dans les résultats, extraits et suggestions. | SEARCH-04 | 2 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-11 | Proposé |
-
 | BL-SEARCH-05 | afficher les objets liés à l'élément courant. | SEARCH-05 | 2 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-11 | Proposé |
-
 | BL-SEARCH-06 | proposer une recherche sémantique et contextuelle. | SEARCH-06 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-11 | Proposé |
-
 | BL-EXPORT-01 | exporter le texte du manuscrit en Markdown ou dans un autre format textuel ouvert documenté. | EXPORT-01 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-10 | Proposé |
-
 | BL-EXPORT-02 | exporter les données structurées d'un projet dans un format machine lisible, avec identifiants et relations. | EXPORT-02 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-10 | Proposé |
-
 | BL-EXPORT-03 | inclure dans l'export la version du schéma et une description des formats. | EXPORT-03 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-10 | Proposé |
-
 | BL-EXPORT-04 | permettre l'export uniquement aux utilisateurs autorisés. | EXPORT-04 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-10 | Proposé |
-
 | BL-EXPORT-05 | proposer des formats éditoriaux supplémentaires, notamment DOCX et EPUB. | EXPORT-05 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-10 | Proposé |
-
 | BL-EXPORT-06 | permettre la réimportation d'une archive produite par la plateforme. | EXPORT-06 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-10 | Proposé |
-
 | BL-COLLAB-01 | plusieurs utilisateurs peuvent participer au même projet. | COLLAB-01 | 3 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-04/08 | Proposé |
-
 | BL-COLLAB-02 | les contributions sont attribuées à leur auteur. | COLLAB-02 | 3 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-04/08 | Proposé |
-
 | BL-COLLAB-03 | les modifications concurrentes ne doivent pas écraser silencieusement des données. | COLLAB-03 | 1 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-04/08 | Proposé |
-
 | BL-COLLAB-04 | les commentaires peuvent être associés à un objet ou à un passage du manuscrit. | COLLAB-04 | 3 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-04/08 | Proposé |
-
 | BL-COLLAB-05 | les permissions sont appliquées à toutes les interfaces, y compris API et MCP. | COLLAB-05 | 0 | P1 | MVP | GO-00..02 | Adoption / complexité | AC-04/08 | Proposé |
-
 | BL-COLLAB-06 | plusieurs auteurs peuvent éditer simultanément une scène avec synchronisation en temps réel. | COLLAB-06 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-04/08 | Proposé |
-
 | BL-COLLAB-07 | l'interface peut afficher la présence des autres contributeurs. | COLLAB-07 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-04/08 | Proposé |
-
 | BL-COLLAB-08 | une notification informe les utilisateurs concernés des propositions, commentaires et validations. | COLLAB-08 | 3 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-04/08 | Proposé |
-
 | BL-AI-01 | Interroger l'IA depuis le contexte d'un projet | AI-01 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-02 | Sélectionner un fournisseur/modèle pris en charge | AI-02 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-03 | Utiliser des identifiants de fournisseur configurés de manière sécurisée | AI-03 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-04 | Rechercher les scènes et objets pertinents pour une demande | AI-04 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-05 | Fournir à l'IA des références identifiables aux sources du projet | AI-05 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-06 | Permettre à l'IA de préparer une proposition multi-objets | AI-06 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-07 | Exposer un ensemble contrôlé d'opérations via MCP | AI-07 | 6 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-08 | Empêcher toute opération dépassant les permissions déléguées | AI-08 | 6 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-09 | Conserver la provenance des propositions IA | AI-09 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-10 | Afficher les modifications avant leur application | AI-10 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-11 | Imposer une validation humaine des propositions IA par défaut | AI-11 | 5 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-12 | Permettre de limiter les dépenses ou appels IA | AI-12 | 5 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-13 | Permettre l'annulation d'une opération IA en cours | AI-13 | 5 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-14 | Afficher les données transmises au fournisseur IA ou leur périmètre | AI-14 | 5 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-07/12/26 | Proposé |
-
 | BL-AI-SEC-01 | les contenus narratifs ne doivent jamais être interprétés comme des instructions de sécurité ou d'autorisation. | AI-SEC-01 | 5 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-18 | Proposé |
-
 | BL-AI-SEC-02 | les autorisations sont appliquées indépendamment du contenu des prompts. | AI-SEC-02 | 6 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-18 | Proposé |
-
 | BL-AI-SEC-03 | les secrets et jetons ne doivent pas être inclus dans les contextes IA. | AI-SEC-03 | 5 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-18 | Proposé |
-
 | BL-AI-SEC-04 | les appels externes sont soumis à des limites et à une journalisation adaptées. | AI-SEC-04 | 5 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-18 | Proposé |
-
 | BL-AI-SEC-05 | les utilisateurs sont informés lorsque des contenus sont envoyés à un fournisseur IA tiers. | AI-SEC-05 | 5 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-18 | Proposé |
-
 | BL-PROP-01 | Créer une proposition contenant plusieurs opérations | PROP-01 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-02 | Associer une justification et un auteur à la proposition | PROP-02 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-03 | Conserver la version de base des objets modifiés | PROP-03 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-04 | Afficher les différences proposées avant fusion | PROP-04 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-05 | Vérifier les permissions à la création et à la fusion | PROP-05 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-06 | Vérifier les conflits de version avant fusion | PROP-06 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-07 | Appliquer de manière atomique les modifications interdépendantes | PROP-07 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-08 | Conserver un historique des validations et refus | PROP-08 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-09 | Permettre les commentaires de revue | PROP-09 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-10 | Permettre la révision d'une proposition | PROP-10 | 4 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé ; D08 |
-
 | BL-PROP-11 | Détecter les impacts potentiels sur les objets liés | PROP-11 | 4 | P2 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-12 | Permettre l'approbation partielle d'une proposition | PROP-12 | V1 | P2 | V1 | MVP stabilisé | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-13 | Permettre des variantes narratives concurrentes | PROP-13 | V2+ | P2 | V2+ | MVP stabilisé | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-PROP-14 | Configurer des règles de fusion automatique | PROP-14 | V2+ | P2 | V2+ | MVP stabilisé | Intégrité / confidentialité | AC-05/13/14 | Proposé |
-
 | BL-CRIT-01 | lancer une analyse sur une scène, un chapitre ou un manuscrit. | CRIT-01 | V1 | P1 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-CRIT-02 | conserver les références aux éléments analysés. | CRIT-02 | V1 | P1 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-CRIT-03 | distinguer observations objectives et interprétations. | CRIT-03 | V1 | P1 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-CRIT-04 | présenter des suggestions sans les appliquer automatiquement. | CRIT-04 | V1 | P1 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-CRIT-05 | convertir une suggestion en proposition de modification. | CRIT-05 | V1 | P1 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-CRIT-06 | permettre de marquer un diagnostic comme accepté, ignoré ou résolu. | CRIT-06 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-CRIT-07 | comparer les résultats avant et après correction. | CRIT-07 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-CRIT-08 | éviter de répéter indéfiniment des critiques explicitement écartées par l'auteur. | CRIT-08 | V1 | P2 | V1 | MVP stabilisé | Adoption / complexité | AC-23 | Proposé |
-
 | BL-UX-01 | permettre d'accéder à une scène depuis le tableau de bord du projet avec un nombre raisonnable d'actions. | UX-01 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-02 | distinguer visuellement les modifications enregistrées, en cours d'enregistrement et en erreur. | UX-02 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-03 | ne jamais masquer un échec d'enregistrement. | UX-03 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-04 | permettre de retrouver facilement les références d'un personnage ou d'un lieu. | UX-04 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-05 | rendre les opérations destructives explicites et confirmables. | UX-05 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-06 | proposer une interface utilisable au clavier pour les parcours essentiels. | UX-06 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-07 | proposer un mode clair et un mode sombre. | UX-07 | 7 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-08 | permettre de réduire les panneaux périphériques pendant la rédaction. | UX-08 | 1 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-09 | permettre une personnalisation raisonnable des vues et des raccourcis. | UX-09 | 7 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-UX-10 | prévoir une architecture internationalisable, avec le français comme langue initiale possible. | UX-10 | 7 | P2 | MVP | Socle puis lots précédents | Adoption / complexité | AC-24 | Proposé |
-
 | BL-SEC-01 | authentifier les utilisateurs avant tout accès privé. | SEC-01 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-02 | appliquer les permissions côté serveur sur chaque opération. | SEC-02 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-03 | empêcher tout accès interprojets non autorisé. | SEC-03 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-04 | vérifier également les permissions lors de la recherche, de l'export, des traitements IA et des accès MCP. | SEC-04 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-05 | permettre la révocation des sessions et accès externes. | SEC-05 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-06 | proposer l'authentification multifacteur. | SEC-06 | 0 | P2 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-07 | chiffrer les communications réseau. | SEC-07 | 7 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-08 | protéger les secrets et clés API au repos. | SEC-08 | 5 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-09 | exclure les secrets des journaux applicatifs. | SEC-09 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-10 | limiter les données personnelles et contenus narratifs collectés dans les journaux. | SEC-10 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-11 | prévoir des sauvegardes et vérifier leur restauration. | SEC-11 | 7 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-12 | assurer la traçabilité des modifications importantes. | SEC-12 | 0 | P0 | MVP | GO-00..02 | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-13 | protéger l'éditeur et les rendus contre les contenus actifs malveillants. | SEC-13 | 1 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
 | BL-SEC-14 | prévoir des limites d'usage et de débit sur les API exposées. | SEC-14 | 6 | P0 | MVP | Socle puis lots précédents | Intégrité / confidentialité | AC-01/08/15 | Proposé |
-
-| BL-NFR-01 | Fiabilité | NFR-01 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-02 | Performance | NFR-02 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-03 | Recherche | NFR-03 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-04 | Édition | NFR-04 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-05 | Résilience | NFR-05 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-06 | Disponibilité | NFR-06 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-07 | Portabilité | NFR-07 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-08 | Accessibilité | NFR-08 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-09 | Observabilité | NFR-09 | 0 | P1 | MVP | GO-00..02 | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-10 | Maintenabilité | NFR-10 | 0 | P1 | MVP | GO-00..02 | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-11 | Évolutivité | NFR-11 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
-
-| BL-NFR-12 | Interopérabilité | NFR-12 | 6 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-01 | Aucun enregistrement confirmé ne doit être perdu silencieusement | NFR-01 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-02 | Réponse p95 inférieure à 500 ms pour les lectures métier simples, hors IA | NFR-02 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-03 | Réponse p95 inférieure à 2 s sur un projet de référence de 10 000 objets, hors génération IA | NFR-03 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-04 | Retour visible d'enregistrement ou d'erreur dans un délai cible de 2 s en conditions normales | NFR-04 | 1 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-05 | Sauvegardes automatisées et test de restauration documenté | NFR-05 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-06 | Objectif initial de 99,5 % après stabilisation de la version de production | NFR-06 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-07 | Export complet des données métier essentielles dans des formats documentés | NFR-07 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-08 | Viser WCAG 2.2 AA pour les parcours principaux | NFR-08 | 7 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-09 | Traces techniques et métriques sans exposition inutile des manuscrits | NFR-09 | 0 | P1 | MVP | GO-00..02 | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-10 | Tests automatisés des règles métier et des permissions | NFR-10 | 0 | P1 | MVP | GO-00..02 | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-11 | Ajout de nouveaux types d'objets et modules sans refonte du socle | NFR-11 | 2 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
+| BL-NFR-12 | API métier documentée et intégration MCP versionnée | NFR-12 | 6 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
 
 
-La révision de proposition PROP-10 est SHOULD dans le PRD, proposée P0 MVP pour satisfaire l'invalidation obligatoire. La réservation des coûts est un contrôle P0 AI-SEC-04/TH-11 ; l'interface commerciale AI-12 reste différable. Le transfert de propriété est un parcours administratif séparé, pas une opération de proposition.
+La révision de proposition PROP-10 reste SHOULD dans le PRD ; P0 MVP est une priorité de réalisation proposée, pas une promotion produit acceptée. La [proposition PRD](PRD-ALIGNMENT-PROPOSAL.md) sépare le patch des huit lots de sa promotion éventuelle en MUST. La réservation des coûts est un contrôle P0 AI-SEC-04/TH-11 ; l'interface commerciale AI-12 reste différable. Le transfert de propriété est un parcours administratif séparé, pas une opération de proposition.
 
 ## Qualification des performances et de la production
 
@@ -647,6 +517,8 @@ Commencer par IA donnerait une démo rapide mais laisserait persistance et sécu
 Exactement Lots 0–7 avec objectif, prérequis, exigences, tâches, dépendances, risques, livrables, AC fonctionnels/sécurité/données/résilience, tests et sortie ; chaque MUST MVP du registre a un lot numérique ; chaque MUST V1 reste hors lot MVP ; trois spikes complets et non réalisés ; AC-01..12 conservés et complétés ; Q-01..15 visibles ; pas de calendrier inventé.
 
 ## Décisions requérant validation humaine avant implémentation
+
+Les [fiches GO-00 à GO-02](HUMAN-DECISIONS.md) donnent les alternatives et les points précis à valider ; elles ne sont pas encore approuvées.
 
 | Classe | ID | Décision concrète proposée | Preuve / alternatives |
 |---|---|---|---|
