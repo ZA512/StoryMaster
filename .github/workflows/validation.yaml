@@ -55,3 +55,32 @@ jobs:
       - name: Nettoyage de cet environnement CI éphémère
         if: always()
         run: docker compose -f compose.yaml -f compose.test.yaml down --volumes --remove-orphans
+  spike-a:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '26.8.1'
+          cache: npm
+          cache-dependency-path: spikes/editor/package-lock.json
+      - name: Dépendances isolées du Spike A
+        run: npm ci --prefix spikes/editor --no-audit --no-fund
+      - name: TypeScript du prototype
+        run: npm --prefix spikes/editor run typecheck
+      - name: PostgreSQL éphémère dédiée, sans volume persistant
+        run: docker compose -f spikes/editor/compose.yaml up -d --wait
+      - name: Tests du schéma, révisions, concurrence et import Yjs
+        run: npm --prefix spikes/editor test
+      - name: Mesures reproductibles
+        run: npm --prefix spikes/editor run bench
+      - name: Éditeur réel et CSP dans Chromium
+        run: |
+          spikes/editor/node_modules/.bin/playwright install --with-deps chromium
+          npm --prefix spikes/editor run test:browser
+      - name: Arrêt de la sandbox éphémère uniquement
+        if: always()
+        run: docker compose -f spikes/editor/compose.yaml down

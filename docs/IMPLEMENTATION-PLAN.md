@@ -1,6 +1,6 @@
 # Plan de réalisation et critères de sortie
 
-**Statut :** Huit lots validés ; implémentation du Lot 0 autorisée le 31 octobre 2026. Lots 1–7 non autorisés à ce stade. **Date :** mise à jour le 31 octobre 2026, Europe/Paris.
+**Statut :** Huit lots validés ; Lot 0 réceptionné sous réserve de fonctionnement et CI, confirmés. Spike A isolé autorisé et exécuté ; production des lots 1–7 non autorisée à ce stade. **Date :** mise à jour le 31 octobre 2026, Europe/Paris.
 **Portée :** exactement huit lots MVP puis pistes V1/V2+, sans estimation de durée faute de ressources connues.
 **Références :** [PRD](PRD.md), [audit](DOCUMENT-AUDIT.md), [domaine](DOMAIN-MODEL.md), [architecture](ARCHITECTURE.md), [API](API-CONTRACTS.md), [sécurité](SECURITY-MODEL.md), [tests](CONTRACT-TESTS.md), [ADR](adr/README.md).
 
@@ -100,7 +100,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Objectif :** Rédiger et retrouver un manuscrit complet avec autosave fiable.
 
-**Prérequis / dépendances :** Lot 0 ; résultat spike A et ADR-0007 avant stockage final de l’éditeur.
+**Prérequis / dépendances :** Lot 0 reçu et CI verte ; [résultat du Spike A](SPIKE-A-REPORT.md) disponible, ADR-0007 encore à accepter et production Lot 1 à autoriser explicitement avant stockage final de l’éditeur.
 
 **Exigences PRD couvertes :** OBJ-03, OBJ-09, EDIT-01, EDIT-02, EDIT-03, EDIT-04, EDIT-05, EDIT-06, EDIT-07, EDIT-10, EDIT-11, EDIT-12, EXPORT-01, COLLAB-03, UX-01, UX-02, UX-03, UX-05, UX-08, SEC-13, NFR-01, NFR-04. Les exigences transversales continuent à être vérifiées dans les lots suivants.
 
@@ -292,9 +292,9 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 
 
-## Prototypes techniques à réaliser ultérieurement
+## Prototypes techniques et état d’exécution
 
-Aucun spike n'est implémenté pendant cette mission ; leurs jeux d'essai et protocoles constituent des livrables de conception.
+Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-REPORT.md), GO technique proposé et ADR-0007 en attente de validation humaine. Le spike B est partiellement mesuré sur métadonnées au Lot 0, ses cas complets restent futurs ; C non exécuté. Aucun de ces travaux n’autorise la production du Lot 1.
 
 | Spike | Hypothèse / question | Protocole et métriques | Résultat attendu | Go / no-go |
 |---|---|---|---|---|

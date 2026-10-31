@@ -10,3 +10,6 @@ coverage/
 test-results/
 playwright-report/
 artifacts/local/
+# Prototype Spike A : build et résultats locaux, corpus fictif versionné séparément.
+spikes/editor/dist/
+spikes/editor/results/

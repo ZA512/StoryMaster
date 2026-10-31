@@ -79,3 +79,8 @@ Changer les mots de passe `.env` après initialisation ne change pas ceux des r�
 `apps/web` : Next.js/React, transport HTTP et interface. `apps/api` : Fastify et adaptateur OIDC. `packages/domain` : invariants/politique ; `application` : cas d’usage communs ; `contracts` : validation des DTO ; `infrastructure` : PostgreSQL, migrations, sessions et OIDC. Les routes n’accèdent pas directement aux données narratives. Aucun éditeur, scène, assistant IA ou serveur MCP n’est implémenté.
 
 Les détails de concurrence, de sécurité, les limites locales et les résultats réellement obtenus figurent dans le rapport. L’approbation de la sortie du Lot 0 et tout démarrage du Lot 1 appartiennent au propriétaire.
+
+
+## Laboratoire préalable au Lot 1
+
+Le [Spike A isolé](spikes/editor/README.md) évalue l’éditeur, le stockage JSON, les révisions, les diffs et une future migration Yjs sur corpus fictif. Ses dépendances et sa PostgreSQL en mémoire sont séparées des applications. [Rapport et décision proposée](docs/SPIKE-A-REPORT.md). Aucun éditeur de production n’est ajouté au Lot 0 ; la décision ADR-0007 et le lancement du Lot 1 restent soumis au propriétaire.

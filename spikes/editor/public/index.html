@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Spike A · StoryMaster</title><link rel="stylesheet" href="/style.css"><script type="module" src="/editor.js"></script></head>
+<body><header><strong>StoryMaster <span>Laboratoire d’écriture</span></strong><small>SPIKE A · CORPUS FICTIF · HORS PRODUCTION</small></header>
+<main><p class="eyebrow">ÉDITEUR, STOCKAGE ET RÉVISIONS</p><h1>Une scène, toutes ses versions.</h1><p>Prototype isolé de Tiptap / ProseMirror. La sauvegarde conserve le JSON complet dans une base de test dédiée.</p>
+<section class="panel"><div class="controls"><label>Corpus <select id="corpus"></select></label><button id="load-corpus">Charger le corpus dans le brouillon</button><span id="revision">Chargement…</span></div>
+<div class="toolbar" role="toolbar" aria-label="Mise en forme"><button data-command="bold">Gras</button><button data-command="italic">Italique</button><button data-command="strike">Barré</button><button data-command="heading">Titre</button><button data-command="bullet">Liste</button><button data-command="ordered">Liste numérotée</button><button data-command="quote">Citation</button><button data-command="link">Lien sûr</button><button id="move">Déplacer le premier bloc à la fin</button></div>
+<div id="editor"></div><div class="controls"><button class="primary" id="save">Enregistrer</button><button id="reload">Recharger la version enregistrée</button><button id="markdown">Exporter en Markdown</button></div><p id="message" role="status" aria-live="polite"></p></section>
+<section class="panel"><h2>Historique et comparaison</h2><div class="controls"><label>Version de référence <select id="history"></select></label><button id="restore">Restaurer comme nouvelle révision</button><button id="compare">Comparer au brouillon</button></div><p class="muted">Le diff aide à lire les changements. Il ne sert jamais de patch à appliquer.</p><div id="diff" aria-live="polite"></div></section>
+<details class="panel"><summary>Export Markdown et pertes détectées</summary><p id="losses"></p><pre id="markdown-output"></pre></details>
+<details class="panel"><summary>JSON canonique du brouillon</summary><pre id="json"></pre></details>
+</main></body></html>

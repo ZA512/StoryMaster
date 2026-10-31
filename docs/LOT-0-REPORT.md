@@ -1,6 +1,6 @@
 # Rapport de réalisation du Lot 0
 
-**Date :** 31 octobre 2026, Europe/Paris. **Statut :** socle local implémenté et vérifié ; présenté au propriétaire pour validation de sortie. Aucun démarrage du Lot 1 ni déploiement public. **Références :** [démarrage et tests](../README.md), [décisions](HUMAN-DECISIONS.md), [plan](IMPLEMENTATION-PLAN.md), [ADR de mise en œuvre](adr/0009-socle-executable-lot-0.md), [inventaire des fichiers](LOT-0-FILES.txt).
+**Date :** 31 octobre 2026, Europe/Paris. **Statut :** socle local implémenté et vérifié ; réception approuvée par le propriétaire sous réserve de fonctionnement et CI, contrôles confirmés le 31 octobre 2026. Aucun démarrage du Lot 1 ni déploiement public. **Références :** [démarrage et tests](../README.md), [décisions](HUMAN-DECISIONS.md), [plan](IMPLEMENTATION-PLAN.md), [ADR de mise en œuvre](adr/0009-socle-executable-lot-0.md), [inventaire des fichiers](LOT-0-FILES.txt).
 
 ## Résultat et décisions appliquées
 
@@ -32,7 +32,7 @@ Aucun secret réel commité. `.env`, dépendances, caches, captures et traces so
 
 ## Commandes exécutées et résultats
 
-Les commandes sont exécutées localement, sur les vraies instances PostgreSQL et Keycloak. La GitHub Action est créée et ses étapes sont vérifiées localement ; **aucune exécution sur les runners GitHub n’est revendiquée**.
+Les commandes sont exécutées localement, sur les vraies instances PostgreSQL et Keycloak. À la livraison initiale, les étapes étaient vérifiées localement sans exécution distante revendiquée. Depuis la réception, la [CI GitHub de ea27725](https://github.com/ZA512/StoryMaster/actions/runs/41148886995) est terminée et réussie.
 
 | Commande / contrôle | Résultat final |
 |---|---|
@@ -111,12 +111,12 @@ L’outbox n’est pas matérialisée car aucune mutation de projet ne produit d
 | Identité réelle, projets privés créables/consultables/modifiables | Vérifié |
 | Permissions centrales, refus interprojets et sessions | Vérifié sur PostgreSQL et navigateur |
 | Atomicité, CAS, idempotence, contraintes et historique | Vérifié sur PostgreSQL |
-| CI versionnée, documentation et commandes reproductibles | Fournies ; déclenchement distant non effectué |
+| CI versionnée, documentation et commandes reproductibles | Fournies ; CI ea27725 terminée avec succès |
 | Qualification préliminaire du verrou | Mesurée ; granularité toujours provisoire |
 | ADR de socle validés, pas de bypass DB depuis les routes | Appliqué et vérifié |
-| Validation de sortie par le propriétaire | À recueillir après revue du résultat |
+| Validation de sortie par le propriétaire | Reçue sous réserve de fonctionnement et CI ; CI ea27725 réussie, voir HUMAN-DECISIONS |
 
-Restent à votre accord : réception du Lot 0 et autorisation éventuelle du Lot 1. Avant celui-ci, arbitrage du stockage éditeur (ADR-0007/spike A) ; avant généralisation des scènes, résultat du spike B complet. GO-03/04, décisions fonctionnelles ultérieures et exploitation publique restent ouverts. Le présent rapport ne demande pas de réapprouver GO-00..02 ni PROP-10.
+La réception du Lot 0 est approuvée sous réserve de fonctionnement et CI ; la CI de ea27725 est [réussie](https://github.com/ZA512/StoryMaster/actions/runs/41148886995). L’autorisation de production du Lot 1 reste à votre accord. Le Spike A isolé seul est maintenant autorisé. Avant celui-ci, arbitrage du stockage éditeur (ADR-0007/spike A) ; avant généralisation des scènes, résultat du spike B complet. GO-03/04, décisions fonctionnelles ultérieures et exploitation publique restent ouverts. Le présent rapport ne demande pas de réapprouver GO-00..02 ni PROP-10.
 
 ## Critères d'acceptation du document
 

@@ -39,3 +39,10 @@ Les droits sont centraux et aucune clé de démonstration ne doit servir à un d
 ## Critères d'acceptation du document
 
 Décideur/date/source d'accord explicites ; deux patchs appliqués une seule fois ; 150 IDs et 100 MUST MVP ; réserve sur verrou et périmètre Lot 0 conservés ; autres décisions non acceptées par défaut.
+
+
+## Réception du Lot 0 et autorisation du Spike A — 31 octobre 2026
+
+Le propriétaire approuve la réception du Lot 0 « sous réserve du fonctionnement confirmé et des contrôles CI », par l’instruction « Réception du Lot 0 et Spike A préalable au Lot 1 ». Le dépôt est propre au départ sur `ea27725a470233882a558a6575e274b7771e7d1a` ; les quatre services locaux sont sains et la [CI de ce commit](https://github.com/ZA512/StoryMaster/actions/runs/41148886995) est terminée avec succès. Les tests du socle seront aussi rejoués pendant cette passe.
+
+Cette réception conserve explicitement les risques et limites du [rapport Lot 0](LOT-0-REPORT.md), dont verrou projet provisoire, RLS non activée, révocation IdP non globale, exploitation publique/backups futurs et absence de qualification de charge. GO-00..02 et PROP-10 ne changent pas. Seul le prototype isolé Spike A est autorisé ; ADR-0007 demeure une décision proposée à présenter au propriétaire après mesures. Aucune fonctionnalité de production Lot 1 n’est autorisée.

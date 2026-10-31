@@ -194,3 +194,8 @@ Reproduire tous les concurrents rendrait le MVP ingérable. Un moteur de faits c
 ## Critères d'acceptation du document
 
 Chaque identifiant PRD apparaît exactement une fois dans la matrice ; tout MUST MVP a un lot dans le plan ; les MUST V1 ne sont pas agrégés aux MUST MVP ; toutes les grandes familles des recherches ont une décision et une justification ; aucune citation `turn…` héritée n'est présentée comme vérifiée.
+
+
+## Preuve technique complémentaire — Spike A
+
+Le [rapport exécuté du 31 octobre](SPIKE-A-REPORT.md) relie les essais à EDIT-02/04/07/12, EXPORT-01, COLLAB-03, SEC-13 et NFR-04 : conservation du texte riche, sauvegarde/révisions/CAS, restauration, diff et export contrôlé. Il apporte des preuves sur corpus fictif, sans déclarer ces exigences livrées en production. Q-07 et ADR-0007 restent proposés au propriétaire. Les priorités, versions cibles et affectations des 150 exigences ne changent pas ; Yjs reste V1 malgré la preuve isolée de migration.

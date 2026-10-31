@@ -11,3 +11,12 @@ for (const [name, dependencies] of Object.entries(allowed)) {
   }
 }
 console.log('Dépendances orientées vers le domaine : OK');
+// La preuve CRDT du spike ne doit pas devenir une dépendance applicative du MVP.
+for (const parent of ['apps','packages']) {
+  for (const directory of readdirSync(parent)) {
+    const manifest = JSON.parse(readFileSync(`${parent}/${directory}/package.json`,'utf8'));
+    for (const name of Object.keys(manifest.dependencies ?? {})) {
+      if (['yjs','y-prosemirror','@storymaster/spike-a'].includes(name)) throw new Error(`Dépendance du prototype interdite en production: ${parent}/${directory} → ${name}`);
+    }
+  }
+}

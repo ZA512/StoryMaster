@@ -1,0 +1,1271 @@
+{
+  "environment": {
+    "measuredAt": "2026-10-31T02:37:04.162Z",
+    "node": "v26.8.1",
+    "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "platform": "linux",
+    "kernel": "7.2.8-9-omarchy",
+    "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+    "logicalCpus": 12,
+    "memoryGiB": 31.3,
+    "explicitGc": true,
+    "dependencies": {
+      "@esbuild/aix-ppc64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/android-arm": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/android-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/android-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/darwin-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/darwin-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/freebsd-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/freebsd-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-arm": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-ia32": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-loong64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-mips64el": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-ppc64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-riscv64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-s390x": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/linux-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/netbsd-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/netbsd-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/openbsd-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/openbsd-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/openharmony-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/sunos-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/win32-arm64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/win32-ia32": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@esbuild/win32-x64": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "@playwright/test": {
+        "version": "1.64.1",
+        "license": "Apache-2.0"
+      },
+      "@tiptap/core": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-blockquote": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-bold": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-bullet-list": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-code": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-code-block": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-document": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-dropcursor": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-gapcursor": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-hard-break": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-heading": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-horizontal-rule": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-italic": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-link": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-list": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-list-item": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-list-keymap": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-ordered-list": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-paragraph": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-strike": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-text": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extension-underline": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/extensions": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/markdown": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/pm": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@tiptap/starter-kit": {
+        "version": "3.32.2",
+        "license": "MIT"
+      },
+      "@types/node": {
+        "version": "26.6.6",
+        "license": "MIT"
+      },
+      "@types/pg": {
+        "version": "8.23.1",
+        "license": "MIT"
+      },
+      "diff": {
+        "version": "9.0.0",
+        "license": "BSD-3-Clause"
+      },
+      "esbuild": {
+        "version": "0.28.2",
+        "license": "MIT"
+      },
+      "fsevents": {
+        "version": "2.3.3",
+        "license": "MIT"
+      },
+      "isomorphic.js": {
+        "version": "0.2.5",
+        "license": "MIT"
+      },
+      "lib0": {
+        "version": "0.2.119",
+        "license": "MIT"
+      },
+      "linkifyjs": {
+        "version": "4.4.0",
+        "license": "MIT"
+      },
+      "marked": {
+        "version": "17.0.6",
+        "license": "MIT"
+      },
+      "orderedmap": {
+        "version": "2.1.1",
+        "license": "MIT"
+      },
+      "pg": {
+        "version": "8.23.1",
+        "license": "MIT"
+      },
+      "pg-cloudflare": {
+        "version": "1.4.1",
+        "license": "MIT"
+      },
+      "pg-connection-string": {
+        "version": "2.14.1",
+        "license": "MIT"
+      },
+      "pg-int8": {
+        "version": "1.0.1",
+        "license": "ISC"
+      },
+      "pg-pool": {
+        "version": "3.14.0",
+        "license": "MIT"
+      },
+      "pg-protocol": {
+        "version": "1.16.1",
+        "license": "MIT"
+      },
+      "pg-types": {
+        "version": "2.2.0",
+        "license": "MIT"
+      },
+      "pgpass": {
+        "version": "1.0.5",
+        "license": "MIT"
+      },
+      "playwright": {
+        "version": "1.64.1",
+        "license": "Apache-2.0"
+      },
+      "playwright-core": {
+        "version": "1.64.1",
+        "license": "Apache-2.0"
+      },
+      "postgres-array": {
+        "version": "2.0.0",
+        "license": "MIT"
+      },
+      "postgres-bytea": {
+        "version": "1.0.1",
+        "license": "MIT"
+      },
+      "postgres-date": {
+        "version": "1.0.7",
+        "license": "MIT"
+      },
+      "postgres-interval": {
+        "version": "1.2.0",
+        "license": "MIT"
+      },
+      "prosemirror-changeset": {
+        "version": "2.4.5",
+        "license": "MIT"
+      },
+      "prosemirror-commands": {
+        "version": "1.7.2",
+        "license": "MIT"
+      },
+      "prosemirror-dropcursor": {
+        "version": "1.8.4",
+        "license": "MIT"
+      },
+      "prosemirror-gapcursor": {
+        "version": "1.4.1",
+        "license": "MIT"
+      },
+      "prosemirror-history": {
+        "version": "1.5.1",
+        "license": "MIT"
+      },
+      "prosemirror-inputrules": {
+        "version": "1.5.1",
+        "license": "MIT"
+      },
+      "prosemirror-keymap": {
+        "version": "1.2.3",
+        "license": "MIT"
+      },
+      "prosemirror-model": {
+        "version": "1.25.12",
+        "license": "MIT"
+      },
+      "prosemirror-schema-list": {
+        "version": "1.6.0",
+        "license": "MIT"
+      },
+      "prosemirror-state": {
+        "version": "1.4.4",
+        "license": "MIT"
+      },
+      "prosemirror-tables": {
+        "version": "1.8.5",
+        "license": "MIT"
+      },
+      "prosemirror-transform": {
+        "version": "1.12.4",
+        "license": "MIT"
+      },
+      "prosemirror-view": {
+        "version": "1.42.8",
+        "license": "MIT"
+      },
+      "rope-sequence": {
+        "version": "1.3.4",
+        "license": "MIT"
+      },
+      "split2": {
+        "version": "4.2.0",
+        "license": "ISC"
+      },
+      "tsx": {
+        "version": "4.23.15",
+        "license": "MIT"
+      },
+      "typescript": {
+        "version": "6.0.3",
+        "license": "Apache-2.0"
+      },
+      "undici-types": {
+        "version": "8.9.0",
+        "license": "MIT"
+      },
+      "w3c-keyname": {
+        "version": "2.2.8",
+        "license": "MIT"
+      },
+      "xtend": {
+        "version": "4.0.2",
+        "license": "MIT"
+      },
+      "y-prosemirror": {
+        "version": "1.3.7",
+        "license": "MIT"
+      },
+      "y-protocols": {
+        "version": "1.0.7",
+        "license": "MIT"
+      },
+      "yjs": {
+        "version": "13.6.33",
+        "license": "MIT"
+      }
+    }
+  },
+  "methodology": "3 échauffements ; 15 échantillons sérialisation/rechargement, 7 diffs, 5 Markdown ; 3 sauvegardes/lectures PostgreSQL. Horloges client. GC explicite avant/après taille. RSS échantillonnée, pas un pic absolu par opération. Corpus synthétique, une campagne locale ; pas de SLA.",
+  "results": [
+    {
+      "blocks": 8,
+      "utf16TextLength": 1447,
+      "jsonBytes": 3207,
+      "markdownBytes": 1654,
+      "yjsBytes": 2703,
+      "sha256": "9a69a99603f21541e5dfefd1dcf144d982f0fc98816f243eebad2ceecdb2f6ab",
+      "jsonSerializeMs": {
+        "samples": 15,
+        "p50": 0.015,
+        "p95": 0.03,
+        "max": 0.03
+      },
+      "jsonReloadMs": {
+        "samples": 15,
+        "p50": 0.065,
+        "p95": 0.089,
+        "max": 0.089
+      },
+      "serverValidateAndSerializeMs": {
+        "samples": 15,
+        "p50": 0.146,
+        "p95": 0.201,
+        "max": 0.201
+      },
+      "textDiffMs": {
+        "samples": 7,
+        "p50": 0.518,
+        "p95": 0.552,
+        "max": 0.552
+      },
+      "richDiffMs": {
+        "samples": 7,
+        "p50": 0.498,
+        "p95": 0.642,
+        "max": 0.642
+      },
+      "richFallback": false,
+      "markdownRoundTripMs": {
+        "samples": 5,
+        "p50": 1.677,
+        "p95": 2.213,
+        "max": 2.213
+      },
+      "markdownLosses": [
+        {
+          "kind": "structure_or_marks",
+          "message": "Le réimport Markdown diffère du JSON canonique ; conserver le JSON pour une restauration exacte."
+        }
+      ],
+      "postgresSaveMs": {
+        "samples": 3,
+        "p50": 1.372,
+        "p95": 1.709,
+        "max": 1.709
+      },
+      "postgresReloadMs": {
+        "samples": 3,
+        "p50": 0.574,
+        "p95": 0.81,
+        "max": 0.81
+      },
+      "memory": {
+        "heapBeforeBytes": 17767736,
+        "heapAfterGcBytes": 20083088,
+        "retainedDeltaBytes": 2315352,
+        "sampledRssMaxBytes": 127102976
+      }
+    },
+    {
+      "blocks": 128,
+      "utf16TextLength": 23167,
+      "jsonBytes": 50007,
+      "markdownBytes": 26494,
+      "yjsBytes": 43660,
+      "sha256": "97e42366262add65b762a0019faaf10c6dacf3d9abde2443ac12da94aa7a0ea1",
+      "jsonSerializeMs": {
+        "samples": 15,
+        "p50": 0.211,
+        "p95": 0.249,
+        "max": 0.249
+      },
+      "jsonReloadMs": {
+        "samples": 15,
+        "p50": 0.63,
+        "p95": 1.394,
+        "max": 1.394
+      },
+      "serverValidateAndSerializeMs": {
+        "samples": 15,
+        "p50": 1.702,
+        "p95": 2.219,
+        "max": 2.219
+      },
+      "textDiffMs": {
+        "samples": 7,
+        "p50": 5.77,
+        "p95": 6.437,
+        "max": 6.437
+      },
+      "richDiffMs": {
+        "samples": 7,
+        "p50": 3.063,
+        "p95": 4.354,
+        "max": 4.354
+      },
+      "richFallback": false,
+      "markdownRoundTripMs": {
+        "samples": 5,
+        "p50": 11,
+        "p95": 12.909,
+        "max": 12.909
+      },
+      "markdownLosses": [
+        {
+          "kind": "structure_or_marks",
+          "message": "Le réimport Markdown diffère du JSON canonique ; conserver le JSON pour une restauration exacte."
+        }
+      ],
+      "postgresSaveMs": {
+        "samples": 3,
+        "p50": 3.885,
+        "p95": 5.103,
+        "max": 5.103
+      },
+      "postgresReloadMs": {
+        "samples": 3,
+        "p50": 2.084,
+        "p95": 2.274,
+        "max": 2.274
+      },
+      "memory": {
+        "heapBeforeBytes": 20055512,
+        "heapAfterGcBytes": 22840952,
+        "retainedDeltaBytes": 2785440,
+        "sampledRssMaxBytes": 141000704
+      }
+    },
+    {
+      "blocks": 1024,
+      "utf16TextLength": 185343,
+      "jsonBytes": 399447,
+      "markdownBytes": 211966,
+      "yjsBytes": 355468,
+      "sha256": "f21680108070e8da5503a0b9a48998a27371c36fb550facb78cf6bb51671981b",
+      "jsonSerializeMs": {
+        "samples": 15,
+        "p50": 1.42,
+        "p95": 3.08,
+        "max": 3.08
+      },
+      "jsonReloadMs": {
+        "samples": 15,
+        "p50": 4.041,
+        "p95": 4.454,
+        "max": 4.454
+      },
+      "serverValidateAndSerializeMs": {
+        "samples": 15,
+        "p50": 10.001,
+        "p95": 10.969,
+        "max": 10.969
+      },
+      "textDiffMs": {
+        "samples": 7,
+        "p50": 49.761,
+        "p95": 64.624,
+        "max": 64.624
+      },
+      "richDiffMs": {
+        "samples": 7,
+        "p50": 24.376,
+        "p95": 25.654,
+        "max": 25.654
+      },
+      "richFallback": false,
+      "markdownRoundTripMs": {
+        "samples": 5,
+        "p50": 86.027,
+        "p95": 86.765,
+        "max": 86.765
+      },
+      "markdownLosses": [
+        {
+          "kind": "structure_or_marks",
+          "message": "Le réimport Markdown diffère du JSON canonique ; conserver le JSON pour une restauration exacte."
+        }
+      ],
+      "postgresSaveMs": {
+        "samples": 3,
+        "p50": 27.397,
+        "p95": 29.794,
+        "max": 29.794
+      },
+      "postgresReloadMs": {
+        "samples": 3,
+        "p50": 15.847,
+        "p95": 16.855,
+        "max": 16.855
+      },
+      "memory": {
+        "heapBeforeBytes": 22718968,
+        "heapAfterGcBytes": 38542096,
+        "retainedDeltaBytes": 15823128,
+        "sampledRssMaxBytes": 253046784
+      }
+    },
+    {
+      "blocks": 3000,
+      "utf16TextLength": 542999,
+      "jsonBytes": 1170087,
+      "markdownBytes": 620998,
+      "yjsBytes": 1043117,
+      "sha256": "cce39208df88701ce3dd4a40d7220956c2a57ce82b955c52a426139224ed34c0",
+      "jsonSerializeMs": {
+        "samples": 15,
+        "p50": 2.854,
+        "p95": 4.26,
+        "max": 4.26
+      },
+      "jsonReloadMs": {
+        "samples": 15,
+        "p50": 9.237,
+        "p95": 11.171,
+        "max": 11.171
+      },
+      "serverValidateAndSerializeMs": {
+        "samples": 15,
+        "p50": 34.042,
+        "p95": 35.561,
+        "max": 35.561
+      },
+      "textDiffMs": {
+        "samples": 7,
+        "p50": 150.858,
+        "p95": 189.239,
+        "max": 189.239
+      },
+      "richDiffMs": {
+        "samples": 7,
+        "p50": 75.32,
+        "p95": 84.202,
+        "max": 84.202
+      },
+      "richFallback": true,
+      "markdownRoundTripMs": {
+        "samples": 5,
+        "p50": 259.574,
+        "p95": 266.218,
+        "max": 266.218
+      },
+      "markdownLosses": [
+        {
+          "kind": "structure_or_marks",
+          "message": "Le réimport Markdown diffère du JSON canonique ; conserver le JSON pour une restauration exacte."
+        }
+      ],
+      "postgresSaveMs": {
+        "samples": 3,
+        "p50": 96.298,
+        "p95": 99.939,
+        "max": 99.939
+      },
+      "postgresReloadMs": {
+        "samples": 3,
+        "p50": 44.362,
+        "p95": 51.428,
+        "max": 51.428
+      },
+      "memory": {
+        "heapBeforeBytes": 38463552,
+        "heapAfterGcBytes": 71538600,
+        "retainedDeltaBytes": 33075048,
+        "sampledRssMaxBytes": 539394048
+      }
+    }
+  ],
+  "markdownCases": {
+    "markSpaces": {
+      "markdown": " **espaces** ",
+      "roundTrip": {
+        "format": "storymaster-scene-spike",
+        "schemaVersion": 2,
+        "doc": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": " "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "espaces"
+                },
+                {
+                  "type": "text",
+                  "text": " "
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "losses": [
+        {
+          "kind": "structure_or_marks",
+          "message": "Le réimport Markdown diffère du JSON canonique ; conserver le JSON pour une restauration exacte."
+        }
+      ]
+    },
+    "doubleBreak": {
+      "markdown": "A  \n  \nB",
+      "roundTrip": {
+        "format": "storymaster-scene-spike",
+        "schemaVersion": 2,
+        "doc": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A  "
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "B"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "losses": [
+        {
+          "kind": "text_or_linebreaks",
+          "message": "Le réimport Markdown diffère du JSON canonique ; conserver le JSON pour une restauration exacte."
+        }
+      ]
+    },
+    "empty": {
+      "markdown": "",
+      "roundTrip": {
+        "format": "storymaster-scene-spike",
+        "schemaVersion": 2,
+        "doc": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph"
+            }
+          ]
+        }
+      },
+      "losses": []
+    },
+    "rich": {
+      "markdown": "## Le retour d’Élise\n\nÉlise et Noël — œ, ç, é, é, 👩🏽‍💻, 🏳️‍🌈, 𐐷, 漢字, العربية.\n\n**Une idée** *douce **et*** ~~barrée~~ [; un lien](https://example.test/livre?chapitre=1&langue=fr \"Le livre\")\n\n> « Chaque histoire commence par un espace à soi. »\n\n- Un départ\n- Un retour\n  3. Dans une liste imbriquée\n\n— Tu reviendras ?  \n— À l’aube, répondit-elle.\n\n\n\n&lt;script&gt;globalThis.executable = true&lt;/script&gt; : ceci est du texte littéral.",
+      "roundTrip": {
+        "format": "storymaster-scene-spike",
+        "schemaVersion": 2,
+        "doc": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 2
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Le retour d’Élise"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Élise et Noël — œ, ç, é, é, 👩🏽‍💻, 🏳️‍🌈, 𐐷, 漢字, العربية."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": "Une idée"
+                },
+                {
+                  "type": "text",
+                  "text": " "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ],
+                  "text": "douce "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    },
+                    {
+                      "type": "italic"
+                    }
+                  ],
+                  "text": "et"
+                },
+                {
+                  "type": "text",
+                  "text": " "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "strike"
+                    }
+                  ],
+                  "text": "barrée"
+                },
+                {
+                  "type": "text",
+                  "text": " "
+                },
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "link",
+                      "attrs": {
+                        "href": "https://example.test/livre?chapitre=1&langue=fr",
+                        "target": null,
+                        "rel": "noopener noreferrer nofollow",
+                        "class": null,
+                        "title": "Le livre"
+                      }
+                    }
+                  ],
+                  "text": "; un lien"
+                }
+              ]
+            },
+            {
+              "type": "blockquote",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "« Chaque histoire commence par un espace à soi. »"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Un départ"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Un retour"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "orderedList",
+                      "attrs": {
+                        "start": 3,
+                        "type": null
+                      },
+                      "content": [
+                        {
+                          "type": "listItem",
+                          "content": [
+                            {
+                              "type": "paragraph",
+                              "content": [
+                                {
+                                  "type": "text",
+                                  "text": "Dans une liste imbriquée"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "— Tu reviendras ?"
+                },
+                {
+                  "type": "hardBreak"
+                },
+                {
+                  "type": "text",
+                  "text": "— À l’aube, répondit-elle."
+                }
+              ]
+            },
+            {
+              "type": "paragraph"
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "<script>globalThis.executable = true</script> : ceci est du texte littéral."
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "losses": [
+        {
+          "kind": "structure_or_marks",
+          "message": "Le réimport Markdown diffère du JSON canonique ; conserver le JSON pour une restauration exacte."
+        }
+      ]
+    },
+    "unicode": {
+      "markdown": "é|é|Å|Å|👨‍👩‍👧‍👦|🇫🇷|مرحبا|漢字|𐐷|l’apostrophe",
+      "roundTrip": {
+        "format": "storymaster-scene-spike",
+        "schemaVersion": 2,
+        "doc": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "é|é|Å|Å|👨‍👩‍👧‍👦|🇫🇷|مرحبا|漢字|𐐷|l’apostrophe"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "losses": []
+    },
+    "repeated": {
+      "markdown": "Même phrase.\n\nMême phrase.",
+      "roundTrip": {
+        "format": "storymaster-scene-spike",
+        "schemaVersion": 2,
+        "doc": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Même phrase."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Même phrase."
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "losses": []
+    }
+  },
+  "diffCases": [
+    {
+      "name": "marks seulement",
+      "text": {
+        "strategy": "text-blocks-words",
+        "blocks": [
+          {
+            "count": 1,
+            "added": false,
+            "removed": false,
+            "value": [
+              " espaces "
+            ]
+          }
+        ],
+        "words": [
+          {
+            "value": " espaces ",
+            "added": false,
+            "removed": false
+          }
+        ],
+        "limitation": "Ne distingue ni marks, ni type de nœud, ni déplacement de façon fiable."
+      },
+      "rich": {
+        "before": {
+          "format": "storymaster-scene-spike",
+          "schemaVersion": 2,
+          "doc": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "bold"
+                      }
+                    ],
+                    "text": " espaces "
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "after": {
+          "format": "storymaster-scene-spike",
+          "schemaVersion": 2,
+          "doc": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": " espaces "
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "fallback": false,
+        "reason": "",
+        "changes": [
+          {
+            "kind": "format",
+            "from": 0,
+            "to": 0,
+            "details": {
+              "before": [
+                "Gras sur «  espaces  »"
+              ],
+              "after": []
+            },
+            "label": "Mise en forme du bloc 1 modifiée (texte identique)",
+            "words": [
+              {
+                "value": " espaces ",
+                "added": false,
+                "removed": false
+              }
+            ],
+            "before": {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ],
+                  "text": " espaces "
+                }
+              ]
+            },
+            "after": {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": " espaces "
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "blocs répétés",
+      "text": {
+        "strategy": "text-blocks-words",
+        "blocks": [
+          {
+            "count": 2,
+            "added": false,
+            "removed": false,
+            "value": [
+              "Même phrase.",
+              "Même phrase."
+            ]
+          },
+          {
+            "count": 1,
+            "added": true,
+            "removed": false,
+            "value": [
+              "Suite"
+            ]
+          }
+        ],
+        "words": [
+          {
+            "value": "Même phrase.\n\nMême phrase.",
+            "added": false,
+            "removed": false
+          },
+          {
+            "value": "\n\nSuite",
+            "added": true,
+            "removed": false
+          }
+        ],
+        "limitation": "Ne distingue ni marks, ni type de nœud, ni déplacement de façon fiable."
+      },
+      "rich": {
+        "before": {
+          "format": "storymaster-scene-spike",
+          "schemaVersion": 2,
+          "doc": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Même phrase."
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Même phrase."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "after": {
+          "format": "storymaster-scene-spike",
+          "schemaVersion": 2,
+          "doc": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Même phrase."
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Même phrase."
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Suite"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "fallback": true,
+        "reason": "Blocs identiques répétés : identité et déplacement ambigus.",
+        "changes": []
+      }
+    }
+  ]
+}

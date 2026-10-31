@@ -713,3 +713,8 @@ Lecture, préparation, preview et merge sont retraçables avec identités, trans
 ## Décisions d’exécution du Lot 0 — 31 octobre 2026
 
 Première cible validée : **auto-hébergement Docker Compose**, SaaS possible ultérieurement. Backend Fastify/TypeScript et frontend Next.js/React/TypeScript ; PostgreSQL source de vérité ; OIDC Code + PKCE avec Keycloak en développement, sessions serveur. Les recommandations SaaS initiales des sections de comparaison constituent désormais un historique, pas la cible retenue. Les adaptateurs IA/MCP et worker réutiliseront les services applicatifs mais ne sont pas implémentés au Lot 0.
+
+
+## Qualification isolée du stockage éditeur — 31 octobre 2026
+
+Le [Spike A exécuté](SPIKE-A-REPORT.md) étaye le JSON ProseMirror versionné et les snapshots PostgreSQL. Les pertes Markdown sont signalées, les diffs riches disposent d’un fallback explicite et l’import/rechargement binaire Yjs est éprouvé hors production. ADR-0007 reste proposé : aucune bascule du contrat Scene ni dépendance Yjs n’est introduite dans les applications. Les bornes du laboratoire sont des paramètres expérimentaux, pas des quotas produit acceptés. La réception du Lot 0 et sa CI verte ne lèvent pas les réserves du verrou projet, des opérations multi-scènes, des commentaires ou de l’exploitation publique. L’atomicité PostgreSQL↔serveur CRDT demeure une décision V1 future.

@@ -34,6 +34,8 @@ class ValidatorTests(unittest.TestCase):
         shutil.copy2(ROOT / "AGENTS.md", self.root / "AGENTS.md")
         shutil.copy2(ROOT / "README.md", self.root / "README.md")
         shutil.copytree(ROOT / ".github", self.root / ".github")
+        shutil.copytree(ROOT / "spikes", self.root / "spikes",
+                        ignore=shutil.ignore_patterns("node_modules", "dist", "results", "test-results", "playwright-report"))
 
     def mutate_json(self, relative, mutate):
         path = self.root / relative

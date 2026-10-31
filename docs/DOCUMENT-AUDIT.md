@@ -104,3 +104,10 @@ Le propriétaire accepte GO-00..02, les deux patchs PRD et PROP-10 MUST. Ils son
 ## Résultat de réalisation du Lot 0
 
 Le [rapport du 31 octobre](LOT-0-REPORT.md) remplace les mentions historiques « sans application » pour le socle uniquement. Les deux patchs PRD approuvés sont appliqués ; registre/backlog/matrice et contrats sont synchronisés. ADR-0009 documente les choix d’exécution, la portée de PROJ-10 et l’absence d’outbox sans effet externe. Les contrôles de contrats nouveaux, exemples, tests et état de la CI sont versionnés ensemble. La première qualification B porte sur les métadonnées, jamais sur de fausses scènes ; les tests futurs restent futurs. La modification d’AGENTS est limitée à l’autorisation explicite reçue. Aucun autre changement de priorité produit ni acceptation implicite d’une décision n’est introduit.
+
+
+## Réception du Lot 0 et Spike A — 31 octobre 2026
+
+Instruction explicite du propriétaire : réception sous réserve de fonctionnement et CI, puis prototype A isolé. Départ Git propre sur ea27725 ; la CI GitHub correspondante est terminée avec succès et les services locaux sont sains. L’accord de réception est enregistré, les risques résiduels maintenus, sans modifier GO-00..02. AGENTS est actualisé uniquement pour refléter cette autorisation de spike et l’interdiction persistante du Lot 1 en production.
+
+Le [rapport du Spike A](SPIKE-A-REPORT.md) consigne prototype, corpus, tests, pertes Markdown, mesures, limites et décision proposée. L’enveloppe du laboratoire et sa migration v1/v2 fictive sont distinguées du contrat Scene inchangé ; aucune décision de version de production n’est prise implicitement. ADR-0007 reste Proposée avec une recommandation GO étayée. Les dépendances restent dans spikes/editor, isolées des workspaces/images applicatives ; aucune API/authentification/permission applicative modifiée. La PostgreSQL du spike est en tmpfs, aucun volume persistant ni donnée applicative du Lot 0 réinitialisé.

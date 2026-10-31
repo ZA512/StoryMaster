@@ -1,0 +1,31 @@
+{
+  "measuredAt": "2026-10-31T02:40:27.487Z",
+  "browser": "155.0.8059.84",
+  "methodology": "Un passage par taille dans Chromium headless. Navigation inclut réseau local/bundle ; editorReload inclut setContent, construction de la vue et génération du JSON affiché, pas une garantie de paint complet. Aucun seuil SLA.",
+  "measurements": [
+    {
+      "blocks": 128,
+      "jsonBytes": 50007,
+      "navigationToReadyMs": 159.31337200000007,
+      "editorReloadMs": 17.299999997019768,
+      "saveAcknowledgedMs": 70.57438299999967,
+      "samples": 1
+    },
+    {
+      "blocks": 1024,
+      "jsonBytes": 399447,
+      "navigationToReadyMs": 338.5260870000002,
+      "editorReloadMs": 47.5,
+      "saveAcknowledgedMs": 185.31307900000002,
+      "samples": 1
+    },
+    {
+      "blocks": 3000,
+      "jsonBytes": 1170087,
+      "navigationToReadyMs": 792.7639040000004,
+      "editorReloadMs": 117.90000000596046,
+      "saveAcknowledgedMs": 432.7217380000002,
+      "samples": 1
+    }
+  ]
+}

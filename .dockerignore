@@ -8,3 +8,5 @@ artifacts/local
 playwright-report
 test-results
 **/__pycache__
+# Le prototype et ses dépendances ne doivent jamais entrer dans les images applicatives.
+spikes/

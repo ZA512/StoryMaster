@@ -1,0 +1,17 @@
+name: storymaster-spike-a
+services:
+  postgres-spike:
+    image: postgres:18@sha256:979bccfde35445db618c65107d27d08c6c21339d8dc3ad4c830c6633947be0e4
+    command: [postgres, -c, log_error_verbosity=terse, -c, log_min_error_statement=panic]
+    environment:
+      POSTGRES_DB: storymaster_spike_a_test
+      POSTGRES_USER: spike
+      POSTGRES_PASSWORD: spike-only-fictional-local
+    tmpfs:
+      - /var/lib/postgresql:size=1g
+    ports: ['127.0.0.1:55433:5432']
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U spike -d storymaster_spike_a_test]
+      interval: 2s
+      timeout: 3s
+      retries: 30
