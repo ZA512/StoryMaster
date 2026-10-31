@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs';
-const allowed = { domain: [], contracts: ['domain'], application: ['domain','contracts'], infrastructure: ['domain','contracts','application'] };
+const allowed = { domain: [], editor: ['domain'], contracts: ['domain','editor'], application: ['domain','contracts','editor'], infrastructure: ['domain','contracts','application','editor'] };
 for (const [name, dependencies] of Object.entries(allowed)) {
   const manifest = JSON.parse(readFileSync(`packages/${name}/package.json`, 'utf8'));
   for (const dep of Object.keys(manifest.dependencies ?? {})) {

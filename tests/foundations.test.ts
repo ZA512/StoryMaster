@@ -14,16 +14,16 @@ const code=(expected:string)=>(error:unknown)=>error instanceof AppError && erro
 
 test('migrations rejouables, empreinte protégée, rôle applicatif non privilégié',async()=>{
   await migrate(admin);
-  assert.equal((await admin.query('SELECT count(*) FROM schema_migrations')).rows[0].count,'1');
+  assert.equal((await admin.query('SELECT count(*) FROM schema_migrations')).rows[0].count,'3');
   const role=(await pool.query('SELECT rolsuper,rolcreaterole,rolcreatedb,rolbypassrls FROM pg_roles WHERE rolname=current_user')).rows[0];
   assert.deepEqual(Object.values(role),[false,false,false,false]);
   await assert.rejects(pool.query('DELETE FROM audit_events'),{code:'42501'});
   await assert.rejects(pool.query('UPDATE project_revisions SET revision=revision'),{code:'42501'});
-  await admin.query("UPDATE schema_migrations SET checksum='changed'");
+  await admin.query("UPDATE schema_migrations SET checksum='changed' WHERE name='0001-foundations'");
   await assert.rejects(migrate(admin),/autre empreinte/);
   // Restauration de l'empreinte d'origine, sans modifier le fichier de migration.
   const {readFile}=await import('node:fs/promises');
-  await admin.query('UPDATE schema_migrations SET checksum=$1',[sha256(await readFile(new URL('../packages/infrastructure/migrations/0001-foundations.sql',import.meta.url),'utf8'))]);
+  await admin.query('UPDATE schema_migrations SET checksum=$1 WHERE name=\'0001-foundations\'',[sha256(await readFile(new URL('../packages/infrastructure/migrations/0001-foundations.sql',import.meta.url),'utf8'))]);
 });
 test('identité par issuer+subject, même email distinct, concurrence sans compte orphelin',async()=>{
   const subject=randomUUID(), a=await person(subject),b=await person(subject),c=await person();

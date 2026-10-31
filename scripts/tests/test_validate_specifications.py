@@ -47,6 +47,25 @@ class ValidatorTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             validation.validate_all(self.root)
 
+    def test_lot1_cannot_remove_parent_cas(self):
+        oas = validation.load_yaml(self.root / 'docs/spec/openapi.yaml')
+        oas['components']['schemas']['EditorialMove']['required'].remove('expectedTargetStructureRevision')
+        with self.assertRaises(validation.InvalidSpecification):
+            validation.validate_lot1(oas)
+
+    def test_lot1_cannot_expose_ai_write(self):
+        oas = validation.load_yaml(self.root / 'docs/spec/openapi.yaml')
+        oas['paths']['/projects/{projectId}/scenes/{sceneId}/content']['put']['security'] = [{'bearerAuth': []}]
+        with self.assertRaises(validation.InvalidSpecification):
+            validation.validate_lot1(oas)
+
+    def test_lot1_cannot_remove_csrf(self):
+        oas = validation.load_yaml(self.root / 'docs/spec/openapi.yaml')
+        params = oas['paths']['/projects/{projectId}/scenes/{sceneId}/restore']['post']['parameters']
+        next(p for p in params if p.get('name') == 'X-CSRF-Token')['required'] = False
+        with self.assertRaises(validation.InvalidSpecification):
+            validation.validate_lot1(oas)
+
     def test_lot0_cannot_accept_bearer_instead_of_session(self):
         oas = validation.load_yaml(self.root / "docs/spec/openapi.yaml")
         oas["paths"]["/projects"]["post"]["security"] = [{"bearerAuth": []}]

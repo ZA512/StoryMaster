@@ -1,6 +1,6 @@
 # Plan de réalisation et critères de sortie
 
-**Statut :** Huit lots validés ; Lot 0 réceptionné sous réserve de fonctionnement et CI, confirmés. Spike A isolé autorisé et exécuté ; production des lots 1–7 non autorisée à ce stade. **Date :** mise à jour le 31 octobre 2026, Europe/Paris.
+**Statut :** Huit lots validés ; Lot 0 réceptionné sous réserve de fonctionnement et CI, confirmés. Spike A exécuté et ADR-0007 accepté ; production du Lot 1 autorisée le 31 octobre 2026, réception attendue. Lots 2–7 non autorisés. **Date :** mise à jour le 31 octobre 2026, Europe/Paris.
 **Portée :** exactement huit lots MVP puis pistes V1/V2+, sans estimation de durée faute de ressources connues.
 **Références :** [PRD](PRD.md), [audit](DOCUMENT-AUDIT.md), [domaine](DOMAIN-MODEL.md), [architecture](ARCHITECTURE.md), [API](API-CONTRACTS.md), [sécurité](SECURITY-MODEL.md), [tests](CONTRACT-TESTS.md), [ADR](adr/README.md).
 
@@ -78,7 +78,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Tâches (ordre proposé) :** Initialiser dépôt/CI/environnement reproductible ; cas d’usage d’identité OIDC et sessions ; Project, Membership et autorisation commune ; schémas/erreurs/CAS/idempotence et audit minimal ; rôle DB sans privilèges globaux ; stratégie transaction/verrou projet ; tests de refus et données fictives.
 
-**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Sortie soumise à réception du propriétaire, Lot 1 non autorisé.
+**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis arrêt avant Lot 2.
 
 **Risques :** Divergence adaptateurs, mauvaise identité email, secret en CI, décision IdP tardive.
 
@@ -100,7 +100,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Objectif :** Rédiger et retrouver un manuscrit complet avec autosave fiable.
 
-**Prérequis / dépendances :** Lot 0 reçu et CI verte ; [résultat du Spike A](SPIKE-A-REPORT.md) disponible, ADR-0007 encore à accepter et production Lot 1 à autoriser explicitement avant stockage final de l’éditeur.
+**Prérequis / dépendances :** Lot 0 reçu et CI verte ; [résultat du Spike A](SPIKE-A-REPORT.md) disponible, ADR-0007 accepté et production Lot 1 autorisée explicitement le 31 octobre 2026. Voir [rapport Lot 1](LOT-1-REPORT.md) et [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md).
 
 **Exigences PRD couvertes :** OBJ-03, OBJ-09, EDIT-01, EDIT-02, EDIT-03, EDIT-04, EDIT-05, EDIT-06, EDIT-07, EDIT-10, EDIT-11, EDIT-12, EXPORT-01, COLLAB-03, UX-01, UX-02, UX-03, UX-05, UX-08, SEC-13, NFR-01, NFR-04. Les exigences transversales continuent à être vérifiées dans les lots suivants.
 
@@ -294,7 +294,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 ## Prototypes techniques et état d’exécution
 
-Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-REPORT.md), GO technique proposé et ADR-0007 en attente de validation humaine. Le spike B est partiellement mesuré sur métadonnées au Lot 0, ses cas complets restent futurs ; C non exécuté. Aucun de ces travaux n’autorise la production du Lot 1.
+Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-REPORT.md), ADR-0007 accepté et Lot 1 explicitement autorisé. B-01..05 et B-07 autosave sont exécutés sur PostgreSQL ; B-06 et la variante B-07 pendant merge restent au Lot 4, C non exécuté. Voir [rapport Lot 1](LOT-1-REPORT.md).
 
 | Spike | Hypothèse / question | Protocole et métriques | Résultat attendu | Go / no-go |
 |---|---|---|---|---|
@@ -304,7 +304,7 @@ Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-R
 
 ### Complément obligatoire du spike B — scènes indépendantes et contention
 
-**Statut :** protocole complet futur ; première mesure exécutée au Lot 0 sur métadonnées seulement, [résultats et limites](LOT-0-REPORT.md). Les cas multi-scènes B-01..07 ne sont pas exécutés. **Références :** risque R-CONT-01 de l'architecture, ADR-0003 et fiche GO-01. Hypothèse à éprouver : le verrou projet conserve l'intégrité mais peut empêcher un débit suffisant dès que plusieurs auteurs enregistrent des scènes distinctes.
+**Statut :** premières mesures Lot 0 sur métadonnées, puis B-01..05 et B-07 autosave exécutés au Lot 1, [mesures et limites](measurements/LOT-1-CONTENTION.md). B-06 et la variante B-07 pendant merge restent futurs. Le protocole initial ci-dessous est conservé ; l’[ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md) explique pourquoi B-02 avec barrière partagée permet désormais le commit indépendant avant libération de T1. **Références :** risque R-CONT-01 de l'architecture, ADR-0003 et fiche GO-01. Hypothèse à éprouver : le verrou projet conserve l'intégrité mais peut empêcher un débit suffisant dès que plusieurs auteurs enregistrent des scènes distinctes.
 
 | Cas | Écritures et synchronisation proposées | Oracle d'intégrité / objectif de mesure |
 |---|---|---|

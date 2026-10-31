@@ -1,17 +1,19 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { AppError, normalizeMetadata, permitted, notFound, unauthenticated } from '@storymaster/domain';
 import type { Actor, AuditEvent, Identity, Project, ProjectChanges, ProjectInput, ProjectWithRole, User } from '@storymaster/domain';
+import type { EditorialPort } from './editorial-ports.ts';
 import type { Page, ProjectDto } from '@storymaster/contracts';
 
 export interface ProjectPosition { timestamp: string; id: string }
 export interface Transaction {
+  readonly editorial:EditorialPort;
   assertActor(actor: Actor): Promise<void>;
   getProject(userId: string, projectId: string): Promise<ProjectWithRole | null>;
   listProjects(userId: string, limit: number, after?: ProjectPosition): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
-  lockProject(projectId: string): Promise<void>;
+  lockProject(projectId: string,mode?:'exclusive'|'shared'): Promise<void>;
   lockIdempotency(scope: string, key: string): Promise<void>;
-  findIdempotency(scope: string, key: string): Promise<{ fingerprint: string; response: ProjectWithRole } | null>;
-  saveIdempotency(scope: string, key: string, fingerprint: string, response: ProjectWithRole): Promise<void>;
+  findIdempotency<T=ProjectWithRole>(scope: string, key: string): Promise<{ fingerprint: string; response: T } | null>;
+  saveIdempotency(scope: string, key: string, fingerprint: string, response: unknown): Promise<void>;
   insertProject(project: Project): Promise<void>;
   insertOwner(projectId: string, userId: string): Promise<void>;
   saveProject(project: Project): Promise<void>;
@@ -142,3 +144,6 @@ export class IdentityService {
     });
   }
 }
+
+export * from './editorial-ports.ts';
+export * from './editorial.ts';

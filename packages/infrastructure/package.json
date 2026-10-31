@@ -8,7 +8,8 @@
     "@storymaster/application": "*",
     "@storymaster/contracts": "*",
     "pg": "8.23.1",
-    "openid-client": "6.8.8"
+    "openid-client": "6.8.8",
+    "@storymaster/editor": "*"
   },
   "exports": {
     ".": "./src/index.ts"

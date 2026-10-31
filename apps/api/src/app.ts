@@ -5,10 +5,11 @@ import type { FastifyRequest } from 'fastify';
 import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@storymaster/domain';
-import { IdentityService, ProjectService } from '@storymaster/application';
+import { IdentityService, ProjectService,EditorialService } from '@storymaster/application';
 import { createProjectSchema,updateProjectSchema,listProjectsSchema,idempotencyKeySchema,emptyBodySchema } from '@storymaster/contracts';
 import { Pool,PostgresUnitOfWork,SessionStore,OidcProvider } from '@storymaster/infrastructure';
 import type { Session,LoginSecret } from '@storymaster/infrastructure';
+import { registerEditorial } from './editorial.ts';
 import type { Config } from './config.ts';
 
 declare module 'fastify' { interface FastifyRequest { session:Session|null } }
@@ -20,7 +21,7 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   const app=Fastify({bodyLimit:32768,genReqId:()=>randomUUID(),logger:{level:'info',...(options.logStream ? {stream:options.logStream} : {}),redact:['req.headers.authorization','req.headers.cookie','res.headers.set-cookie'],serializers:{req(req){return {method:req.method,path:String(req.url).split('?')[0]};},res(res){return {statusCode:res.statusCode};}}}});
   pool.on('error',()=>app.log.warn({code:'DATABASE_CONNECTION_LOST'},'Connexion inactive à la base interrompue'));
   await app.register(cookie);
-  await app.register(rateLimit,{max:options.rateMax ?? 120,timeWindow:'1 minute'});
+  await app.register(rateLimit,{max:options.rateMax ?? 300,timeWindow:'1 minute',hook:'preHandler',keyGenerator:req=>req.session?.actor.userId ?? req.ip});
   app.decorateRequest('session',null);
   const secure=!config.local, sessionCookie=secure ? '__Host-sm_session' : 'sm_session_local',loginCookie=secure ? '__Host-sm_login' : 'sm_login_local';
   const cookieOptions={path:'/',httpOnly:true,secure,sameSite:'lax' as const};
@@ -36,7 +37,7 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   app.setErrorHandler((error,req,reply)=>{
     const known=error instanceof AppError;
     const status=error && typeof error==='object' && 'statusCode' in error ? error.statusCode : undefined;
-    const e=known ? error : error instanceof Error && error.name==='ZodError' ? new AppError('VALIDATION_FAILED','Les paramètres de la demande ne sont pas valides.',422) : status===429 ? new AppError('RATE_LIMITED','Trop de demandes. Réessayez dans un instant.',429) : status===400 || status===413 ? new AppError('VALIDATION_FAILED','Le corps de la demande n’est pas valide.',status) : new AppError('INTERNAL_ERROR','Une erreur est survenue.',500);
+    const e=known ? error : error instanceof Error && error.name==='ZodError' ? new AppError('VALIDATION_FAILED','Les paramètres de la demande ne sont pas valides.',422) : status===429 ? new AppError('RATE_LIMITED','Trop de demandes. Réessayez dans un instant.',429) : status===400 || status===413 || status===415 ? new AppError('VALIDATION_FAILED','Le corps de la demande n’est pas valide.',status) : new AppError('INTERNAL_ERROR','Une erreur est survenue.',500);
     app.log.warn({code:e.code,correlationId:req.id},'Requête refusée ou échouée');
     reply.code(e.status).send({error:{code:e.code,message:e.message,correlationId:req.id,retryable:e.status===503 || e.status===429,...(e.details ? {details:e.details} : {})}});
   });
@@ -109,6 +110,7 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
       reply.header('ETag',`"r${result.revision}"`);return {data:result};
     });
   }
+  await registerEditorial(app,new EditorialService(db),{actor,key,expected});
   app.addHook('onClose',()=>pool.end());
   return app;
 }

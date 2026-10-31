@@ -1,4 +1,4 @@
-name: Documentation et Lot 0
+name: Documentation et Lots 0–1
 on:
   push:
   pull_request:
@@ -45,6 +45,8 @@ jobs:
         run: npm test
       - name: Qualification préliminaire de contention
         run: npm run bench:contention
+      - name: Contention des scènes et comparaison des barrières
+        run: npm run bench:scenes
       - name: Navigateur
         run: |
           npx playwright install --with-deps chromium

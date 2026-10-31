@@ -1,13 +1,13 @@
 # ADR-0007 — Stockage de l’éditeur et représentation des différences
 
-**Statut :** Proposée — Spike A exécuté, GO technique recommandé, validation humaine attendue
+**Statut :** Acceptée le 31 octobre 2026 par instruction explicite du propriétaire
 **Date :** 2026-10-30
-**Portée :** choix de stockage MVP et prototype isolé exécuté ; aucune implémentation de production du Lot 1.
+**Portée :** choix de stockage MVP et prototype isolé exécuté ; Lot 1 de production explicitement autorisé.
 **Références :** [PRD](../PRD.md), [domaine](../DOMAIN-MODEL.md), [architecture](../ARCHITECTURE.md), [sources](../RESEARCH-SOURCES.md).
 
 ## Synthèse
 
-B recommandé après exécution du [Spike A](../SPIKE-A-REPORT.md), sous réserve d’acceptation du propriétaire ; remplacement complet de scène avec expectedRevision ; diff bloc/mot/marks calculé, avant/après conservés. Historique métier interne. Future migration unique par scène/epoch vers Yjs, puis binaire préservé.
+B accepté le 31 octobre 2026 après exécution du [Spike A](../SPIKE-A-REPORT.md) ; remplacement complet de scène avec expectedRevision ; diff bloc/mot/marks calculé, avant/après conservés. Historique métier interne. Future migration unique par scène/epoch vers Yjs, puis binaire préservé.
 
 ## Contexte
 
@@ -21,9 +21,9 @@ Format stable/versionné, sécurité rendu, contenu français/Unicode, indépend
 
 A : Markdown canonique. B : JSON ProseMirror versionné dans PostgreSQL. C : Y.Doc binaire canonique dès MVP.
 
-## Décision proposée
+## Décision acceptée
 
-B recommandé après exécution du [Spike A](../SPIKE-A-REPORT.md), sous réserve d’acceptation du propriétaire ; remplacement complet de scène avec expectedRevision ; diff bloc/mot/marks calculé, avant/après conservés. Historique métier interne. Future migration unique par scène/epoch vers Yjs, puis binaire préservé.
+B accepté le 31 octobre 2026 après exécution du [Spike A](../SPIKE-A-REPORT.md) ; remplacement complet de scène avec expectedRevision ; diff bloc/mot/marks calculé, avant/après conservés. Historique métier interne. Future migration unique par scène/epoch vers Yjs, puis binaire préservé.
 
 ## Alternatives rejetées
 
@@ -51,11 +51,11 @@ Recommandée après tests de conservation, transactions, diff et import Yjs. Con
 
 ## Questions ouvertes
 
-Le prototype qualifie le schéma Tiptap, l’alignement jsdiff enrichi de la structure/marks et les licences libres des extensions utilisées. Restent à valider : bornes de production, acceptation de la présentation, intégration des invariants dans les services métier et autorisation du Lot 1.
+Le prototype qualifie le schéma Tiptap, l’alignement jsdiff enrichi de la structure/marks et les licences libres des extensions utilisées. Le Lot 1 est autorisé ; les bornes et invariants de production sont qualifiés dans le rapport du lot. La présentation reste soumise à sa réception.
 
 ## Critères d'acceptation du document
 
-Options crédibles comparées ; recommandation distinguée du PRD ; statut non accepté ; conséquence durable et condition de réexamen explicites ; décisions ouvertes reliées au lot concerné.
+Options crédibles comparées ; recommandation distinguée du PRD ; statut accepté explicitement ; conséquence durable et condition de réexamen explicites ; décisions ouvertes reliées au lot concerné.
 
 
 ## Résultat du Spike A — 31 octobre 2026
@@ -66,4 +66,9 @@ Le JSON ProseMirror versionné est recommandé pour le MVP avec snapshots Postgr
 
 L’import unique Yjs conserve texte/structure/marks. Le rechargement binaire conserve vector/ancres ; une reconstruction depuis JSON détruit cette continuité. Epoch, fencing et coordination avec révisions métier restent à concevoir/tester pour V1. Le store isolé n’inclut pas les permissions/audit/barrière projet du futur Lot 1 et ne doit pas être intégré tel quel.
 
-**Décision demandée : GO sur B**, diff d’affichage + fallback et Markdown avec avertissements ; Yjs reste hors production MVP. Statut maintenu **Proposée**. L’autorisation de production du Lot 1 constitue une décision distincte ; aucune acceptation automatique depuis les résultats du spike.
+**Décision demandée : GO sur B**, diff d’affichage + fallback et Markdown avec avertissements ; Yjs reste hors production MVP. À la livraison du spike, statut **Proposée**, désormais remplacé par la validation explicite ci-dessous. L’autorisation de production du Lot 1 constitue une décision distincte ; aucune acceptation automatique depuis les résultats du spike.
+
+
+## Acceptation du 31 octobre 2026
+
+Source : instruction du propriétaire « Validation ADR-0007 et implémentation du Lot 1 ». GO pour JSON ProseMirror versionné PostgreSQL, snapshots métier internes, révisions optimistes et diff riche avec fallback. Markdown reste un export dérivé ; JSON canonique conservé. Yjs reste hors application MVP. Cette acceptation ne s’étend à aucun autre ADR encore proposé. Le Lot 1 seul est autorisé, puis arrêt pour réception avant Lot 2.

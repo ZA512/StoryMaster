@@ -46,3 +46,7 @@ Installation isolée reproductible ; commande CI sans secret ; erreurs entraîna
 ## Tests de l’application et contrats observés
 
 Voir le [README racine](../README.md) et le [rapport Lot 0](../docs/LOT-0-REPORT.md). `validate_runtime_contracts.py` reçoit uniquement via stdin des réponses Fastify réelles ; il les valide contre les chemins, méthodes et codes d’OpenAPI, sans afficher le contenu en cas d’erreur. Les tests Node appellent l’interpréteur `DOCUMENT_PYTHON` ou `python3` : activer le venv avant `npm test`. Le script documentaire reste indépendant des services et ne devient pas une simulation de tests métier.
+
+## Contrats et qualification du Lot 1
+
+`npm run lint` exécute l’architecture et `node --import tsx scripts/sync-editorial-contracts.mjs --check`. Le générateur sans `--check` met à jour les schémas des corps Zod, routes et DTO OpenAPI puis les définitions partagées MCP ; examiner son diff avant adoption. `npm run bench:scenes` compare les deux barrières sur de vraies scènes/auteurs en base `_test`, vérifie contenu/hashes/snapshots/révisions et publie les métriques dans `artifacts/local/scene-contention.json`. Les [mesures versionnées](../docs/measurements/LOT-1-CONTENTION.md) déclarent limites et environnement ; B-06 propositions est absent. Les tests navigateur chargent `.env` et le scénario de durabilité redémarre seulement PostgreSQL/API/web locaux, sans suppression de volume.

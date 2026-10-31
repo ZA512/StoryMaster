@@ -1050,3 +1050,9 @@ Chaque entité demandée a identité, ownership, attributs, cardinalités, cycle
 ## Socle matérialisé au Lot 0
 
 Les seules tables métier matérialisées sont utilisateurs, identités externes, projets, memberships, snapshots de projet et audit ; sessions, login_transactions et idempotency_records servent le socle technique. Le domaine futur de ce document reste spécifié. Les modèles prédéfinis PROJ-10 préremplissent uniquement les métadonnées d’un projet libre, roman ou nouvelle ; aucune scène, chapitre ni activation de module n’est créée. Archiver conserve les ressources ; réactiver produit une nouvelle révision. Détails : [ADR-0009](adr/0009-socle-executable-lot-0.md).
+
+## Modèle exécuté au Lot 1
+
+Manuscript → Chapter → Scene sont des tables privées au projet, reliées par clés composites. `revision` contrôle contenu/métadonnées ; `structureRevision` contrôle l’ordre des enfants. Les déplacements conservent les IDs, révisent l’élément choisi et les structures des parents, sans faux conflit sur le texte des voisins. Les scènes ont des statuts rédactionnels configurés par manuscrit ; retirer un statut utilisé est refusé. Archive/réactivation conserve contenu et historique ; seuls owner/admin archivent. Les compteurs mots des scènes sont calculés depuis le JSON accepté ; chapitres/manuscrits totalisent leurs scènes actives.
+
+`scene_revisions` contient snapshots intégraux et métadonnées, auteur/date, ChangeSet direct et provenance de restauration. La restauration exposée remet le texte, conserve les métadonnées actuelles et crée r+1. Ce lot n’implémente ni références narratives ni propositions. Détails et limites : [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md), [rapport](LOT-1-REPORT.md).

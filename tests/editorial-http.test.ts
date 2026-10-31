@@ -1,0 +1,35 @@
+import {before,after,test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {buildApp} from '../apps/api/src/app.ts';
+import {person,sessions,reset,close,issuer,secret,admin} from './database.helper.ts';
+import {doc} from './editorial.helper.ts';
+before(reset);after(close);
+test('contrats HTTP Lot 1 réellement observés : préconditions, idempotence, schéma, historique, exports et droits',async()=>{
+ const app=await buildApp({databaseUrl:process.env.TEST_APP_DATABASE_URL!,issuer,clientId:'storymaster-web',publicOrigin:'http://localhost:3000',secret,local:true,port:3001,sessionSeconds:3600},{rateMax:1000});
+ try{const a=await person(),b=await person(),headers={cookie:`sm_session_local=${a.raw}`,origin:'http://localhost:3000','x-csrf-token':sessions.csrf(a.raw)},observed:unknown[]=[];
+ const call=async(method:'GET'|'POST'|'PUT'|'PATCH',url:string,path:string,status:number,payload?:unknown,extra:Record<string,string>={})=>{const r=await app.inject({method,url,headers:{...headers,'idempotency-key':randomUUID(),...extra},...(payload?{payload}:{})});assert.equal(r.statusCode,status,r.body);observed.push({method:method.toLowerCase(),path:path.replace('/api/v1',''),status,body:r.json()});return r.json().data;};
+ const p=await call('POST','/api/v1/projects','/api/v1/projects',201,{name:'Contrats éditoriaux'}),base='/api/v1/projects/'+p.id,template='/api/v1/projects/{projectId}';
+ const m=await call('POST',base+'/manuscripts',template+'/manuscripts',201,{title:'Roman HTTP',expectedStructureRevision:1});
+ const c=await call('POST',base+'/manuscripts/'+m.id+'/chapters',template+'/manuscripts/{manuscriptId}/chapters',201,{title:'Chapitre',expectedStructureRevision:1});
+ const s=await call('POST',base+'/chapters/'+c.id+'/scenes',template+'/chapters/{chapterId}/scenes',201,{title:'Scène',expectedStructureRevision:1}),url=base+'/scenes/'+s.id,route=template+'/scenes/{sceneId}';
+ await call('GET',base+'/manuscripts',template+'/manuscripts',200);await call('GET',url,route,200);
+ await call('PUT',url+'/content',route+'/content',428,{contentFormatVersion:1,content:doc('Sans précondition')});
+ await call('PUT',url+'/content',route+'/content',403,{contentFormatVersion:1,content:doc('Sans CSRF')},{'if-match':'"r1"','x-csrf-token':'invalid'});
+ const body={contentFormatVersion:1,content:doc('Élise et Noe\u0308l 👩🏽‍💻',[{type:'bold'}])},key=randomUUID(),ack=await call('PUT',url+'/content',route+'/content',200,body,{'if-match':'"r1"','idempotency-key':key});assert.equal(ack.revision,2);
+ assert.deepEqual(await call('PUT',url+'/content',route+'/content',200,body,{'if-match':'"r1"','idempotency-key':key}),ack);
+ await call('PUT',url+'/content',route+'/content',412,{...body,content:doc('Obsolète')},{'if-match':'"r1"'});
+ await call('PUT',url+'/content',route+'/content',422,{contentFormatVersion:1,content:{type:'doc',content:[{type:'image'}]}},{'if-match':'"r2"'});
+ await call('PATCH',url,route,200,{expectedRevision:2,set:{title:'Renommée',status:'En cours'}});
+ await call('GET',url+'/revisions',route+'/revisions',200);await call('GET',url+'/revisions/2',route+'/revisions/{revision}',200);await call('GET',url+'/compare?from=1&to=3',route+'/compare',200);
+ await call('POST',url+'/restore',route+'/restore',200,{sourceRevision:1},{'if-match':'"r3"'});
+ await call('POST',url+'/move',route+'/move',200,{expectedRevision:4,targetParentId:c.id,beforeId:null,expectedSourceStructureRevision:2,expectedTargetStructureRevision:2});
+ await call('POST',url+'/archive',route+'/archive',200,{expectedRevision:5,archived:true});await call('POST',url+'/archive',route+'/archive',200,{expectedRevision:6,archived:false});
+ for(const format of ['json','markdown'])await call('GET',base+'/manuscripts/'+m.id+'/export?format='+format,template+'/manuscripts/{manuscriptId}/export',200);
+ await call('GET',url,route,404,undefined,{cookie:`sm_session_local=${b.raw}`});
+ await admin.query("INSERT INTO project_memberships(project_id,user_id,role) VALUES($1,$2,'reader')",[p.id,b.user.id]);
+ await call('PUT',url+'/content',route+'/content',403,body,{cookie:`sm_session_local=${b.raw}`,'x-csrf-token':sessions.csrf(b.raw),'if-match':'"r7"'});
+ const validated=spawnSync(process.env.DOCUMENT_PYTHON??'python3',['scripts/validate_runtime_contracts.py'],{input:JSON.stringify(observed),encoding:'utf8'});assert.equal(validated.status,0,validated.stdout+validated.stderr);console.log(validated.stdout.trim());
+ }finally{await app.close();}
+});

@@ -32,3 +32,22 @@ export interface AuditEvent {
   action: string; actor: Actor; correlationId: string; projectId?: string; resourceId: string;
   beforeRevision?: number; afterRevision?: number;
 }
+export type NarrativePermission = 'narrative.read'|'narrative.write'|'narrative.archive'|'export.create';
+export function narrativePermitted(role:Role, permission:NarrativePermission, actor:ActorType):boolean {
+  if(actor!=='human')return false;
+  switch(permission){case 'narrative.read':return roles.includes(role);case 'narrative.archive':return role==='owner'||role==='admin';case 'narrative.write':case 'export.create':return ['owner','admin','author'].includes(role);default:return false;}
+}
+export interface RichNode { type:string; text?:string; attrs?:Record<string,unknown>; marks?:{type:string;attrs?:Record<string,unknown>}[];content?:RichNode[] }
+export interface RichDocument extends RichNode { type:'doc';content:RichNode[] }
+export type EditorialKind='manuscript'|'chapter'|'scene';
+export interface EditorialNode {
+  kind:EditorialKind;id:string;projectId:string;parentId:string;title:string;summary:string;position:number;
+  revision:number;structureRevision:number;archived:boolean;status:string;writingStatuses:string[];
+  wordCount:number;content?:RichDocument;contentHash?:string;createdAt:string;updatedAt:string;
+}
+export interface SceneRevision {
+  sceneId:string;projectId:string;revision:number;contentFormatVersion:1;content:RichDocument;contentHash:string;
+  metadata:{title:string;summary:string;status:string;archived:boolean;chapterId:string};
+  author:{id:string;displayName:string};createdAt:string;changeSetId:string;restoredFromRevision:number|null;action:string;
+}
+export interface EditorialChange {id:string;projectId:string;resourceId:string;kind:EditorialKind;action:string;beforeRevision:number|null;afterRevision:number;actor:Actor;correlationId:string;details:Record<string,unknown>}

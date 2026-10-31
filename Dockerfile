@@ -8,6 +8,7 @@ COPY packages/domain/package.json ./packages/domain/package.json
 COPY packages/application/package.json ./packages/application/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json
 COPY packages/infrastructure/package.json ./packages/infrastructure/package.json
+COPY packages/editor/package.json ./packages/editor/package.json
 RUN npm ci --no-audit --no-fund
 COPY . .
 

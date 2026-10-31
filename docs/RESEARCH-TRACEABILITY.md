@@ -199,3 +199,7 @@ Chaque identifiant PRD apparaît exactement une fois dans la matrice ; tout MUST
 ## Preuve technique complémentaire — Spike A
 
 Le [rapport exécuté du 31 octobre](SPIKE-A-REPORT.md) relie les essais à EDIT-02/04/07/12, EXPORT-01, COLLAB-03, SEC-13 et NFR-04 : conservation du texte riche, sauvegarde/révisions/CAS, restauration, diff et export contrôlé. Il apporte des preuves sur corpus fictif, sans déclarer ces exigences livrées en production. Q-07 et ADR-0007 restent proposés au propriétaire. Les priorités, versions cibles et affectations des 150 exigences ne changent pas ; Yjs reste V1 malgré la preuve isolée de migration.
+
+## Réalisation du Lot 1 — 31 octobre 2026
+
+Instruction explicite du propriétaire : accepter ADR-0007 et implémenter Lot 1, puis arrêt avant Lot 2. Aucune priorité, version cible ni aucun des 150 IDs n’est changé. Les exigences affectées sont exactement celles de la section Lot 1 du [plan](IMPLEMENTATION-PLAN.md) ; preuves et limites dans le [rapport](LOT-1-REPORT.md). EDIT-01..07, EDIT-10..12, EXPORT-01 et les invariants transversaux sont reliés aux services/contrats et tests de ce lot. Les références narratives d’EDIT-08, le moteur de propositions et l’archive complète restent dans leurs lots. Le choix de verrou provisoire est affiné par mesures et documenté dans [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md), sans modifier l’obligation d’atomicité.

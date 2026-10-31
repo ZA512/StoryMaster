@@ -1,0 +1,24 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import type {SceneRevision,RichDocument} from '@storymaster/domain';
+import type {RevisionPage,SceneDto} from '@storymaster/contracts';
+import type {richDiff} from '@storymaster/editor/diff';
+import {api} from '../api';
+import {RichView} from './rich-view';
+type Comparison=ReturnType<typeof richDiff>;
+export function ComparisonView({before,after}:{before:RichDocument;after:RichDocument}){
+ const [result,setResult]=useState<Comparison|null>(null),[error,setError]=useState('');
+ useEffect(()=>{setResult(null);setError('');const worker=new Worker(new URL('./editor.worker.ts',import.meta.url),{type:'module'});worker.onmessage=e=>{if(e.data.error)setError(e.data.error);else setResult(e.data.result);};worker.onerror=()=>setError('Comparaison détaillée indisponible.');worker.postMessage({kind:'diff',before,after});return()=>worker.terminate();},[before,after]);
+ return <>{error?<p role="status">{error}</p>:!result?<p role="status">Comparaison en cours…</p>:result.fallback?<p className="notice">{result.reason}</p>:<div className="diff-summary">{result.changes.length===0?<p>Textes et mise en forme identiques.</p>:result.changes.map((c,i)=><div key={i}><strong>{c.label}</strong>{c.words&&<p>{c.words.map((w,j)=>w.added?<ins key={j}>{w.value}</ins>:w.removed?<del key={j}>{w.value}</del>:<span key={j}>{w.value}</span>)}</p>}{c.details&&<><p>Avant : {c.details.before.join(' ; ')||'Aucune marque.'}</p><p>Après : {c.details.after.join(' ; ')||'Aucune marque.'}</p></>}</div>)}</div>}
+ <div className="comparison"><section><h3>Avant</h3><RichView doc={before}/></section><section><h3>Après</h3><RichView doc={after}/></section></div></>;
+}
+export function History({base,scene,canWrite,onRestore,onClose}:{base:string;scene:SceneDto;canWrite:boolean;onRestore:(revision:number)=>Promise<void>;onClose:()=>void}){
+ const [page,setPage]=useState<RevisionPage|null>(null),[selected,setSelected]=useState<SceneRevision|null>(null),[pair,setPair]=useState<{before:SceneRevision;after:SceneRevision}|null>(null),[from,setFrom]=useState(1),[to,setTo]=useState(scene.revision),[error,setError]=useState(''),[busy,setBusy]=useState(false);const dialog=useRef<HTMLDialogElement>(null);
+ useEffect(()=>{dialog.current?.showModal();let active=true;void api<RevisionPage>(base+'/revisions').then(p=>{if(active)setPage(p);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[base]);
+ const run=async(work:()=>Promise<void>)=>{setBusy(true);setError('');try{await work();}catch(e){setError(e instanceof Error?e.message:'Lecture impossible.');}finally{setBusy(false);}};
+ return <dialog ref={dialog} className="history-dialog" aria-labelledby="history-title" onCancel={event=>{event.preventDefault();if(!busy)onClose();}}><div className="section-line"><h2 id="history-title">Historique de « {scene.title} »</h2><button className="text-button" disabled={busy} onClick={onClose}>Fermer</button></div><p className="muted">Chaque version est conservée avec son auteur et sa date. Restaurer le texte crée une nouvelle version ; le titre, le statut et l’emplacement actuels restent en place.</p>{error&&<p className="notice error" role="alert">{error}</p>}
+ <div className="revision-list">{page?.items.map(r=><button key={r.revision} disabled={busy} onClick={()=>void run(async()=>{setPair(null);setSelected(await api<SceneRevision>(base+'/revisions/'+r.revision));})}>Version {r.revision} · {r.author.displayName} · {new Date(r.createdAt).toLocaleString('fr')}{r.restoredFromRevision!==null?` · restaurée depuis ${r.restoredFromRevision}`:''}</button>)}</div>{page?.hasMore&&<button className="text-button" disabled={busy} onClick={()=>void run(async()=>{const next=await api<RevisionPage>(base+'/revisions?beforeRevision='+page.nextBeforeRevision);setPage({...next,items:[...page.items,...next.items]});})}>Versions précédentes</button>}
+ <fieldset disabled={busy} className="compare-controls"><legend>Comparer deux versions</legend><label>Avant<input type="number" min="1" max={scene.revision} value={from} onChange={e=>setFrom(Number(e.target.value))}/></label><label>Après<input type="number" min="1" max={scene.revision} value={to} onChange={e=>setTo(Number(e.target.value))}/></label><button className="button secondary" onClick={()=>void run(async()=>{setSelected(null);setPair(await api(base+`/compare?from=${from}&to=${to}`));})}>Comparer</button></fieldset>
+ {pair&&<ComparisonView before={pair.before.content} after={pair.after.content}/>}{selected&&<section><h3>Version {selected.revision} · {selected.author.displayName}</h3><RichView doc={selected.content}/>{canWrite&&<button className="button" disabled={busy} onClick={()=>{if(window.confirm(`Restaurer le texte de la version ${selected.revision} ? Une nouvelle version sera créée.`))void run(async()=>{await onRestore(selected.revision);onClose();});}}>Restaurer ce texte</button>}</section>}
+ </dialog>;
+}

@@ -15,11 +15,12 @@
     "dev:web": "npm run dev -w @storymaster/web",
     "build": "npm run typecheck && npm run build -w @storymaster/web",
     "typecheck": "tsc --noEmit && tsc --noEmit -p apps/web/tsconfig.json",
-    "lint": "eslint . && node scripts/check-architecture.mjs",
+    "lint": "eslint . && node scripts/check-architecture.mjs && node --import tsx scripts/sync-editorial-contracts.mjs --check",
     "test": "node --env-file-if-exists=.env --import tsx --test --test-concurrency=1 tests/*.test.ts",
     "test:e2e": "playwright test",
     "db:migrate": "node --env-file-if-exists=.env --import tsx scripts/migrate.ts",
-    "bench:contention": "node --env-file-if-exists=.env --import tsx scripts/measure-contention.ts"
+    "bench:contention": "node --env-file-if-exists=.env --import tsx scripts/measure-contention.ts",
+    "bench:scenes": "node --env-file-if-exists=.env --import tsx scripts/measure-scene-contention.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

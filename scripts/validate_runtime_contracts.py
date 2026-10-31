@@ -18,6 +18,8 @@ def main():
         schema = response['content']['application/json']['schema']
         schema_validate({**schema, 'components': oas['components']}, item['body'],
                         f"{item['method']} {item['path']} {item['status']}")
+        if item['path'].endswith('/export') and item['status'] == 200 and item['body']['data']['format'] == 'json':
+            schema_validate({'$ref':'#/components/schemas/EditorialJsonExport','components':oas['components']},json.loads(item['body']['data']['text']),'Export éditorial JSON observé')
     print(f'{len(observations)} réponses HTTP observées conformes à OpenAPI')
 
 

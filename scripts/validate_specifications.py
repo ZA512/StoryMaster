@@ -349,6 +349,40 @@ def validate_lot0(oas):
             'Lot 0 : rôle client interdit dans le corps')
 
 
+def validate_lot1(oas):
+    base = '/projects/{projectId}'
+    expected = {'manuscriptOutline': (base+'/manuscripts','get')}
+    for kind, plural, parent in [('manuscript','manuscripts',base),('chapter','chapters',base+'/manuscripts/{manuscriptId}'),('scene','scenes',base+'/chapters/{chapterId}')]:
+        expected[kind+'Create'] = (parent+'/'+plural,'post')
+        path = base+'/'+plural+'/{'+kind+'Id}'
+        for suffix, method in [('Update','patch'),('Move','post'),('Archive','post')]:
+            expected[kind+suffix] = (path+('' if suffix=='Update' else '/'+suffix.lower()),method)
+    scene = base+'/scenes/{sceneId}'
+    for oid, suffix, method in [('sceneRead','','get'),('sceneContentSave','/content','put'),('sceneRevisionList','/revisions','get'),('sceneRevisionGet','/revisions/{revision}','get'),('sceneCompare','/compare','get'),('sceneRestore','/restore','post')]:
+        expected[oid] = (scene+suffix,method)
+    expected['manuscriptExport'] = (base+'/manuscripts/{manuscriptId}/export','get')
+    for oid, (path, method) in expected.items():
+        op = oas['paths'].get(path,{}).get(method,{})
+        require(op.get('operationId')==oid and op.get('x-lot')==1, 'Lot 1 : opération absente '+oid)
+        require(op.get('security')==[{'webSession':[]}], 'Lot 1 : session humaine obligatoire '+oid)
+        if method in {'post','put','patch'}:
+            params = {p['name']:p for raw in op.get('parameters',[]) for p in [dereference(oas,raw)]}
+            for name in ['X-CSRF-Token','Idempotency-Key'] + (['If-Match'] if oid in {'sceneContentSave','sceneRestore'} else []):
+                require(params.get(name,{}).get('required') is True, 'Lot 1 : précondition absente '+oid+' '+name)
+            schema = dereference(oas,op['requestBody']['content']['application/json']['schema'])
+            require(schema.get('additionalProperties') is False, 'Lot 1 : corps strict '+oid)
+            if oid.endswith(('Update','Move','Archive')):
+                require('expectedRevision' in schema['required'], 'Lot 1 : CAS requis '+oid)
+            if oid.endswith('Create'):
+                require('expectedStructureRevision' in schema['required'], 'Lot 1 : CAS parent requis '+oid)
+            if oid.endswith('Move'):
+                require({'expectedSourceStructureRevision','expectedTargetStructureRevision'}.issubset(schema['required']), 'Lot 1 : deux parents requis '+oid)
+    schemas = oas['components']['schemas']
+    require(schemas['SceneContentSave']['properties']['contentFormatVersion']=={'type':'number','const':1}, 'Lot 1 : format éditeur versionné')
+    require(schemas['SceneRevision']['properties']['content']=={'$ref':'#/components/schemas/RichDocument'}, 'Lot 1 : snapshot riche intégral')
+    require('position' not in schemas['Scene']['properties'], 'Lot 1 : ordre porté par le plan, pas CAS texte voisin')
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -358,6 +392,7 @@ def validate_contracts(root):
     except Exception as exc:
         raise InvalidSpecification(f"OpenAPI invalide : {exc}") from exc
     validate_lot0(oas)
+    validate_lot1(oas)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and
@@ -440,7 +475,7 @@ def validate_contracts(root):
 
 
 def validate_lot0_examples(root, oas):
-    examples = load_json(root / 'docs/examples/lot0-http.json')['responses']
+    examples = [example for name in ['lot0-http.json','lot1-http.json'] for example in load_json(root / 'docs/examples' / name)['responses']]
     for example in examples:
         op = oas['paths'][example['path']][example['method']]
         context = 'Lot 0 exemple : ' + example['path']

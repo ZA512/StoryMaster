@@ -1,6 +1,6 @@
 # Artefacts de contrat
 
-**Statut :** Opérations HTTP `x-lot: 0` exécutées ; autres contrats et MCP proposés. **Portée :** MVP, sans serveur MCP au Lot 0. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
+**Statut :** Opérations HTTP `x-lot: 0/1` implémentées ; autres contrats et MCP proposés. **Portée :** MVP, sans serveur MCP aux Lots 0/1. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
 
 ## Synthèse et analyse
 
@@ -49,3 +49,7 @@ Parsing JSON/YAML réussi ; références résolues ; OpenAPI valide ; schémas D
 ## Contrats exécutés au Lot 0
 
 OpenAPI distingue dix opérations implémentées par `x-lot: 0`, avec session humaine seule et CSRF pour mutations. Le DTO Project et les définitions MCP embarquées sont synchronisés ; les exemples de [lot0-http.json](../examples/lot0-http.json) sont validés. Les tests Fastify valident aussi six réponses réelles contre OpenAPI via `scripts/validate_runtime_contracts.py`, sans écrire les tokens sur disque. Le [rapport](../LOT-0-REPORT.md) précise ce qui fonctionne et ce qui reste spécifié.
+
+## Éditeur et export du Lot 1
+
+Les corps Zod et DTO éditoriaux sont synchronisés via `scripts/sync-editorial-contracts.mjs`, contrôlés par `npm run lint`. `EditorialJsonExport` décrit le contenu encodé du JSON éditorial v1 (structure, IDs/ordre, archives, texte riche courant, sans historique). Le validateur des réponses observées parse aussi ce texte JSON et le valide contre ce composant ; le wrapper HTTP seul ne suffit pas. Le JSON ProseMirror canonique reste `RichDocument` avec contentFormatVersion=1. Les 13 outils MCP demeurent spécifiés seulement.

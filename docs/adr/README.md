@@ -1,10 +1,10 @@
 # Registre des décisions d’architecture
 
-**Statut :** ADR-0001/0002/0006 acceptés ; ADR-0003 accepté sur atomicité/concurrence, verrou provisoire ; ADR-0008 partiellement validé GO-02 ; autres ADR proposés. **Portée :** socle et contrats MVP. **Références :** [plan](../IMPLEMENTATION-PLAN.md), [audit](../DOCUMENT-AUDIT.md).
+**Statut :** ADR-0001/0002/0006/0007 acceptés ; ADR-0003 accepté sur atomicité/concurrence, verrou provisoire ; ADR-0008 partiellement validé GO-02 ; ADR-0009/0010 décrivent la mise en œuvre des lots autorisés ; autres ADR proposés. **Portée :** socle et contrats MVP. **Références :** [plan](../IMPLEMENTATION-PLAN.md), [audit](../DOCUMENT-AUDIT.md).
 
 ## Synthèse et analyse
 
-Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style architectural ; ADR-0006 isole la décision durable de stockage. ADR-0007 reste conditionné au spike A. ADR-0008 formalise identité, permissions et valeurs proposées.
+Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style architectural ; ADR-0006 isole la décision durable de stockage. ADR-0007 est accepté par le propriétaire le 31 octobre 2026 après le Spike A. ADR-0008 formalise identité, permissions et valeurs proposées.
 
 | ID | Décision | Statut |
 |---|---|---|
@@ -14,9 +14,10 @@ Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style
 | ADR-0004 | [Édition asynchrone avant collaboration temps réel](0004-edition-asynchrone-au-mvp.md) | Proposée |
 | ADR-0005 | [Modularité fonctionnelle et schémas narratifs versionnés](0005-modules-et-schemas-versionnes.md) | Proposée |
 | ADR-0006 | [Source de vérité et frontières du stockage](0006-source-de-verite-et-stockage.md) | Acceptée |
-| ADR-0007 | [Stockage de l’éditeur et représentation des différences](0007-stockage-editeur-et-diff.md) | Proposée |
+| ADR-0007 | [Stockage de l’éditeur et représentation des différences](0007-stockage-editeur-et-diff.md) | Acceptée |
 | ADR-0009 | [Socle exécutable Lot 0](0009-socle-executable-lot-0.md) | Mise en œuvre GO-00..02 |
 | ADR-0008 | [Identité déléguée, autorisation et politiques par défaut](0008-identite-delegation-et-politiques.md) | Proposée |
+| ADR-0010 | [Atelier et barrière des écritures de texte](0010-atelier-ecriture-et-concurrence.md) | Mise en œuvre Lot 1 ; réception attendue |
 
 ## Décisions proposées et alternatives
 

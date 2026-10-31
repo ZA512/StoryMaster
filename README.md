@@ -1,6 +1,6 @@
 # StoryMaster
 
-Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; les lots suivants restent soumis à validation. [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
+Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Réception Lot 1 attendue ; Lot 2 non autorisé. [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
 
 ## Démarrage local
 
@@ -46,11 +46,12 @@ Les tests critiques utilisent une vraie base dédiée `storymaster_test`, avec l
 docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait
 npm test
 npm run bench:contention
+npm run bench:scenes
 npx playwright install chromium
 npm run test:e2e
 ```
 
-L’overlay de test publie PostgreSQL sur **127.0.0.1:55432**. Le benchmark et la suite PostgreSQL se sérialisent par verrou de test. Le benchmark écrit `artifacts/local/contention.json` ; ses paramètres bornés sont `BENCH_WORKERS` (8 par défaut), `BENCH_WRITES` (20), `BENCH_OUTPUT`. Il utilise de nouveaux projets de test, sans scènes fictives. Les essais navigateur passent par Keycloak réel et créent des projets de démonstration dans l’application locale. Captures et traces restent dans des dossiers ignorés ; ne pas publier une trace contenant des cookies ou codes de connexion. Avec Chromium déjà installé : `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e`.
+L’overlay de test publie PostgreSQL sur **127.0.0.1:55432**. Les benchmarks et la suite PostgreSQL se sérialisent par verrou de test. Exécuter la suite navigateur ensuite : son test de durabilité redémarre PostgreSQL et les services locaux, dont Keycloak pour rétablir son pool. Le benchmark de métadonnées écrit `artifacts/local/contention.json` ; ses paramètres bornés sont `BENCH_WORKERS` (8 par défaut), `BENCH_WRITES` (20), `BENCH_OUTPUT`. Ce premier benchmark utilise de nouveaux projets de test sans scènes. `bench:scenes` mesure de vraies scènes et auteurs synthétiques ; ses résultats sont dans `artifacts/local/scene-contention.json`. Les essais navigateur passent par Keycloak réel et créent des projets de démonstration dans l’application locale. Captures et traces restent dans des dossiers ignorés ; ne pas publier une trace contenant des cookies ou codes de connexion. Le navigateur fourni par Playwright est recommandé pour correspondre à la CI. Avec Chromium système déjà installé, option locale : `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e`.
 
 Pour exécuter les processus Node sur l’hôte, conserver PostgreSQL/Keycloak avec l’overlay puis lancer dans deux terminaux :
 
@@ -84,3 +85,11 @@ Les détails de concurrence, de sécurité, les limites locales et les résultat
 ## Laboratoire préalable au Lot 1
 
 Le [Spike A isolé](spikes/editor/README.md) évalue l’éditeur, le stockage JSON, les révisions, les diffs et une future migration Yjs sur corpus fictif. Ses dépendances et sa PostgreSQL en mémoire sont séparées des applications. [Rapport et décision proposée](docs/SPIKE-A-REPORT.md). Aucun éditeur de production n’est ajouté au Lot 0 ; la décision ADR-0007 et le lancement du Lot 1 restent soumis au propriétaire.
+
+## Atelier d’écriture — Lot 1
+
+Ouvrir un projet puis **Ouvrir l’atelier d’écriture**. Créer un manuscrit, un chapitre et des scènes ; les boutons du plan modifient titre/résumé/statut, déplacent et ordonnent sans changer les identifiants. L’archivage est confirmé et réversible pour les responsables. Le texte riche s’enregistre après une pause de 600 ms ; Ctrl/⌘ S force l’enregistrement. Attendre **Enregistré** avant de quitter. Une erreur conserve le brouillon dans l’onglet ; réessayer rejoue la même demande. Un conflit montre les versions et impose un choix explicite. Le navigateur avertit avant fermeture avec brouillon non confirmé ; aucune conservation hors ligne ou après fermeture forcée n’est garantie.
+
+Historique : auteur, date, lecture/comparaison de versions, restauration du texte en nouvelle révision. Export Markdown dérivé avec avertissements ; JSON éditorial versionné avec structure/archives/textes courants, sans historique ni archive complète de projet. Les compteurs enregistrés viennent du serveur ; le compteur de brouillon est calculé en Worker. Mode concentration et raccourcis de mise en forme disponibles. Limites et qualification : [rapport](docs/LOT-1-REPORT.md), [ADR-0010](docs/adr/0010-atelier-ecriture-et-concurrence.md).
+
+Les migrations 0002/0003 sont additives et rejouables, sans réinitialisation des données existantes. Ne jamais supprimer le volume persistant pour les appliquer. CI : documentation/contrats, tests du validateur, architecture, TypeScript, tests sur PostgreSQL, comparaison de contention des deux stratégies et navigateur réel ; Spike A reste isolé.

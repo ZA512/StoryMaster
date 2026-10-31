@@ -1,10 +1,10 @@
 # Executive Summary
 
-**Statut :** Conception consolidée le 30 octobre ; GO-00..02 validés et Lot 0 réalisé le 31 octobre 2026. **Portée :** dossier de référence MVP et réalisation locale du socle. Voir le [rapport exécuté du Lot 0](LOT-0-REPORT.md) pour les tests, limites et validation de sortie encore attendue.
+**Statut :** Conception consolidée le 30 octobre ; GO-00..02 validés et Lots 0/1 réalisés le 31 octobre 2026, réception Lot 1 attendue. **Portée :** dossier de référence MVP et réalisation locale du socle et de l’atelier. Voir le [rapport exécuté du Lot 0](LOT-0-REPORT.md) pour les tests, limites et validation de sortie encore attendue.
 
 Le dépôt dispose désormais d'un dossier permettant de préparer le Lot 0 sans réinventer les identités, les permissions, les révisions ou les frontières de sécurité. Le socle validé GO-01 est un **monolithe modulaire avec PostgreSQL**, une **couche métier commune au web, à l'IA et à MCP**, et des **propositions multi-objets fusionnées dans une transaction unique**. La collaboration reste asynchrone au MVP ; la coédition CRDT, les faits/connaissances/révélations et la recherche sémantique restent V1.
 
-La traçabilité comprend **150 exigences numérotées**, dont **100 MUST MVP** affectées à un lot. Les contrats comprennent **27 opérations HTTP sur 24 chemins**, dont 10 opérations Lot 0 exécutées, **13 outils MCP**, **deux fixtures complètes de propositions**, **deux diagnostics illustratifs**, **50 scénarios de contrat**, **26 AC transversaux**, **neuf ADR dont quatre décisions acceptées dans leur portée et une mise en œuvre du socle**, avec ADR-0008 partiellement validé GO-02. Spikes A/C futurs et B partiellement qualifié sur les métadonnées. Le PRD est modifié uniquement par les deux patchs approuvés ; les recherches sont conservées. Les accords du 31 octobre sont tracés dans HUMAN-DECISIONS.md ; les autres arbitrages restent ouverts.
+La traçabilité comprend **150 exigences numérotées**, dont **100 MUST MVP** affectées à un lot. Les contrats comprennent **46 opérations HTTP sur 41 chemins**, dont 10 opérations Lot 0 et 20 opérations Lot 1 implémentées, **13 outils MCP**, **deux fixtures complètes de propositions**, **deux diagnostics illustratifs**, **50 scénarios de contrat**, **26 AC transversaux**, **dix ADR, dont ADR-0007 accepté explicitement et ADR-0010 de mise en œuvre du Lot 1**, avec ADR-0008 partiellement validé GO-02. Spike A exécuté ; B-01..05 et B-07 autosave qualifiés localement dans leur enveloppe, B-06 et C futurs. Le PRD est modifié uniquement par les deux patchs approuvés ; les recherches sont conservées. Les accords du 31 octobre sont tracés dans HUMAN-DECISIONS.md ; les autres arbitrages restent ouverts.
 
 ## État des documents analysés
 
@@ -152,7 +152,7 @@ OpenAPI est validé avec `openapi-spec-validator`, JSON Schema avec `jsonschema`
 
 Le registre normalisé sépare type, priorité produit, version et texte intégral ; les NFR portent l’objectif complet avec priorité null. Après accord explicite, PROP-10 passe de SHOULD à MUST ; les 150 IDs sont conservés. Les deux patchs PRD sont appliqués et les huit lots acceptés. Le [validateur reproductible](../scripts/README.md) couvre aussi les contrats exécutés du Lot 0.
 
-Le socle local est réalisé et vérifié : [rapport](LOT-0-REPORT.md), [mesures préliminaires](LOT-0-CONTENTION.json), [démarrage](../README.md). R-CONT-01 demeure ouvert : le test de métadonnées ne remplace pas le spike B multi-scènes. La prochaine étape nécessite la réception du Lot 0 et une autorisation explicite avant Lot 1.
+Le socle local est réalisé et vérifié : [rapport](LOT-0-REPORT.md), [mesures préliminaires](LOT-0-CONTENTION.json), [démarrage](../README.md). R-CONT-01 demeure ouvert : le test de métadonnées ne remplace pas le spike B multi-scènes. La réception du Lot 0 et sa CI sont confirmées ; Lot 1 explicitement autorisé puis réalisé, [rapport](LOT-1-REPORT.md). Réception humaine requise avant Lot 2.
 
 ## Critères d'acceptation du document
 
@@ -163,5 +163,9 @@ Rapport autoportant reliant audit, écarts, options d'architecture, domaine, con
 | Classe | Décisions |
 |---|---|
 | **VALIDÉES POUR LOT 0** | GO-00..02, PRD/huit lots, PROP-10 MUST, monolithe/PostgreSQL, invariants transactionnels, rôles et identité OIDC, owner unique, auto-hébergement local. Verrou projet toujours provisoire. |
-| **À VALIDER AVANT LE LOT CONCERNÉ** | Éditeur après spike A ; schémas/modules ; invitations/transfert owner ; propositions après spike B (PROP-10 MUST déjà validée) ; fournisseurs/clés/consentement/budget ; OAuth et clients MCP après spike C ; rétention, exploitation, restauration et risques résiduels avant production (GO-03..04). |
+| **À VALIDER AVANT LE LOT CONCERNÉ** | Présentation et limites du Lot 1 ; schémas/modules ; invitations/transfert owner ; propositions après spike B (PROP-10 MUST déjà validée) ; fournisseurs/clés/consentement/budget ; OAuth et clients MCP après spike C ; rétention, exploitation, restauration et risques résiduels avant production (GO-03..04). |
 | **NON BLOQUANTE** | Bibliothèque UI secondaire, modèles de genres, quotas commerciaux, séries partagées entre projets, calendriers avancés, CRDT et autres choix V1/V2+ sans impact requis sur le socle (GO-05). |
+
+## Réalisation du Lot 1
+
+ADR-0007 accepté, atelier riche et révisions PostgreSQL, autosave fiable, historique et export éditorial livrés pour réception locale. Le [rapport](LOT-1-REPORT.md) distingue preuves documentaires, tests applicatifs, navigateur et [mesures B-01..05](measurements/LOT-1-CONTENTION.md). La barrière fine reste limitée au texte d’une scène ; structure/révocation et futurs traitements multi-objets conservent l’exclusivité projet. Aucun Lot 2 n’est commencé, aucun autre ADR proposé n’est accepté par cette réalisation.

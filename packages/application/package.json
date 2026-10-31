@@ -5,7 +5,8 @@
   "type": "module",
   "dependencies": {
     "@storymaster/domain": "*",
-    "@storymaster/contracts": "*"
+    "@storymaster/contracts": "*",
+    "@storymaster/editor": "*"
   },
   "exports": {
     ".": "./src/index.ts"

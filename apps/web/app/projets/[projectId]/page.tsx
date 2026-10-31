@@ -31,7 +31,7 @@ export default function ProjectPage(){
  const canEdit=project?.role==='owner' || project?.role==='admin';
  return <Shell><Link className="back-link" href="/projets">← Mes projets</Link>{loading ? <p role="status">Chargement du projet…</p> : !project ? <><ErrorNotice message={error ?? 'Ressource introuvable.'}/><button className="text-button" onClick={()=>void load()}>Réessayer</button></> : <>
  <div className="page-heading"><div><span className="eyebrow">VOTRE PROJET LITTÉRAIRE</span><h1>{project.name}</h1><p>Les premières intentions de votre histoire.</p></div><span className="status-badge">{project.status==='archived' ? 'Archivé' : 'Projet privé'}</span></div>
- <div className="form-grid"><section className="panel form-panel"><h2>À propos du projet</h2><p className="muted">Un cadre pour les idées qui viendront.</p>
+ <p><Link className="button" href={`/projets/${projectId}/ecriture`}>Ouvrir l’atelier d’écriture →</Link></p><div className="form-grid"><section className="panel form-panel"><h2>À propos du projet</h2><p className="muted">Un cadre pour les idées qui viendront.</p>
  {error && <ErrorNotice message={error}/>} {conflict && <button type="button" className="text-button" onClick={()=>{if(window.confirm('Recharger les informations et abandonner vos modifications non enregistrées ?'))void load();}}>Recharger les informations</button>}
  {saved && <div className="notice success" role="status">Informations enregistrées.</div>}
  {project.status==='archived' && <div className="notice" role="status">Ce projet est archivé. Ses informations et son historique sont conservés.</div>}

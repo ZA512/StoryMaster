@@ -46,3 +46,8 @@ Décideur/date/source d'accord explicites ; deux patchs appliqués une seule foi
 Le propriétaire approuve la réception du Lot 0 « sous réserve du fonctionnement confirmé et des contrôles CI », par l’instruction « Réception du Lot 0 et Spike A préalable au Lot 1 ». Le dépôt est propre au départ sur `ea27725a470233882a558a6575e274b7771e7d1a` ; les quatre services locaux sont sains et la [CI de ce commit](https://github.com/ZA512/StoryMaster/actions/runs/41148886995) est terminée avec succès. Les tests du socle seront aussi rejoués pendant cette passe.
 
 Cette réception conserve explicitement les risques et limites du [rapport Lot 0](LOT-0-REPORT.md), dont verrou projet provisoire, RLS non activée, révocation IdP non globale, exploitation publique/backups futurs et absence de qualification de charge. GO-00..02 et PROP-10 ne changent pas. Seul le prototype isolé Spike A est autorisé ; ADR-0007 demeure une décision proposée à présenter au propriétaire après mesures. Aucune fonctionnalité de production Lot 1 n’est autorisée.
+
+
+## ADR-0007 acceptée et Lot 1 autorisé — 31 octobre 2026
+
+Instruction explicite du propriétaire : « GO pour l’ADR-0007 : JSON ProseMirror versionné dans PostgreSQL, snapshots métier internes, révisions optimistes et diff riche avec fallback ». Implémentation complète du Lot 1 MVP autorisée, réception avant Lot 2. Le dépôt était propre sur `3f0134cfb90d57d295808363439b9ec085c9a768` ; [CI de ce commit](https://github.com/ZA512/StoryMaster/actions/runs/41187721831) terminée avec succès (jobs validate et spike-a). GO-00..02 et les autres statuts d’ADR ne sont pas modifiés. Les cas B-01..05 doivent mesurer des scènes réelles avant généralisation ; B-06 dépend toujours des propositions futures.

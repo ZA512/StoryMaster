@@ -18,3 +18,4 @@ export type UserDto = z.infer<typeof userSchema>;
 export interface Page<T> { items: T[]; nextCursor: string | null; hasMore: boolean }
 export interface MeDto { user: UserDto; csrfToken: string; expiresAt: string }
 export interface ErrorDto { error: { code: string; message: string; correlationId: string; retryable: boolean; details?: Record<string, unknown> } }
+export * from './editorial.ts';

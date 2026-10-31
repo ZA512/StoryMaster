@@ -124,3 +124,7 @@ Contexte et options initiaux conservés ; forces, recommandation, alternatives, 
 Décideur : propriétaire du projet, instruction explicite « Validation des décisions et implémentation du Lot 0 ». Principes acceptés : monolithe modulaire TypeScript, source de vérité PostgreSQL, cas d’usage communs, révisions optimistes, atomicité, historique/audit et outbox pour effets externes nécessaires. Les fonctions futures ne sont pas implémentées au Lot 0.
 
 Le verrou exclusif par projet reste **provisoire**, à mesurer ; seule l’obligation d’atomicité et de contrôle de concurrence est définitivement acceptée. Premières mesures dès Lot 0 sur métadonnées de projets ; spike B complet idéalement avant généralisation des sauvegardes du Lot 1.
+
+## Adaptation mesurée du Lot 1 — 31 octobre 2026
+
+L’[ADR-0010](0010-atelier-ecriture-et-concurrence.md) précise la barrière : les sauvegardes/restaurations du texte d’une seule scène prennent Project partagé puis Scene exclusif ; structure, métadonnées, archivage et futurs traitements multi-objets restent exclusifs au projet. Les verrous des seules scènes ne remplacent pas la frontière projet. Le [rapport Lot 1](../LOT-1-REPORT.md) compare les deux stratégies sur PostgreSQL avec contrôle de contenu/snapshots, conflits légitimes et révocations. Cette adaptation du verrou provisoire est autorisée par la mission Lot 1 ; elle ne valide pas les propositions encore absentes.

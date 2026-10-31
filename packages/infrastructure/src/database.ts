@@ -1,13 +1,14 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
-import { readFile } from 'node:fs/promises';
+import { readFile,readdir } from 'node:fs/promises';
 import pg from 'pg';
+import { PostgresEditorialStore } from './editorial.ts';
 import type { PoolClient, QueryResultRow } from 'pg';
 import type { Actor, AuditEvent, Identity, Project, ProjectWithRole, Role, User } from '@storymaster/domain';
 import { AppError, unauthenticated } from '@storymaster/domain';
 import type { ProjectPosition, Transaction, UnitOfWork } from '@storymaster/application';
 export const { Pool } = pg;
-export type Metric = { name: 'project.lock_wait_ms' | 'project.lock_hold_ms'; value: number };
+export type Metric = { name: 'project.lock_wait_ms' | 'project.lock_hold_ms' | 'scene.lock_wait_ms' | 'scene.lock_hold_ms'; value: number; mode:'exclusive'|'shared' };
 export const sha256 = (text: string) => createHash('sha256').update(text).digest('hex');
 export async function migrate(pool: pg.Pool): Promise<void> {
   const client = await pool.connect();
@@ -15,14 +16,12 @@ export async function migrate(pool: pg.Pool): Promise<void> {
     await client.query('BEGIN');
     await client.query("SELECT pg_advisory_xact_lock(hashtextextended('storymaster.migrations',0))");
     await client.query('CREATE TABLE IF NOT EXISTS schema_migrations (name text PRIMARY KEY, checksum text NOT NULL, applied_at timestamptz NOT NULL DEFAULT now())');
-    const sql = await readFile(new URL('../migrations/0001-foundations.sql',import.meta.url),'utf8');
-    const checksum = sha256(sql), name = '0001-foundations';
-    const old = await client.query<{checksum:string}>('SELECT checksum FROM schema_migrations WHERE name=$1',[name]);
-    if (old.rows[0]) {
-      if (old.rows[0].checksum !== checksum) throw new Error('Migration déjà appliquée avec une autre empreinte.');
-    } else {
-      await client.query(sql);
-      await client.query('INSERT INTO schema_migrations(name,checksum) VALUES ($1,$2)',[name,checksum]);
+    const directory=new URL('../migrations/',import.meta.url);
+    for(const file of (await readdir(directory)).filter(f=>/^\d{4}-[a-z0-9-]+\.sql$/.test(f)).sort()) {
+      const sql=await readFile(new URL(file,directory),'utf8'),checksum=sha256(sql),name=file.slice(0,-4);
+      const old=await client.query<{checksum:string}>('SELECT checksum FROM schema_migrations WHERE name=$1',[name]);
+      if(old.rows[0]) { if(old.rows[0].checksum!==checksum)throw new Error('Migration déjà appliquée avec une autre empreinte.'); }
+      else { await client.query(sql);await client.query('INSERT INTO schema_migrations(name,checksum) VALUES ($1,$2)',[name,checksum]); }
     }
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
@@ -40,6 +39,8 @@ export class PostgresUnitOfWork implements UnitOfWork {
   constructor(public pool: pg.Pool, private observe: (metric: Metric) => void = () => {}) {}
   async transaction<T>(work: (tx: Transaction) => Promise<T>): Promise<T> {
     const client = await this.pool.connect();
+    let broken=false;
+    const connectionError=()=>{broken=true;};client.on('error',connectionError);
     const tx = new PostgresTransaction(client,this.observe);
     try {
       await client.query('BEGIN');
@@ -49,16 +50,18 @@ export class PostgresUnitOfWork implements UnitOfWork {
       await client.query('COMMIT');
       return result;
     } catch (error) {
-      await client.query('ROLLBACK');
-      if (error && typeof error === 'object' && 'code' in error && ['40P01','55P03','57014','40001'].includes(String(error.code))) throw new AppError('TEMPORARILY_UNAVAILABLE','Le service est occupé. Réessayez dans un instant.',503);
+      try{await client.query('ROLLBACK');}catch{broken=true;}
+      if (broken || (error && typeof error === 'object' && 'code' in error && (['40P01','55P03','57014','40001','57P01','ECONNRESET','EPIPE'].includes(String(error.code))||String(error.code).startsWith('08')))) throw new AppError('TEMPORARILY_UNAVAILABLE','Le service est occupé. Réessayez dans un instant.',503);
       throw error;
-    } finally { tx.finish(); client.release(); }
+    } finally { tx.finish();client.off('error',connectionError);client.release(broken); }
   }
 }
 class PostgresTransaction implements Transaction {
   private lockStarted?: number;
-  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {}
-  finish() { if (this.lockStarted !== undefined) this.observe({name:'project.lock_hold_ms',value:performance.now()-this.lockStarted}); }
+  readonly editorial:PostgresEditorialStore;
+  private lockMode:'exclusive'|'shared'='exclusive';
+  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.editorial=new PostgresEditorialStore(client,observe);}
+  finish() { this.editorial.finish();if (this.lockStarted !== undefined) this.observe({name:'project.lock_hold_ms',value:performance.now()-this.lockStarted,mode:this.lockMode}); }
   async assertActor(actor: Actor) {
     const result = await this.client.query(`SELECT u.id FROM sessions s JOIN app_users u ON u.id=s.user_id
       WHERE s.token_hash=$1 AND s.user_id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active' FOR SHARE OF s`,[actor.sessionHash,actor.userId]);
@@ -73,19 +76,20 @@ class PostgresTransaction implements Transaction {
       WHERE m.user_id=$1 AND m.status='active' AND ($3::timestamptz IS NULL OR (p.created_at,p.id)<($3::timestamptz,$4::uuid)) ORDER BY p.created_at DESC,p.id DESC LIMIT $2`,[userId,limit,after?.timestamp ?? null,after?.id ?? null]);
     return result.rows.map(row => ({project:project(row),position:{timestamp:row.cursor_timestamp,id:row.id}}));
   }
-  async lockProject(id:string) {
+  async lockProject(id:string,mode:'exclusive'|'shared'='exclusive') {
+    this.lockMode=mode;
     const start=performance.now();
-    await this.client.query('SELECT id FROM projects WHERE id=$1 FOR UPDATE',[id]);
+    await this.client.query(mode==='exclusive' ? 'SELECT id FROM projects WHERE id=$1 FOR UPDATE' : 'SELECT id FROM projects WHERE id=$1 FOR SHARE',[id]);
     this.lockStarted=performance.now();
-    this.observe({name:'project.lock_wait_ms',value:this.lockStarted-start});
+    this.observe({name:'project.lock_wait_ms',value:this.lockStarted-start,mode});
   }
   async lockIdempotency(scope:string,key:string) { await this.client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[scope+sha256(key)]); }
-  async findIdempotency(scope:string,key:string) {
+  async findIdempotency<T=ProjectWithRole>(scope:string,key:string) {
     await this.client.query('DELETE FROM idempotency_records WHERE scope_hash=$1 AND key_hash=$2 AND expires_at<=clock_timestamp()',[scope,sha256(key)]);
-    const result = await this.client.query<{fingerprint:string;response:ProjectWithRole}>('SELECT fingerprint,response FROM idempotency_records WHERE scope_hash=$1 AND key_hash=$2',[scope,sha256(key)]);
+    const result = await this.client.query<{fingerprint:string;response:T}>('SELECT fingerprint,response FROM idempotency_records WHERE scope_hash=$1 AND key_hash=$2',[scope,sha256(key)]);
     return result.rows[0] ?? null;
   }
-  async saveIdempotency(scope:string,key:string,hash:string,response:ProjectWithRole) {
+  async saveIdempotency(scope:string,key:string,hash:string,response:unknown) {
     await this.client.query('INSERT INTO idempotency_records(scope_hash,key_hash,fingerprint,response) VALUES ($1,$2,$3,$4)',[scope,sha256(key),hash,JSON.stringify(response)]);
   }
   async insertProject(p:Project) {

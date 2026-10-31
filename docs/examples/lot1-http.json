@@ -1,0 +1,65 @@
+{
+  "status": "Exemples synthétiques ; aucune preuve de test exécuté. Réponses réelles validées par tests/editorial-http.test.ts.",
+  "responses": [
+    {
+      "path": "/projects/{projectId}/manuscripts",
+      "method": "get",
+      "request": {
+        "headers": {}
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "projectId": "971027ea-3573-4d2e-978e-b87f80856ca5",
+          "revision": 1,
+          "structureRevision": 1,
+          "manuscripts": []
+        }
+      }
+    },
+    {
+      "path": "/projects/{projectId}/scenes/{sceneId}/content",
+      "method": "put",
+      "request": {
+        "headers": {
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "example-lot1-save",
+          "If-Match": "\"r1\""
+        },
+        "body": {
+          "contentFormatVersion": 1,
+          "content": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Élise et Noël 👩🏽‍💻",
+                    "marks": [
+                      {
+                        "type": "italic"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "4f7db0aa-3349-4e56-9ce5-365888726ad1",
+          "revision": 2,
+          "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "wordCount": 4,
+          "updatedAt": "2026-10-31T12:00:00Z",
+          "changeSetId": "971027ea-3573-4d2e-978e-b87f80856ca5"
+        }
+      }
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 # Audit des documents de référence
 
-**Statut :** Audit terminé ; arbitrages proposés, non validés. **Date :** 30 octobre 2026.
-**Portée :** documents présents, aucune application existante. **Références :** [PRD](PRD.md), [R-A](deep-research-analyse-fonction.md), [R-M](deep-research-modele-fonctionnel.md), [sources](RESEARCH-SOURCES.md).
+**Statut :** Audit initial du 30 octobre, complété par décisions humaines et réalisation Lots 0/1 le 31 octobre 2026 ; réception Lot 1 attendue.
+**Portée :** audit initial documentaire, puis suivi des réalisations autorisées ; historique conservé. **Références :** [PRD](PRD.md), [R-A](deep-research-analyse-fonction.md), [R-M](deep-research-modele-fonctionnel.md), [sources](RESEARCH-SOURCES.md).
 
 ## Synthèse
 
-AGENTS.md absent à l'ouverture ; trois références lues dans l'ordre demandé. Architecture, domaine, API, sécurité et cinq ADR déjà présents et cohérents dans leurs grandes lignes. Traçabilité encore « NON_ANALYSE ». Plan, contrats machine, fixtures et tests de contrat absents. Aucun ADR accepté. Les fichiers étaient non suivis par Git ; leur présence ne vaut pas validation.
+À l’ouverture de l’audit initial : AGENTS.md absent ; trois références lues dans l'ordre demandé. Architecture, domaine, API, sécurité et cinq ADR déjà présents et cohérents dans leurs grandes lignes. Traçabilité encore « NON_ANALYSE ». Plan, contrats machine, fixtures et tests de contrat absents. Aucun ADR accepté. Les fichiers étaient non suivis par Git ; leur présence ne vaut pas validation.
 
 Attention aux noms : R-A expose surtout le modèle central, API et IA ; R-M expose surtout la comparaison des logiciels et le catalogue produit. La présente analyse se fonde sur les titres réels, sans inverser les fichiers.
 
@@ -111,3 +111,9 @@ Le [rapport du 31 octobre](LOT-0-REPORT.md) remplace les mentions historiques «
 Instruction explicite du propriétaire : réception sous réserve de fonctionnement et CI, puis prototype A isolé. Départ Git propre sur ea27725 ; la CI GitHub correspondante est terminée avec succès et les services locaux sont sains. L’accord de réception est enregistré, les risques résiduels maintenus, sans modifier GO-00..02. AGENTS est actualisé uniquement pour refléter cette autorisation de spike et l’interdiction persistante du Lot 1 en production.
 
 Le [rapport du Spike A](SPIKE-A-REPORT.md) consigne prototype, corpus, tests, pertes Markdown, mesures, limites et décision proposée. L’enveloppe du laboratoire et sa migration v1/v2 fictive sont distinguées du contrat Scene inchangé ; aucune décision de version de production n’est prise implicitement. ADR-0007 reste Proposée avec une recommandation GO étayée. Les dépendances restent dans spikes/editor, isolées des workspaces/images applicatives ; aucune API/authentification/permission applicative modifiée. La PostgreSQL du spike est en tmpfs, aucun volume persistant ni donnée applicative du Lot 0 réinitialisé.
+
+## Exécution autorisée du Lot 1 — 31 octobre 2026
+
+Le propriétaire accepte explicitement ADR-0007 et autorise Lot 1 après CI verte du commit Spike A 3f0134c. AGENTS, registre, plan et ADR sont alignés sur cette nouvelle portée ; leur ancienne interdiction du Lot 1 est remplacée, pas celle du Lot 2. Aucun autre ADR proposé n’est accepté automatiquement. JSON ProseMirror v1 conservé, Markdown dérivé, Yjs isolé. Les contrats, exemples et contrôles CI sont synchronisés avec les routes réellement implémentées.
+
+Le risque R-CONT-01 est mesuré sur scènes indépendantes/plusieurs auteurs, gros textes et projets distincts. [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md) documente une barrière partagée limitée au texte des scènes, verrou de scène et compteur séparé ; tous changements structurels et futurs traitements multi-objets restent sous exclusivité projet. Pas de généralisation à une capacité commerciale ni d’affirmation que B-06 est testé. [Rapport](LOT-1-REPORT.md) et inventaire recensent les preuves et limitations. Les 150 exigences et leurs priorités sont conservées.

@@ -948,3 +948,7 @@ CT-01..30 présents dans l'ordre demandé, tous avec préconditions, acteur, req
 ## Exécution du socle au Lot 0
 
 Les 50 CT restent des scénarios de référence MVP ; leur présence ne signifie pas qu’ils ont tous été exécutés. Les scénarios concrets identité/projets/session/permissions/transactions du Lot 0 sont exécutables dans `tests/foundations.test.ts`, `tests/oidc.test.ts` et `tests/e2e/lot0.spec.ts`. [Exemples HTTP](examples/lot0-http.json), [rapport avec résultats réels](LOT-0-REPORT.md) et [ADR de mise en œuvre](adr/0009-socle-executable-lot-0.md) précisent les correspondances et limites. Les propositions, scènes, graphes, IA et MCP ne sont pas implémentés ; aucun de leurs CT n’est déclaré réussi sur un runtime.
+
+## Preuves du Lot 1 et portée des scénarios
+
+CT-05/06/26/35/36/46 sont reliés aux tests exécutables `tests/editorial.test.ts`, `tests/editorial-http.test.ts`, `tests/autosave.test.ts` et `tests/e2e/lot1.spec.ts`. Le premier teste sur PostgreSQL contenu exact, snapshots contigus, rollback, clés composites, rôles/révocations et concurrence ; le second valide les réponses HTTP réellement observées contre OpenAPI ; les tests d’autosave contrôlent générations et idempotence après réponse perdue ; Chromium contrôle les parcours utilisateur. Le [rapport](LOT-1-REPORT.md) distingue commandes exécutées, limites et scénarios futurs. Les 50 CT déclaratifs ne deviennent pas tous exécutés ; B-06 propositions reste futur.
