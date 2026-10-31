@@ -32,6 +32,8 @@ class ValidatorTests(unittest.TestCase):
         shutil.copytree(ROOT / "scripts", self.root / "scripts",
                         ignore=shutil.ignore_patterns("__pycache__"))
         shutil.copy2(ROOT / "AGENTS.md", self.root / "AGENTS.md")
+        shutil.copy2(ROOT / "README.md", self.root / "README.md")
+        shutil.copytree(ROOT / ".github", self.root / ".github")
 
     def mutate_json(self, relative, mutate):
         path = self.root / relative
@@ -42,6 +44,24 @@ class ValidatorTests(unittest.TestCase):
     def test_current_dossier(self):
         with contextlib.redirect_stdout(io.StringIO()):
             validation.validate_all(self.root)
+
+    def test_lot0_cannot_accept_bearer_instead_of_session(self):
+        oas = validation.load_yaml(self.root / "docs/spec/openapi.yaml")
+        oas["paths"]["/projects"]["post"]["security"] = [{"bearerAuth": []}]
+        with self.assertRaisesRegex(validation.InvalidSpecification, "sécurité de session"):
+            validation.validate_lot0(oas)
+
+    def test_lot0_cannot_make_cas_optional(self):
+        oas = validation.load_yaml(self.root / "docs/spec/openapi.yaml")
+        oas["components"]["parameters"]["ProjectIfMatch"]["required"] = False
+        with self.assertRaisesRegex(validation.InvalidSpecification, "précondition forte"):
+            validation.validate_lot0(oas)
+
+    def test_lot0_cannot_accept_client_role(self):
+        oas = validation.load_yaml(self.root / "docs/spec/openapi.yaml")
+        oas["components"]["schemas"]["ProjectCreate"]["properties"]["role"] = {"type": "string"}
+        with self.assertRaisesRegex(validation.InvalidSpecification, "rôle client interdit"):
+            validation.validate_lot0(oas)
 
     def test_duplicate_json_key(self):
         path = self.root / "docs/spec/requirements.json"
@@ -75,9 +95,9 @@ class ValidatorTests(unittest.TestCase):
         with self.assertRaisesRegex(validation.InvalidSpecification, "priority"):
             validation.validate_requirements(self.root)
 
-    def test_prop10_cannot_be_promoted_without_prd_change(self):
+    def test_prop10_priority_must_match_approved_prd(self):
         def change(data):
-            next(row for row in data["requirements"] if row["id"] == "PROP-10")["priority"] = "MUST"
+            next(row for row in data["requirements"] if row["id"] == "PROP-10")["priority"] = "SHOULD"
         self.mutate_json("docs/spec/requirements.json", change)
         with self.assertRaisesRegex(validation.InvalidSpecification, "PROP-10.priority"):
             validation.validate_requirements(self.root)

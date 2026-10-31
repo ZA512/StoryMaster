@@ -1,7 +1,7 @@
 # Architecture technique — Plateforme de création littéraire
 
 **Version :** 0.2  
-**Statut :** Architecture de référence proposée  
+**Statut :** Principes GO-01 acceptés, socle Lot 0 exécuté ; détails futurs proposés
 **Références :** `PRD.md`, `DOMAIN-MODEL.md`
 
 ## 1. Objectifs
@@ -709,3 +709,7 @@ Risque principal : sérialisation de toutes les écritures d'un projet sous char
 ## Critères d'acceptation du document
 
 Lecture, préparation, preview et merge sont retraçables avec identités, transactions et stockage ; le diagramme interdit tout accès IA/MCP direct à DB ; chaque effet externe a une politique de reprise ; les 25 questions ont une réponse ou décision ouverte ; la stratégie de verrou explique cycles et concurrence création/suppression, pas seulement les mises à jour de lignes existantes.
+
+## Décisions d’exécution du Lot 0 — 31 octobre 2026
+
+Première cible validée : **auto-hébergement Docker Compose**, SaaS possible ultérieurement. Backend Fastify/TypeScript et frontend Next.js/React/TypeScript ; PostgreSQL source de vérité ; OIDC Code + PKCE avec Keycloak en développement, sessions serveur. Les recommandations SaaS initiales des sections de comparaison constituent désormais un historique, pas la cible retenue. Les adaptateurs IA/MCP et worker réutiliseront les services applicatifs mais ne sont pas implémentés au Lot 0.

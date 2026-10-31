@@ -2,10 +2,12 @@ openapi: 3.1.1
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 info:
   title: StoryMaster — contrats de spécification
-  version: 0.2.0-proposed
-  description: Conception sans serveur ; décisions proposées au 30 octobre 2026. OpenAPI 3.1.1 choisi pour outillage,
-    sans prétendre être la dernière version.
+  version: 0.3.0
+  description: 'Contrats MVP. Les opérations x-lot: 0 sont implémentées pour session humaine ; les autres restent
+    des spécifications futures. Aucun serveur MCP au Lot 0.'
 servers:
+- url: http://localhost:3000/api/v1
+  description: Docker Compose local seulement
 - url: https://storymaster.example/api/v1
   description: Exemple réservé, aucun service déployé
 security:
@@ -68,6 +70,75 @@ paths:
         $ref: '#/components/parameters/Limit'
       - &id003
         $ref: '#/components/parameters/Cursor'
+      x-lot: 0
+      security:
+      - webSession: []
+    post:
+      operationId: projectCreate
+      summary: Créer un projet privé et son owner atomiquement
+      x-lot: 0
+      x-permission: project.create
+      x-audit: A1
+      security:
+      - webSession: []
+      responses:
+        '201':
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+              description: 'Pour un projet : "rN".'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+      parameters:
+      - $ref: '#/components/parameters/CSRF'
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 8
+          maxLength: 200
   /projects/{projectId}:
     parameters:
     - name: projectId
@@ -127,6 +198,76 @@ paths:
           $ref: '#/components/responses/Error500'
         '503':
           $ref: '#/components/responses/Error503'
+      x-lot: 0
+      security:
+      - webSession: []
+    patch:
+      operationId: projectUpdate
+      summary: Modifier les métadonnées (owner/admin humain)
+      x-lot: 0
+      x-permission: project.admin
+      x-audit: A1
+      security:
+      - webSession: []
+      responses:
+        '200':
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+              description: 'Pour un projet : "rN".'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdate'
+      parameters:
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/ProjectIfMatch'
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          minLength: 8
+          maxLength: 200
   /projects/{projectId}/context:
     parameters:
     - name: projectId
@@ -1233,6 +1374,304 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProposalAction'
+  /projects/{projectId}/archive:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+        pattern: ^[A-Za-z0-9_-]+$
+    post:
+      operationId: projectArchive
+      summary: Archiver sans destruction
+      x-lot: 0
+      x-permission: project.admin
+      x-audit: A1
+      security:
+      - webSession: []
+      responses:
+        '200':
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+              description: 'Pour un projet : "rN".'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmptyBody'
+      parameters:
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/ProjectIfMatch'
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 8
+          maxLength: 200
+  /projects/{projectId}/restore:
+    parameters:
+    - name: projectId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+        pattern: ^[A-Za-z0-9_-]+$
+    post:
+      operationId: projectRestore
+      summary: Réactiver avec une nouvelle révision
+      x-lot: 0
+      x-permission: project.admin
+      x-audit: A1
+      security:
+      - webSession: []
+      responses:
+        '200':
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+              description: 'Pour un projet : "rN".'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmptyBody'
+      parameters:
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/ProjectIfMatch'
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema:
+          type: string
+          minLength: 8
+          maxLength: 200
+  /me:
+    get:
+      operationId: identityGet
+      summary: Identité de la session courante
+      x-lot: 0
+      x-permission: session.read
+      x-audit: A0
+      security:
+      - webSession: []
+      responses:
+        '200':
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Me'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+              description: 'Pour un projet : "rN".'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+  /session/logout:
+    post:
+      operationId: sessionLogout
+      summary: Révoquer la session et retourner le logout OIDC
+      x-lot: 0
+      x-permission: session.revoke
+      x-audit: A1
+      security:
+      - webSession: []
+      responses:
+        '200':
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Logout'
+                required:
+                - data
+                additionalProperties: false
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+              description: 'Pour un projet : "rN".'
+        '400':
+          $ref: '#/components/responses/Error400'
+        '401':
+          $ref: '#/components/responses/Error401'
+        '403':
+          $ref: '#/components/responses/Error403'
+        '404':
+          $ref: '#/components/responses/Error404'
+        '409':
+          $ref: '#/components/responses/Error409'
+        '412':
+          $ref: '#/components/responses/Error412'
+        '422':
+          $ref: '#/components/responses/Error422'
+        '428':
+          $ref: '#/components/responses/Error428'
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+        '503':
+          $ref: '#/components/responses/Error503'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmptyBody'
+      parameters:
+      - $ref: '#/components/parameters/CSRF'
+  /auth/login:
+    get:
+      operationId: oidcStart
+      summary: Démarrer Code + PKCE S256 avec nonce/state
+      x-lot: 0
+      security: []
+      servers:
+      - url: http://localhost:3000
+        description: Origine locale ; HTTPS requis hors local
+      responses:
+        '302':
+          description: Redirection fixe vers IdP ou application ; cookie HttpOnly, Secure hors local, SameSite=Lax.
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
+  /auth/callback:
+    get:
+      operationId: oidcCallback
+      summary: Consommer le callback une seule fois et établir la session
+      x-lot: 0
+      security: []
+      servers:
+      - url: http://localhost:3000
+        description: Origine locale ; HTTPS requis hors local
+      responses:
+        '302':
+          description: Redirection fixe vers IdP ou application ; cookie HttpOnly, Secure hors local, SameSite=Lax.
+        '429':
+          $ref: '#/components/responses/Error429'
+        '500':
+          $ref: '#/components/responses/Error500'
 components:
   schemas:
     Id:
@@ -2269,18 +2708,39 @@ components:
           enum:
           - active
           - archived
-          - pending_deletion
         visibility:
           const: private
         language:
           type: string
-          maxLength: 20
+          maxLength: 35
+          pattern: ^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$
+        description:
+          type: string
+          maxLength: 4000
+        role:
+          enum:
+          - owner
+          - admin
+          - author
+          - reviewer
+          - reader
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
       required:
       - id
       - name
       - revision
       - status
       - visibility
+      - language
+      - description
+      - role
+      - createdAt
+      - updatedAt
       additionalProperties: false
     Entity:
       type: object
@@ -3407,6 +3867,92 @@ components:
       - reviewId
       - proposal
       additionalProperties: false
+    ProjectCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 4000
+        language:
+          type: string
+          maxLength: 35
+          pattern: ^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$
+      required:
+      - name
+      additionalProperties: false
+    ProjectUpdate:
+      type: object
+      properties:
+        set:
+          type: object
+          properties:
+            name:
+              type: string
+              minLength: 1
+              maxLength: 200
+            description:
+              type: string
+              maxLength: 4000
+            language:
+              type: string
+              maxLength: 35
+              pattern: ^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$
+          minProperties: 1
+          additionalProperties: false
+      required:
+      - set
+      additionalProperties: false
+    EmptyBody:
+      type: object
+      properties: {}
+      required: []
+      additionalProperties: false
+    Me:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            displayName:
+              type: string
+              maxLength: 200
+            email:
+              type:
+              - string
+              - 'null'
+          required:
+          - id
+          - displayName
+          - email
+          additionalProperties: false
+        csrfToken:
+          type: string
+          minLength: 43
+          maxLength: 43
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+      - user
+      - csrfToken
+      - expiresAt
+      additionalProperties: false
+    Logout:
+      type: object
+      properties:
+        redirectUrl:
+          type: string
+          format: uri
+      required:
+      - redirectUrl
+      additionalProperties: false
   parameters:
     IfMatch:
       name: If-Match
@@ -3433,12 +3979,31 @@ components:
       in: query
       schema:
         type: string
+        maxLength: 2000
+    ProjectIfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema:
+        type: string
+        pattern: ^"r[1-9][0-9]*"$
+      description: 'Révision de projet forte : "rN" ; absence 428, révision périmée 412.'
+    CSRF:
+      name: X-CSRF-Token
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 43
+        maxLength: 43
+      description: Token lié à la session retourné par /me ; Origin doit égaler PUBLIC_ORIGIN.
   securitySchemes:
     webSession:
       type: apiKey
       in: cookie
-      name: __Host-storymaster
-      description: Session OIDC serveur proposée ; CSRF et Origin requis pour mutation.
+      name: __Host-sm_session
+      description: 'Cookie serveur HttpOnly, Secure, SameSite=Lax. En local HTTP seulement : sm_session_local. Origin
+        exact et X-CSRF-Token pour mutation. Identité vérifiée par issuer+subject ; aucun bearer au Lot 0.'
     bearerAuth:
       type: http
       scheme: bearer

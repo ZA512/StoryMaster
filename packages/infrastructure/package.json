@@ -1,0 +1,16 @@
+{
+  "name": "@storymaster/infrastructure",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@storymaster/domain": "*",
+    "@storymaster/application": "*",
+    "@storymaster/contracts": "*",
+    "pg": "8.23.1",
+    "openid-client": "6.8.8"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

@@ -56,3 +56,7 @@ IdP/AS exact, durées tokens, support legacy, politique transfert owner et expos
 ## Critères d'acceptation du document
 
 Options crédibles comparées ; recommandation distinguée du PRD ; statut non accepté ; conséquence durable et condition de réexamen explicites ; décisions ouvertes reliées au lot concerné.
+
+## Validation partielle GO-02 du 31 octobre 2026
+
+Rôles projet, owner unique, approbation/fusion humaines, auto-approbation owner humain, absence d’ACL par scène, clés personnelles et conversations privées sont validés. OIDC Code + PKCE, Keycloak local et sessions serveur sont acceptés ; première cible auto-hébergée Docker Compose. Les modalités OAuth/MCP, durées des grants et autres capacités futures restent proposées : cet ADR n’est pas accepté intégralement.

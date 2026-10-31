@@ -1,6 +1,6 @@
 # ADR-0003 — Propositions multi-objets et révisions optimistes
 
-**Statut :** Proposée  
+**Statut :** Acceptée
 **Date :** 2026-10-30
 
 ## Contexte
@@ -67,7 +67,7 @@ Il préfère refuser un conflit et permettre une résolution explicite.
 
 ## Consolidation du 30 octobre 2026
 
-**Portée :** MVP et points de réexamen V1. **Références :** [PRD](../PRD.md), [audit](../DOCUMENT-AUDIT.md), [architecture](../ARCHITECTURE.md), [sources vérifiées](../RESEARCH-SOURCES.md). **Synthèse :** proposition initiale conservée, précisée ci-dessous ; aucune acceptation humaine constatée.
+**Portée :** MVP et points de réexamen V1. **Références :** [PRD](../PRD.md), [audit](../DOCUMENT-AUDIT.md), [architecture](../ARCHITECTURE.md), [sources vérifiées](../RESEARCH-SOURCES.md). **Synthèse :** proposition initiale conservée, précisée ci-dessous ; principes acceptés par instruction du propriétaire du 31 octobre 2026.
 
 ### Forces / contraintes
 
@@ -113,8 +113,14 @@ Sans enveloppe de charge et mesures, aucune capacité n'est qualifiée. Si les c
 
 ### Questions ouvertes
 
-Versions exactes, limites mesurées et validation des politiques correspondantes dans le plan. Statut maintenu **Proposée**.
+Versions exactes, limites mesurées et validation des politiques correspondantes dans le plan. Statut **Acceptée** pour les principes définis ci-dessous.
 
 ### Critères d'acceptation du document
 
 Contexte et options initiaux conservés ; forces, recommandation, alternatives, conséquences, risques, confiance et conditions de réexamen identifiables ; aucune formulation ne prétend une acceptation inexistante.
+
+## Validation du 31 octobre 2026
+
+Décideur : propriétaire du projet, instruction explicite « Validation des décisions et implémentation du Lot 0 ». Principes acceptés : monolithe modulaire TypeScript, source de vérité PostgreSQL, cas d’usage communs, révisions optimistes, atomicité, historique/audit et outbox pour effets externes nécessaires. Les fonctions futures ne sont pas implémentées au Lot 0.
+
+Le verrou exclusif par projet reste **provisoire**, à mesurer ; seule l’obligation d’atomicité et de contrôle de concurrence est définitivement acceptée. Premières mesures dès Lot 0 sur métadonnées de projets ; spike B complet idéalement avant généralisation des sauvegardes du Lot 1.

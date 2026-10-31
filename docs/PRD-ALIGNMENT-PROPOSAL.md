@@ -1,4 +1,14 @@
-# Alignement minimal proposé du PRD
+# Alignement du PRD — décision appliquée
+
+**Statut :** Accepté et appliqué le 31 octobre 2026 par instruction explicite du propriétaire. **Portée :** §19 huit lots et PROP-10 MUST. **Références :** [PRD](PRD.md), [décisions](HUMAN-DECISIONS.md).
+
+Les deux patchs archivés dans proposals/ ont été appliqués, sans ajout V1/V2+ et sans modification des autres priorités. Le registre conserve 150 IDs et contient désormais 100 MUST MVP. Le test documentaire compare la priorité à cette source validée ; le nombre n'est pas une preuve suffisante.
+
+## Propositions et alternatives historiques
+
+La section suivante est l’état de la proposition avant accord ; ses commandes --check ne sont plus attendues réussir sur le PRD déjà patché. Aucun de ces patchs ne doit être réappliqué.
+
+## Texte de proposition conservé
 
 **Statut :** Proposé, non appliqué ; accord du propriétaire requis. **Portée :** §19 et une décision indépendante sur PROP-10. **Références :** [PRD actuel](PRD.md), [plan](IMPLEMENTATION-PLAN.md), [fiches GO](HUMAN-DECISIONS.md), [audit](DOCUMENT-AUDIT.md).
 

@@ -14,7 +14,8 @@
             "default": 20
           },
           "cursor": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 2000
           }
         },
         "required": [],
@@ -121,8 +122,7 @@
               "status": {
                 "enum": [
                   "active",
-                  "archived",
-                  "pending_deletion"
+                  "archived"
                 ]
               },
               "visibility": {
@@ -130,7 +130,29 @@
               },
               "language": {
                 "type": "string",
-                "maxLength": 20
+                "maxLength": 35,
+                "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "role": {
+                "enum": [
+                  "owner",
+                  "admin",
+                  "author",
+                  "reviewer",
+                  "reader"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
               }
             },
             "required": [
@@ -138,7 +160,12 @@
               "name",
               "revision",
               "status",
-              "visibility"
+              "visibility",
+              "language",
+              "description",
+              "role",
+              "createdAt",
+              "updatedAt"
             ],
             "additionalProperties": false
           },
@@ -297,8 +324,7 @@
               "status": {
                 "enum": [
                   "active",
-                  "archived",
-                  "pending_deletion"
+                  "archived"
                 ]
               },
               "visibility": {
@@ -306,7 +332,29 @@
               },
               "language": {
                 "type": "string",
-                "maxLength": 20
+                "maxLength": 35,
+                "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "role": {
+                "enum": [
+                  "owner",
+                  "admin",
+                  "author",
+                  "reviewer",
+                  "reader"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
               }
             },
             "required": [
@@ -314,7 +362,12 @@
               "name",
               "revision",
               "status",
-              "visibility"
+              "visibility",
+              "language",
+              "description",
+              "role",
+              "createdAt",
+              "updatedAt"
             ],
             "additionalProperties": false
           },
@@ -412,7 +465,8 @@
             "default": 20
           },
           "cursor": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 2000
           }
         },
         "required": [
@@ -1096,7 +1150,8 @@
             "default": 20
           },
           "cursor": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 2000
           }
         },
         "required": [
@@ -1290,7 +1345,8 @@
             "default": 20
           },
           "cursor": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 2000
           }
         },
         "required": [

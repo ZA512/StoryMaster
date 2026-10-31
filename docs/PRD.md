@@ -1,7 +1,7 @@
 # PRD — Plateforme modulaire de création littéraire
 
 **Version :** 0.1  
-**Statut :** Proposition initiale — à consolider avec les recherches fonctionnelles  
+**Statut :** Référence produit MVP validée le 31 octobre 2026 — huit lots et PROP-10 MUST approuvés
 **Date :** 30 octobre 2026  
 **Nature :** Product Requirements Document (PRD)  
 **Public cible :** Responsable produit, concepteurs, développeurs, Codex, futurs contributeurs
@@ -694,7 +694,7 @@ Une proposition en conflit peut être révisée puis soumise à nouveau.
 | PROP-07 | Appliquer de manière atomique les modifications interdépendantes | MUST |
 | PROP-08 | Conserver un historique des validations et refus | MUST |
 | PROP-09 | Permettre les commentaires de revue | MUST |
-| PROP-10 | Permettre la révision d'une proposition | SHOULD |
+| PROP-10 | Permettre la révision d'une proposition | MUST |
 | PROP-11 | Détecter les impacts potentiels sur les objets liés | SHOULD |
 | PROP-12 | Permettre l'approbation partielle d'une proposition | V1 — SHOULD |
 | PROP-13 | Permettre des variantes narratives concurrentes | V2+ |
@@ -1254,7 +1254,7 @@ Le contenu de V2+ doit rester ajustable selon les usages constatés.
 
 ## 19. Ordre recommandé des lots de développement
 
-Les lots ci-dessous décrivent un ordre logique, sans imposer de durée.
+Les huit lots ci-dessous décrivent un ordre logique, sans imposer de durée.
 
 ### Lot 0 — Fondations
 
@@ -1269,7 +1269,7 @@ Les lots ci-dessous décrivent un ordre logique, sans imposer de durée.
 
 **Condition de sortie :** un utilisateur peut créer un projet privé et les tests prouvent qu'un autre utilisateur ne peut pas y accéder.
 
-### Lot 1 — Écriture
+### Lot 1 — Manuscrit et éditeur
 
 - manuscrits ;
 - chapitres ;
@@ -1294,33 +1294,48 @@ Les lots ci-dessous décrivent un ordre logique, sans imposer de durée.
 
 **Condition de sortie :** une scène peut référencer des objets stables, et l'utilisateur peut retrouver toutes les scènes liées à un personnage.
 
-### Lot 3 — Collaboration et propositions
+### Lot 3 — Collaboration asynchrone
 
 - invitations ;
 - rôles ;
 - commentaires ;
-- propositions ;
-- différences ;
+- attribution des contributions ;
+- protection contre les écrasements concurrents.
+
+**Condition de sortie :** deux utilisateurs peuvent contribuer et commenter selon leurs rôles sans écrasement silencieux ; les commentaires conservent leur contexte de passage.
+
+### Lot 4 — Propositions
+
+- propositions multi-objets ;
+- différences et prévisualisation ;
+- commentaires de revue ;
 - validation ;
 - conflits ;
-- fusion atomique.
+- approbation et fusion atomique.
 
-**Condition de sortie :** deux utilisateurs peuvent travailler sur un projet sans écrasement silencieux, et une proposition multi-objets peut être revue puis fusionnée.
+**Condition de sortie :** une proposition multi-objets peut être revue puis fusionnée entièrement ou refusée sans modification partielle ; toute approbation porte sur une révision précise.
 
-### Lot 4 — IA intégrée et MCP
+### Lot 5 — Assistant IA intégré
 
 - configuration des fournisseurs ;
 - contexte IA ;
 - conversation intégrée ;
 - outils métier ;
-- serveur MCP ;
-- autorisations déléguées ;
 - propositions IA ;
 - traçabilité.
 
-**Condition de sortie :** une IA externe ou intégrée peut lire les données autorisées et soumettre une proposition, mais ne peut pas contourner la validation.
+**Condition de sortie :** l'assistant intégré peut lire les données autorisées et préparer une proposition exploitable, sans pouvoir écrire directement le canon ni fusionner.
 
-### Lot 5 — Consolidation MVP
+### Lot 6 — MCP externe
+
+- adaptateur MCP vers les mêmes cas d'usage métier ;
+- autorisations déléguées ;
+- lectures et propositions contrôlées ;
+- révocation et traçabilité des accès externes.
+
+**Condition de sortie :** un client MCP peut lire et soumettre une proposition dans sa délégation, sans pouvoir approuver ou fusionner ; une révocation bloque les nouveaux appels.
+
+### Lot 7 — Consolidation / production
 
 - tests de sécurité ;
 - tests de charge ;

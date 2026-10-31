@@ -95,3 +95,12 @@ Sur-spécification des modules, coût du moteur de propositions, contrats OAuth/
 ## Critères d'acceptation du document
 
 Les 28 sections du PRD et toutes les grandes sections des deux recherches ont une conclusion ; divergences identifiées sans résolution silencieuse ; le registre des sources permet de distinguer vérifié, inaccessible et hypothétique ; les livrables existants ont été lus avant modification.
+
+## Autorisation de réalisation du 31 octobre 2026
+
+Le propriétaire accepte GO-00..02, les deux patchs PRD et PROP-10 MUST. Ils sont appliqués, avec 150 IDs et 100 MUST MVP. Auto-hébergement Docker Compose prioritaire (remplace la recommandation SaaS initiale), Keycloak local, TypeScript/Fastify/Next.js. ADR-0001/0002/0006 acceptés, ADR-0003 accepté sur invariants avec verrou provisoire ; ADR-0008 validé uniquement pour les principes GO-02. Lot 0 seul autorisé ; aucun autre ADR accepté automatiquement. L’exigence de conception seule d’AGENTS est actualisée conformément à cette instruction utilisateur.
+
+
+## Résultat de réalisation du Lot 0
+
+Le [rapport du 31 octobre](LOT-0-REPORT.md) remplace les mentions historiques « sans application » pour le socle uniquement. Les deux patchs PRD approuvés sont appliqués ; registre/backlog/matrice et contrats sont synchronisés. ADR-0009 documente les choix d’exécution, la portée de PROJ-10 et l’absence d’outbox sans effet externe. Les contrôles de contrats nouveaux, exemples, tests et état de la CI sont versionnés ensemble. La première qualification B porte sur les métadonnées, jamais sur de fausses scènes ; les tests futurs restent futurs. La modification d’AGENTS est limitée à l’autorisation explicite reçue. Aucun autre changement de priorité produit ni acceptation implicite d’une décision n’est introduit.

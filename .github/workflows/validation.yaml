@@ -1,0 +1,57 @@
+name: Documentation et Lot 0
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: validation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '26.8.1'
+          cache: npm
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: scripts/requirements-validation.txt
+      - name: Dépendances documentaires
+        run: python -m pip install -r scripts/requirements-validation.txt
+      - name: Contrats, traçabilité et tests du validateur
+        run: |
+          python scripts/validate_specifications.py
+          python -m unittest discover -s scripts/tests -v
+      - run: npm ci --no-audit --no-fund
+      - name: Lint et dépendances architecturales
+        run: npm run lint
+      - name: TypeScript
+        run: npm run typecheck
+      - name: Environnement réel PostgreSQL, Keycloak, API et web
+        run: |
+          cp .env.example .env
+          docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait
+      - name: Tests applicatifs et PostgreSQL
+        run: npm test
+      - name: Qualification préliminaire de contention
+        run: npm run bench:contention
+      - name: Navigateur
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+      - name: État des conteneurs en cas d'échec
+        if: failure()
+        run: docker compose -f compose.yaml -f compose.test.yaml ps -a
+      - name: Nettoyage de cet environnement CI éphémère
+        if: always()
+        run: docker compose -f compose.yaml -f compose.test.yaml down --volumes --remove-orphans

@@ -943,3 +943,8 @@ Valider un JSON ne prouve ni autorisation ni atomicité. Les simulations fournis
 ## Critères d'acceptation du document
 
 CT-01..30 présents dans l'ordre demandé, tous avec préconditions, acteur, requête, résultat, effets permis/interdits et exigence PRD ; compléments couvrant CSRF/XSS/SSRF/DoS, budgets concurrents, pool DB, backup et ancrages ; les fixtures ont des oracles cohérents avec les révisions ; aucun scénario décrit comme exécuté sur une application inexistante.
+
+
+## Exécution du socle au Lot 0
+
+Les 50 CT restent des scénarios de référence MVP ; leur présence ne signifie pas qu’ils ont tous été exécutés. Les scénarios concrets identité/projets/session/permissions/transactions du Lot 0 sont exécutables dans `tests/foundations.test.ts`, `tests/oidc.test.ts` et `tests/e2e/lot0.spec.ts`. [Exemples HTTP](examples/lot0-http.json), [rapport avec résultats réels](LOT-0-REPORT.md) et [ADR de mise en œuvre](adr/0009-socle-executable-lot-0.md) précisent les correspondances et limites. Les propositions, scènes, graphes, IA et MCP ne sont pas implémentés ; aucun de leurs CT n’est déclaré réussi sur un runtime.

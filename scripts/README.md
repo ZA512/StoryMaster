@@ -1,10 +1,10 @@
 # Validation documentaire et des contrats
 
-**Statut :** Outillage documentaire exécutable, sans application. **Portée :** CI ou exécution locale en lecture seule des documents. **Références :** [artefacts](../docs/spec/README.md), [preuves de validation](../docs/SPECIFICATION-VALIDATION.md).
+**Statut :** Outillage documentaire exécutable, complété par la CI et les tests applicatifs du Lot 0. **Portée :** CI ou exécution locale en lecture seule des documents. **Références :** [artefacts](../docs/spec/README.md), [preuves de validation](../docs/SPECIFICATION-VALIDATION.md).
 
 ## Synthèse et exécution CI
 
-Python 3.14, testé avec 3.14.8. Les dépendances de validation et leurs dépendances transitives sont épinglées dans `requirements-validation.txt`. Elles sont isolées de toute future dépendance applicative. L'installation télécharge ces paquets ; la validation elle-même n'utilise ni réseau, ni base, ni secret, ni fournisseur IA.
+Python 3.14, testé avec 3.14.8. Les dépendances de validation et leurs dépendances transitives sont épinglées dans `requirements-validation.txt`. Elles sont isolées de dépendances applicatives Node. L'installation télécharge ces paquets ; la validation elle-même n'utilise ni réseau, ni base, ni secret, ni fournisseur IA.
 
 Depuis la racine du dépôt, dans un shell CI configuré pour arrêter au premier échec :
 
@@ -36,8 +36,13 @@ La CI doit échouer sur les divergences ; aucune correction automatique ni promo
 
 ## Risques et questions ouvertes
 
-Les 19 tests de non-régression injectent notamment des erreurs à nombre d'IDs/outils constant, une promotion non autorisée de PROP-10, une base obsolète et une approbation non invalidée. Une CI verte ne prouve ni autorisation métier effective, ni transactions PostgreSQL, ni contention, ni compatibilité MCP runtime. Le spike B demeure à réaliser. La preuve de consentement humain est enregistrée dans les fiches GO ; le script ne peut pas attester seul de l'identité du décideur.
+Les 22 tests de non-régression injectent notamment des erreurs à nombre d'IDs/outils constant, une divergence de PROP-10 par rapport au PRD approuvé, une base obsolète et une approbation non invalidée. Une CI verte ne prouve ni autorisation métier effective, ni transactions PostgreSQL, ni contention, ni compatibilité MCP runtime. Le spike B complet demeure à réaliser ; la mesure préliminaire sur métadonnées est dans le rapport du Lot 0. La preuve de consentement humain est enregistrée dans les fiches GO ; le script ne peut pas attester seul de l'identité du décideur.
 
 ## Critères d'acceptation du document
 
 Installation isolée reproductible ; commande CI sans secret ; erreurs entraînant un code non nul ; contrôles sémantiques démontrés par mutations ; périmètre documentaire clairement séparé des futurs tests applicatifs.
+
+
+## Tests de l’application et contrats observés
+
+Voir le [README racine](../README.md) et le [rapport Lot 0](../docs/LOT-0-REPORT.md). `validate_runtime_contracts.py` reçoit uniquement via stdin des réponses Fastify réelles ; il les valide contre les chemins, méthodes et codes d’OpenAPI, sans afficher le contenu en cas d’erreur. Les tests Node appellent l’interpréteur `DOCUMENT_PYTHON` ou `python3` : activer le venv avant `npm test`. Le script documentaire reste indépendant des services et ne devient pas une simulation de tests métier.

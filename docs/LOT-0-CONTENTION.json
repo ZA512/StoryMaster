@@ -1,0 +1,147 @@
+{
+  "environment": {
+    "date": "2026-10-30T23:55:21.715Z",
+    "node": "v26.8.1",
+    "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "os": "linux 7.2.8-9-omarchy",
+    "cpus": 12,
+    "memoryGiB": 31.3,
+    "workers": 8,
+    "writesPerWorker": 20
+  },
+  "limits": "Qualification locale courte des métadonnées uniquement, sans scènes, sans garantie de capacité ni SLA. Temps client, réseau/pool inclus dans les latences ; verrou chronométré côté adaptateur. Spike B multi-scènes requis ultérieurement.",
+  "results": [
+    {
+      "mode": "same_project",
+      "successfulWrites": 160,
+      "retries": 608,
+      "failures": 0,
+      "deadlocks": 0,
+      "elapsedMs": 1700,
+      "writesPerSecond": 94.12,
+      "operationMs": {
+        "samples": 160,
+        "p50": 10.157,
+        "p95": 30.881,
+        "p99": 1367.742,
+        "max": 1575.953
+      },
+      "attemptMs": {
+        "samples": 768,
+        "p50": 9.511,
+        "p95": 16.026,
+        "p99": 21.672,
+        "max": 25.225
+      },
+      "lockWaitMs": {
+        "samples": 768,
+        "p50": 6.612,
+        "p95": 13.544,
+        "p99": 17.744,
+        "max": 20.976
+      },
+      "lockHoldMs": {
+        "samples": 768,
+        "p50": 1.438,
+        "p95": 4.251,
+        "p99": 6.748,
+        "max": 18.848
+      },
+      "invariants": [
+        {
+          "revision": 161,
+          "snapshots": 161,
+          "audits": 161,
+          "owners": 1
+        }
+      ]
+    },
+    {
+      "mode": "different_projects",
+      "successfulWrites": 160,
+      "retries": 0,
+      "failures": 0,
+      "deadlocks": 0,
+      "elapsedMs": 253.83,
+      "writesPerSecond": 630.35,
+      "operationMs": {
+        "samples": 160,
+        "p50": 11.451,
+        "p95": 18.043,
+        "p99": 21.24,
+        "max": 23.256
+      },
+      "attemptMs": {
+        "samples": 160,
+        "p50": 7.185,
+        "p95": 12.974,
+        "p99": 15.951,
+        "max": 16.323
+      },
+      "lockWaitMs": {
+        "samples": 160,
+        "p50": 0.257,
+        "p95": 0.594,
+        "p99": 0.773,
+        "max": 1.037
+      },
+      "lockHoldMs": {
+        "samples": 160,
+        "p50": 5.865,
+        "p95": 9.867,
+        "p99": 13.454,
+        "max": 13.551
+      },
+      "invariants": [
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        },
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        },
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        },
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        },
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        },
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        },
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        },
+        {
+          "revision": 21,
+          "snapshots": 21,
+          "audits": 21,
+          "owners": 1
+        }
+      ]
+    }
+  ]
+}

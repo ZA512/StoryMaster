@@ -1,10 +1,10 @@
 # Executive Summary
 
-**Statut :** Dossier de conception consolidé, décisions proposées. **Date de référence et de vérification :** 30 octobre 2026, Europe/Paris. **Portée :** recherche, analyse, contrats et préparation de réalisation ; aucune implémentation de l'application.
+**Statut :** Conception consolidée le 30 octobre ; GO-00..02 validés et Lot 0 réalisé le 31 octobre 2026. **Portée :** dossier de référence MVP et réalisation locale du socle. Voir le [rapport exécuté du Lot 0](LOT-0-REPORT.md) pour les tests, limites et validation de sortie encore attendue.
 
-Le dépôt dispose désormais d'un dossier permettant de préparer le Lot 0 sans réinventer les identités, les permissions, les révisions ou les frontières de sécurité. La recommandation est un **monolithe modulaire avec PostgreSQL**, une **couche métier commune au web, à l'IA et à MCP**, et des **propositions multi-objets fusionnées dans une transaction unique**. La collaboration reste asynchrone au MVP ; la coédition CRDT, les faits/connaissances/révélations et la recherche sémantique restent V1.
+Le dépôt dispose désormais d'un dossier permettant de préparer le Lot 0 sans réinventer les identités, les permissions, les révisions ou les frontières de sécurité. Le socle validé GO-01 est un **monolithe modulaire avec PostgreSQL**, une **couche métier commune au web, à l'IA et à MCP**, et des **propositions multi-objets fusionnées dans une transaction unique**. La collaboration reste asynchrone au MVP ; la coédition CRDT, les faits/connaissances/révélations et la recherche sémantique restent V1.
 
-La traçabilité comprend **150 exigences numérotées**, dont **99 MUST MVP** affectées à un lot. Les contrats comprennent **19 opérations HTTP sur 18 chemins**, **13 outils MCP**, **deux fixtures complètes de propositions**, **deux diagnostics illustratifs**, **50 scénarios de contrat**, **26 AC transversaux**, **huit ADR proposés** et **trois spikes non implémentés**. Le PRD et les deux recherches sont conservés à l'identique. Les arbitrages ne sont pas présentés comme acceptés.
+La traçabilité comprend **150 exigences numérotées**, dont **100 MUST MVP** affectées à un lot. Les contrats comprennent **27 opérations HTTP sur 24 chemins**, dont 10 opérations Lot 0 exécutées, **13 outils MCP**, **deux fixtures complètes de propositions**, **deux diagnostics illustratifs**, **50 scénarios de contrat**, **26 AC transversaux**, **neuf ADR dont quatre décisions acceptées dans leur portée et une mise en œuvre du socle**, avec ADR-0008 partiellement validé GO-02. Spikes A/C futurs et B partiellement qualifié sur les métadonnées. Le PRD est modifié uniquement par les deux patchs approuvés ; les recherches sont conservées. Les accords du 31 octobre sont tracés dans HUMAN-DECISIONS.md ; les autres arbitrages restent ouverts.
 
 ## État des documents analysés
 
@@ -32,7 +32,7 @@ La recherche technique est documentée par **30 entrées de sources primaires** 
 | DOCX/EPUB/PDF présentés comme exports minimaux | Markdown et archive JSON MVP ; formats éditoriaux V1 |
 | Modèles libres, canvas, séries, calendriers, systèmes spécialisés | Pas ajoutés au MVP par simple intérêt technique |
 | Six lots PRD contre huit demandés | Correspondance explicite dans le plan ; aucun changement silencieux |
-| PROP-10 SHOULD contre révision/invalidation requises | Promotion MUST MVP recommandée, à valider avant lot 4 |
+| PROP-10 initialement SHOULD contre révision/invalidation requises | Promotion MUST MVP acceptée et appliquée le 31 octobre ; moteur au lot 4 |
 | Rôles merge/export, notes privées et conversations non définis | Valeurs sûres proposées ; confidentialité par champ non promise ; conversations privées à initiateur |
 | Temps absolu universel recommandé dans R-M | unknown/ordinal d'abord ; calendrier fictif et tick distinct du timestamp technique |
 
@@ -51,7 +51,7 @@ Les divergences **D01–D17** sont détaillées dans l'audit. Les contrôles de 
 
 La matrice détaillée distingue MUST/SHOULD/COULD et MVP/V1/V2+ ; **132 exigences sont classées MVP, 16 V1 et 2 V2+** dans l'inventaire numéroté. Ce décompte n'inclut pas tous les modules futurs non numérotés du PRD ; il ne signifie pas que toutes les améliorations SHOULD/COULD sont bloquantes pour le MVP.
 
-## Décisions d'architecture proposées
+## Décisions d'architecture — principes de socle validés, détails futurs proposés
 
 | Option | Bénéfice | Limite | Recommandation |
 |---|---|---|---|
@@ -126,7 +126,7 @@ Le [plan](IMPLEMENTATION-PLAN.md) donne objectif, prérequis, exigences, tâches
 | 6 — MCP externe | P0 délégation / P1 interopérabilité | Même métier, grants, révocation et refus merge | 5 |
 | 7 — Consolidation / production | P0 récupération / P1 qualité | Export complet, restauration, charge et accessibilité | 7 |
 
-Les critères sont repris dans [50 tests de contrat](CONTRACT-TESTS.md), non exécutés sur un produit absent. Spikes A éditeur/révisions, B fusion transactionnelle et C API↔MCP sont spécifiés avec protocole, métriques et go/no-go ; aucun n'est implémenté ici.
+Les critères sont repris dans [50 scénarios de contrat](CONTRACT-TESTS.md). La couverture exécutée au Lot 0 est détaillée dans [son rapport](LOT-0-REPORT.md), sans revendiquer l’exécution de tous les scénarios futurs. Spikes A/C non exécutés ; B qualifié uniquement sur les métadonnées, protocole complet multi-scènes encore requis.
 
 ## Risques et décisions ouvertes
 
@@ -146,26 +146,22 @@ Les décisions produit Q-01..Q-15 sont toutes reprises au plan ; les recommandat
 | Gouvernance | [Registre ADR](adr/README.md), [AGENTS.md](../AGENTS.md), présent rapport |
 | Vérification du dossier | [Rapport des contrôles](SPECIFICATION-VALIDATION.md) |
 
-OpenAPI est validé avec `openapi-spec-validator`, JSON Schema avec `jsonschema` Draft 2020-12 ; requêtes et opérations des deux fixtures sont conformes. Les références documentaires locales et la couverture des 99 MUST MVP ont été contrôlées. Ces résultats valident les artefacts de conception, pas leur future exécution ni les NFR.
+OpenAPI est validé avec `openapi-spec-validator`, JSON Schema avec `jsonschema` Draft 2020-12 ; requêtes et opérations des deux fixtures sont conformes. Les références documentaires locales et la couverture des 100 MUST MVP ont été contrôlées. Ces résultats valident les artefacts de conception, pas leur future exécution ni les NFR.
 
-## Passe de correction avant décisions humaines
+## Correction documentaire et réalisation du Lot 0
 
-Le registre des 150 exigences est désormais normalisé v2 : type, priorité produit, version cible et texte intégral séparés ; les NFR portent leur objectif dans text et une priorité null faute de marquage PRD. Le backlog et la matrice reprennent leurs objectifs complets. Les priorités produit explicites, notamment PROP-10 SHOULD, n'ont pas été modifiées.
+Le registre normalisé sépare type, priorité produit, version et texte intégral ; les NFR portent l’objectif complet avec priorité null. Après accord explicite, PROP-10 passe de SHOULD à MUST ; les 150 IDs sont conservés. Les deux patchs PRD sont appliqués et les huit lots acceptés. Le [validateur reproductible](../scripts/README.md) couvre aussi les contrats exécutés du Lot 0.
 
-La validation reproductible est versionnée : [script et commande CI](../scripts/README.md), schéma du registre et tests de mutations. [GO-00..02](HUMAN-DECISIONS.md) disposent de fiches courtes, et les [deux patchs PRD](PRD-ALIGNMENT-PROPOSAL.md) sont séparés et non appliqués. R-CONT-01 et le spike B couvrent désormais les autosaves de plusieurs scènes indépendantes et leurs temps d'attente. Aucune mesure de contention n'est encore revendiquée.
-
-## Recommandation de passage à la phase suivante
-
-Le dossier est prêt pour **validation humaine du socle proposé**. Après validation GO-00..02, la prochaine demande peut être « implémenter le Lot 0 conformément aux contrats et invariants ». Les spikes et validations des lots suivants restent leurs prérequis, sans faire avancer leurs fonctions dans le Lot 0. La présente mission s'arrête aux spécifications.
+Le socle local est réalisé et vérifié : [rapport](LOT-0-REPORT.md), [mesures préliminaires](LOT-0-CONTENTION.json), [démarrage](../README.md). R-CONT-01 demeure ouvert : le test de métadonnées ne remplace pas le spike B multi-scènes. La prochaine étape nécessite la réception du Lot 0 et une autorisation explicite avant Lot 1.
 
 ## Critères d'acceptation du document
 
-Rapport autoportant reliant audit, écarts, options d'architecture, domaine, contrats, sécurité, backlog, ADR et preuves de validation ; annexes liées pour JSON détaillé ; décisions ouvertes classées sans acceptation implicite ; aucun code de production généré.
+Rapport autoportant reliant audit, écarts, options d'architecture, domaine, contrats, sécurité, backlog, ADR et preuves de validation ; annexes liées pour JSON détaillé ; décisions ouvertes classées sans acceptation implicite ; réalisation Lot 0 et décisions futures distinguées.
 
 ## Décisions requérant validation humaine avant implémentation
 
 | Classe | Décisions |
 |---|---|
-| **BLOQUANTE AVANT LOT 0** | Valider le PRD provisoire et les huit lots ; monolithe/PostgreSQL et stratégie transactionnelle ; matrice rôles/merge/export/auto-approbation owner ; modèle identité/OIDC, owner unique et mode d'hébergement supporté (GO-00..02). |
-| **À VALIDER AVANT LE LOT CONCERNÉ** | Éditeur après spike A ; schémas/modules ; invitations/transfert owner ; propositions après spike B et promotion PROP-10 ; fournisseurs/clés/consentement/budget ; OAuth et clients MCP après spike C ; rétention, exploitation, restauration et risques résiduels avant production (GO-03..04). |
+| **VALIDÉES POUR LOT 0** | GO-00..02, PRD/huit lots, PROP-10 MUST, monolithe/PostgreSQL, invariants transactionnels, rôles et identité OIDC, owner unique, auto-hébergement local. Verrou projet toujours provisoire. |
+| **À VALIDER AVANT LE LOT CONCERNÉ** | Éditeur après spike A ; schémas/modules ; invitations/transfert owner ; propositions après spike B (PROP-10 MUST déjà validée) ; fournisseurs/clés/consentement/budget ; OAuth et clients MCP après spike C ; rétention, exploitation, restauration et risques résiduels avant production (GO-03..04). |
 | **NON BLOQUANTE** | Bibliothèque UI secondaire, modèles de genres, quotas commerciaux, séries partagées entre projets, calendriers avancés, CRDT et autres choix V1/V2+ sans impact requis sur le socle (GO-05). |

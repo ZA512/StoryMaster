@@ -1,6 +1,6 @@
 # ADR-0006 — Source de vérité et frontières du stockage
 
-**Statut :** Proposée
+**Statut :** Acceptée
 **Date :** 2026-10-30
 **Portée :** conception MVP, aucune implémentation.
 **Références :** [PRD](../PRD.md), [domaine](../DOMAIN-MODEL.md), [architecture](../ARCHITECTURE.md), [sources](../RESEARCH-SOURCES.md).
@@ -55,4 +55,8 @@ Rétention et configuration d’exploitation au lot 7, versions exactes et ORM a
 
 ## Critères d'acceptation du document
 
-Options crédibles comparées ; recommandation distinguée du PRD ; statut non accepté ; conséquence durable et condition de réexamen explicites ; décisions ouvertes reliées au lot concerné.
+Options crédibles comparées ; recommandation distinguée du PRD ; statut et portée de validation explicites ; conséquence durable et condition de réexamen explicites ; décisions ouvertes reliées au lot concerné.
+
+## Validation du 31 octobre 2026
+
+Décideur : propriétaire du projet, instruction explicite « Validation des décisions et implémentation du Lot 0 ». Principes acceptés : monolithe modulaire TypeScript, source de vérité PostgreSQL, cas d’usage communs, révisions optimistes, atomicité, historique/audit et outbox pour effets externes nécessaires. Les fonctions futures ne sont pas implémentées au Lot 0.

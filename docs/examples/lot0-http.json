@@ -1,0 +1,202 @@
+{
+  "status": "Exemples synthétiques ; aucun token réel et aucune preuve de test exécuté.",
+  "responses": [
+    {
+      "path": "/projects",
+      "method": "post",
+      "request": {
+        "body": {
+          "name": "Les jours de brume",
+          "description": "Une voyageuse retrouve une ville oubliée.",
+          "language": "fr"
+        },
+        "headers": {
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "fixture-lot0-key"
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "id": "971027ea-3573-4d2e-978e-b87f80856ca5",
+          "name": "Les jours de brume",
+          "description": "Une voyageuse retrouve une ville oubliée.",
+          "language": "fr",
+          "revision": 1,
+          "visibility": "private",
+          "status": "active",
+          "role": "owner",
+          "createdAt": "2026-10-31T00:00:00Z",
+          "updatedAt": "2026-10-31T00:00:00Z"
+        }
+      }
+    },
+    {
+      "path": "/projects",
+      "method": "get",
+      "request": {
+        "body": null,
+        "headers": {}
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "items": [
+            {
+              "id": "971027ea-3573-4d2e-978e-b87f80856ca5",
+              "name": "Les jours de brume",
+              "description": "Une voyageuse retrouve une ville oubliée.",
+              "language": "fr",
+              "revision": 1,
+              "visibility": "private",
+              "status": "active",
+              "role": "owner",
+              "createdAt": "2026-10-31T00:00:00Z",
+              "updatedAt": "2026-10-31T00:00:00Z"
+            }
+          ],
+          "nextCursor": null,
+          "hasMore": false
+        }
+      }
+    },
+    {
+      "path": "/projects/{projectId}",
+      "method": "get",
+      "request": {
+        "body": null,
+        "headers": {}
+      },
+      "status": 404,
+      "response": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "Demande refusée.",
+          "correlationId": "req_lot0_fixture",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "path": "/projects/{projectId}",
+      "method": "patch",
+      "request": {
+        "body": {
+          "set": {
+            "name": "Titre modifié"
+          }
+        },
+        "headers": {
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "fixture-lot0-key",
+          "If-Match": "\"r1\""
+        }
+      },
+      "status": 412,
+      "response": {
+        "error": {
+          "code": "REVISION_CONFLICT",
+          "message": "Demande refusée.",
+          "correlationId": "req_lot0_fixture",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "path": "/projects/{projectId}/archive",
+      "method": "post",
+      "request": {
+        "body": {},
+        "headers": {
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "fixture-lot0-key",
+          "If-Match": "\"r1\""
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "971027ea-3573-4d2e-978e-b87f80856ca5",
+          "name": "Les jours de brume",
+          "description": "Une voyageuse retrouve une ville oubliée.",
+          "language": "fr",
+          "revision": 2,
+          "visibility": "private",
+          "status": "archived",
+          "role": "owner",
+          "createdAt": "2026-10-31T00:00:00Z",
+          "updatedAt": "2026-10-31T00:00:00Z"
+        }
+      }
+    },
+    {
+      "path": "/projects/{projectId}/restore",
+      "method": "post",
+      "request": {
+        "body": {},
+        "headers": {
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "fixture-lot0-key",
+          "If-Match": "\"r2\""
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "971027ea-3573-4d2e-978e-b87f80856ca5",
+          "name": "Les jours de brume",
+          "description": "Une voyageuse retrouve une ville oubliée.",
+          "language": "fr",
+          "revision": 3,
+          "visibility": "private",
+          "status": "active",
+          "role": "owner",
+          "createdAt": "2026-10-31T00:00:00Z",
+          "updatedAt": "2026-10-31T00:00:00Z"
+        }
+      }
+    },
+    {
+      "path": "/me",
+      "method": "get",
+      "request": {
+        "body": null,
+        "headers": {}
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "user": {
+            "id": "522e8168-c190-4164-bdfb-61db1e3f6604",
+            "displayName": "Alice de démonstration",
+            "email": null
+          },
+          "csrfToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "expiresAt": "2026-10-31T08:00:00Z"
+        }
+      }
+    },
+    {
+      "path": "/session/logout",
+      "method": "post",
+      "request": {
+        "body": {},
+        "headers": {
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "fixture-lot0-key"
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "redirectUrl": "http://localhost:3000/connexion?deconnecte=1"
+        }
+      }
+    }
+  ]
+}

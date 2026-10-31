@@ -1,0 +1,31 @@
+{
+  "realm": "storymaster",
+  "enabled": true,
+  "displayName": "StoryMaster — développement local",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "bruteForceProtected": true,
+  "clients": [{
+    "clientId": "storymaster-web",
+    "name": "StoryMaster local",
+    "enabled": true,
+    "publicClient": true,
+    "standardFlowEnabled": true,
+    "directAccessGrantsEnabled": false,
+    "serviceAccountsEnabled": false,
+    "redirectUris": ["${STORYMASTER_PUBLIC_ORIGIN}/auth/callback"],
+    "webOrigins": ["${STORYMASTER_PUBLIC_ORIGIN}"],
+    "attributes": {
+      "pkce.code.challenge.method": "S256",
+      "post.logout.redirect.uris": "${STORYMASTER_PUBLIC_ORIGIN}/connexion?deconnecte=1"
+    },
+    "defaultClientScopes": ["web-origins", "acr", "profile", "email", "roles"]
+  }],
+  "users": [
+    {"username":"alice","enabled":true,"emailVerified":true,"email":"alice@example.test","firstName":"Alice","lastName":"Martin","credentials":[{"type":"password","value":"local-only-storymaster","temporary":false}]},
+    {"username":"bob","enabled":true,"emailVerified":true,"email":"bob@example.test","firstName":"Bob","lastName":"Bernard","credentials":[{"type":"password","value":"local-only-storymaster","temporary":false}]}
+  ]
+}

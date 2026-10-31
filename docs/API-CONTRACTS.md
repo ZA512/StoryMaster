@@ -1,7 +1,7 @@
 # Contrats API et MCP
 
-**Version :** 0.2  
-**Statut :** Proposition de contrat  
+**Version :** 0.3
+**Statut :** Contrats Lot 0 exécutés ; autres opérations proposées
 **Références :** `PRD.md`, `DOMAIN-MODEL.md`, `ARCHITECTURE.md`
 
 ## 1. Principes
@@ -758,3 +758,12 @@ Le contrat refuse JSON Patch arbitraire et offsets riches comme primitives de fu
 ## Critères d'acceptation du document
 
 Chaque opération demandée a entrée, sortie, permission, version, idempotence, erreurs, audit et transaction ; OpenAPI se valide syntaxiquement et ses références se résolvent ; catalogue MCP est machine lisible et sans outil de fusion ; les deux exemples sont conformes aux schémas ; tests HTTP/MCP partagent les mêmes oracles métier et les erreurs n'exposent aucun projet interdit.
+
+
+## 21. Contrats exécutés au Lot 0 — 31 octobre 2026
+
+Les opérations `x-lot: 0` d’[OpenAPI](spec/openapi.yaml) sont les seules implémentées : login/callback OIDC hors préfixe API ; `/me`, logout, liste/création/lecture/modification/archivage/réactivation des projets sous `/api/v1`. Sécurité session humaine uniquement ; aucune route bearer ou MCP au Lot 0. Le cookie hors local est `__Host-sm_session` ; en HTTP local seulement `sm_session_local`. Les autres opérations de ce document restent des spécifications futures.
+
+Le DTO Project inclut description, langue, rôle courant et dates ; statut actif/archivé. La création accepte name, description et language, jamais ownerId/role/visibility client. PATCH accepte `{set:{name?,description?,language?}}`, au moins un champ. Archive/restore prennent un corps `{}` ; restore réactive avec nouvelle révision sans supprimer l’historique. `If-Match: "rN"` obligatoire pour ces trois mutations ; Idempotency-Key obligatoire à la création et aux changements de statut, facultative sur PATCH. Les mutations exigent Origin exact et X-CSRF-Token retourné par `/me` ; clés et révisions restent vérifiées dans les cas d’usage communs.
+
+Le projet inconnu ou non autorisé produit la même erreur 404. Seuls owner/admin humains modifient les métadonnées ; tous les rôles actifs peuvent lire. Les DTO excluent le propriétaire interne, secrets et identifiants de session. Erreurs JSON normalisées avec correlationId, aucune query string/token/contenu dans les logs applicatifs. Une erreur réseau du transport Next produit 503 sans journaliser l’URL. Schémas MCP Project synchronisés, sans implémenter un serveur MCP. Exemples et tests : [scénarios Lot 0](examples/lot0-http.json), [rapport](LOT-0-REPORT.md), [ADR de mise en œuvre](adr/0009-socle-executable-lot-0.md).

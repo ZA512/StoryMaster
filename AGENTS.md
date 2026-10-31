@@ -4,7 +4,7 @@
 
 Avant toute modification, lire dans cet ordre `docs/PRD.md`, `docs/deep-research-analyse-fonction.md`, `docs/deep-research-modele-fonctionnel.md`, puis `docs/DOCUMENT-AUDIT.md` et `docs/RESEARCH-TRACEABILITY.md`. Pour le domaine concerné lire `docs/DOMAIN-MODEL.md`, `docs/ARCHITECTURE.md`, `docs/API-CONTRACTS.md`, `docs/SECURITY-MODEL.md`, `docs/IMPLEMENTATION-PLAN.md`, `docs/CONTRACT-TESTS.md`, les artefacts `docs/spec/` et les ADR applicables.
 
-Le PRD prime sur les recherches pour le produit, sous réserve d'une instruction utilisateur explicite qui le modifie. Aucun document ni ADR n'est accepté par sa seule présence ; le statut actuel des décisions est Proposée. La mission de conception n'autorise aucune implémentation de production.
+Le PRD prime sur les recherches pour le produit, sous réserve d'une instruction utilisateur explicite qui le modifie. Aucun document ni ADR n’est accepté par sa seule présence. Le propriétaire a validé GO-00..02 et PROP-10 MUST le 31 octobre 2026, avec portée indiquée dans HUMAN-DECISIONS.md. Seule l’implémentation du Lot 0 est actuellement autorisée ; ne pas commencer le Lot 1.
 
 ## Périmètre et décisions
 

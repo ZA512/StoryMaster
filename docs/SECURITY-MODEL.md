@@ -593,3 +593,10 @@ Autorisation applicative centrale obligatoire ; RLS recommandée en défense en 
 ## Critères d'acceptation du document
 
 Chaque menace critique a mitigation concrète et scénario vérifiable ; matrice autorisations testable par rôle et canal ; les clients ne fournissent jamais leur propre identité d'autorité ; chaque copie/transfert a une règle d'accès ; résiduels élevés ont décision et lot ; la sécurité ne repose ni sur le prompt ni sur la liste d'outils seule. Les tests spécifiés ne sont pas présentés comme exécutés sur une application absente.
+
+
+## 22. Protections effectivement exécutées au Lot 0
+
+GO-02 est validé pour les rôles et principes indiqués dans [HUMAN-DECISIONS](HUMAN-DECISIONS.md). La matrice owner/admin/author/reviewer/reader s’applique aux cas d’usage de projets ; aucune preuve de droit n’est lue du navigateur. Les tests PostgreSQL vérifient les cinq rôles, l’isolement, la révocation et la relecture de rôle/session après attente du verrou. OIDC vérifie PKCE, state, nonce, signature, issuer, audience, expiration et usage unique ; Keycloak réel est testé par navigateur. Cookie HttpOnly/SameSite, CSRF/Origin et CSP par nonce sont présents. Voir [ADR-0009](adr/0009-socle-executable-lot-0.md) et [rapport](LOT-0-REPORT.md) pour preuves et limites.
+
+RLS, MFA, administration des membres, grants MCP, stockage de clés IA, backups et exploitation distante ne sont pas implémentés au Lot 0. Pas de promesse de protection contre un administrateur DB ou un hôte compromis. Les identifiants de démonstration sont publics et locaux ; aucun environnement public n’est déployé. Les durées techniques de session/login/idempotence locales ne fixent pas la rétention des manuscrits. Le rôle applicatif n’a pas les droits UPDATE/DELETE sur audit/snapshots ; le migrateur garde des droits d’exploitation distincts. Le TLS hors local et la politique publique relèvent toujours de GO-04.

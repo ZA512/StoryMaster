@@ -1,6 +1,6 @@
 # Plan de réalisation et critères de sortie
 
-**Statut :** Plan proposé, aucun développement autorisé par cette mission. **Date :** 30 octobre 2026, Europe/Paris.
+**Statut :** Huit lots validés ; implémentation du Lot 0 autorisée le 31 octobre 2026. Lots 1–7 non autorisés à ce stade. **Date :** mise à jour le 31 octobre 2026, Europe/Paris.
 **Portée :** exactement huit lots MVP puis pistes V1/V2+, sans estimation de durée faute de ressources connues.
 **Références :** [PRD](PRD.md), [audit](DOCUMENT-AUDIT.md), [domaine](DOMAIN-MODEL.md), [architecture](ARCHITECTURE.md), [API](API-CONTRACTS.md), [sécurité](SECURITY-MODEL.md), [tests](CONTRACT-TESTS.md), [ADR](adr/README.md).
 
@@ -72,13 +72,13 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Objectif :** Prouver identité, projet privé et refus par défaut avant tout manuscrit.
 
-**Prérequis / dépendances :** Validation GO-00..02 et ADR-0001/0002/0006/0008 ; aucun produit préalable.
+**Prérequis / dépendances :** GO-00..02 validés ; ADR-0001/0002/0006 acceptés, principes GO-02 de l’ADR-0008 validés ; aucun produit préalable.
 
 **Exigences PRD couvertes :** OBJ-01, PROJ-01, PROJ-02, PROJ-03, PROJ-04, PROJ-05, PROJ-08, PROJ-10, COLLAB-05, SEC-01, SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-09, SEC-10, SEC-12, NFR-09, NFR-10. Les exigences transversales continuent à être vérifiées dans les lots suivants.
 
 **Tâches (ordre proposé) :** Initialiser dépôt/CI/environnement reproductible ; cas d’usage d’identité OIDC et sessions ; Project, Membership et autorisation commune ; schémas/erreurs/CAS/idempotence et audit minimal ; rôle DB sans privilèges globaux ; stratégie transaction/verrou projet ; tests de refus et données fictives.
 
-**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal.
+**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Sortie soumise à réception du propriétaire, Lot 1 non autorisé.
 
 **Risques :** Divergence adaptateurs, mauvaise identité email, secret en CI, décision IdP tardive.
 
@@ -304,7 +304,7 @@ Aucun spike n'est implémenté pendant cette mission ; leurs jeux d'essai et pro
 
 ### Complément obligatoire du spike B — scènes indépendantes et contention
 
-**Statut :** protocole uniquement ; aucune transaction ni mesure exécutée pendant cette passe. **Références :** risque R-CONT-01 de l'architecture, ADR-0003 et fiche GO-01. Hypothèse à éprouver : le verrou projet conserve l'intégrité mais peut empêcher un débit suffisant dès que plusieurs auteurs enregistrent des scènes distinctes.
+**Statut :** protocole complet futur ; première mesure exécutée au Lot 0 sur métadonnées seulement, [résultats et limites](LOT-0-REPORT.md). Les cas multi-scènes B-01..07 ne sont pas exécutés. **Références :** risque R-CONT-01 de l'architecture, ADR-0003 et fiche GO-01. Hypothèse à éprouver : le verrou projet conserve l'intégrité mais peut empêcher un débit suffisant dès que plusieurs auteurs enregistrent des scènes distinctes.
 
 | Cas | Écritures et synchronisation proposées | Oracle d'intégrité / objectif de mesure |
 |---|---|---|
@@ -482,7 +482,7 @@ Le tableau associe chaque exigence à un lot principal ; les tests peuvent couvr
 | BL-NFR-12 | API métier documentée et intégration MCP versionnée | NFR-12 | 6 | P1 | MVP | Socle puis lots précédents | Adoption / complexité | AC-25 | Proposé |
 
 
-La révision de proposition PROP-10 reste SHOULD dans le PRD ; P0 MVP est une priorité de réalisation proposée, pas une promotion produit acceptée. La [proposition PRD](PRD-ALIGNMENT-PROPOSAL.md) sépare le patch des huit lots de sa promotion éventuelle en MUST. La réservation des coûts est un contrôle P0 AI-SEC-04/TH-11 ; l'interface commerciale AI-12 reste différable. Le transfert de propriété est un parcours administratif séparé, pas une opération de proposition.
+La révision de proposition PROP-10 est MUST depuis accord explicite du 31 octobre 2026 ; sa priorité de réalisation reste P0. La [proposition PRD](PRD-ALIGNMENT-PROPOSAL.md) sépare le patch des huit lots de sa promotion éventuelle en MUST. La réservation des coûts est un contrôle P0 AI-SEC-04/TH-11 ; l'interface commerciale AI-12 reste différable. Le transfert de propriété est un parcours administratif séparé, pas une opération de proposition.
 
 ## Qualification des performances et de la production
 
@@ -518,7 +518,7 @@ Exactement Lots 0–7 avec objectif, prérequis, exigences, tâches, dépendance
 
 ## Décisions requérant validation humaine avant implémentation
 
-Les [fiches GO-00 à GO-02](HUMAN-DECISIONS.md) donnent les alternatives et les points précis à valider ; elles ne sont pas encore approuvées.
+Les [décisions GO-00 à GO-02](HUMAN-DECISIONS.md) sont validées dans la portée indiquée le 31 octobre 2026 ; le verrou projet reste provisoire et les autres décisions restent ouvertes.
 
 | Classe | ID | Décision concrète proposée | Preuve / alternatives |
 |---|---|---|---|

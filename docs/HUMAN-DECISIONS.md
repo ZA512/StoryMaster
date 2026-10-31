@@ -1,67 +1,41 @@
-# Fiches de décision — GO-00, GO-01 et GO-02
+# Décisions humaines — GO-00, GO-01 et GO-02
 
-**Statut :** Préparées, en attente de décision humaine. **Portée :** validation du socle avant Lot 0 ; aucune autorisation d'implémentation implicite. **Références :** [PRD](PRD.md), [patchs proposés](PRD-ALIGNMENT-PROPOSAL.md), [architecture](ARCHITECTURE.md), [sécurité](SECURITY-MODEL.md), [ADR](adr/README.md), [plan](IMPLEMENTATION-PLAN.md).
+**Statut :** Validées dans la portée ci-dessous le 31 octobre 2026. **Décideur :** propriétaire du projet, instruction explicite « Validation des décisions et implémentation du Lot 0 ». **Portée :** Lot 0 uniquement. **Références :** [PRD](PRD.md), [alignement](PRD-ALIGNMENT-PROPOSAL.md), [architecture](ARCHITECTURE.md), [sécurité](SECURITY-MODEL.md), [ADR](adr/README.md).
 
 ## Synthèse
 
-Le propriétaire peut accepter, refuser ou demander une modification de chaque fiche séparément. Aucun choix n'est présélectionné comme accepté. Une validation du découpage ne valide ni une priorité produit supplémentaire, ni un hébergeur, ni une intégration fournisseur. À consigner pour chaque décision : propriétaire, date, choix et réserves.
+L'instruction autorise un environnement fonctionnel auto-hébergé local, avec authentification réelle, projets privés et tests exécutés. Elle n'autorise ni déploiement public ni infrastructure payante ni Lot 1. Les autres décisions ouvertes ne sont pas acceptées automatiquement.
 
-## GO-00 — Référence produit et huit lots
+## GO-00 — Référence produit — Acceptée
 
-**Recommandation :** retenir le PRD v0.1 comme référence, accepter uniquement le patch de sa section 19 pour les huit lots, conserver MVP/V1/V2+ et les 150 identifiants. Confiance élevée ; changement de découpage demandé, validation formelle du PRD toujours à enregistrer.
+Le PRD v0.1 est la référence du MVP. Le patch de sa section 19 pour huit lots est appliqué. Aucun ajout V1/V2+ et aucun identifiant supprimé. Les 150 exigences restent tracées.
 
-**Alternatives :** garder les six lots du PRD en faisant réécrire le plan et ses affectations ; ou conserver le document provisoire et poursuivre uniquement la conception. La première réduit le nombre de jalons mais regroupe propositions/collaboration et IA/MCP ; la seconde n'autorise pas Lot 0.
+### PROP-10 — Acceptée
 
-**Conséquences :** sorties de lots séparées et traçabilité stable, aucune durée imposée. Le registre distingue priorité produit (MUST/SHOULD/COULD ou null), priorité de réalisation proposée (P0/P1/P2) et version cible ; null ne crée pas de priorité pour les NFR ou fonctionnalités seulement marquées V1/V2+.
+Le patch SHOULD→MUST est appliqué par accord explicite. Le registre, la matrice et le plan utilisent MUST ; 100 MUST MVP au lieu de 99. Cette décision n'autorise pas le moteur de propositions avant Lot 4.
 
-**Éléments précis à valider :**
+## GO-01 — Architecture — Acceptée avec réserve de mesure
 
-- [ ] PRD v0.1 retenu comme base produit, avec les questions ouvertes conservées.
-- [ ] Patch « huit lots » accepté, ou alternative de découpage désignée.
-- [ ] Aucun ajout V1/V2+ au MVP et aucune promotion implicite de SHOULD en MUST.
-- [ ] PROP-10 traité séparément : accepter sa promotion MUST, conserver SHOULD avec révision des contrats, ou différer cette décision avant Lot 4.
+Monolithe modulaire ; TypeScript backend/frontend ; PostgreSQL source de vérité ; mêmes services applicatifs pour futurs adaptateurs HTTP/IA/MCP/worker ; révisions optimistes, atomicité multi-objets, historique/audit et outbox pour effets externes nécessaires.
 
-**Décision / propriétaire / date / réserves :** non renseignés.
+ADR-0001/0002/0006 acceptés. ADR-0003 accepté pour atomicité et concurrence : le verrou exclusif projet demeure **provisoire**, jamais une garantie de performance. Première qualification au Lot 0 sur projets ; spike B complet idéalement avant généralisation des sauvegardes du Lot 1.
 
-## GO-01 — Architecture, intégrité et concurrence
+Alternatives étudiées et non retenues pour le socle : services séparés, base documentaire, coordination distribuée. Les alternatives de granularité de locks restent ouvertes si les mesures justifient un réexamen.
 
-**Recommandation :** monolithe modulaire, PostgreSQL source de vérité, cas d'usage partagés, révisions optimistes et fusion multi-objets dans une transaction avec historique/audit/outbox. Retenir le verrou exclusif projet comme stratégie initiale **à qualifier par spike**, pas comme garantie d'évolutivité. Confiance élevée sur le stockage transactionnel, moyenne sur cette granularité de verrou.
+## GO-02 — Identité, permissions et hébergement — Acceptée
 
-**Alternatives :** backend géré avec la même transaction serveur ; services séparés et coordination distribuée ; ou verrouillage plus fin avec contraintes/sérialisabilité pour les invariants d'ensemble. Les services augmentent l'exploitation et la difficulté de l'atomicité ; des locks plus fins peuvent améliorer le parallélisme mais exigent de démontrer à nouveau absence de write skew, cycles et course avec révocation.
+- Owner unique ; rôles owner/admin/author/reviewer/reader ; matrice SECURITY-MODEL appliquée côté serveur.
+- Approbation/fusion par humains autorisés ; auto-approbation d'un owner humain permise ; jamais d'approbation/fusion IA au MVP.
+- Pas d'ACL par scène ; clés IA personnelles chiffrées à terme et conversations privées à initiateur, sans implémenter ces fonctions futures au Lot 0.
+- OIDC Authorization Code + PKCE S256 ; Keycloak local ; sessions applicatives côté serveur ; identité par issuer/subject. L'adaptateur reste substituable.
+- **Auto-hébergement Docker Compose en premier**, remplaçant la recommandation SaaS initiale. SaaS ultérieur possible ; aucune ressource publique ou payante.
 
-**Conséquences :** une panne de fournisseur n'est jamais dans la transaction ; tous les changements canoniques passent par les mêmes règles. En contrepartie, deux autosaves de scènes indépendantes d'un même projet attendent le même verrou ; ajouter des workers ne supprime pas cette file d'attente. Les écritures de projets distincts constituent un témoin séparé.
+ADR-0008 : principes GO-02 validés ; détails OAuth/MCP, clients et durées de grants restent proposés avant Lot 6. Pas d'acceptation automatique des ADR-0004/0005/0007 ni des autres arbitrages.
 
-**Éléments précis à valider :**
+## Conséquences et éléments encore ouverts
 
-- [ ] Principes des ADR-0001/0003/0006 : transaction unique, CAS, historique et source de vérité.
-- [ ] Verrou projet accepté comme hypothèse de départ, conditionné au spike B étendu avant Lot 4 ; pas d'engagement de capacité non mesuré.
-- [ ] Enveloppe de charge représentative à définir pour le spike : auteurs actifs/projet, scènes distinctes, cadence et taille d'autosave, taille de proposition et matériel. Valeurs actuellement non renseignées.
-- [ ] Si la contention compromet les objectifs NFR de cette enveloppe, réexamen ADR-0003 avant généralisation ; ni suppression du contrôle de versions ni affaiblissement de l'atomicité pour gagner du débit.
-
-**Décision / propriétaire / date / réserves :** non renseignés.
-
-## GO-02 — Droits, identité et exploitation initiale
-
-**Recommandation :** rôles par projet et owner unique ; approbation/fusion réservées aux humains owner/admin ; author/reviewer autorisés à proposer ; export owner/admin/author. Accepter l'auto-approbation du propriétaire humain pour le projet solo, jamais celle d'une IA. Authentification web OIDC et délégation MCP distincte ; pas de partage public ni d'ACL par scène au MVP. Mode d'exploitation recommandé : SaaS initial conteneurisable, auto-hébergement non promis au MVP. Confiance moyenne, choix produit et opérationnels à confirmer.
-
-**Alternatives :** imposer deux humains pour toute approbation (bloque l'auteur solo) ; réserver toutes fusions au seul owner (moins de délégation humaine) ; auto-hébergement initial avec responsabilité d'exploitation explicitement affectée. Des ACL fines par scène étendraient le périmètre et les tests. Aucun fournisseur IdP/hébergeur n'est choisi faute de contraintes ou de préférence connues.
-
-**Conséquences :** la délégation IA ne transmet jamais les droits humains d'écriture canonique/merge, même depuis un owner. Un admin ne retire/modifie que author/reviewer/reader ; la propriété et le transfert suivent un parcours distinct. Clés IA personnelles et conversations privées à l'initiateur, en plus de l'isolation projet. Un SaaS implique de désigner l'opérateur des manuscrits, sauvegardes et secrets.
-
-**Éléments précis à valider :**
-
-- [ ] Matrice lecture/édition/commentaire/proposition/approbation/fusion/export de SECURITY-MODEL, owner unique et restrictions admin.
-- [ ] Auto-approbation humaine owner pour un projet solo autorisée, ou règle alternative explicite.
-- [ ] Rôles au niveau projet MVP ; pas de confidentialité par champ implicitement promise ; conversations privées et clés personnelles.
-- [ ] OIDC retenu ; **nom de l'IdP et environnement de développement à renseigner avant configuration du Lot 0**. AS/durées de tokens/clients MCP à qualifier avant Lot 6.
-- [ ] Mode initial choisi (SaaS ou auto-hébergé), opérateur responsable et contraintes de localisation éventuelles à renseigner ; aucune infrastructure payante déployée par cette fiche.
-
-**Décision / propriétaire / date / réserves :** non renseignés.
-
-## Risques et décisions proposées
-
-Toutes les cases sont une liste de points à décider, pas une validation effectuée. Les paramètres non connus ne sont pas inventés. GO-00..02 restent bloquants avant implémentation ; la granularité des locks reste réexaminable, et les paramètres de charge non encore connus n'interdisent pas la présente préparation documentaire.
+Les droits sont centraux et aucune clé de démonstration ne doit servir à un déploiement public. Dépendances stables et compatibles vérifiées lors de réalisation ; migrations limitées aux fondations. Charge cible, rétention, exploitation publique et intégrations futures restent ouvertes. Le rapport Lot 0 doit distinguer résultats réels, limites et scénarios non exécutés.
 
 ## Critères d'acceptation du document
 
-Chaque fiche donne recommandation, alternatives crédibles, conséquences, confiance et points précis d'accord ; décisions/identité/date non renseignées tant que le propriétaire ne s'est pas prononcé ; PROP-10 reste indépendant ; risques de contention, identité et hébergement visibles.
+Décideur/date/source d'accord explicites ; deux patchs appliqués une seule fois ; 150 IDs et 100 MUST MVP ; réserve sur verrou et périmètre Lot 0 conservés ; autres décisions non acceptées par défaut.

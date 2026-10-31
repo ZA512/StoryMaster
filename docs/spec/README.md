@@ -1,6 +1,6 @@
 # Artefacts de contrat
 
-**Statut :** Proposés. **Portée :** spécifications sans serveur. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
+**Statut :** Opérations HTTP `x-lot: 0` exécutées ; autres contrats et MCP proposés. **Portée :** MVP, sans serveur MCP au Lot 0. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
 
 ## Synthèse et analyse
 
@@ -27,7 +27,7 @@ Les schémas n'imposent pas des UUID dans les fixtures ; en production, IDs gén
 | section / sourceText | Section PRD et ligne Markdown d'origine, conservées pour rapprochement exact |
 | lot | Entier `0..7` pour une cible MVP ; `null` pour V1/V2+, sans duplication de version dans le lot |
 
-Les 150 IDs sont conservés. Les 12 NFR et les fonctionnalités uniquement marquées V1/V2+ ont une priorité produit `null`, sans nouvelle obligation inventée. Les cibles de §16 restent des objectifs initiaux à confirmer. PROP-10 reste `SHOULD` ; sa promotion est une [décision séparée](../PRD-ALIGNMENT-PROPOSAL.md). Les anciens champs ambigus `need` et `phase` sont remplacés par `text`, `domain` et `targetVersion`.
+Les 150 IDs sont conservés. Les 12 NFR et les fonctionnalités uniquement marquées V1/V2+ ont une priorité produit `null`, sans nouvelle obligation inventée. Les cibles de §16 restent des objectifs initiaux à confirmer. PROP-10 est `MUST` depuis validation du 31 octobre 2026 ; sa promotion est une [décision séparée](../PRD-ALIGNMENT-PROPOSAL.md). Les anciens champs ambigus `need` et `phase` sont remplacés par `text`, `domain` et `targetVersion`.
 
 La classification de type distingue les objectifs OBJ, la qualité NFR, la sécurité SEC/AI-SEC, l'utilisabilité UX et les autres exigences fonctionnelles. Les versions classées `proposed_mvp` ne sont pas présentées comme un marquage explicite du PRD.
 
@@ -44,3 +44,8 @@ Sous-ensembles de JSON Schema supportés par chaque fournisseur à tester ; ne p
 ## Critères d'acceptation du document
 
 Parsing JSON/YAML réussi ; références résolues ; OpenAPI valide ; schémas Draft 2020-12 valides et fixtures conformes ; exactement treize outils obligatoires et aucun merge ; chaque outil a sa politique séparée. Rapport de vérification dans `../SPECIFICATION-VALIDATION.md`.
+
+
+## Contrats exécutés au Lot 0
+
+OpenAPI distingue dix opérations implémentées par `x-lot: 0`, avec session humaine seule et CSRF pour mutations. Le DTO Project et les définitions MCP embarquées sont synchronisés ; les exemples de [lot0-http.json](../examples/lot0-http.json) sont validés. Les tests Fastify valident aussi six réponses réelles contre OpenAPI via `scripts/validate_runtime_contracts.py`, sans écrire les tokens sur disque. Le [rapport](../LOT-0-REPORT.md) précise ce qui fonctionne et ce qui reste spécifié.

@@ -1320,13 +1320,13 @@
     {
       "id": "PROP-10",
       "requirementType": "functional",
-      "priority": "SHOULD",
+      "priority": "MUST",
       "targetVersion": "MVP",
       "targetVersionBasis": "proposed_mvp",
       "text": "Permettre la révision d'une proposition",
       "domain": null,
       "section": "10.3 Exigences",
-      "sourceText": "| PROP-10 | Permettre la révision d'une proposition | SHOULD |",
+      "sourceText": "| PROP-10 | Permettre la révision d'une proposition | MUST |",
       "deliveryPriority": "P0",
       "lot": 4
     },

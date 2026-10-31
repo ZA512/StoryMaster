@@ -193,7 +193,7 @@ def validate_requirements(root):
         require(row[1:6] == [item["text"], identifier, displayed_lot,
                              item["deliveryPriority"], item["targetVersion"]],
                 f"Backlog {identifier}: texte, ID, lot, priorité ou version divergents")
-        require(row[8] and row[9].startswith("Proposé"), f"Backlog {identifier}: AC/statut manquant")
+        require(row[8] and row[9].startswith(("Proposé", "Validé")), f"Backlog {identifier}: AC/statut manquant")
         tr = trace[identifier]
         priority = item["priority"] or "non spécifiée"
         require(len(tr) == 12 and tr[1] == item["text"] and tr[7] == item["targetVersion"],
@@ -304,6 +304,51 @@ def http_arguments(oas, path, operation):
     return properties, required
 
 
+def validate_lot0(oas):
+    expected = {
+        'projectList': ('/projects', 'get'), 'projectCreate': ('/projects', 'post'),
+        'projectGet': ('/projects/{projectId}', 'get'),
+        'projectUpdate': ('/projects/{projectId}', 'patch'),
+        'projectArchive': ('/projects/{projectId}/archive', 'post'),
+        'projectRestore': ('/projects/{projectId}/restore', 'post'),
+        'identityGet': ('/me', 'get'), 'sessionLogout': ('/session/logout', 'post'),
+        'oidcStart': ('/auth/login', 'get'), 'oidcCallback': ('/auth/callback', 'get'),
+    }
+    for oid, (path, method) in expected.items():
+        op = oas['paths'].get(path, {}).get(method, {})
+        require(op.get('operationId') == oid and op.get('x-lot') == 0,
+                f'Lot 0 : route/opération manquante {oid}')
+        require(op.get('security') == ([] if oid.startswith('oidc') else [{'webSession': []}]),
+                f'Lot 0 : sécurité de session divergente {oid}')
+        if method in {'post', 'patch'}:
+            params = [dereference(oas, p) for p in op.get('parameters', [])]
+            by_name = {p['name']: p for p in params}
+            require(by_name.get('X-CSRF-Token', {}).get('required') is True,
+                    f'Lot 0 : CSRF obligatoire {oid}')
+            if oid in {'projectUpdate', 'projectArchive', 'projectRestore'}:
+                require(by_name.get('If-Match', {}).get('required') is True and
+                        by_name['If-Match']['schema'].get('pattern') == '^"r[1-9][0-9]*"$',
+                        f'Lot 0 : précondition forte obligatoire {oid}')
+            if oid in {'projectCreate', 'projectArchive', 'projectRestore'}:
+                require(by_name.get('Idempotency-Key', {}).get('required') is True,
+                        f'Lot 0 : idempotence obligatoire {oid}')
+    schemas = oas['components']['schemas']
+    project = schemas['Project']
+    require(project['additionalProperties'] is False and
+            set(project['required']) == {'id', 'name', 'description', 'language', 'status',
+                                        'visibility', 'revision', 'role', 'createdAt', 'updatedAt'},
+            'Lot 0 : DTO Project divergent')
+    require(project['properties']['role']['enum'] == ['owner', 'admin', 'author', 'reviewer', 'reader']
+            and project['properties']['visibility'] == {'const': 'private'},
+            'Lot 0 : rôle ou visibilité divergents')
+    for name in ['ProjectCreate', 'ProjectUpdate', 'EmptyBody']:
+        require(schemas[name].get('additionalProperties') is False,
+                f'Lot 0 : corps doit refuser les propriétés inconnues {name}')
+    require(set(schemas['ProjectCreate']['properties']) == {'name', 'description', 'language'} and
+            set(schemas['ProjectUpdate']['properties']) == {'set'},
+            'Lot 0 : rôle client interdit dans le corps')
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -312,6 +357,7 @@ def validate_contracts(root):
         validate(oas)
     except Exception as exc:
         raise InvalidSpecification(f"OpenAPI invalide : {exc}") from exc
+    validate_lot0(oas)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and
@@ -389,7 +435,27 @@ def validate_contracts(root):
             require(p["limits"]["maxOperations"] == inp["properties"]["operations"]["maxItems"],
                     f"{name}: limite opérations divergente")
     validate_fixtures(root, oas, tools)
+    validate_lot0_examples(root, oas)
     return oas, tools
+
+
+def validate_lot0_examples(root, oas):
+    examples = load_json(root / 'docs/examples/lot0-http.json')['responses']
+    for example in examples:
+        op = oas['paths'][example['path']][example['method']]
+        context = 'Lot 0 exemple : ' + example['path']
+        if 'requestBody' in op:
+            schema = op['requestBody']['content']['application/json']['schema']
+            schema_validate({**schema, 'components': oas['components']},
+                            example['request']['body'], context)
+        for p in op.get('parameters', []):
+            p = dereference(oas, p)
+            if p['in'] == 'header' and p.get('required'):
+                require(p['name'] in example['request']['headers'], context + ': header absent')
+                schema_validate(p['schema'], example['request']['headers'][p['name']], context)
+        response = dereference(oas, op['responses'][str(example['status'])])
+        schema = response['content']['application/json']['schema']
+        schema_validate({**schema, 'components': oas['components']}, example['response'], context)
 
 
 def validate_fixtures(root, oas, tools):

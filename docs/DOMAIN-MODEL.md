@@ -1045,3 +1045,8 @@ Modèle relationnel hybride recommandé (confiance élevée, ADR-0006), plutôt 
 ## Critères d'acceptation du document
 
 Chaque entité demandée a identité, ownership, attributs, cardinalités, cycle, suppression, version et autorisation ; chaque kind de operations.schema.json a une cible et des invariants ; les deux fixtures se projettent sans ambiguïté ; les états approve→révision→submit invalident l'ancienne review ; aucun objet V1 n'est nécessaire à une écriture MVP ; Mermaid décrit les frontières et associations principales.
+
+
+## Socle matérialisé au Lot 0
+
+Les seules tables métier matérialisées sont utilisateurs, identités externes, projets, memberships, snapshots de projet et audit ; sessions, login_transactions et idempotency_records servent le socle technique. Le domaine futur de ce document reste spécifié. Les modèles prédéfinis PROJ-10 préremplissent uniquement les métadonnées d’un projet libre, roman ou nouvelle ; aucune scène, chapitre ni activation de module n’est créée. Archiver conserve les ressources ; réactiver produit une nouvelle révision. Détails : [ADR-0009](adr/0009-socle-executable-lot-0.md).

@@ -1,6 +1,6 @@
 # ADR-0002 — API métier unique pour les humains et les IA
 
-**Statut :** Proposée  
+**Statut :** Acceptée
 **Date :** 2026-10-30
 
 ## Contexte
@@ -57,7 +57,7 @@ La centralisation des règles métier reste un invariant.
 
 ## Consolidation du 30 octobre 2026
 
-**Portée :** MVP et points de réexamen V1. **Références :** [PRD](../PRD.md), [audit](../DOCUMENT-AUDIT.md), [architecture](../ARCHITECTURE.md), [sources vérifiées](../RESEARCH-SOURCES.md). **Synthèse :** proposition initiale conservée, précisée ci-dessous ; aucune acceptation humaine constatée.
+**Portée :** MVP et points de réexamen V1. **Références :** [PRD](../PRD.md), [audit](../DOCUMENT-AUDIT.md), [architecture](../ARCHITECTURE.md), [sources vérifiées](../RESEARCH-SOURCES.md). **Synthèse :** proposition initiale conservée, précisée ci-dessous ; principes acceptés par instruction du propriétaire du 31 octobre 2026.
 
 ### Forces / contraintes
 
@@ -97,8 +97,12 @@ Les recommandations ne prouvent ni performance ni sécurité d'une application a
 
 ### Questions ouvertes
 
-Versions exactes, limites mesurées et validation des politiques correspondantes dans le plan. Statut maintenu **Proposée**.
+Versions exactes, limites mesurées et validation des politiques correspondantes dans le plan. Statut **Acceptée** pour les principes définis ci-dessous.
 
 ### Critères d'acceptation du document
 
 Contexte et options initiaux conservés ; forces, recommandation, alternatives, conséquences, risques, confiance et conditions de réexamen identifiables ; aucune formulation ne prétend une acceptation inexistante.
+
+## Validation du 31 octobre 2026
+
+Décideur : propriétaire du projet, instruction explicite « Validation des décisions et implémentation du Lot 0 ». Principes acceptés : monolithe modulaire TypeScript, source de vérité PostgreSQL, cas d’usage communs, révisions optimistes, atomicité, historique/audit et outbox pour effets externes nécessaires. Les fonctions futures ne sont pas implémentées au Lot 0.

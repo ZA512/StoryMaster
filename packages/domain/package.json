@@ -1,0 +1,10 @@
+{
+  "name": "@storymaster/domain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {},
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
