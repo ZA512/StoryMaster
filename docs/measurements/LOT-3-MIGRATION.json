@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-31T21:07:02.357Z",
+  "before": {
+    "projects": {
+      "count": 87,
+      "digest": "c23e79a25bda15672932ab894b38765f05ab7630a1b3dbd89eb6cc314d811dab"
+    },
+    "scenes": {
+      "count": 121,
+      "digest": "389c5929f8e38eb41b9843cb8b99f374a450e0aa2f4f9f18c6109a1954a68aef"
+    },
+    "scene_revisions": {
+      "count": 337,
+      "digest": "55695bdbeec26e156139a4e5c5e630abaeeb09507e887f24f4e2f586f8519ce0"
+    },
+    "narrative_objects": {
+      "count": 41,
+      "digest": "fc4fd0e22961f7e3cc44702ed447a5b9d7e06a3b20ade3cff204ad26ac8cd924"
+    },
+    "narrative_relations": {
+      "count": 6,
+      "digest": "0f2e98087fe711193861832c5942ba647e87ad17ecbdceb712679c66af466670"
+    },
+    "scene_references": {
+      "count": 28,
+      "digest": "ce39d054e3d49dc98df18df8765a55122cd9862ba3e07f76c2abe951dc5bea73"
+    },
+    "narrative_revisions": {
+      "count": 398,
+      "digest": "0a64b00fa43a543ee4c8ca677796135525771facb083e91a325c96c723a01725"
+    },
+    "module_activations": {
+      "count": 261,
+      "digest": "47847213f09966f7b5f8a62b27067ad709ff0e7cba37c5660c13cce599127c79"
+    },
+    "project_memberships": {
+      "count": 106,
+      "digest": "0018aa9ae84ef3dc4b0e9f3c8c31c7c6844e5a18f03142950f20b78fcac770eb"
+    }
+  },
+  "after": {
+    "projects": {
+      "count": 87,
+      "digest": "c23e79a25bda15672932ab894b38765f05ab7630a1b3dbd89eb6cc314d811dab"
+    },
+    "scenes": {
+      "count": 121,
+      "digest": "389c5929f8e38eb41b9843cb8b99f374a450e0aa2f4f9f18c6109a1954a68aef"
+    },
+    "scene_revisions": {
+      "count": 337,
+      "digest": "55695bdbeec26e156139a4e5c5e630abaeeb09507e887f24f4e2f586f8519ce0"
+    },
+    "narrative_objects": {
+      "count": 41,
+      "digest": "fc4fd0e22961f7e3cc44702ed447a5b9d7e06a3b20ade3cff204ad26ac8cd924"
+    },
+    "narrative_relations": {
+      "count": 6,
+      "digest": "0f2e98087fe711193861832c5942ba647e87ad17ecbdceb712679c66af466670"
+    },
+    "scene_references": {
+      "count": 28,
+      "digest": "ce39d054e3d49dc98df18df8765a55122cd9862ba3e07f76c2abe951dc5bea73"
+    },
+    "narrative_revisions": {
+      "count": 398,
+      "digest": "0a64b00fa43a543ee4c8ca677796135525771facb083e91a325c96c723a01725"
+    },
+    "module_activations": {
+      "count": 261,
+      "digest": "47847213f09966f7b5f8a62b27067ad709ff0e7cba37c5660c13cce599127c79"
+    },
+    "project_memberships": {
+      "count": 106,
+      "digest": "0018aa9ae84ef3dc4b0e9f3c8c31c7c6844e5a18f03142950f20b78fcac770eb"
+    }
+  },
+  "allOriginalCanonicalDataUnchanged": true
+}

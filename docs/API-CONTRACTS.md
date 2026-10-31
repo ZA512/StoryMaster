@@ -1,7 +1,7 @@
 # Contrats API et MCP
 
-**Version :** 0.5
-**Statut :** HTTP Lots 0–2 exécutables pour sessions humaines ; MCP et autres opérations spécifiés seulement
+**Version :** 0.6
+**Statut :** HTTP Lots 0–3 exécutables, réception Lot 3 attendue pour sessions humaines ; MCP et autres opérations spécifiés seulement
 **Références :** `PRD.md`, `DOMAIN-MODEL.md`, `ARCHITECTURE.md`
 
 ## 1. Principes
@@ -413,19 +413,23 @@ Le serveur vérifie :
 - compatibilité des types ;
 - résolution atomique lors de la fusion.
 
-## 9. Commentaires
+## 9. Collaboration asynchrone — Lot 3
 
-- `GET /api/v1/projects/{projectId}/comments`
-- `POST /api/v1/projects/{projectId}/comments`
-- `PATCH /api/v1/projects/{projectId}/comments/{commentId}`
-- `POST /api/v1/projects/{projectId}/comments/{commentId}/resolve`
+Les routes exécutées sont marquées `x-lot: 3` dans [OpenAPI 0.6.0](spec/openapi.yaml), qui décrit chaque entrée, DTO, code et précondition. Toutes les routes métier exigent une session humaine et une autorisation serveur fraîche. Mutations : Origin exact, CSRF, Idempotency-Key ; If-Match sur la ressource existante (membership, invitation, fil ou commentaire). L’édition/retrait d’un commentaire ajoute expectedThreadRevision. Créations : pas de fausse révision de scène pour le commentaire global ; une ancre cite explicitement sa SceneRevision.
 
-Un commentaire peut cibler :
+| Parcours | Routes principales |
+|---|---|
+| Membres | GET `/projects/{projectId}/members`, GET `/members/self`, PATCH/DELETE `/members/{userId}`, POST `/members/leave` |
+| Invitations | GET/POST `/projects/{projectId}/invitations`, DELETE `/invitations/{invitationId}` |
+| Préparation de lien | POST `/auth/invitations/prepare` (anonyme, Origin, aucune consultation de données), cookie chiffré temporaire |
+| Réponse destinataire | GET `/api/v1/invitations/current`, POST `/current/respond`, DELETE `/current` pour effacer le contexte |
+| Discussions | GET/POST `/projects/{projectId}/comments`, GET `/comment-threads/{threadId}`, POST `/comment-threads/{threadId}/replies`, PATCH `/comment-threads/{threadId}/state` |
+| Messages | PATCH/DELETE `/projects/{projectId}/comments/{commentId}` |
+| Historique | GET des sous-routes `/revisions` de membership, invitation, fil et commentaire |
 
-- une scène ;
-- un passage versionné ;
-- un objet narratif ;
-- une proposition.
+Les routes métier abrégées dans ce tableau sont préfixées `/api/v1` ; les sous-routes restent sous le même projet. Pagination bornée et curseurs liés au compte/projet/rôle/filtres ; historique par beforeRevision. Owner unique non modifiable ; admin limité aux rôles author/reviewer/reader. Aucun hash ni secret dans les DTO. Création d’invitation : lien révélé une fois ; rejeu `{link:null,linkRevealed:false}`. Réponse acceptée rejouée ne restaure pas un accès retiré.
+
+ThreadView contient le commentaire racine, l’origine immuable et sa résolution courante étiquetée par révision. ThreadDetail ajoute une page de messages. Incertitude : positions null, origine lisible sous les mêmes droits. Texte brut rendu sans HTML actif. Corps retiré null ; historique privé aux auteurs encore membres et modérateurs. Résoudre/rouvrir vise le fil, pas un endpoint resolve de commentaire. Cibles de production : scène ou fiche ; propositions futures. [Exemples synthétiques](examples/lot3-http.json), [scénarios déclaratifs](spec/lot3-scenarios.json), [preuves d’exécution](LOT-3-REPORT.md).
 
 ## 10. Assistant IA intégré
 

@@ -16,7 +16,9 @@ export const projectSchema = z.object({
 export type ProjectDto = z.infer<typeof projectSchema>;
 export type UserDto = z.infer<typeof userSchema>;
 export interface Page<T> { items: T[]; nextCursor: string | null; hasMore: boolean }
-export interface MeDto { user: UserDto; csrfToken: string; expiresAt: string }
+export interface MeDto { user: UserDto & {emailVerified?:boolean}; csrfToken: string; expiresAt: string }
 export interface ErrorDto { error: { code: string; message: string; correlationId: string; retryable: boolean; details?: Record<string, unknown> } }
 export * from './editorial.ts';
 export * from './narrative.ts';
+
+export * from './collaboration.ts';

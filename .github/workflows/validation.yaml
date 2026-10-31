@@ -1,4 +1,4 @@
-name: Documentation et Lots 0–2
+name: Documentation et Lots 0–3
 on:
   push:
   pull_request:
@@ -49,6 +49,8 @@ jobs:
         run: npm run bench:scenes
       - name: Recherche 10 000 objets et contention mixte narrative
         run: npm run bench:narrative
+      - name: Collaboration, autosaves et administration concurrentes
+        run: npm run bench:collaboration
       - name: Navigateur
         run: |
           npx playwright install --with-deps chromium

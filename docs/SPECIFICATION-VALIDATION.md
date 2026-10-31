@@ -59,3 +59,7 @@ Le validateur contrôle chaque opération Lot 1 attendue, session humaine, CSRF/
 ## Extension de validation Lot 2
 
 OpenAPI 0.5.0 et catalogue de 13 outils MCP synchronisés, registre v1 rapproché des schémas Zod et empreintes, anciens SceneRevision conservés. Nouveaux exemples HTTP et scénarios déclaratifs des portions applicables. Les 29 tests de mutation du validateur sont documentaires ; le [rapport Lot 2](LOT-2-REPORT.md) distingue les  preuves PostgreSQL/HTTP/navigateur et les parties de propositions/MCP non exécutées.
+
+## Extension de validation Lot 3
+
+OpenAPI 0.6.0, composants de collaboration synchronisés aux Zod/DTOs, catalogue MCP conservé sans nouvel outil. Vérification du mapping de chaque opération Lot 3, session humaine et préparation anonyme sans exposition de données, CSRF/Origin/idempotence/CAS, exclusion owner, identité destinataire serveur et absence de hash dans les réponses. Positions actuelles nulles pour ambiguous/orphaned, origine obligatoire. Cinq mutations supplémentaires portent le total documentaire à 34. Exemples synthétiques distincts des 34 réponses HTTP réelles observées et conformes. Les scénarios CT-02/06/20/30/36/45/49 ne revendiquent que leurs portions de collaboration humaine ; propositions et délégation MCP restent non exécutées. Voir [rapport Lot 3](LOT-3-REPORT.md).

@@ -1,7 +1,7 @@
 # Architecture technique — Plateforme de création littéraire
 
-**Version :** 0.2  
-**Statut :** Principes GO-01 acceptés, socle Lot 0 exécuté ; détails futurs proposés
+**Version :** 0.3
+**Statut :** Principes GO-01 acceptés, Lots 0–3 exécutés localement, réception Lot 3 attendue ; détails futurs proposés
 **Références :** `PRD.md`, `DOMAIN-MODEL.md`
 
 ## 1. Objectifs
@@ -612,13 +612,13 @@ Les flèches worker→application sont des commandes bornées avec contexte pers
 
 ### Frontières transactionnelles et verrouillage MVP
 
-Une transaction d'écriture prend d'abord un verrou exclusif sur la ligne Project (`FOR UPDATE` conceptuel), puis relit permissions et état. TOUTES les écritures du projet, y compris sauvegarde directe, changement de rôle, révocation de grant projet, module, structure, commentaires et merge, suivent ce protocole. Les grants multi-projets sont révoqués en verrouillant les projets triés par id avant leur ligne ; ordre global projet→autorisation→proposition→ressources. Un changement global User/ExternalClient utilise la même barrière sur les projets concernés et peut être asynchrone seulement si un drapeau de refus global est vérifié avant les commandes.
+La barrière conservatrice est Project exclusif (`FOR UPDATE`), puis relecture des permissions et de l’état, pour structure, droits, graphe, modules et futur merge. Les raffinements prouvés des ADR-0010/0012 utilisent Project partagé uniquement pour texte de scène (puis Scene exclusif) et commentaires (puis Thread), sans conversion partagé→exclusif. Les autres écritures restent exclusives. Les grants multi-projets sont révoqués en verrouillant les projets triés par id avant leur ligne ; ordre global projet→autorisation→proposition→ressources. Un changement global User/ExternalClient utilise la même barrière sur les projets concernés et peut être asynchrone seulement si un drapeau de refus global est vérifié avant les commandes.
 
 C'est un choix conservateur pour empêcher write skew, cycles et créations concurrentes violant une cardinalité. Il ne repose pas uniquement sur le verrouillage des lignes déjà présentes, insuffisant pour les invariants de graphe. Niveau READ COMMITTED suffisant si toutes les écritures respectent la barrière et si l'état est relu après acquisition ; les requêtes critiques ne réutilisent pas un snapshot chargé avant le verrou. Le spike B devra mesurer contention et absence d'interblocage. Alternative SERIALIZABLE avec reprise complète envisageable si ce verrou devient limitant, ADR-0003 à réexaminer.
 
 #### R-CONT-01 — Contention du verrou exclusif projet
 
-**Risque explicite, non mesuré et non accepté définitivement.** Le verrou s'applique à toutes les écritures d'un projet : deux scènes indépendantes, un commentaire, un changement de rôle et un merge se sérialisent même sans conflit de ressource. Une transaction longue retarde donc l'autosave d'autres auteurs. Une hausse du nombre de workers/connexions peut allonger la file d'attente plutôt qu'augmenter le débit ; le verrou ne doit jamais couvrir appel IA, export fichier ou autre réseau.
+**Risque explicite, mesuré localement et non accepté définitivement.** La stratégie initiale tout-exclusif sérialise même deux scènes indépendantes ; depuis ADR-0010/0012, autosaves et commentaires partagent la barrière, mais restent bloqués par les écritures exclusives de droits/graphe/structure et le futur merge. Une transaction longue retarde donc l'autosave d'autres auteurs. Une hausse du nombre de workers/connexions peut allonger la file d'attente plutôt qu'augmenter le débit ; le verrou ne doit jamais couvrir appel IA, export fichier ou autre réseau.
 
 Pour un projet, le débit d'écriture est borné approximativement par l'inverse de la durée moyenne de détention du verrou, hors autres coûts ; ce n'est pas une capacité garantie. Mesurer séparément **temps d'attente**, **temps de détention**, latence totale de sauvegarde, débit utile, profondeur de file, timeouts et reprises. Une lecture ordinaire sans verrou d'écriture ne doit pas être artificiellement sérialisée par cette barrière, même si la saturation DB peut dégrader toute la charge.
 
@@ -730,3 +730,11 @@ NarrativeService et EditorialService partagent UnitOfWork/PostgresTransaction et
 R-CONT-01 reste ouvert : toute mutation de fiche, hiérarchie, relation, référence ou activation prend Project exclusif. Les autosaves/restores texte prennent Project partagé puis Scene exclusif ; une écriture de graphe attend donc toutes les lectures/saves déjà engagées et peut retarder les scènes indépendantes. Le graphe n’est pas parallélisé artificiellement pour gagner en débit. Ordre projet → droits relus → scène si concernée → idempotence → écritures ; pas de conversion partagé→exclusif. Publication éditoriale via editorial_clocks après les verrous métier, sans upgrade de Project.
 
 Index lexical PostgreSQL sur contenu courant, noms, alias et notes ; projection NFC dérivée mise à jour dans la même transaction, jamais source canonique. Le backfill des scènes existantes ne réécrit ni leur contenu ni leurs snapshots. Les requêtes et extraits sont filtrés au projet avant restitution. Voir [ADR-0011](adr/0011-referentiel-narratif-et-references.md), [mesures Lot 2](measurements/LOT-2-QUALIFICATION.md) et [rapport](LOT-2-REPORT.md). Ces mesures locales ne qualifient ni réseau distant, ni déploiement multi-instance ; toute granularité future exige une preuve équivalente des invariants.
+
+## Collaboration asynchrone du Lot 3
+
+[ADR-0012](adr/0012-collaboration-asynchrone-et-ancrages.md) précise la granularité : droits/invitations Project exclusif ; commentaires Project partagé puis Thread, sans Scene exclusif explicite. Les clés étrangères peuvent prendre des verrous de clé brefs sur les cibles. Une ancre lit un snapshot immuable ; sa projection actuelle indique la révision observée, et le client ne surligne que son texte confirmé correspondant. Les nouveaux commentaires n’imposent donc aucune fausse révision de scène.
+
+Ordre global des mutations de droits mixtes : Project → invitations triées par ID → membership → idempotence → écritures/historique/audit. Acceptation : Project → invitation → membership → idempotence. Le verrou exclusif commun interdit un cycle entre ces chemins. Commentaires : Project partagé → Thread → message → idempotence ; aucun upgrade de Project ni appel externe sous transaction. La vérification de session et d’appartenance a lieu après acquisition de la barrière.
+
+Migration additive 0005 : sessions vérifiées, séquence de droits, invitations, fils/messages/ancres et historique append-only. Les snapshots de collaboration excluent le hash de jeton. Les anciennes appartenances sont historisées comme système, sans inventer un acteur humain ; les anciennes sessions exigent réauthentification pour prouver l’email. [Mesure mixte](measurements/LOT-3-COLLABORATION.md) : autosaves, commentaires et droits concurrents, longs textes et vérification exacte des révisions/hashes/snapshots. Le calcul d’ancrage reste borné mais s’effectue dans une lecture autorisée et peut prolonger une attente de révocation ; aucune latence maximale de révocation ni capacité multi-instance n’est certifiée. Les nouveaux appels sont refusés après commit du retrait.

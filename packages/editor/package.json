@@ -1,1 +1,20 @@
-{"name":"@storymaster/editor","version":"0.1.0","private":true,"type":"module","dependencies":{"@storymaster/domain":"*","@tiptap/core":"3.32.2","@tiptap/pm":"3.32.2","@tiptap/starter-kit":"3.32.2","@tiptap/markdown":"3.32.2","diff":"9.0.0"},"exports":{".":"./src/document.ts","./diff":"./src/diff.ts","./markdown":"./src/markdown.ts"}}
+{
+  "name": "@storymaster/editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@storymaster/domain": "*",
+    "@tiptap/core": "3.32.2",
+    "@tiptap/pm": "3.32.2",
+    "@tiptap/starter-kit": "3.32.2",
+    "@tiptap/markdown": "3.32.2",
+    "diff": "9.0.0"
+  },
+  "exports": {
+    ".": "./src/document.ts",
+    "./diff": "./src/diff.ts",
+    "./markdown": "./src/markdown.ts",
+    "./anchors": "./src/anchors.ts"
+  }
+}

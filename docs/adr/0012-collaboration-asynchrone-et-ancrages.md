@@ -1,0 +1,37 @@
+# ADR-0012 — Collaboration asynchrone et ancrages conservateurs
+
+**Statut :** mise en œuvre du Lot 3 autorisé, réception attendue. **Date :** 31 octobre 2026. **Références :** [décisions](../HUMAN-DECISIONS.md), [ADR-0003](0003-propositions-transactionnelles.md), [ADR-0010](0010-atelier-ecriture-et-concurrence.md), [ADR-0011](0011-referentiel-narratif-et-references.md), [plan](../IMPLEMENTATION-PLAN.md).
+
+## Invitations et appartenance
+
+Identité primaire issuer/subject conservée. L’email vérifié provient des claims OIDC validés au login, et est conservé dans la session serveur ; aucun email fourni par le client ou ancien app_users.email ne vaut attestation. Les anciennes sessions restent utilisables, mais exigent une nouvelle connexion avant acceptation si elles ne possèdent pas cette preuve.
+
+Jeton aléatoire 256 bits, hash SHA-256 seul en PostgreSQL, invitation opaque et versionnée, usage unique, TTL configurable (48 h par défaut, bornes techniques 5 min–7 jours). Lien copiable en fragment, effacé immédiatement par la page. Préparation same-origin vers un cookie AES-GCM HttpOnly temporaire (15 min), Secure hors local et SameSite=Lax ; aucun jeton dans query/return URL, logs, stockage web ou idempotence. Le callback OIDC revient à une route fixe, sans paramètre secret. Le lien doit être transmis par canal privé au destinataire ; toute personne le recevant doit encore authentifier le bon email vérifié. Aucun SMTP.
+
+Le lien est révélé une seule fois. Le rejeu d’une création renvoie le DTO sans lien ; après réponse perdue, révoquer puis recréer explicitement. Acceptation répétée par le même compte donne le même résultat sans recréer le membership ; un autre compte, même email vérifié, ne reprend pas l’acceptation. Refuser une invitation la passe en revoked avec motif recipient_declined ; pas de nouvel état produit implicite. Expired est dérivé de l’échéance même si la ligne est encore pending.
+
+Les mutations de membres/invitations prennent Project exclusif, puis droits relus, ligne membership/invitation, idempotence, écritures/historique/audit. Owner unique : aucun rôle owner via invitation ou PATCH, aucun départ/retrait du propriétaire. Admin ne gère que author/reviewer/reader et ne peut cibler owner/admin. Départ volontaire possible hors owner. Révocation reste possible sur projet archivé. L’invitant doit encore disposer de droits de gestion adaptés au moment de l’acceptation. Les rôles d’un membre actif ne changent jamais par acceptation d’une ancienne invitation. Une séquence d’administration séparée bloque la réacceptation d’une invitation émise avant le retrait du compte ; une réinvitation postérieure peut réactiver la même ligne avec r+1. Pas de transfert de propriété ni réauthentification simulée.
+
+Un retrait, départ ou changement de rôle invalide aussi, dans la même transaction, les invitations pending liées aux adresses du membre (adresses de sessions vérifiées, invitations déjà acceptées et dernière adresse de profil utilisée uniquement pour restreindre un accès, jamais pour l’accorder). Cela couvre un autre compte possédant le même email vérifié : aucun ancien lien ne rétablit les droits. L’owner peut invalider tout cet ensemble ; un admin ne peut modifier un autre membre s’il faudrait révoquer une invitation admin, opération réservée au propriétaire. Le départ volontaire retire ses propres accès et liens, sans transfert. Ordre des opérations mixtes : Project exclusif → invitations triées par ID → membership → idempotence → écritures. La séquence reste une défense supplémentaire, sans faire de l’email une identité primaire.
+
+## Discussions séparées du canon
+
+Thread cible scène ou fiche ; Comment porte corps texte brut, auteur, révision et état actif/retiré. TextAnchor porte scène/révision d’origine, positions ProseMirror UTF-16, citation et contextes avant/après, auteur/date. Origine immuable, FK composite vers le snapshot. Aucun commentaire dans JSON ProseMirror ; aucune révision de scène/fiches incrémentée par un commentaire.
+
+Commentaires : Project partagé → droits relus → Thread (partagé pour détail cohérent, exclusif pour mutation) → Comment si concerné → idempotence. Les autosaves partagent la barrière Project et conservent leur verrou Scene ; commenter ne prend pas Scene exclusif. Un ancrage est validé sur le snapshot immutable demandé, puis évalué sur une révision courante explicitement indiquée. Le client ne surligne que si ce numéro correspond à son texte confirmé, jamais dans un brouillon ou sur une autre révision. La révocation Project exclusive attend les commandes engagées ; aucun nouvel appel ne passe après son commit.
+
+Owner/admin/author/reviewer commentent, reader consulte. Commenter une scène/fiche archivée ou un module off reste possible dans un projet actif ; commentaires toujours conservés. Projet archivé : discussions consultables, mutations suspendues. Édition de son propre commentaire seulement ; retrait logique par auteur ou owner/admin, modération d’autrui avec motif. Résoudre/rouvrir : owner/admin/author ou créateur du fil encore autorisé à commenter. Historique du corps réservé à son auteur encore membre et aux modérateurs ; le retrait masque le corps aux autres lecteurs, sans détruire l’attribution.
+
+## Preuve de correspondance des ancrages
+
+Aucune recherche de sous-chaîne seule ne produit une position certaine. Projection ProseMirror en tokens de structure et points Unicode (positions UTF-16 conservées), marques ignorées pour l’identité textuelle. Document structurellement identique : valid. Sinon alignement LCS borné : chaque token du passage doit posséder une seule correspondance commune à tous les alignements optimaux, sans suppression possible ni insertion interne ; positions contiguës et citation revérifiée. Cette règle utilise tout le contexte et refuse les alignements concurrents.
+
+Au-delà du budget de 250 000 cellules LCS ou 20 000 tokens matérialisés, seul un bloc textuel complet inchangé, structurellement compatible et unique dans les deux snapshots permet un déplacement. Sinon ambiguous si la citation existe sans preuve fiable, orphaned si elle a disparu. Aucune position renvoyée pour ces états. L’origine reste consultable selon les droits, y compris après suppression/réécriture/restauration. Les résolutions sont des projections déterministes calculées à la lecture, étiquetées par révision ; pas de réécriture massive d’ancres à chaque autosave, pas de fausse identité CRDT ni de réancrage manuel silencieux.
+
+## Conséquences et alternatives
+
+La correspondance certaine sur tous les textes n’est pas promise : refus conservateur préférable à un commentaire placé au mauvais endroit. Une correspondance textuelle ne prouve pas une intention littéraire ; le cadre déterministe et les incertitudes restent visibles. Calcul borné pour ne pas bloquer l’API sur les longs manuscrits. Recherche de citation seule et Yjs immédiat rejetés ; stockage de jeton brut/idempotence chiffrée en DB et lien en query rejetés. La transmission du lien et la confidentialité des historiques ne remplacent pas une sauvegarde d’exploitation.
+
+## Critères d'acceptation du document
+
+Tests réels de rôles, invitations/IdP, courses révocation/commentaire/autosave/acceptation, rollback, ancrages adversariaux, navigateur deux comptes et persistance. Mesures de contention distinctes de la qualification publique. Toutes réserves héritées restent explicites, aucun Lot 4 commencé et aucune acceptation humaine de cet ADR inventée.

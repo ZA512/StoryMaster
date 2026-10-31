@@ -1,6 +1,6 @@
 # StoryMaster
 
-Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Réception humaine du Lot 2 attendue, Lots 3/4 non commencés. [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
+Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Lot 2 reçu techniquement avec réserves maintenues ; le **Lot 3** ajoute invitations, membres, discussions et ancrages versionnés. Réception humaine du Lot 3 attendue ; Lot 4 non commencé. [Rapport du Lot 3](docs/LOT-3-REPORT.md) · [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
 
 ## Démarrage local
 
@@ -56,11 +56,12 @@ npm test
 npm run bench:contention
 npm run bench:scenes
 npm run bench:narrative
+npm run bench:collaboration
 npx playwright install chromium
 npm run test:e2e
 ```
 
-L’overlay de test publie PostgreSQL sur **127.0.0.1:55432**. Les benchmarks et la suite PostgreSQL se sérialisent par verrou de test. Exécuter la suite navigateur ensuite : son test de durabilité redémarre PostgreSQL et les services locaux, dont Keycloak pour rétablir son pool. `bench:narrative` crée 10 000 fiches synthétiques dans la base dédiée, puis mesure recherche et contention mixte ; résultat dans `artifacts/local/narrative-qualification.json`. Le benchmark de métadonnées écrit `artifacts/local/contention.json` ; ses paramètres bornés sont `BENCH_WORKERS` (8 par défaut), `BENCH_WRITES` (20), `BENCH_OUTPUT`. Ce premier benchmark utilise de nouveaux projets de test sans scènes. `bench:scenes` mesure de vraies scènes et auteurs synthétiques ; ses résultats sont dans `artifacts/local/scene-contention.json`. Les essais navigateur passent par Keycloak réel et créent des projets de démonstration dans l’application locale. Captures et traces restent dans des dossiers ignorés ; ne pas publier une trace contenant des cookies ou codes de connexion. Le navigateur fourni par Playwright est recommandé pour correspondre à la CI. Avec Chromium système déjà installé, option locale : `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e`.
+L’overlay de test publie PostgreSQL sur **127.0.0.1:55432**. Les benchmarks et la suite PostgreSQL se sérialisent par verrou de test. Exécuter la suite navigateur ensuite : son test de durabilité redémarre PostgreSQL et les services locaux, dont Keycloak pour rétablir son pool. `bench:narrative` crée 10 000 fiches synthétiques dans la base dédiée, puis mesure recherche et contention mixte ; résultat dans `artifacts/local/narrative-qualification.json`. Le benchmark de métadonnées écrit `artifacts/local/contention.json` ; ses paramètres bornés sont `BENCH_WORKERS` (8 par défaut), `BENCH_WRITES` (20), `BENCH_OUTPUT`. Ce premier benchmark utilise de nouveaux projets de test sans scènes. `bench:scenes` mesure de vraies scènes et auteurs synthétiques ; ses résultats sont dans `artifacts/local/scene-contention.json`. Les essais navigateur passent par Keycloak réel et créent des projets de démonstration dans l’application locale. Captures et traces restent dans des dossiers ignorés ; ne pas publier une trace contenant des cookies ou codes de connexion. Le navigateur fourni par Playwright est recommandé pour correspondre à la CI. Le Chromium système de cette machine a précédemment planté ; utiliser ici le navigateur fourni par Playwright.
 
 Pour exécuter les processus Node sur l’hôte, conserver PostgreSQL/Keycloak avec l’overlay puis lancer dans deux terminaux :
 
@@ -86,14 +87,14 @@ Changer les mots de passe `.env` après initialisation ne change pas ceux des r�
 
 ## Organisation
 
-`apps/web` : Next.js/React, transport HTTP et interface. `apps/api` : Fastify et adaptateur OIDC. `packages/domain` : invariants/politique ; `application` : cas d’usage communs ; `contracts` : validation des DTO ; `infrastructure` : PostgreSQL, migrations, sessions et OIDC. Les routes n’accèdent pas directement aux données narratives. Aucun éditeur, scène, assistant IA ou serveur MCP n’est implémenté.
+`apps/web` : Next.js/React, transport HTTP et interface. `apps/api` : Fastify et adaptateur OIDC. `packages/domain` : invariants/politique ; `application` : cas d’usage communs ; `contracts` : validation des DTO ; `infrastructure` : PostgreSQL, migrations, sessions et OIDC. Les routes n’accèdent pas directement aux données narratives. Éditeur, scènes, référentiel et collaboration asynchrone utilisent les mêmes services ; assistant IA et serveur MCP restent futurs.
 
-Les détails de concurrence, de sécurité, les limites locales et les résultats réellement obtenus figurent dans le rapport. L’approbation de la sortie du Lot 0 et tout démarrage du Lot 1 appartiennent au propriétaire.
+Les détails de concurrence, de sécurité, les limites locales et les résultats réellement obtenus figurent dans le rapport. La réception du Lot 3 et toute autorisation du Lot 4 appartiennent au propriétaire.
 
 
 ## Laboratoire préalable au Lot 1
 
-Le [Spike A isolé](spikes/editor/README.md) évalue l’éditeur, le stockage JSON, les révisions, les diffs et une future migration Yjs sur corpus fictif. Ses dépendances et sa PostgreSQL en mémoire sont séparées des applications. [Rapport et décision proposée](docs/SPIKE-A-REPORT.md). Aucun éditeur de production n’est ajouté au Lot 0 ; la décision ADR-0007 et le lancement du Lot 1 restent soumis au propriétaire.
+Le [Spike A isolé](spikes/editor/README.md) évalue l’éditeur, le stockage JSON, les révisions, les diffs et une future migration Yjs sur corpus fictif. Ses dépendances et sa PostgreSQL en mémoire sont séparées des applications. [Rapport et décision proposée](docs/SPIKE-A-REPORT.md). Ce laboratoire reste isolé. ADR-0007 a ensuite été accepté explicitement avant la réalisation du Lot 1 ; Yjs reste hors production.
 
 ## Atelier d’écriture — Lot 1
 
@@ -102,3 +103,15 @@ Ouvrir un projet puis **Ouvrir l’atelier d’écriture**. Créer un manuscrit,
 Historique : auteur, date, lecture/comparaison de versions, restauration du texte en nouvelle révision. Export Markdown dérivé avec avertissements ; JSON éditorial versionné avec structure/archives/textes courants, sans historique ni archive complète de projet. Les compteurs enregistrés viennent du serveur ; le compteur de brouillon est calculé en Worker. Mode concentration et raccourcis de mise en forme disponibles. Limites et qualification : [rapport](docs/LOT-1-REPORT.md), [ADR-0010](docs/adr/0010-atelier-ecriture-et-concurrence.md).
 
 Les migrations 0002/0003 sont additives et rejouables, sans réinitialisation des données existantes. Ne jamais supprimer le volume persistant pour les appliquer. CI : documentation/contrats, tests du validateur, architecture, TypeScript, tests sur PostgreSQL, comparaison de contention des deux stratégies et navigateur réel ; Spike A reste isolé.
+
+## Collaborer — Lot 3
+
+Depuis le projet, ouvrir **Collaborateurs**. Le propriétaire peut inviter un admin/auteur/relecteur/lecteur ; un admin gère seulement les trois derniers rôles et ne peut cibler owner/admin. L’owner unique ne peut ni partir ni être rétrogradé par ce parcours. Un membre non propriétaire peut quitter le projet.
+
+Saisir l’adresse vérifiée du destinataire, choisir son rôle, puis créer et copier le lien. Le lien est révélé une seule fois : si la réponse est perdue, révoquer l’invitation et en recréer une. Transmettre ce lien par un canal privé au destinataire, sans ticket public ni capture partagée. Aucun email n’est envoyé par StoryMaster. Le destinataire ouvre le lien, se connecte via Keycloak avec cette adresse **vérifiée**, puis accepte ou refuse. Un ancien compte local non vérifié doit être vérifié dans l’IdP puis reconnecté ; saisir une adresse dans l’interface ne suffit pas. La durée est configurable par `INVITATION_TTL_SECONDS` : 172800 s par défaut, bornes techniques 300–604800 s.
+
+Sous le texte, ouvrir **Discussions de cette scène**, ou sélectionner un passage puis **Commenter la sélection**. Le relecteur sélectionne le texte dans un éditeur en lecture seule. Les discussions globales et les commentaires de fiches sont disponibles dans les panneaux correspondants. Répondre, résoudre/rouvrir, modifier son message, retirer logiquement un message et consulter les historiques selon les droits. Les commentaires restent attachés aux IDs après renommage, archive ou désactivation de module, sans modifier les révisions du canon.
+
+Après modification du texte, actualiser les discussions : un passage confirmé peut être surligné uniquement dans la révision correspondante. Un passage ambigu ou absent garde son extrait et sa version d’origine ; aucun nouvel emplacement n’est inventé. Le brouillon doit être enregistré avant création d’une ancre. Les champs non publiés restent en mémoire dans l’onglet ; une fermeture forcée peut les perdre. Les modifications de droits invalident aussi les anciennes invitations en attente liées au membre. Un retrait bloque les nouveaux appels après son commit ; il ne peut effacer un texte déjà reçu par un navigateur.
+
+Migration additive 0005, sans suppression de volume. `bench:collaboration` mesure autosaves/commentaires/administration et lecture d’ancres sur scène longue, exclusivement en base `_test` ; [résultats et limites](docs/measurements/LOT-3-COLLABORATION.md). Pas de CRDT, SMTP, propositions ou serveur MCP. Les réserves des lots précédents restent ouvertes, y compris la qualification publique et la revue UX manuelle.

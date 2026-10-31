@@ -1,0 +1,79 @@
+{
+  "status": "Exemples synthétiques, pas des tests produit ; réponses observées dans tests/collaboration-http.test.ts.",
+  "responses": [
+    {
+      "path": "/auth/invitations/prepare",
+      "method": "post",
+      "request": {
+        "headers": {
+          "Origin": "http://localhost:3000"
+        },
+        "body": {
+          "invitationId": "00000007-1111-4111-8111-111111111111",
+          "token": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "prepared": true
+        }
+      }
+    },
+    {
+      "path": "/projects/{projectId}/comments",
+      "method": "post",
+      "request": {
+        "headers": {
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "example-lot3-create"
+        },
+        "body": {
+          "targetType": "scene",
+          "targetId": "00000005-1111-4111-8111-111111111111",
+          "body": "Commentaire de lecture."
+        }
+      },
+      "status": 201,
+      "response": {
+        "data": {
+          "rootCommentId": "00000003-1111-4111-8111-111111111111",
+          "id": "00000002-1111-4111-8111-111111111111",
+          "projectId": "00000001-1111-4111-8111-111111111111",
+          "targetType": "scene",
+          "targetId": "00000005-1111-4111-8111-111111111111",
+          "author": {
+            "id": "00000004-1111-4111-8111-111111111111",
+            "displayName": "Bob, relecteur"
+          },
+          "state": "open",
+          "revision": 1,
+          "commentCount": 1,
+          "createdAt": "2026-10-31T21:00:00Z",
+          "updatedAt": "2026-10-31T21:00:00Z",
+          "anchor": null,
+          "anchorResolution": null,
+          "rootComment": {
+            "id": "00000003-1111-4111-8111-111111111111",
+            "projectId": "00000001-1111-4111-8111-111111111111",
+            "threadId": "00000002-1111-4111-8111-111111111111",
+            "author": {
+              "id": "00000004-1111-4111-8111-111111111111",
+              "displayName": "Bob, relecteur"
+            },
+            "body": "Commentaire de lecture.",
+            "status": "active",
+            "revision": 1,
+            "createdAt": "2026-10-31T21:00:00Z",
+            "updatedAt": "2026-10-31T21:00:00Z",
+            "updatedBy": {
+              "id": "00000004-1111-4111-8111-111111111111",
+              "displayName": "Bob, relecteur"
+            },
+            "withdrawalReason": null
+          }
+        }
+      }
+    }
+  ]
+}

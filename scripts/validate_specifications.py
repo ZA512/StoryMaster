@@ -452,6 +452,64 @@ def validate_lot2(oas, root=None):
 
 
 
+def validate_lot3(oas, root=None):
+    base='/projects/{projectId}'
+    expected={
+      'invitationPrepare':('/auth/invitations/prepare','post'),
+      'invitationContext':('/invitations/current','get'),
+      'invitationRespond':('/invitations/current/respond','post'),
+      'invitationContextClear':('/invitations/current','delete'),
+      'memberList':(base+'/members','get'),'memberSelf':(base+'/members/self','get'),
+      'memberRole':(base+'/members/{userId}','patch'),'memberRemove':(base+'/members/{userId}','delete'),
+      'memberLeave':(base+'/members/leave','post'),
+      'invitationList':(base+'/invitations','get'),'invitationCreate':(base+'/invitations','post'),
+      'invitationRevoke':(base+'/invitations/{invitationId}','delete'),
+      'commentThreadList':(base+'/comments','get'),'commentThreadCreate':(base+'/comments','post'),
+      'commentThreadRead':(base+'/comment-threads/{threadId}','get'),
+      'commentReply':(base+'/comment-threads/{threadId}/replies','post'),
+      'commentThreadState':(base+'/comment-threads/{threadId}/state','patch'),
+      'commentUpdate':(base+'/comments/{commentId}','patch'),
+      'commentWithdraw':(base+'/comments/{commentId}','delete')}
+    for segment,param,kind in [('members','userId','member'),('invitations','invitationId','invitation'),('comment-threads','threadId','commentThread'),('comments','commentId','comment')]:
+        expected[kind+'History']=(base+'/'+segment+'/{'+param+'}/revisions','get')
+    creates={'invitationCreate','commentThreadCreate'}
+    for oid,(path,method) in expected.items():
+        op=oas['paths'].get(path,{}).get(method,{})
+        require(op.get('operationId')==oid and op.get('x-lot')==3,'Lot 3 : opération absente '+oid)
+        require(op.get('security')==([] if oid=='invitationPrepare' else [{'webSession':[]}]),'Lot 3 : session humaine ou préparation explicite '+oid)
+        params={p['name']:p for raw in op.get('parameters',[]) for p in [dereference(oas,raw)]}
+        if method in {'post','patch','delete'}:
+            names=['Origin'] if oid=='invitationPrepare' else ['X-CSRF-Token']+([] if oid=='invitationContextClear' else ['Idempotency-Key'])
+            if oid not in creates|{'invitationPrepare','invitationContextClear'}: names+=['If-Match']
+            for name in names: require(params.get(name,{}).get('required') is True,'Lot 3 : précondition absente '+oid+' '+name)
+            schema=dereference(oas,op['requestBody']['content']['application/json']['schema'])
+            require(schema.get('additionalProperties') is False,'Lot 3 : corps strict '+oid)
+        if oid in {'memberRole','memberRemove','invitationCreate','invitationRevoke','invitationList'}:
+            require(op['x-permission']=='members.admin','Lot 3 : gestion réservée '+oid)
+    s=oas['components']['schemas']
+    require(s['MemberRole']['properties']['role']['enum']==['admin','author','reviewer','reader'],'Lot 3 : aucun owner via PATCH')
+    require(s['InvitationCreate']['properties']['role']['enum']==['admin','author','reviewer','reader'],'Lot 3 : aucun owner via invitation')
+    require(set(s['InvitationRespond']['properties'])=={'decision'},'Lot 3 : identité et projet destinataires ne viennent pas du corps')
+    require(set(s['InvitationPrepare']['properties'])=={'invitationId','token'},'Lot 3 : préparation sans return URL')
+    for name in ['Invitation','InvitationCreated','InvitationContext','InvitationResult','Member','CommentThreadView']:
+        require(not re.search(r'"(?:tokenHash|token_hash|secret|sessionHash)"',json.dumps(s[name])),'Lot 3 : secret dans DTO '+name)
+    require(s['TextAnchor']['properties']['state']=={'const':'valid'},'Lot 3 : état original distinct de la projection')
+    require({'sceneId','sceneRevision','from','to','quote','prefix','suffix','authorId'}.issubset(s['TextAnchor']['required']),'Lot 3 : origine complète de l’ancrage')
+    resolution=s['AnchorResolution']
+    require(resolution['properties']['state']['enum']==['valid','relocated','ambiguous','orphaned'],'Lot 3 : états d’ancrage explicites')
+    require(resolution['allOf'][0]['then']['properties']=={'from':{'type':'null'},'to':{'type':'null'}},'Lot 3 : aucune position incertaine présentée certaine')
+    require('emailVerified' in s['Me']['properties']['user']['properties'],'Lot 3 : attestation de session explicite')
+    for name in ['CommentUpdate','CommentWithdraw']:
+        require('expectedThreadRevision' in s[name]['required'],'Lot 3 : fil et commentaire préconditionnés')
+    if root is not None:
+        scenarios=load_json(root/'docs/spec/lot3-scenarios.json')
+        require(scenarios['status']=='Scénarios déclaratifs ; preuves exécutées dans LOT-3-REPORT.md','Lot 3 : scénarios non exécutables distingués')
+        require({x['contractTest'] for x in scenarios['scenarios']}=={'CT-02','CT-06','CT-20','CT-30','CT-36','CT-45','CT-49'},'Lot 3 : sélection CT applicable')
+        for x in scenarios['scenarios']:
+            require(x['oracle'] and x['scope'] in {'human','partial'} and (root/x['executableTest']).is_file(),'Lot 3 : oracle ou test absent')
+
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -463,6 +521,7 @@ def validate_contracts(root):
     validate_lot0(oas)
     validate_lot1(oas)
     validate_lot2(oas, root)
+    validate_lot3(oas, root)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and
@@ -545,7 +604,7 @@ def validate_contracts(root):
 
 
 def validate_lot0_examples(root, oas):
-    examples = [example for name in ['lot0-http.json','lot1-http.json','lot2-http.json'] for example in load_json(root / 'docs/examples' / name)['responses']]
+    examples = [example for name in ['lot0-http.json','lot1-http.json','lot2-http.json','lot3-http.json'] for example in load_json(root / 'docs/examples' / name)['responses']]
     for example in examples:
         op = oas['paths'][example['path']][example['method']]
         context = 'Lot 0 exemple : ' + example['path']

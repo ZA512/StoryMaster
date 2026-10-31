@@ -32,10 +32,10 @@ export interface AuditEvent {
   action: string; actor: Actor; correlationId: string; projectId?: string; resourceId: string;
   beforeRevision?: number; afterRevision?: number;
 }
-export type NarrativePermission = 'narrative.read'|'narrative.write'|'narrative.archive'|'export.create'|'project.admin';
+export type NarrativePermission = 'narrative.read'|'narrative.write'|'narrative.archive'|'export.create'|'project.admin'|'members.read'|'members.admin'|'membership.leave'|'comment.write';
 export function narrativePermitted(role:Role, permission:NarrativePermission, actor:ActorType):boolean {
   if(actor!=='human')return false;
-  switch(permission){case 'narrative.read':return roles.includes(role);case 'project.admin':case 'narrative.archive':return role==='owner'||role==='admin';case 'narrative.write':case 'export.create':return ['owner','admin','author'].includes(role);default:return false;}
+  switch(permission){case 'members.read':case 'membership.leave':case 'narrative.read':return roles.includes(role);case 'members.admin':case 'project.admin':case 'narrative.archive':return role==='owner'||role==='admin';case 'comment.write':return ['owner','admin','author','reviewer'].includes(role);case 'narrative.write':case 'export.create':return ['owner','admin','author'].includes(role);default:return false;}
 }
 export interface RichNode { type:string; text?:string; attrs?:Record<string,unknown>; marks?:{type:string;attrs?:Record<string,unknown>}[];content?:RichNode[] }
 export interface RichDocument extends RichNode { type:'doc';content:RichNode[] }
@@ -53,3 +53,5 @@ export interface SceneRevision {
 }
 export interface EditorialChange {id:string;projectId:string;resourceId:string;kind:EditorialKind;action:string;beforeRevision:number|null;afterRevision:number;actor:Actor;correlationId:string;details:Record<string,unknown>}
 export * from './narrative.ts';
+
+export * from './collaboration.ts';

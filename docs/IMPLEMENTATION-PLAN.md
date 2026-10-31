@@ -78,7 +78,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Tâches (ordre proposé) :** Initialiser dépôt/CI/environnement reproductible ; cas d’usage d’identité OIDC et sessions ; Project, Membership et autorisation commune ; schémas/erreurs/CAS/idempotence et audit minimal ; rôle DB sans privilèges globaux ; stratégie transaction/verrou projet ; tests de refus et données fictives.
 
-**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis Lot 2 autorisé par une instruction distincte ; arrêt avant Lot 3.
+**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis Lot 2 autorisé par une instruction distincte ; arrêt avant Lot 4 après autorisation explicite du Lot 3.
 
 **Risques :** Divergence adaptateurs, mauvaise identité email, secret en CI, décision IdP tardive.
 
@@ -153,6 +153,8 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 
 ### Lot 3 — Collaboration asynchrone
+
+**État :** implémentation autorisée le 31 octobre 2026 après CI verte de 6a58641 ; réalisation et preuves dans le [rapport Lot 3](LOT-3-REPORT.md), choix dans [ADR-0012](adr/0012-collaboration-asynchrone-et-ancrages.md). Réception humaine attendue ; toutes réserves héritées du Lot 2 restent ouvertes. Aucun Lot 4 autorisé.
 
 **Objectif :** Faire contribuer auteurs et relecteurs sans écrasement.
 

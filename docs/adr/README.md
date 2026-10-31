@@ -1,6 +1,6 @@
 # Registre des décisions d’architecture
 
-**Statut :** ADR-0001/0002/0006/0007 acceptés ; ADR-0003 accepté sur atomicité/concurrence, verrou provisoire ; ADR-0008 partiellement validé GO-02 ; ADR-0005 accepté en principe ; ADR-0009/0010/0011 décrivent la mise en œuvre des lots autorisés ; autres ADR proposés. **Portée :** socle et contrats MVP. **Références :** [plan](../IMPLEMENTATION-PLAN.md), [audit](../DOCUMENT-AUDIT.md).
+**Statut :** ADR-0001/0002/0006/0007 acceptés ; ADR-0003 accepté sur atomicité/concurrence, verrou provisoire ; ADR-0008 partiellement validé GO-02 ; ADR-0005 accepté en principe ; ADR-0009/0010/0011/0012 décrivent la mise en œuvre des lots autorisés ; autres ADR proposés. **Portée :** socle et contrats MVP. **Références :** [plan](../IMPLEMENTATION-PLAN.md), [audit](../DOCUMENT-AUDIT.md).
 
 ## Synthèse et analyse
 
@@ -19,7 +19,9 @@ Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style
 | ADR-0008 | [Identité déléguée, autorisation et politiques par défaut](0008-identite-delegation-et-politiques.md) | Proposée |
 | ADR-0010 | [Atelier et barrière des écritures de texte](0010-atelier-ecriture-et-concurrence.md) | Mise en œuvre Lot 1 ; reçu avec réserves |
 
-| ADR-0011 | [Référentiel narratif et références de scènes](0011-referentiel-narratif-et-references.md) | Mise en œuvre Lot 2 ; réception humaine attendue |
+| ADR-0011 | [Référentiel narratif et références de scènes](0011-referentiel-narratif-et-references.md) | Mise en œuvre Lot 2 ; reçu techniquement avec réserves |
+
+| ADR-0012 | [Collaboration asynchrone et ancrages conservateurs](0012-collaboration-asynchrone-et-ancrages.md) | Mise en œuvre Lot 3 ; réception humaine attendue |
 
 ## Décisions proposées et alternatives
 

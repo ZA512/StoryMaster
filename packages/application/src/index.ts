@@ -1,3 +1,4 @@
+import type {CollaborationPort} from './collaboration-ports.ts';
 import type {NarrativePort} from './narrative-ports.ts';
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { AppError, normalizeMetadata, permitted, notFound, unauthenticated } from '@storymaster/domain';
@@ -7,7 +8,7 @@ import type { Page, ProjectDto } from '@storymaster/contracts';
 
 export interface ProjectPosition { timestamp: string; id: string }
 export interface Transaction {
-  readonly editorial:EditorialPort;readonly narrative:NarrativePort;
+  readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
   assertActor(actor: Actor): Promise<void>;
   getProject(userId: string, projectId: string): Promise<ProjectWithRole | null>;
   listProjects(userId: string, limit: number, after?: ProjectPosition): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
@@ -54,7 +55,7 @@ export class ProjectService {
       const now = new Date().toISOString();
       const project: ProjectWithRole = { id:randomUUID(),ownerId:actor.userId,...values,visibility:'private',status:'active',revision:1,createdAt:now,updatedAt:now,role:'owner' };
       await tx.insertProject(project);
-      await tx.insertOwner(project.id,actor.userId);
+      await tx.collaboration.setActor(actor,correlationId);await tx.insertOwner(project.id,actor.userId);
       await tx.snapshot(project,actor);
       await tx.audit({action:'project.created',actor,projectId:project.id,resourceId:project.id,afterRevision:1,correlationId});
       await tx.saveIdempotency(scope,key,hash,project);
@@ -152,3 +153,7 @@ export * from './editorial.ts';
 export * from './narrative-ports.ts';
 export * from './project-access.ts';
 export * from './narrative.ts';
+
+export * from './collaboration-ports.ts';
+
+export * from './collaboration.ts';

@@ -1,7 +1,7 @@
 # Modèle de domaine — Plateforme de création littéraire
 
-**Version :** 0.3
-**Statut :** Domaine Lots 0–2 implémenté ; détails futurs proposés
+**Version :** 0.4
+**Statut :** Domaine Lots 0–3 implémenté, réception Lot 3 attendue ; détails futurs proposés
 **Référence principale :** `docs/PRD.md`
 
 ## 1. Objectif
@@ -752,37 +752,21 @@ Le CRDT ne doit pas devenir un second modèle d'autorisation.
 
 ## 16. Commentaires et ancrages
 
-### 16.1 Comment
+### 16.1 CommentThread et Comment — réalisation Lot 3
 
-Champs :
+CommentThread porte `id`, `projectId`, `targetType` scene/object, `targetId`, `rootCommentId`, auteur, état open/resolved, révision, compte de messages et dates. Comment porte son ID stable, projet/fil, auteur, corps texte brut nullable après retrait, état active/withdrawn, révision, dates, dernier modificateur et motif de retrait. Cible et résolution appartiennent au fil ; édition/retrait appartiennent au message. Les deux révisions sont distinctes et contrôlées pour une modification de message.
 
-- `id`
-- `projectId`
-- `targetType`
-- `targetId`
-- `authorActor`
-- `body`
-- `status`
-- `createdAt`
-- `updatedAt`
+Création, réponse, édition, retrait et résolution produisent des snapshots attribués et un audit transactionnel. Aucun JSON ProseMirror ni révision de scène/fiche n’est modifié. Le retrait logique conserve auteur et origine ; l’historique des corps reste réservé à l’auteur encore membre et aux modérateurs. Les propositions ciblées par commentaire restent Lot 4.
 
 ### 16.2 TextAnchor
 
-Un commentaire sur un passage utilise un ancrage versionné :
+Origine immuable : `id`, `projectId`, `threadId`, `sceneId`, `sceneRevision`, positions ProseMirror UTF-16 `from`/`to`, `quote`, `prefix`, `suffix`, état initial valid, auteur et date. La FK composite garantit la scène/révision du même projet. Citation et contextes sont vérifiés/calculés sur le snapshot serveur ; aucune sélection client ne suffit seule.
 
-- `sceneId`
-- `sceneRevision`
-- `range`
-- `contextFingerprint` facultatif.
+`AnchorResolution` est une projection séparée indiquant la révision courante : valid, relocated, ambiguous ou orphaned. Seules les deux premières portent des positions actuelles certaines ; les autres renvoient from/to null. L’origine n’est jamais écrasée. Correspondance déterministe conservatrice par alignements optimaux ou bloc complet unique inchangé, bornée en coût ; aucune recherche de sous-chaîne seule ne produit un rattachement. La version d’origine reste consultable selon les droits. [ADR-0012](adr/0012-collaboration-asynchrone-et-ancrages.md).
 
-Après modification du texte, l'ancrage peut devenir :
+### 16.3 Invitations et memberships
 
-- valid ;
-- relocated ;
-- ambiguous ;
-- orphaned.
-
-Le système ne doit pas rattacher silencieusement un commentaire au mauvais passage.
+Invitation versionnée, ID opaque, email destinataire, rôle non-owner, invitant, échéance et état pending/accepted/revoked/expired ; hash de jeton uniquement en stockage, jamais dans le DTO/historique. Expired est dérivé de l’échéance. Acceptation liée au compte issuer/subject et à son email IdP vérifié en session ; un refus devient revoked avec motif recipient_declined. Membership révisé et historisé avec séquence de changement de droits ; retrait non destructif, owner unique. Les invitations pending liées aux adresses du membre sont révoquées atomiquement lors d’un changement de droits ; une nouvelle invitation explicite est nécessaire. Email n’est jamais l’identité primaire.
 
 ## 17. Acteurs et audit
 
@@ -919,8 +903,8 @@ Les règles communes ci-dessus s'appliquent à chaque ligne sauf mention « immu
 | SceneReference : occurrence structurée | id,projectId,sceneId,objectId,referenceType,metadata,revision | N scènes ↔ N objets | mutation dans agrégat Scene ; suppression logique | Unicité active `(sceneId,objectId,referenceType)` ; types présent/mentionné/POV/lieu/événement selon enums du contrat |
 | ModuleDefinition : contrat de type | key,version,schemas,relationDefinitions,dependencies[],migrations | 1 version → N activations ; registre applicatif | versions publiées immuables | Pas de code utilisateur ; graphe de dépendances sans cycle |
 | ModuleActivation : capacité projet | projectId,moduleKey,moduleVersion,enabled,configuration,revision | unique projet/module | on↔off ; changement schemaVersion explicitement migré | Off : lecture/export autorisés sous droits projet, création/mutation module refusées ; aucune suppression |
-| Comment : discussion | targetType,targetId,body,status,parentCommentId?,anchorId?,revision | 1 cible ; 0..N réponses ; 0..1 ancrage | open→resolved ; édition auteur ou modération tracée ; retrait masque corps | Texte brut ou rendu assaini ; l'historique privé n'est pas un journal technique |
-| TextAnchor : passage cité | id,projectId,sceneId,sceneRevision,from,to,quote,prefix,suffix,state | 1 scène/révision ; 0..N commentaires | valid→relocated/ambiguous/orphaned ; ancrage de base préservé | Positions ProseMirror dans la révision citée ; réancrage proposé seulement si unique, jamais inventé |
+| CommentThread / Comment | fil : cible, état, révision ; message : corps, auteur, état, révision | 1 cible/fil ; 1..N messages ; 0..1 ancrage | fil open→resolved ; édition auteur, retrait auteur/modérateur tracé | Texte brut ou rendu assaini ; l'historique privé n'est pas un journal technique |
+| TextAnchor : passage cité | id,projectId,sceneId,sceneRevision,from,to,quote,prefix,suffix,state | 1 scène/révision ; 1 fil | origine immuable ; projection valid/relocated/ambiguous/orphaned | Positions ProseMirror dans la révision citée ; réancrage proposé seulement si unique, jamais inventé |
 | ChangeProposal : enveloppe | title,description,origin,currentProposalRevision,status,stateVersion,mergedChangeSetId? | 1 projet ; 1..N révisions ; 0..1 ChangeSet fusionné | état selon diagramme ; fusionnée terminale ; retrait ≠ purge | Auteur et origine déterminés serveur ; pas de permission administrative dans une opération |
 | ProposalRevision : intention revue | proposalId,number,operations[],baseSnapshots,dependencyRevisions,contentHash,createdBy | 1 proposition ; 0..N opérations en brouillon, 1..N à submit ; 0..N reviews | immuable ; nouvelle révision pour titre/justification/opérations/bases | Une approbation se lie au numéro ET au hash ; changement invalide les anciennes |
 | ProposedOperation : commande typée | operationId,kind,targetId? ou tempId?,expectedRevision?,payload,reason? | 1 révision de proposition ; références locales explicites | immuable dans sa révision | Types fermés dans operations.schema.json ; pas de SQL, code, JSON Patch universel |
@@ -966,7 +950,9 @@ erDiagram
     Project ||--o{ ModuleActivation : configure
     ModuleDefinition ||--o{ ModuleActivation : definit
     SceneRevision ||--o{ TextAnchor : ancre
-    TextAnchor o|--o{ Comment : precise
+    CommentThread ||--|{ Comment : contient
+    CommentThread ||--o| TextAnchor : precise
+    Project ||--o{ CommentThread : partage
     Project ||--o{ ChangeProposal : contient
     ChangeProposal ||--|{ ProposalRevision : versionne
     ProposalRevision ||--o{ ProposedOperation : decrit

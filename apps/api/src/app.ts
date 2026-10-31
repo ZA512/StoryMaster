@@ -1,3 +1,4 @@
+import {registerCollaboration,invitationCookie} from './collaboration.ts';
 import {registerNarrative} from './narrative.ts';
 import { randomUUID } from 'node:crypto';
 import type { Writable } from 'node:stream';
@@ -6,7 +7,7 @@ import type { FastifyRequest } from 'fastify';
 import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@storymaster/domain';
-import { IdentityService, ProjectService,EditorialService,NarrativeService } from '@storymaster/application';
+import { IdentityService, ProjectService,EditorialService,NarrativeService,CollaborationService } from '@storymaster/application';
 import { createProjectSchema,updateProjectSchema,listProjectsSchema,idempotencyKeySchema,emptyBodySchema } from '@storymaster/contracts';
 import { Pool,PostgresUnitOfWork,SessionStore,OidcProvider } from '@storymaster/infrastructure';
 import type { Session,LoginSecret } from '@storymaster/infrastructure';
@@ -25,6 +26,7 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   await app.register(rateLimit,{max:options.rateMax ?? 300,timeWindow:'1 minute',hook:'preHandler',keyGenerator:req=>req.session?.actor.userId ?? req.ip});
   app.decorateRequest('session',null);
   const secure=!config.local, sessionCookie=secure ? '__Host-sm_session' : 'sm_session_local',loginCookie=secure ? '__Host-sm_login' : 'sm_login_local';
+  const invitationOptions={origin:config.publicOrigin,local:config.local,seal:(value:string)=>sessions.seal(value),unseal:(value:string)=>sessions.unseal(value)};
   const cookieOptions={path:'/',httpOnly:true,secure,sameSite:'lax' as const};
   app.addHook('onRequest',async(req,reply)=>{
     reply.header('X-Correlation-ID',req.id).header('Cache-Control','private, no-store').header('X-Content-Type-Options','nosniff').header('Referrer-Policy','no-referrer');
@@ -72,9 +74,9 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
       callback.search=new URL(req.url,'http://internal').search;
       const verified=await provider.complete(callback,login);
       const user=await identities.signIn(verified.identity,req.id);
-      const token=await sessions.create(user,req.id,verified.idToken);
+      const token=await sessions.create(user,req.id,verified.idToken,verified.identity.email);
       reply.setCookie(sessionCookie,token,{...cookieOptions,maxAge:config.sessionSeconds});
-      return reply.redirect(config.publicOrigin+'/projets');
+      return reply.redirect(config.publicOrigin+(invitationCookie(invitationOptions).read(req)?'/rejoindre':'/projets'));
     } catch {
       app.log.warn({code:'OIDC_CALLBACK_REJECTED',correlationId:req.id},'Connexion refusée');
       return reply.redirect(config.publicOrigin+'/connexion?erreur=connexion');
@@ -82,7 +84,7 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   });
   app.get('/api/v1/me',async req=>{
     actor(req); const s=req.session!;
-    return {data:{user:{id:s.user.id,displayName:s.user.displayName,email:s.user.email},csrfToken:sessions.csrf(s.rawToken),expiresAt:s.expiresAt}};
+    return {data:{user:{id:s.user.id,displayName:s.user.displayName,email:s.verifiedEmail??s.user.email,emailVerified:!!s.verifiedEmail},csrfToken:sessions.csrf(s.rawToken),expiresAt:s.expiresAt}};
   });
   app.post('/api/v1/session/logout',async(req,reply)=>{
     emptyBodySchema.parse(req.body); actor(req);
@@ -114,6 +116,7 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   const editorial=new EditorialService(db);
   await registerEditorial(app,editorial,{actor,key,expected});
   await registerNarrative(app,new NarrativeService(db,config.secret),editorial,{actor,key,expected});
+  await registerCollaboration(app,new CollaborationService(db,config.secret,{publicOrigin:config.publicOrigin,invitationTtlSeconds:config.invitationTtlSeconds}),{actor,key,expected},invitationOptions);
   app.addHook('onClose',()=>pool.end());
   return app;
 }

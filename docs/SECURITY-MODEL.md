@@ -1,7 +1,7 @@
 # Modèle de sécurité et analyse de menaces
 
-**Version :** 0.2  
-**Statut :** Analyse de menaces initiale  
+**Version :** 0.3
+**Statut :** Analyse et contrôles Lots 0–3 ; exploitation publique non qualifiée
 **Références :** `PRD.md`, `DOMAIN-MODEL.md`, `ARCHITECTURE.md`, `API-CONTRACTS.md`
 
 ## 1. Objectif
@@ -612,3 +612,15 @@ JSON narratif strict, liens http/https/mailto sans credentials, aucune image/HTM
 Fiches, relations et références : lecture pour membres autorisés du projet, écriture owner/admin/author, archivage de fiches owner/admin, activation des modules owner/admin. Export narratif owner/admin/author. Aucun acteur IA ne peut utiliser ces mutations HTTP ou services directement, même sous identité owner. Une session/membership est relue après la barrière projet ; aucun identifiant UUID ni curseur ne remplace une autorisation.
 
 Recherche et navigation inverse restent filtrées par projet. Curseurs signés liés à utilisateur/projet/rôle/requête, aucun compteur global ni suggestion interprojets ; les refus ne révèlent pas le titre d’une cible étrangère. Modules off et archives restent soumis aux mêmes droits de lecture/export/historique. Notes partagées à l’échelle du projet, sans pseudo-confidentialité par champ. Sorties narratives rendues en texte React, sans HTML de ts_headline ; liens et documents riches restent validés. Les [tests Lot 2 et limites](LOT-2-REPORT.md) complètent les contrôles existants, sans déclarer une nouvelle analyse de sécurité exhaustive.
+
+## Réalisation de la collaboration asynchrone — Lot 3
+
+Identité issuer/subject conservée. Seul email_verified strictement booléen true d’un ID token validé permet de conserver l’email vérifié dans la session. Les profils app_users et champs du navigateur ne constituent aucune attestation. Une ancienne session sans cette preuve doit être reconnectée pour accepter. Token aléatoire 256 bits, SHA-256 seul en DB ; durée 48 h configurable entre 5 min et 7 jours, bornes techniques. Usage unique lié au compte acceptant ; appels concurrents/répétés ne créent pas de doublon ni ne restaurent un accès retiré. Le refus est revoked/recipient_declined ; expired est dérivé.
+
+Le lien se transmet par canal privé au destinataire. Fragment immédiatement retiré, préparation same-origin sans recherche de données, secret encapsulé 15 min dans cookie AES-GCM HttpOnly/SameSite=Lax/Secure hors local, callback fixe sans query/returnURL secret. Aucun SMTP, ressource tierce, stockage web ou token brut dans historique/idempotence/logs. Tentatives bornées sur préparation et réponse ; identifiant, token erroné et mauvais destinataire donnent un refus générique sans confirmer un projet. Le lien est révélé uniquement à sa création ; réponse perdue → révoquer/recréer. Ne jamais publier capture ou trace d’un lien.
+
+Owner unique ne peut être invité, rétrogradé, retiré ni partir. Admin ne cible ni owner ni admin, et ne gère que author/reviewer/reader. Si modifier un autre membre exige d’invalider un lien admin en attente, seul l’owner peut agir. Départ volontaire non-owner révoque aussi ses liens pending. Les changements de droits invalident les invitations pending liées aux adresses du membre, dans la même transaction ; l’adresse de profil est ici une restriction supplémentaire, jamais une source de droit. Une invitation résiduelle d’un invitant rétrogradé/retiré ne confère plus ses anciens droits. Aucun transfert implicite.
+
+Commenter : owner/admin/author/reviewer ; reader lit seulement. IA refusée même propriétaire via service ou HTTP. Édition par l’auteur ; retrait logique auteur ou owner/admin, motif obligatoire pour modérer autrui. Résoudre/rouvrir : owner/admin/author, ou reviewer créateur du fil. Historique des corps : auteur encore membre ou owner/admin ; corps retiré masqué pour les autres, attribution conservée. Projet archivé : lecture seule ; scène/fiche archivée ou module off dans un projet actif : discussion permise et conservée. Les ancres incertaines ne portent aucune position actuelle. Tous les contrôles de projet s’appliquent aussi à l’extrait, à l’origine et à l’historique.
+
+Révocation : Project exclusif et droits frais après attente ; commentaire/autosave engagés avant peuvent committer et restent attribués, les nouveaux appels après commit sont refusés malgré une session valide. Les données déjà reçues ne peuvent être effacées à distance. Preuves PG/HTTP/IdP/navigateur et limites : [rapport](LOT-3-REPORT.md). Les parties délégation OAuth/MCP et propositions des CT-20/30/45 restent futures.

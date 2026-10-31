@@ -2,8 +2,9 @@ openapi: 3.1.1
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 info:
   title: StoryMaster — contrats de spécification
-  version: 0.5.0
-  description: Contrats MVP. x-lot 0/1/2 implémentés pour session humaine ; autres opérations et MCP spécifiés seulement.
+  version: 0.6.0
+  description: Contrats MVP. x-lot 0/1/2/3 implémentés pour session humaine ; autres opérations et MCP spécifiés
+    seulement.
 servers:
   - url: http://localhost:3000/api/v1
     description: Docker Compose local seulement
@@ -4549,6 +4550,1593 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
+  /auth/invitations/prepare:
+    post:
+      operationId: invitationPrepare
+      summary: invitationPrepare
+      x-lot: 3
+      x-permission: invitation.stage
+      x-audit: A2
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+      security: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/InvitationPrepared"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationPrepare"
+      x-rate-limit:
+        max: 20
+        windowSeconds: 60
+      servers:
+        - url: http://localhost:3000
+          description: Origine locale ; utiliser PUBLIC_ORIGIN en déploiement HTTPS
+  /invitations/current:
+    get:
+      operationId: invitationContext
+      summary: invitationContext
+      x-lot: 3
+      x-permission: invitation.recipient
+      x-audit: A0
+      parameters: []
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/InvitationContext"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    delete:
+      operationId: invitationContextClear
+      summary: invitationContextClear
+      x-lot: 3
+      x-permission: session
+      x-audit: A2
+      parameters:
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/InvitationCleared"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /invitations/current/respond:
+    post:
+      operationId: invitationRespond
+      summary: invitationRespond
+      x-lot: 3
+      x-permission: invitation.recipient
+      x-audit: A2
+      parameters:
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/InvitationResult"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationRespond"
+  /projects/{projectId}/members:
+    get:
+      operationId: memberList
+      summary: memberList
+      x-lot: 3
+      x-permission: members.read
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: &a12
+            type: string
+            format: uuid
+        - &a13
+          name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - &a14
+          name: cursor
+          in: query
+          schema:
+            type: string
+            maxLength: 2000
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MemberPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/members/self:
+    get:
+      operationId: memberSelf
+      summary: memberSelf
+      x-lot: 3
+      x-permission: members.read
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Member"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/members/{userId}:
+    patch:
+      operationId: memberRole
+      summary: memberRole
+      x-lot: 3
+      x-permission: members.admin
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: userId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Member"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberRole"
+    delete:
+      operationId: memberRemove
+      summary: memberRemove
+      x-lot: 3
+      x-permission: members.admin
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: userId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Member"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/members/leave:
+    post:
+      operationId: memberLeave
+      summary: memberLeave
+      x-lot: 3
+      x-permission: membership.leave
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Member"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/invitations:
+    get:
+      operationId: invitationList
+      summary: invitationList
+      x-lot: 3
+      x-permission: members.admin
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - *a13
+        - *a14
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/InvitationPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    post:
+      operationId: invitationCreate
+      summary: invitationCreate
+      x-lot: 3
+      x-permission: members.admin
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+      security:
+        - webSession: []
+      responses:
+        "201":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/InvitationCreated"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationCreate"
+  /projects/{projectId}/invitations/{invitationId}:
+    delete:
+      operationId: invitationRevoke
+      summary: invitationRevoke
+      x-lot: 3
+      x-permission: members.admin
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: invitationId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Invitation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/comments:
+    get:
+      operationId: commentThreadList
+      summary: commentThreadList
+      x-lot: 3
+      x-permission: narrative.read
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: targetType
+          in: query
+          schema:
+            enum:
+              - scene
+              - object
+        - name: targetId
+          in: query
+          schema: *a12
+        - name: state
+          in: query
+          schema:
+            enum:
+              - open
+              - resolved
+              - all
+            default: all
+        - *a13
+        - *a14
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CommentThreadPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    post:
+      operationId: commentThreadCreate
+      summary: commentThreadCreate
+      x-lot: 3
+      x-permission: comment.write
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+      security:
+        - webSession: []
+      responses:
+        "201":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CommentThreadView"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentThreadCreate"
+  /projects/{projectId}/comment-threads/{threadId}:
+    get:
+      operationId: commentThreadRead
+      summary: commentThreadRead
+      x-lot: 3
+      x-permission: narrative.read
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: threadId
+          in: path
+          required: true
+          schema: *a12
+        - *a13
+        - *a14
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CommentThreadDetail"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/comment-threads/{threadId}/replies:
+    post:
+      operationId: commentReply
+      summary: commentReply
+      x-lot: 3
+      x-permission: comment.write
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: threadId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CommentThreadView"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentReply"
+  /projects/{projectId}/comment-threads/{threadId}/state:
+    patch:
+      operationId: commentThreadState
+      summary: commentThreadState
+      x-lot: 3
+      x-permission: comment.write
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: threadId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CommentThreadView"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentThreadState"
+  /projects/{projectId}/comments/{commentId}:
+    patch:
+      operationId: commentUpdate
+      summary: commentUpdate
+      x-lot: 3
+      x-permission: comment.write
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: commentId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CommentThreadView"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentUpdate"
+    delete:
+      operationId: commentWithdraw
+      summary: commentWithdraw
+      x-lot: 3
+      x-permission: comment.write
+      x-audit: A2
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: commentId
+          in: path
+          required: true
+          schema: *a12
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CommentThreadView"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentWithdraw"
+  /projects/{projectId}/members/{userId}/revisions:
+    get:
+      operationId: memberHistory
+      summary: memberHistory
+      x-lot: 3
+      x-permission: members.admin
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: userId
+          in: path
+          required: true
+          schema: *a12
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: beforeRevision
+          in: query
+          schema: &a15
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CollaborationRevisionPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/invitations/{invitationId}/revisions:
+    get:
+      operationId: invitationHistory
+      summary: invitationHistory
+      x-lot: 3
+      x-permission: members.admin
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: invitationId
+          in: path
+          required: true
+          schema: *a12
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: beforeRevision
+          in: query
+          schema: *a15
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CollaborationRevisionPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/comment-threads/{threadId}/revisions:
+    get:
+      operationId: commentThreadHistory
+      summary: commentThreadHistory
+      x-lot: 3
+      x-permission: narrative.read
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: threadId
+          in: path
+          required: true
+          schema: *a12
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: beforeRevision
+          in: query
+          schema: *a15
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CollaborationRevisionPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/comments/{commentId}/revisions:
+    get:
+      operationId: commentHistory
+      summary: commentHistory
+      x-lot: 3
+      x-permission: narrative.read
+      x-audit: A0
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a12
+        - name: commentId
+          in: path
+          required: true
+          schema: *a12
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: beforeRevision
+          in: query
+          schema: *a15
+      security:
+        - webSession: []
+      responses:
+        "200":
+          description: Résultat autorisé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/CollaborationRevisionPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
 components:
   schemas:
     Id: *a2
@@ -5502,39 +7090,39 @@ components:
     SceneReference:
       type: object
       properties:
-        id: &a41
+        id: &a45
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        projectId: &a42
+        projectId: &a46
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        sceneId: &a43
+        sceneId: &a47
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        objectId: &a44
+        objectId: &a48
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        referenceType: &a45
+        referenceType: &a49
           enum:
             - present
             - mentioned
             - point_of_view
             - setting
             - depicts_event
-        metadata: &a51
+        metadata: &a55
           type: object
           properties: {}
           required: []
           additionalProperties: false
-        revision: &a46
+        revision: &a50
           type: integer
           minimum: 1
       required:
@@ -5637,13 +7225,13 @@ components:
             - active
             - archived
             - deleted
-        createdAt: &a12
+        createdAt: &a16
           type: string
           format: date-time
-        updatedAt: *a12
+        updatedAt: *a16
         createdBy: *a2
         updatedBy: *a2
-        moduleEnabled: &a14
+        moduleEnabled: &a18
           type: boolean
       required:
         - id
@@ -5657,38 +7245,38 @@ components:
     Scene:
       type: object
       properties:
-        id: &a28
+        id: &a32
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        projectId: &a29
+        projectId: &a33
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        chapterId: &a30
+        chapterId: &a34
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        title: &a31
+        title: &a35
           type: string
           maxLength: 200
-        summary: &a32
+        summary: &a36
           type: string
           maxLength: 4000
-        status: &a33
+        status: &a37
           type: string
           maxLength: 40
-        revision: &a34
+        revision: &a38
           type: integer
           minimum: 1
-        contentFormatVersion: &a35
+        contentFormatVersion: &a39
           const: 1
-        content: &a36
+        content: &a40
           $ref: "#/components/schemas/RichDocument"
-        references: &a37
+        references: &a41
           type: array
           items:
             type: object
@@ -5736,18 +7324,18 @@ components:
               - referenceType
               - revision
             additionalProperties: false
-        archived: &a38
+        archived: &a42
           type: boolean
-        contentHash: &a39
+        contentHash: &a43
           type: string
           pattern: ^[a-f0-9]{64}$
-        wordCount: &a40
+        wordCount: &a44
           type: integer
           minimum: 0
-        createdAt: &a13
+        createdAt: &a17
           type: string
           format: date-time
-        updatedAt: *a13
+        updatedAt: *a17
       required:
         - id
         - projectId
@@ -6412,8 +8000,8 @@ components:
             - character
             - place
             - event
-        archived: *a14
-        moduleEnabled: *a14
+        archived: *a18
+        moduleEnabled: *a18
       required:
         - resourceType
         - resourceId
@@ -6456,8 +8044,8 @@ components:
           enum:
             - active
             - removed
-        createdAt: *a12
-        updatedAt: *a12
+        createdAt: *a16
+        updatedAt: *a16
         createdBy: *a2
         updatedBy: *a2
         source:
@@ -6828,6 +8416,8 @@ components:
               type:
                 - string
                 - "null"
+            emailVerified: &a58
+              type: boolean
           required:
             - id
             - displayName
@@ -6983,43 +8573,43 @@ components:
     EditorialItem:
       type: object
       properties:
-        kind: &a16
+        kind: &a20
           enum:
             - manuscript
             - chapter
             - scene
-        id: &a15
+        id: &a19
           type: string
           format: uuid
-        projectId: *a15
-        parentId: *a15
-        title: &a17
+        projectId: *a19
+        parentId: *a19
+        title: &a21
           type: string
           maxLength: 200
-        summary: &a18
+        summary: &a22
           type: string
           maxLength: 4000
         position: *a9
         revision: *a9
-        structureRevision: &a19
+        structureRevision: &a23
           type: integer
           minimum: 0
-        archived: &a20
+        archived: &a24
           type: boolean
-        status: &a21
+        status: &a25
           type: string
           maxLength: 40
-        writingStatuses: &a22
+        writingStatuses: &a26
           type: array
           items:
             type: string
             maxLength: 40
           maxItems: 30
-        wordCount: &a23
+        wordCount: &a27
           type: integer
           minimum: 0
-        createdAt: *a13
-        updatedAt: *a13
+        createdAt: *a17
+        updatedAt: *a17
       required:
         - kind
         - id
@@ -7040,21 +8630,21 @@ components:
     ChapterOutline:
       type: object
       properties:
-        kind: *a16
-        id: *a15
-        projectId: *a15
-        parentId: *a15
-        title: *a17
-        summary: *a18
+        kind: *a20
+        id: *a19
+        projectId: *a19
+        parentId: *a19
+        title: *a21
+        summary: *a22
         position: *a9
         revision: *a9
-        structureRevision: *a19
-        archived: *a20
-        status: *a21
-        writingStatuses: *a22
-        wordCount: *a23
-        createdAt: *a13
-        updatedAt: *a13
+        structureRevision: *a23
+        archived: *a24
+        status: *a25
+        writingStatuses: *a26
+        wordCount: *a27
+        createdAt: *a17
+        updatedAt: *a17
         scenes:
           type: array
           items:
@@ -7080,21 +8670,21 @@ components:
     ManuscriptOutline:
       type: object
       properties:
-        kind: *a16
-        id: *a15
-        projectId: *a15
-        parentId: *a15
-        title: *a17
-        summary: *a18
+        kind: *a20
+        id: *a19
+        projectId: *a19
+        parentId: *a19
+        title: *a21
+        summary: *a22
         position: *a9
         revision: *a9
-        structureRevision: *a19
-        archived: *a20
-        status: *a21
-        writingStatuses: *a22
-        wordCount: *a23
-        createdAt: *a13
-        updatedAt: *a13
+        structureRevision: *a23
+        archived: *a24
+        status: *a25
+        writingStatuses: *a26
+        wordCount: *a27
+        createdAt: *a17
+        updatedAt: *a17
         chapters:
           type: array
           items:
@@ -7120,7 +8710,7 @@ components:
     EditorialOutline:
       type: object
       properties:
-        projectId: *a15
+        projectId: *a19
         revision: *a9
         structureRevision: *a9
         manuscripts:
@@ -7136,7 +8726,7 @@ components:
     EditorialAck:
       type: object
       properties:
-        id: *a15
+        id: *a19
         revision: *a9
         structureRevision:
           type: integer
@@ -7151,7 +8741,7 @@ components:
     SceneSaveAck:
       type: object
       properties:
-        id: *a15
+        id: *a19
         revision: *a9
         contentHash:
           type: string
@@ -7159,8 +8749,8 @@ components:
         wordCount:
           type: integer
           minimum: 0
-        updatedAt: *a13
-        changeSetId: *a15
+        updatedAt: *a17
+        changeSetId: *a19
       required:
         - id
         - revision
@@ -7172,29 +8762,29 @@ components:
     SceneRevisionMeta:
       type: object
       properties:
-        sceneId: *a15
-        projectId: *a15
+        sceneId: *a19
+        projectId: *a19
         revision: *a9
-        contentFormatVersion: &a24
+        contentFormatVersion: &a28
           const: 1
-        author: &a25
+        author: &a29
           type: object
           properties:
-            id: *a15
+            id: *a19
             displayName:
               type: string
           required:
             - id
             - displayName
           additionalProperties: false
-        createdAt: *a13
-        changeSetId: *a15
-        restoredFromRevision: &a26
+        createdAt: *a17
+        changeSetId: *a19
+        restoredFromRevision: &a30
           type:
             - integer
             - "null"
           minimum: 1
-        action: &a27
+        action: &a31
           type: string
         title:
           type: string
@@ -7213,15 +8803,15 @@ components:
     SceneRevision:
       type: object
       properties:
-        sceneId: *a15
-        projectId: *a15
+        sceneId: *a19
+        projectId: *a19
         revision: *a9
-        contentFormatVersion: *a24
-        author: *a25
-        createdAt: *a13
-        changeSetId: *a15
-        restoredFromRevision: *a26
-        action: *a27
+        contentFormatVersion: *a28
+        author: *a29
+        createdAt: *a17
+        changeSetId: *a19
+        restoredFromRevision: *a30
+        action: *a31
         content:
           $ref: "#/components/schemas/RichDocument"
         contentHash:
@@ -7243,7 +8833,7 @@ components:
               type: string
             archived:
               type: boolean
-            chapterId: *a15
+            chapterId: *a19
           required:
             - title
             - summary
@@ -7322,7 +8912,7 @@ components:
           items:
             type: object
             properties:
-              sceneId: *a15
+              sceneId: *a19
               title:
                 type: string
               message:
@@ -7342,21 +8932,21 @@ components:
     EditorialExportScene:
       type: object
       properties:
-        id: *a28
-        projectId: *a29
-        chapterId: *a30
-        title: *a31
-        summary: *a32
-        status: *a33
-        revision: *a34
-        contentFormatVersion: *a35
-        content: *a36
-        references: *a37
-        archived: *a38
-        contentHash: *a39
-        wordCount: *a40
-        createdAt: *a13
-        updatedAt: *a13
+        id: *a32
+        projectId: *a33
+        chapterId: *a34
+        title: *a35
+        summary: *a36
+        status: *a37
+        revision: *a38
+        contentFormatVersion: *a39
+        content: *a40
+        references: *a41
+        archived: *a42
+        contentHash: *a43
+        wordCount: *a44
+        createdAt: *a17
+        updatedAt: *a17
         position: *a9
       required:
         - id
@@ -7379,21 +8969,21 @@ components:
     EditorialExportChapter:
       type: object
       properties:
-        kind: *a16
-        id: *a15
-        projectId: *a15
-        parentId: *a15
-        title: *a17
-        summary: *a18
+        kind: *a20
+        id: *a19
+        projectId: *a19
+        parentId: *a19
+        title: *a21
+        summary: *a22
         position: *a9
         revision: *a9
-        structureRevision: *a19
-        archived: *a20
-        status: *a21
-        writingStatuses: *a22
-        wordCount: *a23
-        createdAt: *a13
-        updatedAt: *a13
+        structureRevision: *a23
+        archived: *a24
+        status: *a25
+        writingStatuses: *a26
+        wordCount: *a27
+        createdAt: *a17
+        updatedAt: *a17
         scenes:
           type: array
           items:
@@ -7423,8 +9013,8 @@ components:
           const: storymaster-editorial
         formatVersion:
           const: 1
-        exportedAt: *a13
-        projectId: *a15
+        exportedAt: *a17
+        projectId: *a19
         includesArchived:
           const: true
         historyIncluded:
@@ -7432,21 +9022,21 @@ components:
         manuscript:
           type: object
           properties:
-            kind: *a16
-            id: *a15
-            projectId: *a15
-            parentId: *a15
-            title: *a17
-            summary: *a18
+            kind: *a20
+            id: *a19
+            projectId: *a19
+            parentId: *a19
+            title: *a21
+            summary: *a22
             position: *a9
             revision: *a9
-            structureRevision: *a19
-            archived: *a20
-            status: *a21
-            writingStatuses: *a22
-            wordCount: *a23
-            createdAt: *a13
-            updatedAt: *a13
+            structureRevision: *a23
+            archived: *a24
+            status: *a25
+            writingStatuses: *a26
+            wordCount: *a27
+            createdAt: *a17
+            updatedAt: *a17
             chapters:
               type: array
               items:
@@ -7925,7 +9515,7 @@ components:
       type: object
       properties:
         id: *a2
-        name: &a50
+        name: &a54
           type: string
         typeKey:
           enum:
@@ -7936,7 +9526,7 @@ components:
           enum:
             - active
             - archived
-        moduleEnabled: *a14
+        moduleEnabled: *a18
         revision: *a11
       required:
         - id
@@ -7949,20 +9539,20 @@ components:
     ReferenceView:
       type: object
       properties:
-        id: *a41
-        projectId: *a42
-        sceneId: *a43
-        objectId: *a44
-        referenceType: *a45
-        metadata: &a47
+        id: *a45
+        projectId: *a46
+        sceneId: *a47
+        objectId: *a48
+        referenceType: *a49
+        metadata: &a51
           type: object
           properties: {}
           required: []
           additionalProperties: false
-        revision: *a46
-        target: &a48
+        revision: *a50
+        target: &a52
           $ref: "#/components/schemas/NarrativeTarget"
-        linkState: &a49
+        linkState: &a53
           enum:
             - active
             - target_archived
@@ -7996,23 +9586,23 @@ components:
     InverseReference:
       type: object
       properties:
-        id: *a41
-        projectId: *a42
-        sceneId: *a43
-        objectId: *a44
-        referenceType: *a45
-        metadata: *a47
-        revision: *a46
-        target: *a48
-        linkState: *a49
+        id: *a45
+        projectId: *a46
+        sceneId: *a47
+        objectId: *a48
+        referenceType: *a49
+        metadata: *a51
+        revision: *a50
+        target: *a52
+        linkState: *a53
         scene:
           type: object
           properties:
             id: *a2
-            title: *a50
+            title: *a54
             chapterId: *a2
             manuscriptId: *a2
-            archived: *a14
+            archived: *a18
             revision: *a11
           required:
             - id
@@ -8041,7 +9631,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/InverseReference"
-        hasMore: *a14
+        hasMore: *a18
         nextCursor:
           type:
             - string
@@ -8058,7 +9648,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Entity"
-        hasMore: *a14
+        hasMore: *a18
         nextCursor:
           type:
             - string
@@ -8085,9 +9675,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/InverseReference"
-        hasMoreRelations: *a14
-        hasMoreReferences: *a14
-        hasMoreChildren: *a14
+        hasMoreRelations: *a18
+        hasMoreReferences: *a18
+        hasMoreChildren: *a18
         relationsNextCursor:
           type:
             - string
@@ -8166,9 +9756,9 @@ components:
             - timeline
         moduleVersion:
           const: 1
-        enabled: *a14
+        enabled: *a18
         revision: *a11
-        updatedAt: *a12
+        updatedAt: *a16
       required:
         - id
         - projectId
@@ -8216,7 +9806,7 @@ components:
               anyOf:
                 - *a2
                 - type: "null"
-            displayName: *a50
+            displayName: *a54
             type:
               enum:
                 - human
@@ -8226,9 +9816,9 @@ components:
             - displayName
             - type
           additionalProperties: false
-        createdAt: *a12
+        createdAt: *a16
         changeSetId: *a2
-        action: *a50
+        action: *a54
         restoredFromRevision:
           type:
             - integer
@@ -8253,7 +9843,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/NarrativeRevision"
-        hasMore: *a14
+        hasMore: *a18
         nextBeforeRevision:
           type:
             - integer
@@ -8272,7 +9862,7 @@ components:
         formatVersion:
           const: 1
         projectId: *a2
-        exportedAt: *a12
+        exportedAt: *a16
         historyIncluded:
           const: false
         modules:
@@ -8290,13 +9880,13 @@ components:
           items:
             type: object
             properties:
-              id: *a41
-              projectId: *a42
-              sceneId: *a43
-              objectId: *a44
-              referenceType: *a45
-              metadata: *a51
-              revision: *a46
+              id: *a45
+              projectId: *a46
+              sceneId: *a47
+              objectId: *a48
+              referenceType: *a49
+              metadata: *a55
+              revision: *a50
               status:
                 enum:
                   - active
@@ -8321,6 +9911,631 @@ components:
         - objects
         - relations
         - sceneReferences
+      additionalProperties: false
+    InvitationCreate:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 320
+          format: email
+          pattern: ^(?:[A-Za-z0-9_'+\-]+\.)*[A-Za-z0-9_'+\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+        role:
+          type: string
+          enum:
+            - admin
+            - author
+            - reviewer
+            - reader
+      required:
+        - email
+        - role
+      additionalProperties: false
+    MemberRole:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+            - admin
+            - author
+            - reviewer
+            - reader
+      required:
+        - role
+      additionalProperties: false
+    InvitationPrepare:
+      type: object
+      properties:
+        invitationId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        token:
+          type: string
+          pattern: ^[A-Za-z0-9_-]{43}$
+      required:
+        - invitationId
+        - token
+      additionalProperties: false
+    InvitationRespond:
+      type: object
+      properties:
+        decision:
+          type: string
+          enum:
+            - accept
+            - decline
+      required:
+        - decision
+      additionalProperties: false
+    CommentThreadCreate:
+      type: object
+      properties:
+        targetType:
+          type: string
+          enum:
+            - scene
+            - object
+        targetId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        body:
+          type: string
+          maxLength: 20000
+        anchor:
+          type: object
+          properties:
+            sceneRevision:
+              type: integer
+              exclusiveMinimum: 0
+              maximum: 9007199254740991
+            from:
+              type: integer
+              minimum: 0
+              maximum: 2000000
+            to:
+              type: integer
+              exclusiveMinimum: 0
+              maximum: 2000000
+            quote:
+              type: string
+              minLength: 1
+              maxLength: 4000
+          required:
+            - sceneRevision
+            - from
+            - to
+            - quote
+          additionalProperties: false
+      required:
+        - targetType
+        - targetId
+        - body
+      additionalProperties: false
+    CommentReply:
+      type: object
+      properties:
+        body:
+          type: string
+          maxLength: 20000
+      required:
+        - body
+      additionalProperties: false
+    CommentUpdate:
+      type: object
+      properties:
+        body:
+          type: string
+          maxLength: 20000
+        expectedThreadRevision:
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 9007199254740991
+      required:
+        - body
+        - expectedThreadRevision
+      additionalProperties: false
+    CommentWithdraw:
+      type: object
+      properties:
+        expectedThreadRevision:
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 9007199254740991
+        reason:
+          type: string
+          maxLength: 1000
+      required:
+        - expectedThreadRevision
+      additionalProperties: false
+    CommentThreadState:
+      type: object
+      properties:
+        resolved:
+          type: boolean
+      required:
+        - resolved
+      additionalProperties: false
+    CollaborationContributor:
+      type: object
+      properties:
+        id: *a12
+        displayName: &a56
+          type: string
+      required:
+        - id
+        - displayName
+      additionalProperties: false
+    Member:
+      type: object
+      properties:
+        projectId: *a12
+        userId: *a12
+        displayName: *a56
+        role: &a59
+          enum:
+            - owner
+            - admin
+            - author
+            - reviewer
+            - reader
+        status:
+          enum:
+            - active
+            - removed
+        revision: *a15
+        changeSequence:
+          type: integer
+          minimum: 0
+        createdAt: &a57
+          type: string
+          format: date-time
+        updatedAt: *a57
+      required:
+        - projectId
+        - userId
+        - displayName
+        - role
+        - status
+        - revision
+        - changeSequence
+        - createdAt
+        - updatedAt
+      additionalProperties: false
+    MemberPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Member"
+        hasMore: *a58
+        nextCursor:
+          anyOf:
+            - *a56
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextCursor
+      additionalProperties: false
+    Invitation:
+      type: object
+      properties:
+        id: *a12
+        projectId: *a12
+        email:
+          type: string
+          format: email
+        role:
+          enum:
+            - admin
+            - author
+            - reviewer
+            - reader
+        inviterId: *a12
+        inviterName: *a56
+        status:
+          enum:
+            - pending
+            - accepted
+            - revoked
+            - expired
+        revision: *a15
+        expiresAt: *a57
+        createdAt: *a57
+        acceptedBy:
+          anyOf:
+            - *a12
+            - type: "null"
+        reason:
+          anyOf:
+            - *a56
+            - type: "null"
+      required:
+        - id
+        - projectId
+        - email
+        - role
+        - inviterId
+        - inviterName
+        - status
+        - revision
+        - expiresAt
+        - createdAt
+        - acceptedBy
+        - reason
+      additionalProperties: false
+    InvitationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Invitation"
+        hasMore: *a58
+        nextCursor:
+          anyOf:
+            - *a56
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextCursor
+      additionalProperties: false
+    InvitationCreated:
+      type: object
+      properties:
+        invitation:
+          $ref: "#/components/schemas/Invitation"
+        link:
+          anyOf:
+            - type: string
+              format: uri
+            - type: "null"
+        linkRevealed: *a58
+      required:
+        - invitation
+        - link
+        - linkRevealed
+      additionalProperties: false
+    InvitationContext:
+      type: object
+      properties:
+        invitation:
+          $ref: "#/components/schemas/Invitation"
+        projectName: *a56
+        recipientMatches:
+          const: true
+        membershipActive: *a58
+        currentRole:
+          anyOf:
+            - *a59
+            - type: "null"
+      required:
+        - invitation
+        - projectName
+        - recipientMatches
+        - membershipActive
+        - currentRole
+      additionalProperties: false
+    InvitationResult:
+      type: object
+      properties:
+        invitationId: *a12
+        projectId: *a12
+        status:
+          enum:
+            - accepted
+            - revoked
+        membershipActive: *a58
+        role:
+          anyOf:
+            - *a59
+            - type: "null"
+      required:
+        - invitationId
+        - projectId
+        - status
+        - membershipActive
+        - role
+      additionalProperties: false
+    InvitationPrepared:
+      type: object
+      properties:
+        prepared:
+          const: true
+      required:
+        - prepared
+      additionalProperties: false
+    InvitationCleared:
+      type: object
+      properties:
+        cleared:
+          const: true
+      required:
+        - cleared
+      additionalProperties: false
+    CollaborationComment:
+      type: object
+      properties:
+        id: *a12
+        projectId: *a12
+        threadId: *a12
+        author:
+          $ref: "#/components/schemas/CollaborationContributor"
+        body:
+          anyOf:
+            - *a56
+            - type: "null"
+        status:
+          enum:
+            - active
+            - withdrawn
+        revision: *a15
+        createdAt: *a57
+        updatedAt: *a57
+        updatedBy:
+          $ref: "#/components/schemas/CollaborationContributor"
+        withdrawalReason:
+          anyOf:
+            - *a56
+            - type: "null"
+      required:
+        - id
+        - projectId
+        - threadId
+        - author
+        - body
+        - status
+        - revision
+        - createdAt
+        - updatedAt
+        - updatedBy
+        - withdrawalReason
+      additionalProperties: false
+    TextAnchor:
+      type: object
+      properties:
+        id: *a12
+        projectId: *a12
+        threadId: *a12
+        sceneId: *a12
+        sceneRevision: *a15
+        from:
+          type: integer
+          minimum: 0
+        to:
+          type: integer
+          minimum: 1
+        quote:
+          type: string
+          minLength: 1
+          maxLength: 4000
+        prefix: *a56
+        suffix: *a56
+        state:
+          const: valid
+        authorId: *a12
+        createdAt: *a57
+      required:
+        - id
+        - projectId
+        - threadId
+        - sceneId
+        - sceneRevision
+        - from
+        - to
+        - quote
+        - prefix
+        - suffix
+        - state
+        - authorId
+        - createdAt
+      additionalProperties: false
+    AnchorResolution:
+      type: object
+      properties:
+        state:
+          enum:
+            - valid
+            - relocated
+            - ambiguous
+            - orphaned
+        sceneRevision: *a15
+        from:
+          anyOf:
+            - type: integer
+              minimum: 0
+            - type: "null"
+        to:
+          anyOf:
+            - type: integer
+              minimum: 1
+            - type: "null"
+        reason:
+          enum:
+            - unchanged_document
+            - unique_edit_mapping
+            - unique_unchanged_block
+            - multiple_correspondences
+            - passage_missing
+            - complexity_limit
+      required:
+        - state
+        - sceneRevision
+        - from
+        - to
+        - reason
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              state:
+                enum:
+                  - ambiguous
+                  - orphaned
+            required:
+              - state
+          then:
+            properties:
+              from:
+                type: "null"
+              to:
+                type: "null"
+          else:
+            properties:
+              from:
+                type: integer
+                minimum: 0
+              to:
+                type: integer
+                minimum: 1
+    CommentThreadView:
+      type: object
+      properties:
+        rootCommentId: *a12
+        id: *a12
+        projectId: *a12
+        targetType:
+          enum:
+            - scene
+            - object
+        targetId: *a12
+        author:
+          $ref: "#/components/schemas/CollaborationContributor"
+        state:
+          enum:
+            - open
+            - resolved
+        revision: *a15
+        commentCount:
+          type: integer
+          minimum: 1
+        createdAt: *a57
+        updatedAt: *a57
+        anchor:
+          anyOf:
+            - $ref: "#/components/schemas/TextAnchor"
+            - type: "null"
+        anchorResolution:
+          anyOf:
+            - $ref: "#/components/schemas/AnchorResolution"
+            - type: "null"
+        rootComment:
+          $ref: "#/components/schemas/CollaborationComment"
+      required:
+        - rootCommentId
+        - id
+        - projectId
+        - targetType
+        - targetId
+        - author
+        - state
+        - revision
+        - commentCount
+        - createdAt
+        - updatedAt
+        - anchor
+        - anchorResolution
+        - rootComment
+      additionalProperties: false
+    CommentThreadPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CommentThreadView"
+        hasMore: *a58
+        nextCursor:
+          anyOf:
+            - *a56
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextCursor
+      additionalProperties: false
+    CollaborationCommentPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CollaborationComment"
+        hasMore: *a58
+        nextCursor:
+          anyOf:
+            - *a56
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextCursor
+      additionalProperties: false
+    CommentThreadDetail:
+      type: object
+      properties:
+        thread:
+          $ref: "#/components/schemas/CommentThreadView"
+        comments:
+          $ref: "#/components/schemas/CollaborationCommentPage"
+      required:
+        - thread
+        - comments
+      additionalProperties: false
+    CollaborationRevision:
+      type: object
+      properties:
+        resourceType:
+          enum:
+            - membership
+            - invitation
+            - thread
+            - comment
+        resourceId: *a12
+        revision: *a15
+        actor:
+          anyOf:
+            - $ref: "#/components/schemas/CollaborationContributor"
+            - type: "null"
+        actorType:
+          enum:
+            - human
+            - system
+        action: *a56
+        createdAt: *a57
+        snapshot:
+          type: object
+      required:
+        - resourceType
+        - resourceId
+        - revision
+        - actor
+        - actorType
+        - action
+        - createdAt
+        - snapshot
+      additionalProperties: false
+    CollaborationRevisionPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CollaborationRevision"
+        hasMore: *a58
+        nextBeforeRevision:
+          anyOf:
+            - *a15
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextBeforeRevision
       additionalProperties: false
   parameters:
     IfMatch:

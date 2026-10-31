@@ -1,6 +1,6 @@
 # Artefacts de contrat
 
-**Statut :** Opérations HTTP `x-lot: 0/1/2` implémentées ; autres contrats et MCP proposés. **Portée :** MVP, sans serveur MCP aux Lots 0–2. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
+**Statut :** Opérations HTTP `x-lot: 0/1/2/3` implémentées ; autres contrats et MCP proposés. **Portée :** MVP, sans serveur MCP aux Lots 0–3. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
 
 ## Synthèse et analyse
 
@@ -57,3 +57,7 @@ Les corps Zod et DTO éditoriaux sont synchronisés via `scripts/sync-editorial-
 ## Ajouts Lot 2
 
 OpenAPI 0.5.0, nouveaux DTOs et mutations humaines préconditionnées. `module-registry.v1.json` fige les trois modules, schémas JSON et règles des liens ; copie applicative strictement identique dans contracts. Le générateur et la CI détectent toute dérive avec Zod ; une évolution durable exige nouvelle version et migration, sans réécrire v1. `lot2-scenarios.json` sélectionne les parties applicables des CT, sans prétendre les exécuter ; [rapport Lot 2](../LOT-2-REPORT.md) contient les preuves. [Exemple HTTP](../examples/lot2-http.json) synthétique, complété par les réponses réellement observées. Les schémas communs gardent les anciennes fixtures opaques ; les entrées directes de production imposent UUID existants, sans tempId.
+
+## Ajouts Lot 3
+
+OpenAPI 0.6.0 contient les DTOs/corps JSON Schema de collaboration, session humaine vérifiée et seule préparation de lien anonyme sans données. `sync-collaboration-contracts.mjs --check` compare les schémas Zod exécutables, routes et DTOs ; les générateurs précédents préservent ces ajouts. Les 13 outils MCP restent inchangés. [Exemple synthétique](../examples/lot3-http.json), [portions CT applicables](lot3-scenarios.json) et [rapport exécuté](../LOT-3-REPORT.md) distinguent contrats de tests réels ; aucune exécution MCP/propositions revendiquée.

@@ -1,0 +1,91 @@
+{
+  "environment": {
+    "date": "2026-10-31T21:19:38.674Z",
+    "node": "v26.8.1",
+    "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+    "memoryGiB": 31.251102447509766
+  },
+  "methodology": "Services communs + PostgreSQL locale dédiée _test ; acteurs de test avec sessions vérifiées (pas IdP ni HTTP). Même projet : quatre auteurs × 16 autosaves, deux reviewers × (16 réponses + 4 changements état), huit changements de rôle, 24 lectures en parallèle. Aucun retry, aucune erreur masquée. Scène longue 1 000 paragraphes, 20 lectures après ajout de préface, preuve par bloc unique. Mesure locale sans promesse de charge publique.",
+  "mixed": {
+    "successfulMutations": 112,
+    "elapsedMs": 692.7042970000001,
+    "mutationsPerSecond": 161.68515264746506,
+    "latencyMs": {
+      "autosave": {
+        "samples": 64,
+        "p50": 26.062,
+        "p95": 45.276,
+        "p99": 57.152,
+        "max": 57.152
+      },
+      "reply": {
+        "samples": 32,
+        "p50": 28.326,
+        "p95": 47.118,
+        "p99": 49.501,
+        "max": 49.501
+      },
+      "state": {
+        "samples": 8,
+        "p50": 20.006,
+        "p95": 46.468,
+        "p99": 46.468,
+        "max": 46.468
+      },
+      "administration": {
+        "samples": 8,
+        "p50": 6.542,
+        "p95": 588.65,
+        "p99": 588.65,
+        "max": 588.65
+      },
+      "read": {
+        "samples": 24,
+        "p50": 19.799,
+        "p95": 50.544,
+        "p99": 65.056,
+        "max": 65.056
+      }
+    },
+    "errors": [],
+    "projectSharedWaitMs": {
+      "samples": 140,
+      "p50": 0.382,
+      "p95": 2.978,
+      "p99": 4.326,
+      "max": 4.462
+    },
+    "projectExclusiveWaitMs": {
+      "samples": 8,
+      "p50": 0.206,
+      "p95": 561.532,
+      "p99": 561.532,
+      "max": 561.532
+    },
+    "projectExclusiveHoldMs": {
+      "samples": 8,
+      "p50": 5.321,
+      "p95": 9.69,
+      "p99": 9.69,
+      "max": 9.69
+    },
+    "integrity": "4 scènes r18, hashes/snapshots exacts ; 2 fils r21/17 messages attribués ; ancres originales immuables ; membership r9/historique exact"
+  },
+  "longScene": {
+    "characters": 939986,
+    "paragraphs": 1000,
+    "anchorFrom": 895760,
+    "reads": 20,
+    "latencyMs": {
+      "samples": 20,
+      "p50": 49.817,
+      "p95": 65.014,
+      "p99": 66.282,
+      "max": 66.282
+    },
+    "state": "relocated",
+    "falseCertainPositions": 0,
+    "sceneRevisionAfterComments": 3
+  }
+}

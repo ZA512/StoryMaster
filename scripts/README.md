@@ -36,7 +36,7 @@ La CI doit échouer sur les divergences ; aucune correction automatique ni promo
 
 ## Risques et questions ouvertes
 
-Les 22 tests de non-régression injectent notamment des erreurs à nombre d'IDs/outils constant, une divergence de PROP-10 par rapport au PRD approuvé, une base obsolète et une approbation non invalidée. Une CI verte ne prouve ni autorisation métier effective, ni transactions PostgreSQL, ni contention, ni compatibilité MCP runtime. Le spike B complet demeure à réaliser ; la mesure préliminaire sur métadonnées est dans le rapport du Lot 0. La preuve de consentement humain est enregistrée dans les fiches GO ; le script ne peut pas attester seul de l'identité du décideur.
+Les 34 tests de non-régression injectent notamment des erreurs à nombre d'IDs/outils constant, une divergence de PROP-10 par rapport au PRD approuvé, une base obsolète et une approbation non invalidée. Une CI verte ne prouve ni autorisation métier effective, ni transactions PostgreSQL, ni contention, ni compatibilité MCP runtime. Le spike B complet demeure à réaliser ; la mesure préliminaire sur métadonnées est dans le rapport du Lot 0. La preuve de consentement humain est enregistrée dans les fiches GO ; le script ne peut pas attester seul de l'identité du décideur.
 
 ## Critères d'acceptation du document
 
@@ -56,3 +56,9 @@ Voir le [README racine](../README.md) et le [rapport Lot 0](../docs/LOT-0-REPORT
 `npm run lint` rapproche désormais `sync-editorial-contracts.mjs --check`, `sync-narrative-contracts.mjs --check` et `publish-narrative-registry.ts --check` des sources exécutables. Le validateur Python contrôle les opérations attendues du Lot 2, session humaine, droits admin des modules, CSRF/idempotence/If-Match, bases de dépendances, ancien format de snapshots, schemas/checksums du registre et scénarios applicables. Les réponses réelles de Fastify sont validées par `validate_runtime_contracts.py`, distinctes des exemples synthétiques. Les tests de mutation du validateur restent documentaires.
 
 `npm run bench:narrative` crée 10 000 objets via les services sur la base `_test`, mesure recherche et écritures mixtes sans mocks, et écrit `artifacts/local/narrative-qualification.json`. Exécuter les tests PostgreSQL/benchmarks avant le navigateur : le scénario de persistance redémarre PostgreSQL/Keycloak/API/web. Ne jamais réinitialiser la base applicative principale. Voir [méthode et résultats](../docs/measurements/LOT-2-QUALIFICATION.md).
+
+## Collaboration et ancrages — Lot 3
+
+`sync-collaboration-contracts.mjs` synchronise schémas Zod, DTOs et routes OpenAPI 0.6.0 ; `--check` est exécuté par lint. Le validateur documentaire contrôle chaque route attendue, session/Origin/CSRF/idempotence/CAS, rôles fermés, DTO sans hash et positions incertaines nulles. Cinq mutations supplémentaires testent ces garde-fous à décompte constant ; 34 tests documentaires au total. Les 34 réponses réellement observées du test HTTP Lot 3 sont validées séparément sans imprimer leur contenu.
+
+`npm run bench:collaboration` vise exclusivement la base `_test` protégée par verrou de suite. Il mesure 64 autosaves, 32 réponses, 8 changements d’état, 8 changements de rôle et 24 lectures sur un même projet, puis 20 lectures d’ancre sur une scène d’environ 940 k caractères. Vérifications exactes révisions/hashes/snapshots/attribution ; aucun retry masqué. Sortie locale `artifacts/local/collaboration-qualification.json`, [mesures versionnées](../docs/measurements/LOT-3-COLLABORATION.md). Ne pas exécuter pendant le test navigateur de redémarrage.

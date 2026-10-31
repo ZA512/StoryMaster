@@ -1,0 +1,47 @@
+{
+  "status": "Scénarios déclaratifs ; preuves exécutées dans LOT-3-REPORT.md",
+  "scenarios": [
+    {
+      "contractTest": "CT-02",
+      "scope": "human",
+      "oracle": "Lectures de fils, commentaires, cibles et historiques refusées entre projets ; curseur lié au projet.",
+      "executableTest": "tests/collaboration.test.ts"
+    },
+    {
+      "contractTest": "CT-06",
+      "scope": "human",
+      "oracle": "CAS fil/commentaire/membership : 412 et aucune mutation partielle ; champ UI conservé.",
+      "executableTest": "tests/collaboration-http.test.ts"
+    },
+    {
+      "contractTest": "CT-20",
+      "scope": "partial",
+      "oracle": "Révocation membership bloque les nouveaux appels humains ; grant/MCP et jetons OAuth restent hors Lot 3.",
+      "executableTest": "tests/collaboration.test.ts"
+    },
+    {
+      "contractTest": "CT-30",
+      "scope": "partial",
+      "oracle": "Auteur/acteur humain, version, date et corrélation conservés ; client/grant/exécution IA futurs non exécutés.",
+      "executableTest": "tests/collaboration.test.ts"
+    },
+    {
+      "contractTest": "CT-36",
+      "scope": "human",
+      "oracle": "Origin/CSRF sur mutations ; préparation anonyme Origin obligatoire, cookies chiffrés.",
+      "executableTest": "tests/collaboration-http.test.ts"
+    },
+    {
+      "contractTest": "CT-45",
+      "scope": "partial",
+      "oracle": "Révocation/downgrade pendant commentaire/autosave/acceptation ; approbation et merge de propositions non exécutés.",
+      "executableTest": "tests/collaboration.test.ts"
+    },
+    {
+      "contractTest": "CT-49",
+      "scope": "human",
+      "oracle": "Compte authentifié au bon email IdP vérifié, usage unique/idempotent, owner protégé et réinvitation.",
+      "executableTest": "tests/collaboration.test.ts"
+    }
+  ]
+}

@@ -59,6 +59,7 @@ services:
       OIDC_INTERNAL_ORIGIN: http://keycloak:8080
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-storymaster-web}
       SESSION_SECRET: ${SESSION_SECRET:?Configurer .env}
+      INVITATION_TTL_SECONDS: ${INVITATION_TTL_SECONDS:-172800}
       SESSION_SECONDS: ${SESSION_SECONDS:-28800}
       DATABASE_URL: postgresql://storymaster_app:${APP_DB_PASSWORD}@postgres:5432/storymaster
     depends_on:

@@ -48,6 +48,32 @@ class ValidatorTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             validation.validate_all(self.root)
 
+    def test_lot3_cannot_spoof_invitation_identity(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['InvitationRespond']['properties']['userId']={'type':'string'}
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot3(oas)
+
+    def test_lot3_cannot_invite_an_owner(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['InvitationCreate']['properties']['role']['enum'].append('owner')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot3(oas)
+
+    def test_lot3_uncertain_anchor_has_no_positions(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['AnchorResolution']['allOf'][0]['then']['properties']['from']={'type':'integer'}
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot3(oas)
+
+    def test_lot3_prepare_must_keep_origin(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        params=oas['paths']['/auth/invitations/prepare']['post']['parameters']
+        next(p for p in params if p.get('name')=='Origin')['required']=False
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot3(oas)
+
+    def test_lot3_cannot_expose_hash(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['Invitation']['properties']['tokenHash']={'type':'string'}
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot3(oas)
+
     def test_lot2_module_admin_cannot_be_author(self):
         oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
         oas['paths']['/projects/{projectId}/modules/{moduleKey}']['patch']['x-permission']='narrative.write'
