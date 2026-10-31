@@ -55,3 +55,7 @@ Résultats documentaires distingués des tests applicatifs exécutés ; commande
 ## Extension exécutée du Lot 1
 
 Le validateur contrôle chaque opération Lot 1 attendue, session humaine, CSRF/idempotence, CAS texte/metadata et versions des deux parents lors des déplacements, format JSON v1 et snapshot riche. Deux exemples éditoriaux synthétiques sont validés ; les réponses HTTP observées le sont séparément depuis `tests/editorial-http.test.ts`. Trois mutations nouvelles retirent le CAS du parent cible, autorisent un bearer sur save ou retirent CSRF sur restore : elles échouent comme attendu. `npm run lint` contrôle aussi que les corps Zod et définitions partagées HTTP/MCP correspondent au générateur versionné ; aucun serveur MCP n’est actif.
+
+## Extension de validation Lot 2
+
+OpenAPI 0.5.0 et catalogue de 13 outils MCP synchronisés, registre v1 rapproché des schémas Zod et empreintes, anciens SceneRevision conservés. Nouveaux exemples HTTP et scénarios déclaratifs des portions applicables. Les 29 tests de mutation du validateur sont documentaires ; le [rapport Lot 2](LOT-2-REPORT.md) distingue les  preuves PostgreSQL/HTTP/navigateur et les parties de propositions/MCP non exécutées.

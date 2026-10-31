@@ -42,3 +42,13 @@ test('relecture automatique ne détruit jamais un brouillon en attente ni un con
 test('compteur tardif d’une ancienne génération ignoré',()=>{
  const manager=new DraftManager({save:async(id,r)=>ack(id,r.expectedRevision+1),read:async()=>scene()},10000);manager.load(scene());manager.edit('A',doc('Un'));const generation=manager.get('A')!.generation;manager.edit('A',doc('Un deux trois'));manager.setWordCount('A',generation,9);assert.notEqual(manager.get('A')!.wordCount,9);manager.setWordCount('A',generation+1,3);assert.equal(manager.get('A')!.wordCount,3);manager.dispose();
 });
+test('Lot 2 : ACK texte conserve les références ; relecture tardive conserve brouillon et base ; résolution explicite adopte le vecteur serveur',async()=>{
+ const old={id:'R',projectId:'P',sceneId:'A',objectId:'O',referenceType:'present' as const,revision:1,metadata:{}},next={...old,objectId:'N',revision:2};let fail=false;
+ const manager=new DraftManager({save:async(id,r)=>{if(fail)throw conflict();return ack(id,r.expectedRevision+1);},read:async()=>({...scene('A',4,'Distant'),references:[next]})},10000);
+ manager.load({...scene(),references:[old]});manager.edit('A',doc('Sauvé'));await manager.flush('A');assert.deepEqual(manager.get('A')!.references,[old]);
+ manager.edit('A',doc('Brouillon'));manager.load({...scene('A',4,'Distant'),references:[next]});assert.deepEqual(manager.get('A')!.references,[old]);fail=true;await manager.flush('A');assert.deepEqual(manager.get('A')!.remote!.references,[next]);assert.deepEqual(manager.get('A')!.references,[old]);
+ fail=false;await manager.resolve('A','local');assert.deepEqual(manager.get('A')!.references,[next]);assert.deepEqual(manager.get('A')!.content,doc('Brouillon'));manager.dispose();
+});
+test('sélection de références en mémoire : navigation entre scènes et relecture gardent le formulaire, sans bloquer le flush texte',async()=>{
+ const manager=new DraftManager({save:async(id,r)=>ack(id,r.expectedRevision+1),read:async id=>scene(id)},10000),pending={view:{sceneId:'A',sceneRevision:1,items:[]},items:[]};manager.load(scene());manager.setReferenceDraft('A',pending);assert.equal(manager.hasPending(),true);assert.equal(await manager.flushAll(),true);manager.load(scene('B'));manager.activate('B');assert.deepEqual(manager.get('A')!.referenceDraft,pending);manager.load(scene('A',3));assert.deepEqual(manager.get('A')!.referenceDraft,pending);manager.setReferenceDraft('A',undefined);manager.activate('B');assert.equal(manager.get('A'),undefined);manager.dispose();
+});

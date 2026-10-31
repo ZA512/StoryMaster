@@ -23,7 +23,7 @@ export interface EditorialOutline {projectId:string;revision:number;structureRev
 export interface EditorialAck {id:string;revision:number;structureRevision:number;projectEditorialRevision:number}
 export interface SceneDto {
  id:string;projectId:string;chapterId:string;title:string;summary:string;status:string;archived:boolean;revision:number;
- contentFormatVersion:1;content:RichDocument;contentHash:string;wordCount:number;createdAt:string;updatedAt:string;references:[];
+ contentFormatVersion:1;content:RichDocument;contentHash:string;wordCount:number;createdAt:string;updatedAt:string;references:import('@storymaster/domain').SceneReference[];
 }
 export interface SceneSaveAck {id:string;revision:number;contentHash:string;wordCount:number;updatedAt:string;changeSetId:string}
 export type SceneRevisionMeta=Omit<SceneRevision,'content'|'metadata'|'contentHash'> & {title:string};

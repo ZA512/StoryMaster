@@ -1,0 +1,45 @@
+{
+  "status": "Scénarios déclaratifs ; preuves exécutées dans LOT-2-REPORT.md",
+  "scenarios": [
+    {
+      "contractTest": "CT-03",
+      "oracle": "Recherche confidentielle : résultats et extraits du projet autorisé seulement.",
+      "executableTest": "tests/narrative.test.ts"
+    },
+    {
+      "contractTest": "CT-10",
+      "oracle": "Portion réutilisée : diagnostics de schéma invalide sans mutation ; cycle/cardinalité refusés atomiquement. validate/submit de propositions restent hors Lot 2, non exécutés.",
+      "executableTest": "tests/narrative.test.ts"
+    },
+    {
+      "contractTest": "CT-16",
+      "oracle": "Relation/référence/parent interprojets refusés sans détails de la cible ni effet partiel.",
+      "executableTest": "tests/narrative.test.ts"
+    },
+    {
+      "contractTest": "CT-25",
+      "oracle": "Module off conserve données/liens/lecture/recherche/export/historique ; mutation MODULE_DISABLED ; réactivation retrouve les IDs.",
+      "executableTest": "tests/narrative.test.ts"
+    },
+    {
+      "contractTest": "CT-31",
+      "oracle": "Curseur signé lié au projet, utilisateur, rôle et filtres ; aucune page ou extrait hors scope.",
+      "executableTest": "tests/narrative.test.ts"
+    },
+    {
+      "contractTest": "CT-42",
+      "oracle": "FK composites, contexte de transaction sans fuite lors de réutilisation du pool, domaine refuse les cibles étrangères.",
+      "executableTest": "tests/narrative.test.ts"
+    },
+    {
+      "contractTest": "CT-46",
+      "oracle": "Renommage de fiche et déplacement de scène conservent liens directs/inverses et IDs, CAS et historique.",
+      "executableTest": "tests/narrative.test.ts"
+    },
+    {
+      "contractTest": "CT-48",
+      "oracle": "Cycles et cardinalités refusés sous concurrence réelle ; aucun tempId dans les écritures directes. Variante propositions/tempId non exécutée au Lot 2.",
+      "executableTest": "tests/narrative.test.ts"
+    }
+  ]
+}

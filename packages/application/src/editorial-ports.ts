@@ -8,7 +8,8 @@ export interface EditorialPort {
  children(kind:EditorialKind,projectId:string,parentId:string):Promise<EditorialNode[]>;
  all(projectId:string):Promise<EditorialNode[]>;
  insert(node:EditorialNode):Promise<void>;
- update(node:EditorialNode):Promise<void>;
+ update(node:EditorialNode,sceneText?:string):Promise<void>;
+ advanceSceneRevision(projectId:string,id:string,revision:number,updatedAt:string):Promise<boolean>;
  reindex(kind:EditorialKind,projectId:string,parentId:string,orderedIds:string[]):Promise<void>;
  bumpStructure(kind:'project'|'manuscript'|'chapter',projectId:string,id:string):Promise<void>;
  change(change:EditorialChange):Promise<void>;

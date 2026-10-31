@@ -50,3 +50,9 @@ Voir le [README racine](../README.md) et le [rapport Lot 0](../docs/LOT-0-REPORT
 ## Contrats et qualification du Lot 1
 
 `npm run lint` exécute l’architecture et `node --import tsx scripts/sync-editorial-contracts.mjs --check`. Le générateur sans `--check` met à jour les schémas des corps Zod, routes et DTO OpenAPI puis les définitions partagées MCP ; examiner son diff avant adoption. `npm run bench:scenes` compare les deux barrières sur de vraies scènes/auteurs en base `_test`, vérifie contenu/hashes/snapshots/révisions et publie les métriques dans `artifacts/local/scene-contention.json`. Les [mesures versionnées](../docs/measurements/LOT-1-CONTENTION.md) déclarent limites et environnement ; B-06 propositions est absent. Les tests navigateur chargent `.env` et le scénario de durabilité redémarre seulement PostgreSQL/API/web locaux, sans suppression de volume.
+
+## Générateurs et vérifications Lot 2
+
+`npm run lint` rapproche désormais `sync-editorial-contracts.mjs --check`, `sync-narrative-contracts.mjs --check` et `publish-narrative-registry.ts --check` des sources exécutables. Le validateur Python contrôle les opérations attendues du Lot 2, session humaine, droits admin des modules, CSRF/idempotence/If-Match, bases de dépendances, ancien format de snapshots, schemas/checksums du registre et scénarios applicables. Les réponses réelles de Fastify sont validées par `validate_runtime_contracts.py`, distinctes des exemples synthétiques. Les tests de mutation du validateur restent documentaires.
+
+`npm run bench:narrative` crée 10 000 objets via les services sur la base `_test`, mesure recherche et écritures mixtes sans mocks, et écrit `artifacts/local/narrative-qualification.json`. Exécuter les tests PostgreSQL/benchmarks avant le navigateur : le scénario de persistance redémarre PostgreSQL/Keycloak/API/web. Ne jamais réinitialiser la base applicative principale. Voir [méthode et résultats](../docs/measurements/LOT-2-QUALIFICATION.md).

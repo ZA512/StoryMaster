@@ -1,0 +1,16 @@
+{
+  "before": {
+    "scenes": 61,
+    "snapshots": 168,
+    "sceneDigest": "95632ac2e9123139f082bf48b00d711405df9805281951bddf49deb3572f917f",
+    "snapshotDigest": "26c167459bfe4d5c0d399dd317cff9c7bb970e8bac89f1dd10b49849a7cfca59"
+  },
+  "after": {
+    "scenes": 61,
+    "snapshots": 168,
+    "sceneDigest": "95632ac2e9123139f082bf48b00d711405df9805281951bddf49deb3572f917f",
+    "snapshotDigest": "26c167459bfe4d5c0d399dd317cff9c7bb970e8bac89f1dd10b49849a7cfca59"
+  },
+  "allOriginalCanonicalDataUnchanged": true,
+  "legacySnapshotsUnmodified": 168
+}

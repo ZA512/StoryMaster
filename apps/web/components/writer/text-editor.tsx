@@ -12,7 +12,7 @@ export function TextEditor({manager,sceneId,epoch,editable,onCount}:{manager:Dra
   const editor=new Editor({element:host.current,extensions:extensions(),content:state.content,editable,injectCSS:false,editorProps:{attributes:{role:'textbox','aria-label':'Texte de la scène','aria-multiline':'true',spellcheck:'true'}},onUpdate:({editor})=>{const content=editor.getJSON() as RichDocument;manager.edit(sceneId,content);count.current(content,manager.get(sceneId)!.generation);},onSelectionUpdate:()=>setToolbar(v=>v+1)});
   instance.current=editor;return()=>{instance.current=null;editor.destroy();};
  },[sceneId,epoch,manager]);
- useEffect(()=>{instance.current?.setEditable(editable);},[editable]);
+ useEffect(()=>{instance.current?.setEditable(editable,false);},[editable]);
  const action=(name:string,fn:(e:Editor)=>void,active?:string)=><button type="button" disabled={!editable} aria-label={name} aria-pressed={active?!!instance.current?.isActive(active):undefined} onMouseDown={e=>e.preventDefault()} onClick={()=>{const e=instance.current;if(e){fn(e);setToolbar(v=>v+1);}}}>{name}</button>;
  return <><div className="editor-toolbar" role="toolbar" aria-label="Mise en forme" data-selection={toolbar}>
  {action('Gras',e=>e.chain().focus().toggleBold().run(),'bold')}{action('Italique',e=>e.chain().focus().toggleItalic().run(),'italic')}{action('Barré',e=>e.chain().focus().toggleStrike().run(),'strike')}

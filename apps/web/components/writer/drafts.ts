@@ -1,10 +1,11 @@
-import type { RichDocument } from '@storymaster/domain';
-import type { SceneDto,SceneSaveAck } from '@storymaster/contracts';
+import type { RichDocument, SceneReference } from '@storymaster/domain';
+import type { SceneDto,SceneSaveAck,SceneReferencesView,ReferenceInput,ReferenceView } from '@storymaster/contracts';
 export type SavePhase='clean'|'dirty'|'saving'|'saved'|'error'|'conflict';
 export interface SaveRequest {content:RichDocument;expectedRevision:number;key:string;generation:number;running:boolean;promise:Promise<boolean>|null}
+export interface ReferenceDraft {view:SceneReferencesView;items:(ReferenceInput&{target:ReferenceView['target']})[]}
 export interface DraftState {
- sceneId:string;projectId:string;content:RichDocument;baseRevision:number;generation:number;savedGeneration:number;
- phase:SavePhase;error:string|null;remote:SceneDto|null;wordCount:number;loadEpoch:number;active:boolean;
+ sceneId:string;projectId:string;content:RichDocument;references:SceneReference[];baseRevision:number;generation:number;savedGeneration:number;
+ referenceDraft?:ReferenceDraft;phase:SavePhase;error:string|null;remote:SceneDto|null;wordCount:number;loadEpoch:number;active:boolean;
  request:SaveRequest|null;timer:ReturnType<typeof setTimeout>|null;
 }
 export interface DraftTransport {save:(sceneId:string,request:SaveRequest)=>Promise<SceneSaveAck>;read:(sceneId:string)=>Promise<SceneDto>}
@@ -18,18 +19,19 @@ export class DraftManager {
  version=()=>this.serial;
  private notify(){if(this.disposed)return;this.serial++;for(const listener of this.listeners)listener();}
  get(id:string){return this.states.get(id);}
+ setReferenceDraft(id:string,draft:ReferenceDraft|undefined){const s=this.states.get(id);if(s)s.referenceDraft=draft;}
  all(){return [...this.states.values()];}
- hasPending(){return this.all().some(s=>s.generation!==s.savedGeneration||s.request!==null||s.phase==='conflict');}
+ hasPending(){return this.all().some(s=>s.generation!==s.savedGeneration||s.request!==null||s.phase==='conflict'||!!s.referenceDraft);}
  private cancelTimer(s:DraftState){if(s.timer){clearTimeout(s.timer);s.timer=null;}}
  private schedule(s:DraftState){this.cancelTimer(s);if(s.phase==='conflict'||s.phase==='error')return;s.timer=setTimeout(()=>{s.timer=null;void this.send(s);},this.debounceMs);}
  activate(id:string|null){for(const state of this.states.values()){state.active=state.sceneId===id;this.prune(state);}this.notify();}
- private prune(s:DraftState){if(!s.active&&!s.request&&s.generation===s.savedGeneration&&s.phase!=='conflict'){this.cancelTimer(s);this.states.delete(s.sceneId);}}
+ private prune(s:DraftState){if(!s.active&&!s.request&&s.generation===s.savedGeneration&&s.phase!=='conflict'&&!s.referenceDraft){this.cancelTimer(s);this.states.delete(s.sceneId);}}
  load(scene:SceneDto,force=false){
   const old=this.states.get(scene.id);
   if(old&&!force&&(old.request||old.generation!==old.savedGeneration||old.phase==='conflict'))return old;
   if(old&&!force&&old.baseRevision===scene.revision)return old;
   if(old)this.cancelTimer(old);
-  const state:DraftState={sceneId:scene.id,projectId:scene.projectId,content:scene.content,baseRevision:scene.revision,generation:0,savedGeneration:0,phase:'clean',error:null,remote:null,wordCount:scene.wordCount,loadEpoch:(old?.loadEpoch??0)+1,active:true,request:null,timer:null};
+  const state:DraftState={sceneId:scene.id,projectId:scene.projectId,content:scene.content,references:scene.references,baseRevision:scene.revision,generation:0,savedGeneration:0,referenceDraft:old?.referenceDraft,phase:'clean',error:null,remote:null,wordCount:scene.wordCount,loadEpoch:(old?.loadEpoch??0)+1,active:true,request:null,timer:null};
   this.states.set(scene.id,state);this.notify();return state;
  }
  edit(id:string,content:RichDocument){const s=this.states.get(id);if(!s)return;s.content=content;s.generation++;
@@ -74,7 +76,7 @@ export class DraftManager {
  async flushAll(){const results=await Promise.all(this.all().map(s=>this.flush(s.sceneId)));return results.every(Boolean);}
  async resolve(id:string,choice:'server'|'local'){
   const s=this.states.get(id);if(!s||s.phase!=='conflict'||!s.remote)return false;
-  const remote=s.remote;s.baseRevision=remote.revision;s.remote=null;s.error=null;s.request=null;
+  const remote=s.remote;s.references=remote.references;s.baseRevision=remote.revision;s.remote=null;s.error=null;s.request=null;
   if(choice==='server'){s.content=remote.content;s.wordCount=remote.wordCount;s.generation++;s.savedGeneration=s.generation;s.loadEpoch++;s.phase='clean';this.notify();return true;}
   s.savedGeneration=-1;s.phase='dirty';this.notify();return this.flush(id);
  }

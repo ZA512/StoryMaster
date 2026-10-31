@@ -952,3 +952,9 @@ Les 50 CT restent des scénarios de référence MVP ; leur présence ne signifie
 ## Preuves du Lot 1 et portée des scénarios
 
 CT-05/06/26/35/36/46 sont reliés aux tests exécutables `tests/editorial.test.ts`, `tests/editorial-http.test.ts`, `tests/autosave.test.ts` et `tests/e2e/lot1.spec.ts`. Le premier teste sur PostgreSQL contenu exact, snapshots contigus, rollback, clés composites, rôles/révocations et concurrence ; le second valide les réponses HTTP réellement observées contre OpenAPI ; les tests d’autosave contrôlent générations et idempotence après réponse perdue ; Chromium contrôle les parcours utilisateur. Le [rapport](LOT-1-REPORT.md) distingue commandes exécutées, limites et scénarios futurs. Les 50 CT déclaratifs ne deviennent pas tous exécutés ; B-06 propositions reste futur.
+
+## Preuves du Lot 2 et portions applicables
+
+[Rapport](LOT-2-REPORT.md), [sélection déclarative](spec/lot2-scenarios.json), `tests/narrative.test.ts`, `tests/narrative-http.test.ts`, `tests/narrative-migration.test.ts`, `tests/autosave.test.ts` et `tests/e2e/lot2.spec.ts` fournissent des contrôles exécutables réels. Le redémarrage sans suppression de volume dans `tests/e2e/lot1-restart.spec.ts` comprend désormais références et module off.
+
+CT-03 recherche confidentielle ; CT-16 relation interprojets (commande directe), CT-25 désactivation conservatrice ; CT-31 curseurs ; CT-42 FK/pool/contextes ; CT-46 rename/move stables ; CT-48 cycles/cardinalités sous concurrence directe. CT-10 validate/submit de proposition et variantes propositions/tempId de CT-16/48 restent non exécutés au Lot 2 : seuls schémas invalides, diagnostics et rollback des commandes directes sont éprouvés. Les CT d’ensemble ne sont pas déclarés entièrement passés par extrapolation. Les 50 scénarios initiaux restent déclaratifs pour les fonctions futures.

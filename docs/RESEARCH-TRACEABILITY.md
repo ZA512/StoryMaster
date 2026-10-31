@@ -203,3 +203,9 @@ Le [rapport exécuté du 31 octobre](SPIKE-A-REPORT.md) relie les essais à EDIT
 ## Réalisation du Lot 1 — 31 octobre 2026
 
 Instruction explicite du propriétaire : accepter ADR-0007 et implémenter Lot 1, puis arrêt avant Lot 2. Aucune priorité, version cible ni aucun des 150 IDs n’est changé. Les exigences affectées sont exactement celles de la section Lot 1 du [plan](IMPLEMENTATION-PLAN.md) ; preuves et limites dans le [rapport](LOT-1-REPORT.md). EDIT-01..07, EDIT-10..12, EXPORT-01 et les invariants transversaux sont reliés aux services/contrats et tests de ce lot. Les références narratives d’EDIT-08, le moteur de propositions et l’archive complète restent dans leurs lots. Le choix de verrou provisoire est affiné par mesures et documenté dans [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md), sans modifier l’obligation d’atomicité.
+
+## Preuves exécutables du Lot 2
+
+La matrice produit et ses 150 identifiants restent inchangés. Réalisation des MUST affectés au Lot 2 : OBJ-04/05/06, MOD-01/02/03/04, PROJ-09, EDIT-08, DATA-01..09/11, SEARCH-01..04, UX-04. MOD-05/06, DATA-10 et SEARCH-05 bénéficient du registre typé, des dépendances de liens et des références inverses ; MOD-07 COULD reste hors réalisation. NFR-11 est soutenue par un registre/versionnage extensible, sans prétendre valider un module futur. NFR-03 mesurée localement, pas certifiée en production.
+
+[Rapport Lot 2](LOT-2-REPORT.md) rapproche exigences, services, contrats, tests PostgreSQL/navigateur et limites. Les tests CT-03/16/25/31/42/46/48 ont des parties applicables exécutées ; CT-10 reste un scénario de proposition futur, seule la logique transversale de validation invalide est exercée sur commandes directes. Aucun scénario déclaratif, fixture ou schéma MCP ne constitue une exécution des propositions ou du serveur MCP.

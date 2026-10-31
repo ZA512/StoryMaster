@@ -11,7 +11,7 @@ function node(kind:EditorialKind,row:QueryResultRow):EditorialNode {
   ...(row.content ? {content:row.content,contentHash:row.content_hash} : {}),createdAt:row.created_at.toISOString(),updatedAt:row.updated_at.toISOString()};
 }
 function revision(row:QueryResultRow):SceneRevision {
- return {sceneId:row.scene_id,projectId:row.project_id,revision:Number(row.revision),contentFormatVersion:1,content:row.content_snapshot,contentHash:row.content_hash,
+ return {...(row.reference_snapshot!==null&&row.reference_snapshot!==undefined?{referenceSnapshotVersion:1 as const,references:row.reference_snapshot}:{}),sceneId:row.scene_id,projectId:row.project_id,revision:Number(row.revision),contentFormatVersion:1,content:row.content_snapshot,contentHash:row.content_hash,
  metadata:row.metadata_snapshot,author:{id:row.actor_user_id,displayName:row.actor_display_name},createdAt:row.created_at.toISOString(),changeSetId:row.change_set_id,
  restoredFromRevision:row.restored_from_revision===null ? null : Number(row.restored_from_revision),action:row.action};
 }
@@ -48,13 +48,15 @@ export class PostgresEditorialStore implements EditorialPort {
   if(n.kind==='scene'){columns.push('status','content','content_hash','word_count');values.push(n.status,JSON.stringify(n.content),n.contentHash,n.wordCount);}
   await this.client.query(`INSERT INTO ${table}(${columns.join(',')}) VALUES (${values.map((_,i)=>'$'+(i+1)).join(',')})`,values);
  }
- async update(n:EditorialNode){const {table,parent,summary}=tables[n.kind];
+ async update(n:EditorialNode,sceneText?:string){const {table,parent,summary}=tables[n.kind];
   const columns=['title',summary,'position','revision','archived','updated_at'];const values:unknown[]=[n.projectId,n.id,n.title,n.summary,n.position,n.revision,n.archived,n.updatedAt];
   if(n.kind!=='manuscript'){columns.push(parent);values.push(n.parentId);}
   if(n.kind==='manuscript'){columns.push('writing_statuses');values.push(JSON.stringify(n.writingStatuses));}
   if(n.kind==='scene'){columns.push('status','content','content_hash','word_count');values.push(n.status,JSON.stringify(n.content),n.contentHash,n.wordCount);}
+  if(n.kind==='scene'&&sceneText!==undefined){columns.push('search_text');values.push(sceneText.normalize('NFC'));}
   await this.client.query(`UPDATE ${table} SET ${columns.map((col,i)=>`${col}=$${i+3}`).join(',')} WHERE project_id=$1 AND id=$2`,values);
  }
+ async advanceSceneRevision(p:string,id:string,revision:number,updatedAt:string){return (await this.client.query('UPDATE scenes SET revision=$3,updated_at=$4 WHERE project_id=$1 AND id=$2 AND revision=$3-1',[p,id,revision,updatedAt])).rowCount===1;}
  async reindex(kind:EditorialKind,projectId:string,parentId:string,ids:string[]){const {table,parent}=tables[kind];
   await this.client.query(`UPDATE ${table} t SET position=u.ordinality FROM UNNEST($3::uuid[]) WITH ORDINALITY u(id,ordinality) WHERE t.project_id=$1 AND t.${parent}=$2 AND t.id=u.id`,[projectId,parentId,ids]);
  }
@@ -65,8 +67,8 @@ export class PostgresEditorialStore implements EditorialPort {
  async change(c:EditorialChange){await this.client.query('INSERT INTO editorial_changes(id,project_id,resource_id,resource_type,action,before_revision,after_revision,actor_user_id,correlation_id,details) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[c.id,c.projectId,c.resourceId,c.kind,c.action,c.beforeRevision,c.afterRevision,c.actor.userId,c.correlationId,JSON.stringify(c.details)]);}
  async snapshot(n:EditorialNode,actor:Actor,changeSetId:string,action:string,restoredFrom?:number){
   const metadata={title:n.title,summary:n.summary,status:n.status,archived:n.archived,chapterId:n.parentId};
-  await this.client.query(`INSERT INTO scene_revisions(project_id,scene_id,revision,content_snapshot,content_hash,metadata_snapshot,actor_user_id,actor_display_name,change_set_id,action,restored_from_revision)
-   SELECT $1,$2,$3,$4,$5,$6,u.id,u.display_name,$8,$9,$10 FROM app_users u WHERE u.id=$7`,[n.projectId,n.id,n.revision,JSON.stringify(n.content),n.contentHash,JSON.stringify(metadata),actor.userId,changeSetId,action,restoredFrom ?? null]);
+  await this.client.query(`INSERT INTO scene_revisions(project_id,scene_id,revision,content_snapshot,content_hash,metadata_snapshot,actor_user_id,actor_display_name,change_set_id,action,restored_from_revision,reference_snapshot)
+   SELECT $1,$2,$3,$4,$5,$6,u.id,u.display_name,$8,$9,$10,current_scene_references($1,$2) FROM app_users u WHERE u.id=$7`,[n.projectId,n.id,n.revision,JSON.stringify(n.content),n.contentHash,JSON.stringify(metadata),actor.userId,changeSetId,action,restoredFrom ?? null]);
  }
  async revision(projectId:string,sceneId:string,number:number){const r=await this.client.query('SELECT * FROM scene_revisions WHERE project_id=$1 AND scene_id=$2 AND revision=$3',[projectId,sceneId,number]);return r.rows[0] ? revision(r.rows[0]) : null;}
  async revisions(projectId:string,sceneId:string,limit:number,before?:number){const r=await this.client.query('SELECT * FROM scene_revisions WHERE project_id=$1 AND scene_id=$2 AND ($4::bigint IS NULL OR revision<$4) ORDER BY revision DESC LIMIT $3',[projectId,sceneId,limit,before ?? null]);return r.rows.map(revision);}

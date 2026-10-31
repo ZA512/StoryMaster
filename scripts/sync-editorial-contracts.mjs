@@ -22,7 +22,9 @@ schemas.SceneSaveAck=obj({id,revision:integer,contentHash:{type:'string',pattern
 Object.assign(schemas.Scene.properties,{summary:{type:'string',maxLength:4000},status:{type:'string',maxLength:40},archived:{type:'boolean'},contentHash:{type:'string',pattern:'^[a-f0-9]{64}$'},wordCount:{type:'integer',minimum:0},createdAt:date,updatedAt:date});
 const revisionMeta={sceneId:id,projectId:id,revision:integer,contentFormatVersion:{const:1},author:obj({id,displayName:{type:'string'}}),createdAt:date,changeSetId:id,restoredFromRevision:{type:['integer','null'],minimum:1},action:{type:'string'}};
 schemas.SceneRevisionMeta=obj({...revisionMeta,title:{type:'string'}});
-schemas.SceneRevision=obj({...revisionMeta,content:ref('RichDocument'),contentHash:{type:'string'},metadata:obj({title:{type:'string'},summary:{type:'string'},status:{type:'string'},archived:{type:'boolean'},chapterId:id})});
+const sceneRevisionRequired=[...Object.keys(revisionMeta),'content','contentHash','metadata'];
+schemas.SceneRevision=obj({...revisionMeta,content:ref('RichDocument'),contentHash:{type:'string'},referenceSnapshotVersion:{const:1},references:{type:'array',items:ref('SceneReference')},metadata:obj({title:{type:'string'},summary:{type:'string'},status:{type:'string'},archived:{type:'boolean'},chapterId:id})},sceneRevisionRequired);
+schemas.SceneRevision.dependentRequired={referenceSnapshotVersion:['references'],references:['referenceSnapshotVersion']};
 schemas.SceneRevisionPage=obj({items:{type:'array',items:ref('SceneRevisionMeta'),maxItems:100},hasMore:{type:'boolean'},nextBeforeRevision:{type:['integer','null'],minimum:1}});
 schemas.SceneComparison=obj({before:ref('SceneRevision'),after:ref('SceneRevision')});
 schemas.EditorialExport=obj({format:{enum:['markdown','json']},filename:{type:'string'},mimeType:{enum:['application/json','text/markdown']},text:{type:'string'},warnings:{type:'array',items:obj({sceneId:id,title:{type:'string'},message:{type:'string'}})}});
@@ -62,7 +64,7 @@ route(scene+'/revisions/{revision}','get','sceneRevisionGet','SceneRevision','pr
 route(scene+'/compare','get','sceneCompare','SceneComparison','project.read',null,false,[param('from','query',integer,true),param('to','query',integer,true)]);
 route(scene+'/restore','post','sceneRestore','SceneSaveAck','narrative.write','SceneRestore',true);
 route(project+'/manuscripts/{manuscriptId}/export','get','manuscriptExport','EditorialExport','export.create',null,false,[param('format','query',{enum:['markdown','json']},true)]);
-oas.info.version='0.4.0';oas.info.description='Contrats MVP. x-lot 0/1 implémentés pour session humaine ; autres opérations et MCP spécifiés seulement.';
+if(!oas.info.version||oas.info.version<'0.4.0')oas.info.version='0.4.0';oas.info.description=oas.info.version>='0.5.0'?'Contrats MVP. x-lot 0/1/2 implémentés pour session humaine ; autres opérations et MCP spécifiés seulement.':'Contrats MVP. x-lot 0/1 implémentés pour session humaine ; autres opérations et MCP spécifiés seulement.';
 const normalize=value=>typeof value==='string'?value.replaceAll('#/components/schemas/','#/$defs/'):Array.isArray(value)?value.map(normalize):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).map(([k,v])=>[k,normalize(v)])):value;
 const catalogFile='docs/spec/mcp-tools.json',catalog=JSON.parse(readFileSync(catalogFile,'utf8')),oldCatalog=structuredClone(catalog);
 for(const tool of catalog.tools)for(const side of ['inputSchema','outputSchema'])for(const name of Object.keys(tool[side].$defs??{}))tool[side].$defs[name]=normalize(schemas[name]);

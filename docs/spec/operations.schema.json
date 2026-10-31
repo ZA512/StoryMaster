@@ -221,24 +221,52 @@
       "type": "object",
       "properties": {
         "aliases": {
+          "maxItems": 100,
           "type": "array",
           "items": {
             "type": "string",
             "maxLength": 200
-          },
-          "maxItems": 100
+          }
         },
         "description": {
           "type": "string",
           "maxLength": 20000
         },
-        "goals": {
+        "narrativeRole": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "motivations": {
+          "maxItems": 100,
           "type": "array",
           "items": {
             "type": "string",
             "maxLength": 1000
-          },
-          "maxItems": 100
+          }
+        },
+        "goals": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "conflicts": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "traits": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          }
         },
         "healthSummary": {
           "type": "string",
@@ -247,43 +275,11 @@
         "conditionEventRefs": {
           "type": "array",
           "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 128,
-                    "pattern": "^[A-Za-z0-9_-]+$"
-                  }
-                },
-                "required": [
-                  "id"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "tempId": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 128,
-                    "pattern": "^[A-Za-z0-9_-]+$"
-                  }
-                },
-                "required": [
-                  "tempId"
-                ],
-                "additionalProperties": false
-              }
-            ]
+            "$ref": "#/$defs/ObjectRef"
           },
           "maxItems": 100
         }
       },
-      "required": [],
       "additionalProperties": false
     },
     "PlaceAttributes": {
@@ -297,42 +293,25 @@
           "type": "string",
           "maxLength": 200
         },
+        "characteristics": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
         "parentPlaceRef": {
-          "oneOf": [
+          "anyOf": [
             {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 128,
-                  "pattern": "^[A-Za-z0-9_-]+$"
-                }
-              },
-              "required": [
-                "id"
-              ],
-              "additionalProperties": false
+              "$ref": "#/$defs/ObjectRef"
             },
             {
-              "type": "object",
-              "properties": {
-                "tempId": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 128,
-                  "pattern": "^[A-Za-z0-9_-]+$"
-                }
-              },
-              "required": [
-                "tempId"
-              ],
-              "additionalProperties": false
+              "type": "null"
             }
           ]
         }
       },
-      "required": [],
       "additionalProperties": false
     },
     "EventAttributes": {
@@ -343,7 +322,9 @@
           "maxLength": 20000
         },
         "chronologyPosition": {
-          "type": "number"
+          "type": "number",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
         },
         "temporalExpression": {
           "oneOf": [
@@ -351,6 +332,7 @@
               "type": "object",
               "properties": {
                 "kind": {
+                  "type": "string",
                   "const": "unknown"
                 }
               },
@@ -363,10 +345,13 @@
               "type": "object",
               "properties": {
                 "kind": {
+                  "type": "string",
                   "const": "ordinal"
                 },
                 "position": {
-                  "type": "number"
+                  "type": "number",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
                 }
               },
               "required": [
@@ -378,7 +363,6 @@
           ]
         }
       },
-      "required": [],
       "additionalProperties": false
     },
     "CreateObject": {
@@ -454,24 +438,52 @@
                     "type": "object",
                     "properties": {
                       "aliases": {
+                        "maxItems": 100,
                         "type": "array",
                         "items": {
                           "type": "string",
                           "maxLength": 200
-                        },
-                        "maxItems": 100
+                        }
                       },
                       "description": {
                         "type": "string",
                         "maxLength": 20000
                       },
-                      "goals": {
+                      "narrativeRole": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "motivations": {
+                        "maxItems": 100,
                         "type": "array",
                         "items": {
                           "type": "string",
                           "maxLength": 1000
-                        },
-                        "maxItems": 100
+                        }
+                      },
+                      "goals": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "conflicts": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "traits": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
                       },
                       "healthSummary": {
                         "type": "string",
@@ -480,43 +492,11 @@
                       "conditionEventRefs": {
                         "type": "array",
                         "items": {
-                          "oneOf": [
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "minLength": 1,
-                                  "maxLength": 128,
-                                  "pattern": "^[A-Za-z0-9_-]+$"
-                                }
-                              },
-                              "required": [
-                                "id"
-                              ],
-                              "additionalProperties": false
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "tempId": {
-                                  "type": "string",
-                                  "minLength": 1,
-                                  "maxLength": 128,
-                                  "pattern": "^[A-Za-z0-9_-]+$"
-                                }
-                              },
-                              "required": [
-                                "tempId"
-                              ],
-                              "additionalProperties": false
-                            }
-                          ]
+                          "$ref": "#/$defs/ObjectRef"
                         },
                         "maxItems": 100
                       }
                     },
-                    "required": [],
                     "additionalProperties": false
                   }
                 }
@@ -546,42 +526,25 @@
                         "type": "string",
                         "maxLength": 200
                       },
+                      "characteristics": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
                       "parentPlaceRef": {
-                        "oneOf": [
+                        "anyOf": [
                           {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 128,
-                                "pattern": "^[A-Za-z0-9_-]+$"
-                              }
-                            },
-                            "required": [
-                              "id"
-                            ],
-                            "additionalProperties": false
+                            "$ref": "#/$defs/ObjectRef"
                           },
                           {
-                            "type": "object",
-                            "properties": {
-                              "tempId": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 128,
-                                "pattern": "^[A-Za-z0-9_-]+$"
-                              }
-                            },
-                            "required": [
-                              "tempId"
-                            ],
-                            "additionalProperties": false
+                            "type": "null"
                           }
                         ]
                       }
                     },
-                    "required": [],
                     "additionalProperties": false
                   }
                 }
@@ -608,7 +571,9 @@
                         "maxLength": 20000
                       },
                       "chronologyPosition": {
-                        "type": "number"
+                        "type": "number",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
                       },
                       "temporalExpression": {
                         "oneOf": [
@@ -616,6 +581,7 @@
                             "type": "object",
                             "properties": {
                               "kind": {
+                                "type": "string",
                                 "const": "unknown"
                               }
                             },
@@ -628,10 +594,13 @@
                             "type": "object",
                             "properties": {
                               "kind": {
+                                "type": "string",
                                 "const": "ordinal"
                               },
                               "position": {
-                                "type": "number"
+                                "type": "number",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
                               }
                             },
                             "required": [
@@ -643,7 +612,6 @@
                         ]
                       }
                     },
-                    "required": [],
                     "additionalProperties": false
                   }
                 }

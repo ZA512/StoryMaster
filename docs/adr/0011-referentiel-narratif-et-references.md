@@ -1,0 +1,37 @@
+# ADR-0011 — Référentiel narratif et révision des références de scènes
+
+**Statut :** mise en œuvre du Lot 2 autorisé, réception attendue. **Date :** 31 octobre 2026. **Références :** [décisions humaines](../HUMAN-DECISIONS.md), [ADR-0005](0005-modules-et-schemas-versionnes.md), [ADR-0003](0003-propositions-transactionnelles.md), [ADR-0010](0010-atelier-ecriture-et-concurrence.md), [registre v1](../spec/module-registry.v1.json).
+
+## Décision et portée
+
+Trois types connus : character, place, event ; noyau relationnel, attributs JSON typés/version 1, noms descriptifs jamais utilisés comme identifiants. Le registre publié est livré dans contracts et docs, avec checksum, et stocké en lecture seule dans PostgreSQL. Une évolution exige une nouvelle version et une migration ; pas de réinterprétation silencieuse des anciennes données. La CI rapproche le registre publié des schémas exécutables. Pas de types arbitraires, plugins tiers ou code utilisateur.
+
+Les modules characters, places et timeline sont initialisés **désactivés** pour les projets existants et nouveaux. Cette initialisation a une provenance système, pas une fausse contribution du propriétaire. L’activation est un choix owner/admin, révisionné et audité. Les trois modules n’ont pas de dépendance dure entre eux : une fiche peut exister seule. En revanche toute mutation d’un lien vérifie les modules de ses extrémités ; off conserve lecture, recherche, export, historique et références. Les capacités du noyau/manuscrit restent permanentes. Aucun modèle de genre ou calendrier avancé n’est inventé.
+
+Les attributs complètent les champs déjà spécifiés : personnages (alias, description, rôle narratif, motivations/objectifs/conflits/caractéristiques), lieux (description, catégorie, caractéristiques, parent facultatif), événements (description, repère unknown ou ordinal). ChronologyPosition reste un miroir compatible de l’ordinal, jamais une seconde source contradictoire ; deux valeurs incompatibles sont refusées. Unknown est explicite et n’est pas une date technique. Les notes sont visibles selon les droits du projet, sans confidentialité par champ. Aucun texte n’est converti automatiquement en fait canonique.
+
+## Graphe et barrières
+
+Toute mutation d’objet, relation, activation et référence prend Project exclusif, puis revalide identité/droits/états ; les saves/restores du seul texte gardent Project partagé puis Scene exclusive. Ordre : projet → autorisation → scène si concernée → idempotence → écritures. Les dépendances de relations sont préconditionnées par les révisions des deux extrémités. Les changements de hiérarchie et de précédence valident le graphe final, y compris les liens conservés vers des fiches archivées, sous barrière exclusive. Les contraintes composites PostgreSQL interdisent les liens interprojets ; index uniques protègent paires, localisation unique et POV unique. Les cycles ne reposent pas sur un contrôle frontend.
+
+related_to est symétrique et stocké dans l’ordre canonique des IDs, sans double miroir. knows reste une relation sociale orientée ; located_in est character/event → place avec une destination active ; participates_in character → event ; precedes event → event acyclique et compatible avec les deux positions ordinales connues. Une mise à jour d’ordinal revérifie les précédences. Aucun solveur temporel, connaissance ou croyance V1.
+
+## Une scène, une révision
+
+PUT references est un remplacement explicite préconditionné par If-Match de la scène et les révisions des objets concernés. Références typées : present/point_of_view → character, setting → place, depicts_event → event, mentioned → tout type. Unicité objet/type ; au plus un POV, lieux/présences multiples possibles. Les associations gardent leur identité et une révision propre ; retraits tombstonés, réajout du couple réactive la même identité.
+
+La commande ne met à jour **que revision et updatedAt** de Scene. Texte, hash et compte de mots restent inchangés. Références, nouvelle révision de scène, snapshot intégral du texte et des références, ChangeSet direct, audit et idempotence sont dans une transaction. Elle ne modifie aucune révision d’objet cible. Les nouveaux saves/moves/restores de texte historisent les références courantes ; restaurer le texte conserve ces références, sans rétablir implicitement d’anciens liens.
+
+La migration ajoute reference_snapshot nullable aux anciennes révisions sans réécrire leur contenu. Null signifie ancien format sans snapshot de références ; les lectures historiques le distinguent du nouveau snapshot explicitement vide. Les anciens exports éditoriaux v1 restent lisibles ; les nouveaux renseignent les références déjà prévues au contrat. L’export narratif v1 complète objets/modules/liens, sans se présenter comme archive complète ni sauvegarde d’exploitation.
+
+Un changement concurrent texte/références produit un conflit de scène légitime : jamais de compteur de texte indépendant. Le brouillon et le formulaire de références sont conservés en mémoire par utilisateur/projet/scène, y compris lors de navigation interne et du mode concentration ; leur récupération après crash n’est pas garantie. L’interface doit montrer que les références ont changé même si le texte est identique. Après résolution explicite du texte, seule la base serveur affichée est utilisée et ses références sont conservées. Le rafraîchissement automatique d’un panneau ne doit pas écraser une sélection locale.
+
+## Historique, archivage et recherche
+
+Les objets/relations/modules ont snapshots append-only, auteur/date et ChangeSet. Restaurer les champs d’une fiche active crée r+1 et conserve son statut actuel ; une fiche archivée doit être réactivée par owner/admin avant édition/restauration. Le retrait d’une relation ou référence est une mutation narrative autorisée aux auteurs, explicitement confirmée, sans supprimer les objets ni leur historique. Les liens vers fiches archivées/modules off restent affichés avec état inactif ; jamais retirés en cascade.
+
+Recherche lexicale PostgreSQL sur contenu courant des scènes et fiches, y compris notes/alias. Les projections NFC sont dérivées ; le contenu canonique Unicode n’est pas normalisé de force. Les index sont actualisés dans la transaction. Défaut : données actives ; filtre explicite archives/tous, modules off consultables. Les anciennes révisions restent dans l’historique, sans être ajoutées silencieusement à la recherche courante. Extraits texte rendus sans HTML ; aucun résultat, compte global ou curseur partagé entre projets. Pagination signée, liée à utilisateur/projet/rôle/requête/filtres, expiration technique 15 minutes ; chaque page revalide les droits. Les pages peuvent refléter les changements intervenus entre requêtes, sans promettre un snapshot multi-pages figé.
+
+## Critères d'acceptation du document
+
+Compteur de références indépendant rejeté : il contournerait l’agrégat Scene validé. Écriture directe depuis route, retrait automatique des liens et activation implicite rejetés. La barrière exclusive du graphe peut retarder les autosaves indépendants : mesurer attente/détention, erreurs et intégrité, sans affaiblir les invariants. Bornes de requêtes/pagination/export sont des protections techniques explicites, pas des quotas commerciaux. La réception doit distinguer preuves PostgreSQL/navigateur/contrats, performance locale et réserves UX/exploitation héritées ; aucun Lot 3/4 commencé.

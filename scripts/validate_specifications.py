@@ -383,6 +383,75 @@ def validate_lot1(oas):
     require('position' not in schemas['Scene']['properties'], 'Lot 1 : ordre porté par le plan, pas CAS texte voisin')
 
 
+def validate_lot2(oas, root=None):
+    base = '/projects/{projectId}'
+    expected = {
+        'narrativeObjectList': (base+'/objects','get'),
+        'narrativeObjectCreate': (base+'/objects','post'),
+        'entityGet': (base+'/objects/{objectId}','get'),
+        'narrativeObjectUpdate': (base+'/objects/{objectId}','patch'),
+        'narrativeObjectDetail': (base+'/objects/{objectId}/detail','get'),
+        'narrativeObjectArchive': (base+'/objects/{objectId}/archive','post'),
+        'narrativeObjectRestore': (base+'/objects/{objectId}/restore','post'),
+        'narrativeObjectReferences': (base+'/objects/{objectId}/references','get'),
+        'relationList': (base+'/objects/{objectId}/relations','get'),
+        'narrativeRelationCreate': (base+'/relations','post'),
+        'narrativeRelationUpdate': (base+'/relations/{relationId}','patch'),
+        'narrativeRelationRemove': (base+'/relations/{relationId}','delete'),
+        'narrativeRelationRestore': (base+'/relations/{relationId}/restore','post'),
+        'narrativeModules': (base+'/modules','get'),
+        'narrativeModuleConfigure': (base+'/modules/{moduleKey}','patch'),
+        'sceneReferences': (base+'/scenes/{sceneId}/references','get'),
+        'sceneReferencesReplace': (base+'/scenes/{sceneId}/references','put'),
+        'timelineList': (base+'/timeline','get'), 'entitySearch': (base+'/search','get'),
+        'narrativeExport': (base+'/narrative-export','get')}
+    for resource, prefix, parameter in [('objects','narrativeObject','objectId'),('relations','narrativeRelation','relationId'),('module-activations','narrativeModule','activationId')]:
+        path=base+'/'+resource+'/{'+parameter+'}/revisions'
+        expected[prefix+'History']=(path,'get')
+        expected[prefix+'Revision']=(path+'/{revision}','get')
+    for oid,(path,method) in expected.items():
+        op=oas['paths'].get(path,{}).get(method,{})
+        require(op.get('operationId')==oid and op.get('x-lot')==2,'Lot 2 : opération absente '+oid)
+        require(op.get('security')==[{'webSession':[]}],'Lot 2 : session humaine obligatoire '+oid)
+        if method in {'post','put','patch','delete'}:
+            params={p['name']:p for raw in op.get('parameters',[]) for p in [dereference(oas,raw)]}
+            for name in ['X-CSRF-Token','Idempotency-Key']+([] if oid.endswith('Create') else ['If-Match']):
+                require(params.get(name,{}).get('required') is True,'Lot 2 : précondition absente '+oid+' '+name)
+            body=dereference(oas,op['requestBody']['content']['application/json']['schema'])
+            require(body.get('additionalProperties') is False,'Lot 2 : corps strict '+oid)
+            if oid.startswith('narrativeRelation') and not oid.endswith('Create') or oid=='sceneReferencesReplace':
+                require('dependencyRevisions' in body['required'],'Lot 2 : bases des cibles obligatoires '+oid)
+    require(oas['paths'][base+'/modules/{moduleKey}']['patch']['x-permission']=='project.admin','Lot 2 : administration module réservée')
+    schemas=oas['components']['schemas']
+    require(schemas['NarrativeCreate']['properties']['schemaVersion'].get('const')==1,'Lot 2 : version typée obligatoire')
+    refs=schemas['SceneReferencesReplace']['properties']['references']['items']
+    require(refs['properties']['metadata'].get('additionalProperties') is False and not refs['properties']['metadata']['properties'],'Lot 2 : métadonnées fermées')
+    require({'referenceSnapshotVersion','references'}.issubset(schemas['SceneRevision']['properties']),'Lot 2 : snapshot références requis')
+    require('references' not in schemas['SceneRevision']['required'],'Lot 2 : anciens snapshots restent lisibles')
+    if root is not None:
+        import hashlib
+        registry=load_json(root/'docs/spec/module-registry.v1.json')
+        require(registry['registryVersion']==1,'Lot 2 : registre versionné')
+        require({d['key'] for d in registry['definitions']}=={'characters','places','timeline'},'Lot 2 : modules connus seulement')
+        require(set(registry['relationRules'])=={'related_to','knows','located_in','participates_in','precedes'},'Lot 2 : catalogue initial exact')
+        for d in registry['definitions']:
+            # Toutes les clés du registre sont ASCII ; tri canonique des clés, tableaux ordonnés.
+            body={k:v for k,v in d.items() if k!='checksum'}
+            digest=hashlib.sha256(json.dumps(body,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+            require(digest==d['checksum'],'Lot 2 : checksum du registre '+d['key'])
+            for type_key,schema in d['schemas'].items():
+                Draft202012Validator.check_schema(schema)
+                name={'character':'CharacterAttributesV1','place':'PlaceAttributesV1','event':'EventAttributesV1'}[type_key]
+                require({k:v for k,v in schema.items() if k!='$schema'}==schemas[name],'Lot 2 : registre et OpenAPI divergents '+type_key)
+        scenarios=load_json(root/'docs/spec/lot2-scenarios.json')
+        require(scenarios['status']=='Scénarios déclaratifs ; preuves exécutées dans LOT-2-REPORT.md','Lot 2 : ne pas prétendre exécuter les scénarios')
+        ids={x['contractTest'] for x in scenarios['scenarios']}
+        require(ids=={'CT-03','CT-10','CT-16','CT-25','CT-31','CT-42','CT-46','CT-48'},'Lot 2 : couverture CT applicable')
+        for x in scenarios['scenarios']:
+            require(x['oracle'] and x['executableTest'] and (root/x['executableTest']).is_file(),'Lot 2 : preuve exécutable manquante')
+
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -393,6 +462,7 @@ def validate_contracts(root):
         raise InvalidSpecification(f"OpenAPI invalide : {exc}") from exc
     validate_lot0(oas)
     validate_lot1(oas)
+    validate_lot2(oas, root)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and
@@ -475,7 +545,7 @@ def validate_contracts(root):
 
 
 def validate_lot0_examples(root, oas):
-    examples = [example for name in ['lot0-http.json','lot1-http.json'] for example in load_json(root / 'docs/examples' / name)['responses']]
+    examples = [example for name in ['lot0-http.json','lot1-http.json','lot2-http.json'] for example in load_json(root / 'docs/examples' / name)['responses']]
     for example in examples:
         op = oas['paths'][example['path']][example['method']]
         context = 'Lot 0 exemple : ' + example['path']

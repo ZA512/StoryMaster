@@ -14,7 +14,7 @@ const code=(expected:string)=>(error:unknown)=>error instanceof AppError && erro
 
 test('migrations rejouables, empreinte protégée, rôle applicatif non privilégié',async()=>{
   await migrate(admin);
-  assert.equal((await admin.query('SELECT count(*) FROM schema_migrations')).rows[0].count,'3');
+  assert.equal((await admin.query('SELECT count(*) FROM schema_migrations')).rows[0].count,'4');
   const role=(await pool.query('SELECT rolsuper,rolcreaterole,rolcreatedb,rolbypassrls FROM pg_roles WHERE rolname=current_user')).rows[0];
   assert.deepEqual(Object.values(role),[false,false,false,false]);
   await assert.rejects(pool.query('DELETE FROM audit_events'),{code:'42501'});

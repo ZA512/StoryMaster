@@ -1,0 +1,32 @@
+import {before,after,test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {buildApp} from '../apps/api/src/app.ts';
+import {person,sessions,reset,close,issuer,secret,admin} from './database.helper.ts';
+import {bibleFixture,create} from './narrative.helper.ts';
+before(reset);after(close);
+test('HTTP Lot 2 observé : schémas, préconditions, droits, CSRF, idempotence, graphes, références, recherche et export',async()=>{
+ const app=await buildApp({databaseUrl:process.env.TEST_APP_DATABASE_URL!,issuer,clientId:'storymaster-web',publicOrigin:'http://localhost:3000',secret,local:true,port:3001,sessionSeconds:3600},{rateMax:1000});
+ try{const f=await bibleFixture(),a=f.owner,b=await person(),p=f.project.id,base='/api/v1/projects/'+p,t='/projects/{projectId}',observed:unknown[]=[],headers={cookie:`sm_session_local=${a.raw}`,origin:'http://localhost:3000','x-csrf-token':sessions.csrf(a.raw)};
+ const call=async(method:'GET'|'POST'|'PUT'|'PATCH'|'DELETE',path:string,template:string,status:number,payload?:unknown,revision?:number,extra:Record<string,string>={})=>{const r=await app.inject({method,url:base+path,headers:{...headers,'idempotency-key':randomUUID(),...(revision?{'if-match':`"r${revision}"`}:{}),...extra},...(payload?{payload}:{})});assert.equal(r.statusCode,status,r.body);observed.push({method:method.toLowerCase(),path:t+template,status,body:r.json()});return r.json().data;};
+ await call('GET','/modules','/modules',200);
+ const body={typeKey:'character',schemaVersion:1,name:'Élise HTTP',summary:'',notes:'portulan',attributes:{aliases:['Capitaine'],description:'Une voyageuse'}};
+ const key=randomUUID(),c=await call('POST','/objects','/objects',201,body,undefined,{'idempotency-key':key});assert.deepEqual(await call('POST','/objects','/objects',201,body,undefined,{'idempotency-key':key}),c);
+ await call('POST','/objects','/objects',422,{...body,attributes:{calendar:'hors périmètre'}});await call('POST','/objects','/objects',422,{...body,schemaVersion:2});await call('POST','/objects','/objects',403,body,undefined,{'x-csrf-token':'invalid'});
+ const o='/objects/'+c.id,ot='/objects/{objectId}';await call('PATCH',o,ot,428,{set:{name:'Sans base'}});await call('PATCH',o,ot,200,{set:{name:'Élise renommée'}},1);await call('PATCH',o,ot,412,{set:{name:'Obsolète'}},1);await call('GET',o,ot,200);await call('GET',o+'/detail',ot+'/detail',200);await call('GET','/objects?typeKey=character&status=all','/objects',200);
+ const place=await call('POST','/objects','/objects',201,{typeKey:'place',schemaVersion:1,name:'Port',attributes:{category:'Ville'}}),event=await call('POST','/objects','/objects',201,{typeKey:'event',schemaVersion:1,name:'Départ',attributes:{temporalExpression:{kind:'ordinal',position:10}}});
+ const r=await call('POST','/relations','/relations',201,{sourceRef:{id:c.id},targetRef:{id:place.id},sourceRevision:2,targetRevision:1,relationType:'located_in',attributes:{}}),rpath='/relations/'+r.id,rt='/relations/{relationId}',dependencies={dependencyRevisions:[{id:c.id,revision:2},{id:place.id,revision:1}]};
+ await call('PATCH',rpath,rt,200,{...dependencies,set:{attributes:{description:'Un lien'}}},1);await call('DELETE',rpath,rt,200,dependencies,2);await call('POST',rpath+'/restore',rt+'/restore',200,dependencies,3);
+ await call('GET',o+'/relations',ot+'/relations',200);await call('GET',rpath+'/revisions',rt+'/revisions',200);await call('GET',rpath+'/revisions/1',rt+'/revisions/{revision}',200);
+ const scene='/scenes/'+f.s.id,st='/scenes/{sceneId}',refs={references:[{objectRef:{id:c.id},referenceType:'present',metadata:{}},{objectRef:{id:place.id},referenceType:'setting',metadata:{}},{objectRef:{id:event.id},referenceType:'depicts_event',metadata:{}}],dependencyRevisions:[{id:c.id,revision:2},{id:place.id,revision:1},{id:event.id,revision:1}]};
+ await call('PUT',scene+'/references',st+'/references',428,refs);await call('PUT',scene+'/references',st+'/references',200,refs,1);await call('GET',scene,st,200);await call('GET',scene+'/references',st+'/references',200);await call('GET',scene+'/revisions/2',st+'/revisions/{revision}',200);await call('GET',o+'/references',ot+'/references',200);await call('GET',o+'/detail',ot+'/detail',200);
+ await call('GET','/search?q=portulan&status=all','/search',200);await call('GET','/timeline?status=all','/timeline',200);await call('GET','/narrative-export','/narrative-export',200);
+ await call('POST',o+'/archive',ot+'/archive',200,{archived:true},2);await call('POST',o+'/archive',ot+'/archive',200,{archived:false},3);await call('POST',o+'/restore',ot+'/restore',200,{sourceRevision:1},4);await call('GET',o+'/revisions',ot+'/revisions',200);await call('GET',o+'/revisions/1',ot+'/revisions/{revision}',200);
+ const activation=await call('PATCH','/modules/characters','/modules/{moduleKey}',200,{enabled:false,moduleVersion:1},2);await call('POST','/objects','/objects',409,body);await call('GET','/module-activations/'+activation.id+'/revisions','/module-activations/{activationId}/revisions',200);await call('GET','/module-activations/'+activation.id+'/revisions/1','/module-activations/{activationId}/revisions/{revision}',200);
+ await call('GET',o,ot,404,undefined,undefined,{cookie:`sm_session_local=${b.raw}`});await call('GET','/search?q=portulan','/search',404,undefined,undefined,{cookie:`sm_session_local=${b.raw}`});
+ await admin.query("INSERT INTO project_memberships(project_id,user_id,role) VALUES($1,$2,'reader')",[p,b.user.id]);const reader={cookie:`sm_session_local=${b.raw}`,'x-csrf-token':sessions.csrf(b.raw)};await call('POST','/objects','/objects',403,body,undefined,reader);await call('PATCH','/modules/characters','/modules/{moduleKey}',403,{enabled:true,moduleVersion:1},3,reader);await call('GET','/narrative-export','/narrative-export',403,undefined,undefined,reader);
+ const other=await bibleFixture(),foreign=await create(other.owner.actor,other.project.id,'character','Autre secret');await call('POST','/relations','/relations',422,{sourceRef:{id:c.id},targetRef:{id:foreign.id},sourceRevision:5,targetRevision:1,relationType:'related_to',attributes:{}}); // module off is checked after endpoint resolution
+ const v=spawnSync(process.env.DOCUMENT_PYTHON??'python3',['scripts/validate_runtime_contracts.py'],{input:JSON.stringify(observed),encoding:'utf8'});assert.equal(v.status,0,v.stdout+v.stderr);console.log(v.stdout.trim());
+ }finally{await app.close();}
+});

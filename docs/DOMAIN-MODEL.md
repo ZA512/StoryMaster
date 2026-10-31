@@ -1,7 +1,7 @@
 # Modèle de domaine — Plateforme de création littéraire
 
-**Version :** 0.2  
-**Statut :** Proposition de conception  
+**Version :** 0.3
+**Statut :** Domaine Lots 0–2 implémenté ; détails futurs proposés
 **Référence principale :** `docs/PRD.md`
 
 ## 1. Objectif
@@ -1056,3 +1056,9 @@ Les seules tables métier matérialisées sont utilisateurs, identités externes
 Manuscript → Chapter → Scene sont des tables privées au projet, reliées par clés composites. `revision` contrôle contenu/métadonnées ; `structureRevision` contrôle l’ordre des enfants. Les déplacements conservent les IDs, révisent l’élément choisi et les structures des parents, sans faux conflit sur le texte des voisins. Les scènes ont des statuts rédactionnels configurés par manuscrit ; retirer un statut utilisé est refusé. Archive/réactivation conserve contenu et historique ; seuls owner/admin archivent. Les compteurs mots des scènes sont calculés depuis le JSON accepté ; chapitres/manuscrits totalisent leurs scènes actives.
 
 `scene_revisions` contient snapshots intégraux et métadonnées, auteur/date, ChangeSet direct et provenance de restauration. La restauration exposée remet le texte, conserve les métadonnées actuelles et crée r+1. Ce lot n’implémente ni références narratives ni propositions. Détails et limites : [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md), [rapport](LOT-1-REPORT.md).
+
+## Réalisation du référentiel Lot 2
+
+[ADR-0011](adr/0011-referentiel-narratif-et-references.md) et [registre v1](spec/module-registry.v1.json) précisent les trois types intégrés, champs typés et catalogue exact sans connaissances/faits V1. NarrativeObject/Relation et ModuleActivation ont révisions, snapshots append-only et provenance. Les modules sont initialement off avec provenance système ; owner/admin les configure. Les liens entre types contrôlent dynamiquement les modules des extrémités, sans dépendance dure arbitraire.
+
+Les références de scène ont identité stable, type et tombstone lors du retrait. Réajouter le même couple objet/type réactive son identité avec une nouvelle révision. Scene porte la révision métier unique ; snapshot du texte et des références atomique, anciens snapshots sans références conservés dans leur ancien format. Les liens vers objets archivés/modules off sont affichés inactifs et conservés. Unknown/ordinal reste indépendant de l’ordre de lecture. Aucune suppression destructive ni migration implicite de schéma.

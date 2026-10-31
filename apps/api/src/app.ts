@@ -1,3 +1,4 @@
+import {registerNarrative} from './narrative.ts';
 import { randomUUID } from 'node:crypto';
 import type { Writable } from 'node:stream';
 import Fastify from 'fastify';
@@ -5,7 +6,7 @@ import type { FastifyRequest } from 'fastify';
 import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@storymaster/domain';
-import { IdentityService, ProjectService,EditorialService } from '@storymaster/application';
+import { IdentityService, ProjectService,EditorialService,NarrativeService } from '@storymaster/application';
 import { createProjectSchema,updateProjectSchema,listProjectsSchema,idempotencyKeySchema,emptyBodySchema } from '@storymaster/contracts';
 import { Pool,PostgresUnitOfWork,SessionStore,OidcProvider } from '@storymaster/infrastructure';
 import type { Session,LoginSecret } from '@storymaster/infrastructure';
@@ -110,7 +111,9 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
       reply.header('ETag',`"r${result.revision}"`);return {data:result};
     });
   }
-  await registerEditorial(app,new EditorialService(db),{actor,key,expected});
+  const editorial=new EditorialService(db);
+  await registerEditorial(app,editorial,{actor,key,expected});
+  await registerNarrative(app,new NarrativeService(db,config.secret),editorial,{actor,key,expected});
   app.addHook('onClose',()=>pool.end());
   return app;
 }

@@ -1,6 +1,6 @@
 # ADR-0005 — Modularité fonctionnelle et schémas narratifs versionnés
 
-**Statut :** Proposée  
+**Statut :** Principe accepté explicitement le 31 octobre 2026
 **Date :** 2026-10-30
 
 ## Contexte
@@ -118,3 +118,7 @@ Versions exactes, limites mesurées et validation des politiques correspondantes
 ### Critères d'acceptation du document
 
 Contexte et options initiaux conservés ; forces, recommandation, alternatives, conséquences, risques, confiance et conditions de réexamen identifiables ; aucune formulation ne prétend une acceptation inexistante.
+
+## Validation du principe — 31 octobre 2026
+
+Le propriétaire accepte explicitement le noyau relationnel hybride, les propriétés typées/schémas versionnés, les modules applicatifs connus et leur désactivation non destructive dans la mission Lot 2. Cela ne vaut ni acceptation de code tiers ou types libres, ni validation des autres ADR proposés. Le registre initial reste limité à character/place/event, modules characters/places/timeline et catalogue de relations du domaine. La réception technique du Lot 1 conserve ses réserves ; Lot 3 non autorisé.

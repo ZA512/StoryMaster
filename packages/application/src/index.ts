@@ -1,3 +1,4 @@
+import type {NarrativePort} from './narrative-ports.ts';
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { AppError, normalizeMetadata, permitted, notFound, unauthenticated } from '@storymaster/domain';
 import type { Actor, AuditEvent, Identity, Project, ProjectChanges, ProjectInput, ProjectWithRole, User } from '@storymaster/domain';
@@ -6,7 +7,7 @@ import type { Page, ProjectDto } from '@storymaster/contracts';
 
 export interface ProjectPosition { timestamp: string; id: string }
 export interface Transaction {
-  readonly editorial:EditorialPort;
+  readonly editorial:EditorialPort;readonly narrative:NarrativePort;
   assertActor(actor: Actor): Promise<void>;
   getProject(userId: string, projectId: string): Promise<ProjectWithRole | null>;
   listProjects(userId: string, limit: number, after?: ProjectPosition): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
@@ -147,3 +148,7 @@ export class IdentityService {
 
 export * from './editorial-ports.ts';
 export * from './editorial.ts';
+
+export * from './narrative-ports.ts';
+export * from './project-access.ts';
+export * from './narrative.ts';

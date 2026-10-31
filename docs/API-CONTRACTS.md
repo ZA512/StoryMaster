@@ -1,7 +1,7 @@
 # Contrats API et MCP
 
-**Version :** 0.3
-**Statut :** Contrats Lot 0 exécutés ; autres opérations proposées
+**Version :** 0.5
+**Statut :** HTTP Lots 0–2 exécutables pour sessions humaines ; MCP et autres opérations spécifiés seulement
 **Références :** `PRD.md`, `DOMAIN-MODEL.md`, `ARCHITECTURE.md`
 
 ## 1. Principes
@@ -773,3 +773,13 @@ Le projet inconnu ou non autorisé produit la même erreur 404. Seuls owner/admi
 Les opérations `x-lot: 1` de l’[OpenAPI](spec/openapi.yaml) sont implémentées pour une session humaine, via EditorialService : plan, création/metadata/move/archive, lecture/save de scène, historique/compare/restore, exports Markdown/JSON éditorial. Les mutations exigent CSRF et Idempotency-Key ; save/restore exigent If-Match fort `"rN"`, les autres corps portent expectedRevision et les versions structurelles nécessaires. Une réponse 412 n’est jamais un save confirmé. Le DTO d’acquittement compact est enregistré avec le snapshot et rejoué à l’identique après réponse perdue.
 
 La comparaison HTTP retourne deux snapshots ; le diff coûteux est calculé hors chemin de frappe/sauvegarde. Scene n’expose pas de position : le plan et ses versions structurelles portent l’ordre. Le catalogue MCP reste spécifié seulement et ses définitions partagées sont synchronisées ; aucune route d’écriture IA n’est active. [Exemples synthétiques](examples/lot1-http.json), tests réels `tests/editorial-http.test.ts`, [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md).
+
+## Extension HTTP Lot 2 — version 0.5.0
+
+Les opérations `x-lot: 2` de [OpenAPI](spec/openapi.yaml) passent par NarrativeService/EditorialService, sans SQL dans l’adaptateur. GET/POST `/projects/{projectId}/objects`, GET/PATCH d’une fiche, detail, archive/restore, history/revision, relations et références inverses paginées ; POST/PATCH/DELETE/restore des relations ; GET modules et PATCH moduleKey ; GET timeline/search/narrative-export ; GET/PUT references d’une scène. [Exemple](examples/lot2-http.json), [registre immutable v1](spec/module-registry.v1.json), [scénarios déclaratifs](spec/lot2-scenarios.json) et [preuves réelles](LOT-2-REPORT.md).
+
+Mutations : session humaine, Origin/CSRF et clé d’idempotence ; If-Match fort sur chaque ressource existante. Création/modification d’une relation impose les révisions de ses deux extrémités ; remplacement des références impose les révisions de l’union des anciennes/nouvelles cibles. Aucune tempId dans ces écritures directes. Une nouvelle base doit être choisie explicitement après 412. Références : metadata fermé vide en v1, max 500 associations, un seul POV. Les types d’attributs sont fermés et schemaVersion=1 obligatoire ; les évolutions futures exigent nouveau schéma et migration.
+
+Scene.revision couvre texte, métadonnées et références. PUT references renvoie SceneSaveAck et ne modifie ni contenu, ni hash, ni wordCount. SceneRevision ajoute deux champs optionnels liés : referenceSnapshotVersion=1 et references. Leur absence signale un ancien snapshot inchangé ; une liste vide n’est pas inventée rétroactivement. Restore du texte conserve les références actuelles.
+
+Les listes utilisent des curseurs HMAC liés à utilisateur/projet/rôle/filtres, expiration technique 15 minutes et droits relus à chaque page. Limit 1–100, défaut 20 ; statut active par défaut, archived/all explicites. Pas de compteur global. La recherche courante inclut scènes/fiches/modules off autorisés ; historique consulté séparément. Extraits texte sans HTML, bornés à 4 000 caractères, source analysée limitée aux premiers 200 000 caractères pour protéger le calcul du snippet ; l’index porte le contenu complet. Export narratif JSON v1 limité techniquement à 32 MiB, historyIncluded=false ; aucun changement de l’ancien format éditorial v1. Le catalogue de 13 outils MCP reste synchronisé sans serveur MCP implémenté.

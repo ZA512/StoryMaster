@@ -1,6 +1,6 @@
-# Décisions humaines — GO-00, GO-01 et GO-02
+# Décisions humaines — GO-00..02 et réceptions des lots
 
-**Statut :** Validées dans la portée ci-dessous le 31 octobre 2026. **Décideur :** propriétaire du projet, instruction explicite « Validation des décisions et implémentation du Lot 0 ». **Portée :** Lot 0 uniquement. **Références :** [PRD](PRD.md), [alignement](PRD-ALIGNMENT-PROPOSAL.md), [architecture](ARCHITECTURE.md), [sécurité](SECURITY-MODEL.md), [ADR](adr/README.md).
+**Statut :** Validées dans la portée ci-dessous le 31 octobre 2026. **Décideur :** propriétaire du projet, instruction explicite « Validation des décisions et implémentation du Lot 0 ». **Portée des GO-00..02 :** Lot 0 uniquement ; les réceptions et autorisations ultérieures sont consignées en fin de document. **Références :** [PRD](PRD.md), [alignement](PRD-ALIGNMENT-PROPOSAL.md), [architecture](ARCHITECTURE.md), [sécurité](SECURITY-MODEL.md), [ADR](adr/README.md).
 
 ## Synthèse
 
@@ -51,3 +51,9 @@ Cette réception conserve explicitement les risques et limites du [rapport Lot 0
 ## ADR-0007 acceptée et Lot 1 autorisé — 31 octobre 2026
 
 Instruction explicite du propriétaire : « GO pour l’ADR-0007 : JSON ProseMirror versionné dans PostgreSQL, snapshots métier internes, révisions optimistes et diff riche avec fallback ». Implémentation complète du Lot 1 MVP autorisée, réception avant Lot 2. Le dépôt était propre sur `3f0134cfb90d57d295808363439b9ec085c9a768` ; [CI de ce commit](https://github.com/ZA512/StoryMaster/actions/runs/41187721831) terminée avec succès (jobs validate et spike-a). GO-00..02 et les autres statuts d’ADR ne sont pas modifiés. Les cas B-01..05 doivent mesurer des scènes réelles avant généralisation ; B-06 dépend toujours des propositions futures.
+
+## Réception technique du Lot 1 et autorisation du Lot 2 — 31 octobre 2026
+
+Source : instruction explicite du propriétaire « Réception du Lot 1 et implémentation du Lot 2 ». Lot 1 reçu avec toutes les réserves de son rapport : qualification locale limitée, UX non auditée manuellement de façon complète, brouillons non confirmés en mémoire de l’onglet sans récupération garantie après crash, limites techniques et exploitation publique non qualifiée. La [CI de 4c169075bd4c976a76c32c1f94cbdbe24bace790](https://github.com/ZA512/StoryMaster/actions/runs/41217270049) est terminée avec succès (`validate` et `spike-a`).
+
+ADR-0005 accepté pour le principe relationnel hybride, propriétés typées et schémas versionnés, modules connus par projet et désactivation non destructive. Implémentation complète du Lot 2 MVP autorisée, puis réception avant Lot 3. Les autres ADR encore proposés ne sont pas acceptés par proximité. La protection des saves confirmés, la révision unique de scène et la barrière projet restent obligatoires ; aucun nouveau chemin d’écriture IA, CRDT ou moteur de propositions n’est autorisé.

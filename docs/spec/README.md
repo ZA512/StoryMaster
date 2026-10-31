@@ -1,6 +1,6 @@
 # Artefacts de contrat
 
-**Statut :** Opérations HTTP `x-lot: 0/1` implémentées ; autres contrats et MCP proposés. **Portée :** MVP, sans serveur MCP aux Lots 0/1. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
+**Statut :** Opérations HTTP `x-lot: 0/1/2` implémentées ; autres contrats et MCP proposés. **Portée :** MVP, sans serveur MCP aux Lots 0–2. **Références :** [contrats](../API-CONTRACTS.md), [sources](../RESEARCH-SOURCES.md).
 
 ## Synthèse et analyse
 
@@ -53,3 +53,7 @@ OpenAPI distingue dix opérations implémentées par `x-lot: 0`, avec session hu
 ## Éditeur et export du Lot 1
 
 Les corps Zod et DTO éditoriaux sont synchronisés via `scripts/sync-editorial-contracts.mjs`, contrôlés par `npm run lint`. `EditorialJsonExport` décrit le contenu encodé du JSON éditorial v1 (structure, IDs/ordre, archives, texte riche courant, sans historique). Le validateur des réponses observées parse aussi ce texte JSON et le valide contre ce composant ; le wrapper HTTP seul ne suffit pas. Le JSON ProseMirror canonique reste `RichDocument` avec contentFormatVersion=1. Les 13 outils MCP demeurent spécifiés seulement.
+
+## Ajouts Lot 2
+
+OpenAPI 0.5.0, nouveaux DTOs et mutations humaines préconditionnées. `module-registry.v1.json` fige les trois modules, schémas JSON et règles des liens ; copie applicative strictement identique dans contracts. Le générateur et la CI détectent toute dérive avec Zod ; une évolution durable exige nouvelle version et migration, sans réécrire v1. `lot2-scenarios.json` sélectionne les parties applicables des CT, sans prétendre les exécuter ; [rapport Lot 2](../LOT-2-REPORT.md) contient les preuves. [Exemple HTTP](../examples/lot2-http.json) synthétique, complété par les réponses réellement observées. Les schémas communs gardent les anciennes fixtures opaques ; les entrées directes de production imposent UUID existants, sans tempId.

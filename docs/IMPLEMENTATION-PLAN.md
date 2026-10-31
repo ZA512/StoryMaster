@@ -1,6 +1,6 @@
 # Plan de réalisation et critères de sortie
 
-**Statut :** Huit lots validés ; Lot 0 réceptionné sous réserve de fonctionnement et CI, confirmés. Spike A exécuté et ADR-0007 accepté ; production du Lot 1 autorisée le 31 octobre 2026, réception attendue. Lots 2–7 non autorisés. **Date :** mise à jour le 31 octobre 2026, Europe/Paris.
+**Statut :** Huit lots validés ; Lot 0 réceptionné sous réserve de fonctionnement et CI, confirmés. Spike A exécuté et ADR-0007 accepté ; Lot 1 reçu avec réserves après CI verte 4c16907 ; ADR-0005 accepté en principe et Lot 2 autorisé le 31 octobre 2026. Réception Lot 2 attendue ; Lots 3–7 non autorisés. **Date :** mise à jour le 31 octobre 2026, Europe/Paris.
 **Portée :** exactement huit lots MVP puis pistes V1/V2+, sans estimation de durée faute de ressources connues.
 **Références :** [PRD](PRD.md), [audit](DOCUMENT-AUDIT.md), [domaine](DOMAIN-MODEL.md), [architecture](ARCHITECTURE.md), [API](API-CONTRACTS.md), [sécurité](SECURITY-MODEL.md), [tests](CONTRACT-TESTS.md), [ADR](adr/README.md).
 
@@ -78,7 +78,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Tâches (ordre proposé) :** Initialiser dépôt/CI/environnement reproductible ; cas d’usage d’identité OIDC et sessions ; Project, Membership et autorisation commune ; schémas/erreurs/CAS/idempotence et audit minimal ; rôle DB sans privilèges globaux ; stratégie transaction/verrou projet ; tests de refus et données fictives.
 
-**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis arrêt avant Lot 2.
+**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis Lot 2 autorisé par une instruction distincte ; arrêt avant Lot 3.
 
 **Risques :** Divergence adaptateurs, mauvaise identité email, secret en CI, décision IdP tardive.
 
@@ -128,7 +128,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Objectif :** Relier le manuscrit aux personnages, lieux et événements stables.
 
-**Prérequis / dépendances :** Lots 0–1 ; valeurs initiales de schémas/relations et règle modules validées.
+**Prérequis / dépendances :** Lots 0–1 reçus avec réserves ; CI du Lot 1 verte sur 4c16907. ADR-0005 accepté en principe et implémentation du Lot 2 explicitement autorisée. Le catalogue initial du domaine est conservé ; détails d’implémentation dans [ADR-0011](adr/0011-referentiel-narratif-et-references.md), preuves et limites dans [rapport Lot 2](LOT-2-REPORT.md). Les autres ADR proposés restent proposés.
 
 **Exigences PRD couvertes :** OBJ-04, OBJ-05, OBJ-06, MOD-01, MOD-02, MOD-03, MOD-04, MOD-05, MOD-06, MOD-07, PROJ-09, EDIT-08, DATA-01, DATA-02, DATA-03, DATA-04, DATA-05, DATA-06, DATA-07, DATA-08, DATA-09, DATA-10, DATA-11, SEARCH-01, SEARCH-02, SEARCH-03, SEARCH-04, SEARCH-05, UX-04, NFR-11. Les exigences transversales continuent à être vérifiées dans les lots suivants.
 

@@ -1,6 +1,6 @@
 # StoryMaster
 
-Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Réception Lot 1 attendue ; Lot 2 non autorisé. [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
+Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Réception humaine du Lot 2 attendue, Lots 3/4 non commencés. [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
 
 ## Démarrage local
 
@@ -25,6 +25,14 @@ Seuls web (127.0.0.1:3000) et Keycloak (127.0.0.1:8080) sont publiés. L’API e
 
 L’import Keycloak ignore un realm déjà présent : modifier le JSON ne modifie pas silencieusement les comptes existants. Son administration locale est disponible sur http://localhost:8080/admin (admin-local, mot de passe `KEYCLOAK_ADMIN_PASSWORD` de `.env`).
 
+## Bible narrative
+
+Depuis un projet ou l’atelier, ouvrir **Bible narrative**, puis **Modules**. Le propriétaire ou un administrateur active Personnages, Lieux et Chronologie ; ils sont désactivés au départ, y compris dans les projets existants. Créer les fiches, choisir un parent géographique ou un repère chronologique facultatif et ajouter leurs relations. Les notes sont partagées avec les membres autorisés du projet.
+
+Dans l’atelier, ouvrir **Repères de cette scène** sous le texte : choisir Présence, Mention, Point de vue, Cadre ou Événement raconté, puis une fiche existante et enregistrer les références. Le texte reste intact. Les fiches affichent les scènes associées ; ces liens survivent aux renommages et déplacements. En cas de conflit, texte et sélection restent disponibles dans l’onglet, avec choix explicite et téléchargement. La relecture d’une sélection demande confirmation avant son abandon. Les brouillons non confirmés ne survivent pas nécessairement à un crash/fermeture du navigateur.
+
+La recherche porte sur scènes et fiches courantes de ce projet, avec filtres de type et d’archive. Un module désactivé conserve lecture, recherche, export et historique ; ses liens sont signalés inactifs, ses modifications suspendues jusqu’à réactivation. L’export JSON narratif conserve les fiches, liens et modules actuels, archives comprises ; il complète l’export éditorial, sans constituer une archive complète de l’historique ou une sauvegarde d’exploitation.
+
 ## Développement et vérifications
 
 Prérequis supplémentaires : **Node 26.8.1**, npm et **Python 3.14**. Depuis la racine :
@@ -47,11 +55,12 @@ docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait
 npm test
 npm run bench:contention
 npm run bench:scenes
+npm run bench:narrative
 npx playwright install chromium
 npm run test:e2e
 ```
 
-L’overlay de test publie PostgreSQL sur **127.0.0.1:55432**. Les benchmarks et la suite PostgreSQL se sérialisent par verrou de test. Exécuter la suite navigateur ensuite : son test de durabilité redémarre PostgreSQL et les services locaux, dont Keycloak pour rétablir son pool. Le benchmark de métadonnées écrit `artifacts/local/contention.json` ; ses paramètres bornés sont `BENCH_WORKERS` (8 par défaut), `BENCH_WRITES` (20), `BENCH_OUTPUT`. Ce premier benchmark utilise de nouveaux projets de test sans scènes. `bench:scenes` mesure de vraies scènes et auteurs synthétiques ; ses résultats sont dans `artifacts/local/scene-contention.json`. Les essais navigateur passent par Keycloak réel et créent des projets de démonstration dans l’application locale. Captures et traces restent dans des dossiers ignorés ; ne pas publier une trace contenant des cookies ou codes de connexion. Le navigateur fourni par Playwright est recommandé pour correspondre à la CI. Avec Chromium système déjà installé, option locale : `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e`.
+L’overlay de test publie PostgreSQL sur **127.0.0.1:55432**. Les benchmarks et la suite PostgreSQL se sérialisent par verrou de test. Exécuter la suite navigateur ensuite : son test de durabilité redémarre PostgreSQL et les services locaux, dont Keycloak pour rétablir son pool. `bench:narrative` crée 10 000 fiches synthétiques dans la base dédiée, puis mesure recherche et contention mixte ; résultat dans `artifacts/local/narrative-qualification.json`. Le benchmark de métadonnées écrit `artifacts/local/contention.json` ; ses paramètres bornés sont `BENCH_WORKERS` (8 par défaut), `BENCH_WRITES` (20), `BENCH_OUTPUT`. Ce premier benchmark utilise de nouveaux projets de test sans scènes. `bench:scenes` mesure de vraies scènes et auteurs synthétiques ; ses résultats sont dans `artifacts/local/scene-contention.json`. Les essais navigateur passent par Keycloak réel et créent des projets de démonstration dans l’application locale. Captures et traces restent dans des dossiers ignorés ; ne pas publier une trace contenant des cookies ou codes de connexion. Le navigateur fourni par Playwright est recommandé pour correspondre à la CI. Avec Chromium système déjà installé, option locale : `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e`.
 
 Pour exécuter les processus Node sur l’hôte, conserver PostgreSQL/Keycloak avec l’overlay puis lancer dans deux terminaux :
 

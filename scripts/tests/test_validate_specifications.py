@@ -31,6 +31,7 @@ class ValidatorTests(unittest.TestCase):
         shutil.copytree(ROOT / "docs", self.root / "docs")
         shutil.copytree(ROOT / "scripts", self.root / "scripts",
                         ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copytree(ROOT / "tests", self.root / "tests")
         shutil.copy2(ROOT / "AGENTS.md", self.root / "AGENTS.md")
         shutil.copy2(ROOT / "README.md", self.root / "README.md")
         shutil.copytree(ROOT / ".github", self.root / ".github")
@@ -46,6 +47,26 @@ class ValidatorTests(unittest.TestCase):
     def test_current_dossier(self):
         with contextlib.redirect_stdout(io.StringIO()):
             validation.validate_all(self.root)
+
+    def test_lot2_module_admin_cannot_be_author(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['paths']['/projects/{projectId}/modules/{moduleKey}']['patch']['x-permission']='narrative.write'
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot2(oas)
+
+    def test_lot2_reference_dependencies_cannot_be_optional(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['SceneReferencesReplace']['required'].remove('dependencyRevisions')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot2(oas)
+
+    def test_lot2_registry_content_drift_preserving_counts(self):
+        self.mutate_json('docs/spec/module-registry.v1.json',lambda r:r['definitions'][0]['schemas']['character']['properties']['description'].update(maxLength=9))
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot2(oas,self.root)
+
+    def test_lot2_cannot_reinterpret_old_snapshot(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['SceneRevision']['required'].append('references')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot2(oas)
 
     def test_lot1_cannot_remove_parent_cas(self):
         oas = validation.load_yaml(self.root / 'docs/spec/openapi.yaml')

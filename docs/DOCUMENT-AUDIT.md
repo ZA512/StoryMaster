@@ -1,6 +1,6 @@
 # Audit des documents de référence
 
-**Statut :** Audit initial du 30 octobre, complété par décisions humaines et réalisation Lots 0/1 le 31 octobre 2026 ; réception Lot 1 attendue.
+**Statut :** Audit initial du 30 octobre, complété par décisions humaines et réalisation Lots 0/1 le 31 octobre 2026 ; Lot 1 reçu avec réserves ; Lot 2 autorisé et réception attendue.
 **Portée :** audit initial documentaire, puis suivi des réalisations autorisées ; historique conservé. **Références :** [PRD](PRD.md), [R-A](deep-research-analyse-fonction.md), [R-M](deep-research-modele-fonctionnel.md), [sources](RESEARCH-SOURCES.md).
 
 ## Synthèse
@@ -117,3 +117,11 @@ Le [rapport du Spike A](SPIKE-A-REPORT.md) consigne prototype, corpus, tests, pe
 Le propriétaire accepte explicitement ADR-0007 et autorise Lot 1 après CI verte du commit Spike A 3f0134c. AGENTS, registre, plan et ADR sont alignés sur cette nouvelle portée ; leur ancienne interdiction du Lot 1 est remplacée, pas celle du Lot 2. Aucun autre ADR proposé n’est accepté automatiquement. JSON ProseMirror v1 conservé, Markdown dérivé, Yjs isolé. Les contrats, exemples et contrôles CI sont synchronisés avec les routes réellement implémentées.
 
 Le risque R-CONT-01 est mesuré sur scènes indépendantes/plusieurs auteurs, gros textes et projets distincts. [ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md) documente une barrière partagée limitée au texte des scènes, verrou de scène et compteur séparé ; tous changements structurels et futurs traitements multi-objets restent sous exclusivité projet. Pas de généralisation à une capacité commerciale ni d’affirmation que B-06 est testé. [Rapport](LOT-1-REPORT.md) et inventaire recensent les preuves et limitations. Les 150 exigences et leurs priorités sont conservées.
+
+## Passage au Lot 2 — 31 octobre 2026
+
+Le propriétaire reçoit techniquement le Lot 1 avec toutes ses réserves et accepte le principe d’ADR-0005. Prérequis vérifié avant développement : [CI 41217270049](https://github.com/ZA512/StoryMaster/actions/runs/41217270049) verte sur 4c169075bd4c976a76c32c1f94cbdbe24bace790. AGENTS.md et plan sont alignés sur cette autorisation explicite, sans accepter les autres ADR proposés. Les 150 exigences, leurs textes/priorités et lots restent inchangés ; MOD-07 COULD (présélection par genre) reste non réalisé, aucun MUST silencieusement différé.
+
+Bible de production reliée aux scènes existantes via services communs, migration additive 0004, schémas/registre versionnés, recherche lexicale et modules non destructifs. [ADR-0011](adr/0011-referentiel-narratif-et-references.md) explicite les choix : modules initialement off, notes partagées par projet, dépendances dynamiques des liens, restauration des champs conservant le statut et révision Scene unique. Ces détails sont présentés pour réception, sans attribuer une acceptation humaine automatique à l’ADR.
+
+Anomalies corrigées pendant vérification : migration sur base remplie refusée par PostgreSQL à cause des triggers différés (backfill déplacé après DDL, rollback initial intégral) ; notification de `setEditable` créant un faux brouillon lors du passage en lecture seule (émission supprimée) ; collision de clés React entre historique et panneau de références (clés distinctes), contraste insuffisant du panneau (corrigé). Les snapshots anciens restent absents de référence_snapshot, jamais réinterprétés comme historiques v1. Conservation effective des 61 scènes et 168 snapshots préexistants vérifiée par empreintes avant/après. Preuves, fichiers, risques et réserves dans [LOT-2-REPORT](LOT-2-REPORT.md), mesures dans [qualification](measurements/LOT-2-QUALIFICATION.md). Aucun Lot 3/4 commencé, aucune récupération durable des brouillons après crash ni audit UX manuel complet revendiqué.

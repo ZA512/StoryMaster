@@ -1,4 +1,4 @@
-name: Documentation et Lots 0–1
+name: Documentation et Lots 0–2
 on:
   push:
   pull_request:
@@ -10,7 +10,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       NEXT_TELEMETRY_DISABLED: '1'
     steps:
@@ -47,6 +47,8 @@ jobs:
         run: npm run bench:contention
       - name: Contention des scènes et comparaison des barrières
         run: npm run bench:scenes
+      - name: Recherche 10 000 objets et contention mixte narrative
+        run: npm run bench:narrative
       - name: Navigateur
         run: |
           npx playwright install --with-deps chromium

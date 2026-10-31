@@ -106,10 +106,11 @@ export const plainText = (value: unknown): string => { const node = model(value)
 
 export const normalizeDocument = (input: unknown, version = 1): RichDocument => normalize({format:'storymaster-editor',schemaVersion:version,doc:input}).document.doc;
 // Only call with a document already accepted by normalizeDocument.
-export function countCanonicalWords(doc: RichDocument): number {
+export function canonicalDocumentStats(doc: RichDocument): {wordCount:number;text:string} {
   const node=schema.nodeFromJSON(doc),text=node.textBetween(0,node.content.size,'\n','\n');
   let count=0;for(const segment of new Intl.Segmenter('fr',{granularity:'word'}).segment(text))if(segment.isWordLike)count++;
-  return count;
+  return {wordCount:count,text};
 }
+export const countCanonicalWords=(doc:RichDocument):number=>canonicalDocumentStats(doc).wordCount;
 export const countWords = (input: unknown): number => countCanonicalWords(normalizeDocument(input));
 export const emptyDocument = (): RichDocument => normalizeDocument({type:'doc',content:[{type:'paragraph'}]});

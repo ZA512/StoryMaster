@@ -1,0 +1,31 @@
+{
+  "status": "Exemples synthétiques ; réponses observées contrôlées par tests/narrative-http.test.ts.",
+  "responses": [
+    {
+      "path": "/projects/{projectId}/scenes/{sceneId}/references",
+      "method": "put",
+      "request": {
+        "headers": {
+          "X-CSRF-Token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "Idempotency-Key": "example-lot2-refs",
+          "If-Match": "\"r2\""
+        },
+        "body": {
+          "references": [],
+          "dependencyRevisions": []
+        }
+      },
+      "status": 200,
+      "response": {
+        "data": {
+          "id": "971027ea-3573-4d2e-978e-b87f80856ca5",
+          "revision": 3,
+          "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "wordCount": 0,
+          "updatedAt": "2026-10-31T12:00:00Z",
+          "changeSetId": "971027ea-3573-4d2e-978e-b87f80856ca5"
+        }
+      }
+    }
+  ]
+}

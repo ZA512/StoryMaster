@@ -2,8 +2,8 @@ openapi: 3.1.1
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 info:
   title: StoryMaster — contrats de spécification
-  version: 0.4.0
-  description: Contrats MVP. x-lot 0/1 implémentés pour session humaine ; autres opérations et MCP spécifiés seulement.
+  version: 0.5.0
+  description: Contrats MVP. x-lot 0/1/2 implémentés pour session humaine ; autres opérations et MCP spécifiés seulement.
 servers:
   - url: http://localhost:3000/api/v1
     description: Docker Compose local seulement
@@ -65,10 +65,8 @@ paths:
         "503":
           $ref: "#/components/responses/Error503"
       parameters:
-        - &a2
-          $ref: "#/components/parameters/Limit"
-        - &a3
-          $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
       x-lot: 0
       security:
         - webSession: []
@@ -330,12 +328,58 @@ paths:
         schema: *a1
     get:
       operationId: entitySearch
-      summary: Rechercher scènes et fiches autorisées
+      summary: entitySearch
+      x-lot: 2
       x-permission: project.read
       x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: &a2
+            type: string
+            minLength: 1
+            maxLength: 128
+            pattern: ^[A-Za-z0-9_-]+$
+          required: true
+        - name: q
+          in: query
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 1000
+          required: true
+        - name: types
+          in: query
+          schema:
+            type: array
+            maxItems: 4
+            items:
+              enum:
+                - scene
+                - character
+                - place
+                - event
+          required: false
+          style: form
+          explode: false
+        - name: status
+          in: query
+          schema: &a5
+            enum:
+              - active
+              - archived
+              - all
+            default: active
+          required: false
+        - &a3
+          $ref: "#/components/parameters/Limit"
+        - &a4
+          $ref: "#/components/parameters/Cursor"
       responses:
         "200":
-          description: Résultat métier autorisé
+          description: Résultat autorisé dans le projet
           content:
             application/json:
               schema:
@@ -346,15 +390,6 @@ paths:
                 required:
                   - data
                 additionalProperties: false
-          headers:
-            ETag:
-              schema:
-                type: string
-              description: Révision ressource ou pN-sN pour proposition
-            Cache-Control:
-              schema:
-                type: string
-              description: private,no-store pour contenu privé
         "400":
           $ref: "#/components/responses/Error400"
         "401":
@@ -367,6 +402,10 @@ paths:
           $ref: "#/components/responses/Error409"
         "412":
           $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
         "422":
           $ref: "#/components/responses/Error422"
         "428":
@@ -377,27 +416,6 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
-      parameters:
-        - name: q
-          in: query
-          required: true
-          schema:
-            type: string
-            minLength: 1
-            maxLength: 1000
-        - name: types
-          in: query
-          schema:
-            type: array
-            maxItems: 4
-            items:
-              enum:
-                - scene
-                - character
-                - place
-                - event
-        - *a2
-        - *a3
   /projects/{projectId}/objects/{objectId}:
     parameters:
       - name: projectId
@@ -410,12 +428,30 @@ paths:
         schema: *a1
     get:
       operationId: entityGet
-      summary: Lire une fiche et sa révision
+      summary: entityGet
+      x-lot: 2
       x-permission: project.read
       x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - name: revision
+          in: query
+          schema: &a11
+            type: integer
+            minimum: 1
+          required: false
       responses:
         "200":
-          description: Résultat métier autorisé
+          description: Résultat autorisé dans le projet
           content:
             application/json:
               schema:
@@ -426,15 +462,6 @@ paths:
                 required:
                   - data
                 additionalProperties: false
-          headers:
-            ETag:
-              schema:
-                type: string
-              description: Révision ressource ou pN-sN pour proposition
-            Cache-Control:
-              schema:
-                type: string
-              description: private,no-store pour contenu privé
         "400":
           $ref: "#/components/responses/Error400"
         "401":
@@ -447,6 +474,10 @@ paths:
           $ref: "#/components/responses/Error409"
         "412":
           $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
         "422":
           $ref: "#/components/responses/Error422"
         "428":
@@ -457,12 +488,83 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
+    patch:
+      operationId: narrativeObjectUpdate
+      summary: narrativeObjectUpdate
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
       parameters:
-        - name: revision
-          in: query
-          schema: &a4
-            type: integer
-            minimum: 1
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Entity"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeUpdate"
   /projects/{projectId}/scenes/{sceneId}:
     parameters:
       - name: projectId
@@ -525,7 +627,9 @@ paths:
       parameters:
         - name: revision
           in: query
-          schema: *a4
+          schema:
+            type: integer
+            minimum: 1
       x-lot: 1
       security:
         - webSession: []
@@ -541,15 +645,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: &a5
-            type: string
-            minLength: 1
-            maxLength: 128
-            pattern: ^[A-Za-z0-9_-]+$
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - &a7
           name: X-CSRF-Token
@@ -628,12 +728,26 @@ paths:
         schema: *a1
     get:
       operationId: relationList
-      summary: Lire les relations autorisées
+      summary: relationList
+      x-lot: 2
       x-permission: project.read
       x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - *a3
+        - *a4
       responses:
         "200":
-          description: Résultat métier autorisé
+          description: Résultat autorisé dans le projet
           content:
             application/json:
               schema:
@@ -644,15 +758,6 @@ paths:
                 required:
                   - data
                 additionalProperties: false
-          headers:
-            ETag:
-              schema:
-                type: string
-              description: Révision ressource ou pN-sN pour proposition
-            Cache-Control:
-              schema:
-                type: string
-              description: private,no-store pour contenu privé
         "400":
           $ref: "#/components/responses/Error400"
         "401":
@@ -665,6 +770,10 @@ paths:
           $ref: "#/components/responses/Error409"
         "412":
           $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
         "422":
           $ref: "#/components/responses/Error422"
         "428":
@@ -675,9 +784,6 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
-      parameters:
-        - *a2
-        - *a3
   /projects/{projectId}/timeline:
     parameters:
       - name: projectId
@@ -686,12 +792,26 @@ paths:
         schema: *a1
     get:
       operationId: timelineList
-      summary: Lire la chronologie simple
+      summary: timelineList
+      x-lot: 2
       x-permission: project.read
       x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: status
+          in: query
+          schema: *a5
+          required: false
+        - *a3
+        - *a4
       responses:
         "200":
-          description: Résultat métier autorisé
+          description: Résultat autorisé dans le projet
           content:
             application/json:
               schema:
@@ -702,15 +822,6 @@ paths:
                 required:
                   - data
                 additionalProperties: false
-          headers:
-            ETag:
-              schema:
-                type: string
-              description: Révision ressource ou pN-sN pour proposition
-            Cache-Control:
-              schema:
-                type: string
-              description: private,no-store pour contenu privé
         "400":
           $ref: "#/components/responses/Error400"
         "401":
@@ -723,6 +834,10 @@ paths:
           $ref: "#/components/responses/Error409"
         "412":
           $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
         "422":
           $ref: "#/components/responses/Error422"
         "428":
@@ -733,9 +848,6 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
-      parameters:
-        - *a2
-        - *a3
   /projects/{projectId}/proposals:
     parameters:
       - name: projectId
@@ -1773,7 +1885,7 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
       responses:
         "200":
@@ -1829,7 +1941,7 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -1894,11 +2006,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: manuscriptId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -1963,11 +2075,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: manuscriptId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2032,11 +2144,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: manuscriptId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2101,11 +2213,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: manuscriptId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2170,11 +2282,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: chapterId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2239,11 +2351,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: chapterId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2308,11 +2420,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: chapterId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2377,11 +2489,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: chapterId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2446,11 +2558,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2515,11 +2627,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2584,11 +2696,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2661,11 +2773,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: limit
           in: query
@@ -2737,11 +2849,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: revision
           in: path
@@ -2802,11 +2914,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: from
           in: query
@@ -2871,11 +2983,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: sceneId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - *a7
         - *a8
@@ -2941,11 +3053,11 @@ paths:
       parameters:
         - name: projectId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: manuscriptId
           in: path
-          schema: *a5
+          schema: *a2
           required: true
         - name: format
           in: query
@@ -2997,12 +3109,1450 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
+  /projects/{projectId}/objects:
+    get:
+      operationId: narrativeObjectList
+      summary: narrativeObjectList
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: typeKey
+          in: query
+          schema:
+            enum:
+              - character
+              - place
+              - event
+          required: false
+        - name: parentPlaceId
+          in: query
+          schema: *a2
+          required: false
+        - name: q
+          in: query
+          schema:
+            type: string
+            maxLength: 1000
+            default: ""
+          required: false
+        - name: status
+          in: query
+          schema: *a5
+          required: false
+        - *a3
+        - *a4
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeObjectPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    post:
+      operationId: narrativeObjectCreate
+      summary: narrativeObjectCreate
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+      responses:
+        "201":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Entity"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeCreate"
+  /projects/{projectId}/objects/{objectId}/detail:
+    get:
+      operationId: narrativeObjectDetail
+      summary: narrativeObjectDetail
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeObjectDetail"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/objects/{objectId}/archive:
+    post:
+      operationId: narrativeObjectArchive
+      summary: narrativeObjectArchive
+      x-lot: 2
+      x-permission: narrative.archive
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Entity"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeArchive"
+  /projects/{projectId}/objects/{objectId}/restore:
+    post:
+      operationId: narrativeObjectRestore
+      summary: narrativeObjectRestore
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Entity"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeRestore"
+  /projects/{projectId}/objects/{objectId}/references:
+    get:
+      operationId: narrativeObjectReferences
+      summary: narrativeObjectReferences
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - *a3
+        - *a4
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/InverseReferencePage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/objects/{objectId}/revisions:
+    get:
+      operationId: narrativeObjectHistory
+      summary: narrativeObjectHistory
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          required: false
+        - name: beforeRevision
+          in: query
+          schema: *a11
+          required: false
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeRevisionPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/objects/{objectId}/revisions/{revision}:
+    get:
+      operationId: narrativeObjectRevision
+      summary: narrativeObjectRevision
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: objectId
+          in: path
+          schema: *a2
+          required: true
+        - name: revision
+          in: path
+          schema: *a11
+          required: true
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeRevision"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/relations/{relationId}/revisions:
+    get:
+      operationId: narrativeRelationHistory
+      summary: narrativeRelationHistory
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: relationId
+          in: path
+          schema: *a2
+          required: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          required: false
+        - name: beforeRevision
+          in: query
+          schema: *a11
+          required: false
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeRevisionPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/relations/{relationId}/revisions/{revision}:
+    get:
+      operationId: narrativeRelationRevision
+      summary: narrativeRelationRevision
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: relationId
+          in: path
+          schema: *a2
+          required: true
+        - name: revision
+          in: path
+          schema: *a11
+          required: true
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeRevision"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/module-activations/{activationId}/revisions:
+    get:
+      operationId: narrativeModuleHistory
+      summary: narrativeModuleHistory
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: activationId
+          in: path
+          schema: *a2
+          required: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          required: false
+        - name: beforeRevision
+          in: query
+          schema: *a11
+          required: false
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeRevisionPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/module-activations/{activationId}/revisions/{revision}:
+    get:
+      operationId: narrativeModuleRevision
+      summary: narrativeModuleRevision
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: activationId
+          in: path
+          schema: *a2
+          required: true
+        - name: revision
+          in: path
+          schema: *a11
+          required: true
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeRevision"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/relations:
+    post:
+      operationId: narrativeRelationCreate
+      summary: narrativeRelationCreate
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+      responses:
+        "201":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Relation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeRelationCreate"
+  /projects/{projectId}/relations/{relationId}:
+    patch:
+      operationId: narrativeRelationUpdate
+      summary: narrativeRelationUpdate
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: relationId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Relation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeRelationUpdate"
+    delete:
+      operationId: narrativeRelationRemove
+      summary: narrativeRelationRemove
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: relationId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Relation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeRelationDependencies"
+  /projects/{projectId}/relations/{relationId}/restore:
+    post:
+      operationId: narrativeRelationRestore
+      summary: narrativeRelationRestore
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: relationId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Relation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NarrativeRelationRestore"
+  /projects/{projectId}/modules:
+    get:
+      operationId: narrativeModules
+      summary: narrativeModules
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeModules"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/modules/{moduleKey}:
+    patch:
+      operationId: narrativeModuleConfigure
+      summary: narrativeModuleConfigure
+      x-lot: 2
+      x-permission: project.admin
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: moduleKey
+          in: path
+          schema:
+            enum:
+              - characters
+              - places
+              - timeline
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ModuleActivation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModuleConfigure"
+  /projects/{projectId}/scenes/{sceneId}/references:
+    get:
+      operationId: sceneReferences
+      summary: sceneReferences
+      x-lot: 2
+      x-permission: project.read
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: sceneId
+          in: path
+          schema: *a2
+          required: true
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/SceneReferencesView"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    put:
+      operationId: sceneReferencesReplace
+      summary: sceneReferencesReplace
+      x-lot: 2
+      x-permission: narrative.write
+      x-audit: A2
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+        - name: sceneId
+          in: path
+          schema: *a2
+          required: true
+        - name: X-CSRF-Token
+          in: header
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+          required: true
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+          required: true
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/SceneSaveAck"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SceneReferencesReplace"
+  /projects/{projectId}/narrative-export:
+    get:
+      operationId: narrativeExport
+      summary: narrativeExport
+      x-lot: 2
+      x-permission: export.create
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          schema: *a2
+          required: true
+      responses:
+        "200":
+          description: Résultat autorisé dans le projet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/NarrativeExport"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
 components:
   schemas:
-    Id: *a5
-    Revision:
-      type: integer
-      minimum: 1
+    Id: *a2
+    Revision: *a11
     ObjectRef:
       oneOf:
         - type: object
@@ -3144,49 +4694,49 @@ components:
       type: object
       properties:
         aliases:
+          maxItems: 100
           type: array
           items:
             type: string
             maxLength: 200
-          maxItems: 100
         description:
           type: string
           maxLength: 20000
-        goals:
+        narrativeRole:
+          type: string
+          maxLength: 200
+        motivations:
+          maxItems: 100
           type: array
           items:
             type: string
             maxLength: 1000
+        goals:
           maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+        conflicts:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+        traits:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
         healthSummary:
           type: string
           maxLength: 4000
         conditionEventRefs:
           type: array
           items:
-            oneOf:
-              - type: object
-                properties:
-                  id:
-                    type: string
-                    minLength: 1
-                    maxLength: 128
-                    pattern: ^[A-Za-z0-9_-]+$
-                required:
-                  - id
-                additionalProperties: false
-              - type: object
-                properties:
-                  tempId:
-                    type: string
-                    minLength: 1
-                    maxLength: 128
-                    pattern: ^[A-Za-z0-9_-]+$
-                required:
-                  - tempId
-                additionalProperties: false
+            $ref: "#/components/schemas/ObjectRef"
           maxItems: 100
-      required: []
       additionalProperties: false
     PlaceAttributes:
       type: object
@@ -3197,29 +4747,16 @@ components:
         category:
           type: string
           maxLength: 200
+        characteristics:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
         parentPlaceRef:
-          oneOf:
-            - type: object
-              properties:
-                id:
-                  type: string
-                  minLength: 1
-                  maxLength: 128
-                  pattern: ^[A-Za-z0-9_-]+$
-              required:
-                - id
-              additionalProperties: false
-            - type: object
-              properties:
-                tempId:
-                  type: string
-                  minLength: 1
-                  maxLength: 128
-                  pattern: ^[A-Za-z0-9_-]+$
-              required:
-                - tempId
-              additionalProperties: false
-      required: []
+          anyOf:
+            - $ref: "#/components/schemas/ObjectRef"
+            - type: "null"
       additionalProperties: false
     EventAttributes:
       type: object
@@ -3229,11 +4766,14 @@ components:
           maxLength: 20000
         chronologyPosition:
           type: number
+          minimum: -9007199254740991
+          maximum: 9007199254740991
         temporalExpression:
           oneOf:
             - type: object
               properties:
                 kind:
+                  type: string
                   const: unknown
               required:
                 - kind
@@ -3241,14 +4781,16 @@ components:
             - type: object
               properties:
                 kind:
+                  type: string
                   const: ordinal
                 position:
                   type: number
+                  minimum: -9007199254740991
+                  maximum: 9007199254740991
               required:
                 - kind
                 - position
               additionalProperties: false
-      required: []
       additionalProperties: false
     CreateObject:
       type: object
@@ -3306,49 +4848,49 @@ components:
                     type: object
                     properties:
                       aliases:
+                        maxItems: 100
                         type: array
                         items:
                           type: string
                           maxLength: 200
-                        maxItems: 100
                       description:
                         type: string
                         maxLength: 20000
-                      goals:
+                      narrativeRole:
+                        type: string
+                        maxLength: 200
+                      motivations:
+                        maxItems: 100
                         type: array
                         items:
                           type: string
                           maxLength: 1000
+                      goals:
                         maxItems: 100
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 1000
+                      conflicts:
+                        maxItems: 100
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 1000
+                      traits:
+                        maxItems: 100
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 1000
                       healthSummary:
                         type: string
                         maxLength: 4000
                       conditionEventRefs:
                         type: array
                         items:
-                          oneOf:
-                            - type: object
-                              properties:
-                                id:
-                                  type: string
-                                  minLength: 1
-                                  maxLength: 128
-                                  pattern: ^[A-Za-z0-9_-]+$
-                              required:
-                                - id
-                              additionalProperties: false
-                            - type: object
-                              properties:
-                                tempId:
-                                  type: string
-                                  minLength: 1
-                                  maxLength: 128
-                                  pattern: ^[A-Za-z0-9_-]+$
-                              required:
-                                - tempId
-                              additionalProperties: false
+                          $ref: "#/components/schemas/ObjectRef"
                         maxItems: 100
-                    required: []
                     additionalProperties: false
             - if:
                 properties:
@@ -3367,29 +4909,16 @@ components:
                       category:
                         type: string
                         maxLength: 200
+                      characteristics:
+                        maxItems: 100
+                        type: array
+                        items:
+                          type: string
+                          maxLength: 1000
                       parentPlaceRef:
-                        oneOf:
-                          - type: object
-                            properties:
-                              id:
-                                type: string
-                                minLength: 1
-                                maxLength: 128
-                                pattern: ^[A-Za-z0-9_-]+$
-                            required:
-                              - id
-                            additionalProperties: false
-                          - type: object
-                            properties:
-                              tempId:
-                                type: string
-                                minLength: 1
-                                maxLength: 128
-                                pattern: ^[A-Za-z0-9_-]+$
-                            required:
-                              - tempId
-                            additionalProperties: false
-                    required: []
+                        anyOf:
+                          - $ref: "#/components/schemas/ObjectRef"
+                          - type: "null"
                     additionalProperties: false
             - if:
                 properties:
@@ -3407,11 +4936,14 @@ components:
                         maxLength: 20000
                       chronologyPosition:
                         type: number
+                        minimum: -9007199254740991
+                        maximum: 9007199254740991
                       temporalExpression:
                         oneOf:
                           - type: object
                             properties:
                               kind:
+                                type: string
                                 const: unknown
                             required:
                               - kind
@@ -3419,14 +4951,16 @@ components:
                           - type: object
                             properties:
                               kind:
+                                type: string
                                 const: ordinal
                               position:
                                 type: number
+                                minimum: -9007199254740991
+                                maximum: 9007199254740991
                             required:
                               - kind
                               - position
                             additionalProperties: false
-                    required: []
                     additionalProperties: false
         reason:
           type: string
@@ -3968,39 +5502,39 @@ components:
     SceneReference:
       type: object
       properties:
-        id:
+        id: &a41
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        projectId:
+        projectId: &a42
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        sceneId:
+        sceneId: &a43
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        objectId:
+        objectId: &a44
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        referenceType:
+        referenceType: &a45
           enum:
             - present
             - mentioned
             - point_of_view
             - setting
             - depicts_event
-        metadata:
+        metadata: &a51
           type: object
           properties: {}
           required: []
           additionalProperties: false
-        revision:
+        revision: &a46
           type: integer
           minimum: 1
       required:
@@ -4103,6 +5637,14 @@ components:
             - active
             - archived
             - deleted
+        createdAt: &a12
+          type: string
+          format: date-time
+        updatedAt: *a12
+        createdBy: *a2
+        updatedBy: *a2
+        moduleEnabled: &a14
+          type: boolean
       required:
         - id
         - projectId
@@ -4115,38 +5657,38 @@ components:
     Scene:
       type: object
       properties:
-        id: &a25
+        id: &a28
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        projectId: &a26
+        projectId: &a29
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        chapterId: &a27
+        chapterId: &a30
           type: string
           minLength: 1
           maxLength: 128
           pattern: ^[A-Za-z0-9_-]+$
-        title: &a28
+        title: &a31
           type: string
           maxLength: 200
-        summary: &a29
+        summary: &a32
           type: string
           maxLength: 4000
-        status: &a30
+        status: &a33
           type: string
           maxLength: 40
-        revision: &a31
+        revision: &a34
           type: integer
           minimum: 1
-        contentFormatVersion: &a32
+        contentFormatVersion: &a35
           const: 1
-        content: &a33
+        content: &a36
           $ref: "#/components/schemas/RichDocument"
-        references: &a34
+        references: &a37
           type: array
           items:
             type: object
@@ -4194,18 +5736,18 @@ components:
               - referenceType
               - revision
             additionalProperties: false
-        archived: &a35
+        archived: &a38
           type: boolean
-        contentHash: &a36
+        contentHash: &a39
           type: string
           pattern: ^[a-f0-9]{64}$
-        wordCount: &a37
+        wordCount: &a40
           type: integer
           minimum: 0
-        createdAt: &a11
+        createdAt: &a13
           type: string
           format: date-time
-        updatedAt: *a11
+        updatedAt: *a13
       required:
         - id
         - projectId
@@ -4864,6 +6406,14 @@ components:
           minimum: 1
         relevance:
           type: number
+        typeKey:
+          enum:
+            - scene
+            - character
+            - place
+            - event
+        archived: *a14
+        moduleEnabled: *a14
       required:
         - resourceType
         - resourceId
@@ -4902,6 +6452,24 @@ components:
         revision:
           type: integer
           minimum: 1
+        status:
+          enum:
+            - active
+            - removed
+        createdAt: *a12
+        updatedAt: *a12
+        createdBy: *a2
+        updatedBy: *a2
+        source:
+          $ref: "#/components/schemas/NarrativeTarget"
+        target:
+          $ref: "#/components/schemas/NarrativeTarget"
+        linkState:
+          enum:
+            - active
+            - target_archived
+            - module_disabled
+            - removed
       required:
         - id
         - projectId
@@ -5415,43 +6983,43 @@ components:
     EditorialItem:
       type: object
       properties:
-        kind: &a13
+        kind: &a16
           enum:
             - manuscript
             - chapter
             - scene
-        id: &a12
+        id: &a15
           type: string
           format: uuid
-        projectId: *a12
-        parentId: *a12
-        title: &a14
+        projectId: *a15
+        parentId: *a15
+        title: &a17
           type: string
           maxLength: 200
-        summary: &a15
+        summary: &a18
           type: string
           maxLength: 4000
         position: *a9
         revision: *a9
-        structureRevision: &a16
+        structureRevision: &a19
           type: integer
           minimum: 0
-        archived: &a17
+        archived: &a20
           type: boolean
-        status: &a18
+        status: &a21
           type: string
           maxLength: 40
-        writingStatuses: &a19
+        writingStatuses: &a22
           type: array
           items:
             type: string
             maxLength: 40
           maxItems: 30
-        wordCount: &a20
+        wordCount: &a23
           type: integer
           minimum: 0
-        createdAt: *a11
-        updatedAt: *a11
+        createdAt: *a13
+        updatedAt: *a13
       required:
         - kind
         - id
@@ -5472,21 +7040,21 @@ components:
     ChapterOutline:
       type: object
       properties:
-        kind: *a13
-        id: *a12
-        projectId: *a12
-        parentId: *a12
-        title: *a14
-        summary: *a15
+        kind: *a16
+        id: *a15
+        projectId: *a15
+        parentId: *a15
+        title: *a17
+        summary: *a18
         position: *a9
         revision: *a9
-        structureRevision: *a16
-        archived: *a17
-        status: *a18
-        writingStatuses: *a19
-        wordCount: *a20
-        createdAt: *a11
-        updatedAt: *a11
+        structureRevision: *a19
+        archived: *a20
+        status: *a21
+        writingStatuses: *a22
+        wordCount: *a23
+        createdAt: *a13
+        updatedAt: *a13
         scenes:
           type: array
           items:
@@ -5512,21 +7080,21 @@ components:
     ManuscriptOutline:
       type: object
       properties:
-        kind: *a13
-        id: *a12
-        projectId: *a12
-        parentId: *a12
-        title: *a14
-        summary: *a15
+        kind: *a16
+        id: *a15
+        projectId: *a15
+        parentId: *a15
+        title: *a17
+        summary: *a18
         position: *a9
         revision: *a9
-        structureRevision: *a16
-        archived: *a17
-        status: *a18
-        writingStatuses: *a19
-        wordCount: *a20
-        createdAt: *a11
-        updatedAt: *a11
+        structureRevision: *a19
+        archived: *a20
+        status: *a21
+        writingStatuses: *a22
+        wordCount: *a23
+        createdAt: *a13
+        updatedAt: *a13
         chapters:
           type: array
           items:
@@ -5552,7 +7120,7 @@ components:
     EditorialOutline:
       type: object
       properties:
-        projectId: *a12
+        projectId: *a15
         revision: *a9
         structureRevision: *a9
         manuscripts:
@@ -5568,7 +7136,7 @@ components:
     EditorialAck:
       type: object
       properties:
-        id: *a12
+        id: *a15
         revision: *a9
         structureRevision:
           type: integer
@@ -5583,7 +7151,7 @@ components:
     SceneSaveAck:
       type: object
       properties:
-        id: *a12
+        id: *a15
         revision: *a9
         contentHash:
           type: string
@@ -5591,8 +7159,8 @@ components:
         wordCount:
           type: integer
           minimum: 0
-        updatedAt: *a11
-        changeSetId: *a12
+        updatedAt: *a13
+        changeSetId: *a15
       required:
         - id
         - revision
@@ -5604,29 +7172,29 @@ components:
     SceneRevisionMeta:
       type: object
       properties:
-        sceneId: *a12
-        projectId: *a12
+        sceneId: *a15
+        projectId: *a15
         revision: *a9
-        contentFormatVersion: &a21
+        contentFormatVersion: &a24
           const: 1
-        author: &a22
+        author: &a25
           type: object
           properties:
-            id: *a12
+            id: *a15
             displayName:
               type: string
           required:
             - id
             - displayName
           additionalProperties: false
-        createdAt: *a11
-        changeSetId: *a12
-        restoredFromRevision: &a23
+        createdAt: *a13
+        changeSetId: *a15
+        restoredFromRevision: &a26
           type:
             - integer
             - "null"
           minimum: 1
-        action: &a24
+        action: &a27
           type: string
         title:
           type: string
@@ -5645,19 +7213,25 @@ components:
     SceneRevision:
       type: object
       properties:
-        sceneId: *a12
-        projectId: *a12
+        sceneId: *a15
+        projectId: *a15
         revision: *a9
-        contentFormatVersion: *a21
-        author: *a22
-        createdAt: *a11
-        changeSetId: *a12
-        restoredFromRevision: *a23
-        action: *a24
+        contentFormatVersion: *a24
+        author: *a25
+        createdAt: *a13
+        changeSetId: *a15
+        restoredFromRevision: *a26
+        action: *a27
         content:
           $ref: "#/components/schemas/RichDocument"
         contentHash:
           type: string
+        referenceSnapshotVersion:
+          const: 1
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/SceneReference"
         metadata:
           type: object
           properties:
@@ -5669,7 +7243,7 @@ components:
               type: string
             archived:
               type: boolean
-            chapterId: *a12
+            chapterId: *a15
           required:
             - title
             - summary
@@ -5691,6 +7265,11 @@ components:
         - contentHash
         - metadata
       additionalProperties: false
+      dependentRequired:
+        referenceSnapshotVersion:
+          - references
+        references:
+          - referenceSnapshotVersion
     SceneRevisionPage:
       type: object
       properties:
@@ -5743,7 +7322,7 @@ components:
           items:
             type: object
             properties:
-              sceneId: *a12
+              sceneId: *a15
               title:
                 type: string
               message:
@@ -5763,21 +7342,21 @@ components:
     EditorialExportScene:
       type: object
       properties:
-        id: *a25
-        projectId: *a26
-        chapterId: *a27
-        title: *a28
-        summary: *a29
-        status: *a30
-        revision: *a31
-        contentFormatVersion: *a32
-        content: *a33
-        references: *a34
-        archived: *a35
-        contentHash: *a36
-        wordCount: *a37
-        createdAt: *a11
-        updatedAt: *a11
+        id: *a28
+        projectId: *a29
+        chapterId: *a30
+        title: *a31
+        summary: *a32
+        status: *a33
+        revision: *a34
+        contentFormatVersion: *a35
+        content: *a36
+        references: *a37
+        archived: *a38
+        contentHash: *a39
+        wordCount: *a40
+        createdAt: *a13
+        updatedAt: *a13
         position: *a9
       required:
         - id
@@ -5800,21 +7379,21 @@ components:
     EditorialExportChapter:
       type: object
       properties:
-        kind: *a13
-        id: *a12
-        projectId: *a12
-        parentId: *a12
-        title: *a14
-        summary: *a15
+        kind: *a16
+        id: *a15
+        projectId: *a15
+        parentId: *a15
+        title: *a17
+        summary: *a18
         position: *a9
         revision: *a9
-        structureRevision: *a16
-        archived: *a17
-        status: *a18
-        writingStatuses: *a19
-        wordCount: *a20
-        createdAt: *a11
-        updatedAt: *a11
+        structureRevision: *a19
+        archived: *a20
+        status: *a21
+        writingStatuses: *a22
+        wordCount: *a23
+        createdAt: *a13
+        updatedAt: *a13
         scenes:
           type: array
           items:
@@ -5844,8 +7423,8 @@ components:
           const: storymaster-editorial
         formatVersion:
           const: 1
-        exportedAt: *a11
-        projectId: *a12
+        exportedAt: *a13
+        projectId: *a15
         includesArchived:
           const: true
         historyIncluded:
@@ -5853,21 +7432,21 @@ components:
         manuscript:
           type: object
           properties:
-            kind: *a13
-            id: *a12
-            projectId: *a12
-            parentId: *a12
-            title: *a14
-            summary: *a15
+            kind: *a16
+            id: *a15
+            projectId: *a15
+            parentId: *a15
+            title: *a17
+            summary: *a18
             position: *a9
             revision: *a9
-            structureRevision: *a16
-            archived: *a17
-            status: *a18
-            writingStatuses: *a19
-            wordCount: *a20
-            createdAt: *a11
-            updatedAt: *a11
+            structureRevision: *a19
+            archived: *a20
+            status: *a21
+            writingStatuses: *a22
+            wordCount: *a23
+            createdAt: *a13
+            updatedAt: *a13
             chapters:
               type: array
               items:
@@ -5898,6 +7477,850 @@ components:
         - includesArchived
         - historyIncluded
         - manuscript
+      additionalProperties: false
+    CharacterAttributesV1:
+      type: object
+      properties:
+        aliases:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 200
+        description:
+          type: string
+          maxLength: 20000
+        narrativeRole:
+          type: string
+          maxLength: 200
+        motivations:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+        goals:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+        conflicts:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+        traits:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+        healthSummary:
+          type: string
+          maxLength: 4000
+        conditionEventRefs:
+          maxItems: 100
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            required:
+              - id
+            additionalProperties: false
+      additionalProperties: false
+    PlaceAttributesV1:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 20000
+        category:
+          type: string
+          maxLength: 200
+        characteristics:
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            maxLength: 1000
+        parentPlaceRef:
+          anyOf:
+            - type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              required:
+                - id
+              additionalProperties: false
+            - type: "null"
+      additionalProperties: false
+    EventAttributesV1:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 20000
+        chronologyPosition:
+          type: number
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        temporalExpression:
+          oneOf:
+            - type: object
+              properties:
+                kind:
+                  type: string
+                  const: unknown
+              required:
+                - kind
+              additionalProperties: false
+            - type: object
+              properties:
+                kind:
+                  type: string
+                  const: ordinal
+                position:
+                  type: number
+                  minimum: -9007199254740991
+                  maximum: 9007199254740991
+              required:
+                - kind
+                - position
+              additionalProperties: false
+      additionalProperties: false
+    NarrativeCreate:
+      type: object
+      properties:
+        typeKey:
+          type: string
+          enum:
+            - character
+            - place
+            - event
+        schemaVersion:
+          type: number
+          const: 1
+        name:
+          type: string
+          maxLength: 200
+        summary:
+          default: ""
+          type: string
+          maxLength: 4000
+        notes:
+          default: ""
+          type: string
+          maxLength: 20000
+        attributes: {}
+      required:
+        - typeKey
+        - schemaVersion
+        - name
+        - summary
+        - notes
+        - attributes
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              typeKey:
+                const: character
+            required:
+              - typeKey
+          then:
+            properties:
+              attributes:
+                $ref: "#/components/schemas/CharacterAttributesV1"
+        - if:
+            properties:
+              typeKey:
+                const: place
+            required:
+              - typeKey
+          then:
+            properties:
+              attributes:
+                $ref: "#/components/schemas/PlaceAttributesV1"
+        - if:
+            properties:
+              typeKey:
+                const: event
+            required:
+              - typeKey
+          then:
+            properties:
+              attributes:
+                $ref: "#/components/schemas/EventAttributesV1"
+    NarrativeUpdate:
+      type: object
+      properties:
+        set:
+          type: object
+          properties:
+            name:
+              type: string
+              maxLength: 200
+            summary:
+              type: string
+              maxLength: 4000
+            notes:
+              type: string
+              maxLength: 20000
+            attributes: {}
+          additionalProperties: false
+          minProperties: 1
+      required:
+        - set
+      additionalProperties: false
+    NarrativeArchive:
+      type: object
+      properties:
+        archived:
+          type: boolean
+      required:
+        - archived
+      additionalProperties: false
+    NarrativeRestore:
+      type: object
+      properties:
+        sourceRevision:
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 9007199254740991
+      required:
+        - sourceRevision
+      additionalProperties: false
+    NarrativeRelationCreate:
+      type: object
+      properties:
+        sourceRef:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+          required:
+            - id
+          additionalProperties: false
+        targetRef:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+          required:
+            - id
+          additionalProperties: false
+        sourceRevision:
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 9007199254740991
+        targetRevision:
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 9007199254740991
+        relationType:
+          type: string
+          enum:
+            - related_to
+            - knows
+            - located_in
+            - participates_in
+            - precedes
+        attributes:
+          default: {}
+          type: object
+          properties:
+            description:
+              type: string
+              maxLength: 4000
+          additionalProperties: false
+      required:
+        - sourceRef
+        - targetRef
+        - sourceRevision
+        - targetRevision
+        - relationType
+        - attributes
+      additionalProperties: false
+    NarrativeRelationUpdate:
+      type: object
+      properties:
+        set:
+          type: object
+          properties:
+            relationType:
+              type: string
+              enum:
+                - related_to
+                - knows
+                - located_in
+                - participates_in
+                - precedes
+            attributes:
+              type: object
+              properties:
+                description:
+                  type: string
+                  maxLength: 4000
+              additionalProperties: false
+          additionalProperties: false
+          minProperties: 1
+        dependencyRevisions:
+          maxItems: 500
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              revision:
+                type: integer
+                exclusiveMinimum: 0
+                maximum: 9007199254740991
+            required:
+              - id
+              - revision
+            additionalProperties: false
+      required:
+        - set
+        - dependencyRevisions
+      additionalProperties: false
+    NarrativeRelationDependencies:
+      type: object
+      properties:
+        dependencyRevisions:
+          maxItems: 500
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              revision:
+                type: integer
+                exclusiveMinimum: 0
+                maximum: 9007199254740991
+            required:
+              - id
+              - revision
+            additionalProperties: false
+      required:
+        - dependencyRevisions
+      additionalProperties: false
+    NarrativeRelationRestore:
+      type: object
+      properties:
+        sourceRevision:
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 9007199254740991
+        dependencyRevisions:
+          maxItems: 500
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              revision:
+                type: integer
+                exclusiveMinimum: 0
+                maximum: 9007199254740991
+            required:
+              - id
+              - revision
+            additionalProperties: false
+      required:
+        - dependencyRevisions
+      additionalProperties: false
+    SceneReferencesReplace:
+      type: object
+      properties:
+        references:
+          maxItems: 500
+          type: array
+          items:
+            type: object
+            properties:
+              objectRef:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+                required:
+                  - id
+                additionalProperties: false
+              referenceType:
+                type: string
+                enum:
+                  - present
+                  - mentioned
+                  - point_of_view
+                  - setting
+                  - depicts_event
+              metadata:
+                default: {}
+                type: object
+                properties: {}
+                additionalProperties: false
+            required:
+              - objectRef
+              - referenceType
+              - metadata
+            additionalProperties: false
+        dependencyRevisions:
+          maxItems: 500
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              revision:
+                type: integer
+                exclusiveMinimum: 0
+                maximum: 9007199254740991
+            required:
+              - id
+              - revision
+            additionalProperties: false
+      required:
+        - references
+        - dependencyRevisions
+      additionalProperties: false
+    ModuleConfigure:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        moduleVersion:
+          type: number
+          const: 1
+      required:
+        - enabled
+        - moduleVersion
+      additionalProperties: false
+    NarrativeTarget:
+      type: object
+      properties:
+        id: *a2
+        name: &a50
+          type: string
+        typeKey:
+          enum:
+            - character
+            - place
+            - event
+        status:
+          enum:
+            - active
+            - archived
+        moduleEnabled: *a14
+        revision: *a11
+      required:
+        - id
+        - name
+        - typeKey
+        - status
+        - moduleEnabled
+        - revision
+      additionalProperties: false
+    ReferenceView:
+      type: object
+      properties:
+        id: *a41
+        projectId: *a42
+        sceneId: *a43
+        objectId: *a44
+        referenceType: *a45
+        metadata: &a47
+          type: object
+          properties: {}
+          required: []
+          additionalProperties: false
+        revision: *a46
+        target: &a48
+          $ref: "#/components/schemas/NarrativeTarget"
+        linkState: &a49
+          enum:
+            - active
+            - target_archived
+            - module_disabled
+            - removed
+      required:
+        - id
+        - projectId
+        - sceneId
+        - objectId
+        - referenceType
+        - metadata
+        - revision
+        - target
+        - linkState
+      additionalProperties: false
+    SceneReferencesView:
+      type: object
+      properties:
+        sceneId: *a2
+        sceneRevision: *a11
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReferenceView"
+      required:
+        - sceneId
+        - sceneRevision
+        - items
+      additionalProperties: false
+    InverseReference:
+      type: object
+      properties:
+        id: *a41
+        projectId: *a42
+        sceneId: *a43
+        objectId: *a44
+        referenceType: *a45
+        metadata: *a47
+        revision: *a46
+        target: *a48
+        linkState: *a49
+        scene:
+          type: object
+          properties:
+            id: *a2
+            title: *a50
+            chapterId: *a2
+            manuscriptId: *a2
+            archived: *a14
+            revision: *a11
+          required:
+            - id
+            - title
+            - chapterId
+            - manuscriptId
+            - archived
+            - revision
+          additionalProperties: false
+      required:
+        - id
+        - projectId
+        - sceneId
+        - objectId
+        - referenceType
+        - metadata
+        - revision
+        - target
+        - linkState
+        - scene
+      additionalProperties: false
+    InverseReferencePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/InverseReference"
+        hasMore: *a14
+        nextCursor:
+          type:
+            - string
+            - "null"
+      required:
+        - items
+        - hasMore
+        - nextCursor
+      additionalProperties: false
+    NarrativeObjectPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entity"
+        hasMore: *a14
+        nextCursor:
+          type:
+            - string
+            - "null"
+      required:
+        - items
+        - hasMore
+        - nextCursor
+      additionalProperties: false
+    NarrativeObjectDetail:
+      type: object
+      properties:
+        object:
+          $ref: "#/components/schemas/Entity"
+        relations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Relation"
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entity"
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/InverseReference"
+        hasMoreRelations: *a14
+        hasMoreReferences: *a14
+        hasMoreChildren: *a14
+        relationsNextCursor:
+          type:
+            - string
+            - "null"
+        referencesNextCursor:
+          type:
+            - string
+            - "null"
+        childrenNextCursor:
+          type:
+            - string
+            - "null"
+        parent:
+          anyOf:
+            - $ref: "#/components/schemas/Entity"
+            - type: "null"
+      required:
+        - object
+        - relations
+        - children
+        - references
+        - hasMoreRelations
+        - hasMoreReferences
+        - hasMoreChildren
+        - relationsNextCursor
+        - referencesNextCursor
+        - childrenNextCursor
+        - parent
+      additionalProperties: false
+    ModuleDefinition:
+      type: object
+      properties:
+        key:
+          enum:
+            - characters
+            - places
+            - timeline
+        version:
+          const: 1
+        typeKeys:
+          type: array
+          items:
+            enum:
+              - character
+              - place
+              - event
+        dependencies:
+          type: array
+          items:
+            enum:
+              - characters
+              - places
+              - timeline
+        schemas:
+          type: object
+        checksum:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+      required:
+        - key
+        - version
+        - typeKeys
+        - dependencies
+        - schemas
+        - checksum
+      additionalProperties: false
+    ModuleActivation:
+      type: object
+      properties:
+        id: *a2
+        projectId: *a2
+        moduleKey:
+          enum:
+            - characters
+            - places
+            - timeline
+        moduleVersion:
+          const: 1
+        enabled: *a14
+        revision: *a11
+        updatedAt: *a12
+      required:
+        - id
+        - projectId
+        - moduleKey
+        - moduleVersion
+        - enabled
+        - revision
+        - updatedAt
+      additionalProperties: false
+    NarrativeModules:
+      type: object
+      properties:
+        definitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ModuleDefinition"
+        activations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ModuleActivation"
+      required:
+        - definitions
+        - activations
+      additionalProperties: false
+    NarrativeRevision:
+      type: object
+      properties:
+        projectId: *a2
+        resourceType:
+          enum:
+            - object
+            - relation
+            - module
+        resourceId: *a2
+        revision: *a11
+        snapshot:
+          anyOf:
+            - $ref: "#/components/schemas/Entity"
+            - $ref: "#/components/schemas/Relation"
+            - $ref: "#/components/schemas/ModuleActivation"
+        actor:
+          type: object
+          properties:
+            id:
+              anyOf:
+                - *a2
+                - type: "null"
+            displayName: *a50
+            type:
+              enum:
+                - human
+                - system
+          required:
+            - id
+            - displayName
+            - type
+          additionalProperties: false
+        createdAt: *a12
+        changeSetId: *a2
+        action: *a50
+        restoredFromRevision:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+      required:
+        - projectId
+        - resourceType
+        - resourceId
+        - revision
+        - snapshot
+        - actor
+        - createdAt
+        - changeSetId
+        - action
+        - restoredFromRevision
+      additionalProperties: false
+    NarrativeRevisionPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/NarrativeRevision"
+        hasMore: *a14
+        nextBeforeRevision:
+          type:
+            - integer
+            - "null"
+          minimum: 1
+      required:
+        - items
+        - hasMore
+        - nextBeforeRevision
+      additionalProperties: false
+    NarrativeExport:
+      type: object
+      properties:
+        format:
+          const: storymaster-narrative
+        formatVersion:
+          const: 1
+        projectId: *a2
+        exportedAt: *a12
+        historyIncluded:
+          const: false
+        modules:
+          $ref: "#/components/schemas/NarrativeModules"
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entity"
+        relations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Relation"
+        sceneReferences:
+          type: array
+          items:
+            type: object
+            properties:
+              id: *a41
+              projectId: *a42
+              sceneId: *a43
+              objectId: *a44
+              referenceType: *a45
+              metadata: *a51
+              revision: *a46
+              status:
+                enum:
+                  - active
+                  - removed
+            required:
+              - id
+              - projectId
+              - sceneId
+              - objectId
+              - referenceType
+              - metadata
+              - revision
+              - status
+            additionalProperties: false
+      required:
+        - format
+        - formatVersion
+        - projectId
+        - exportedAt
+        - historyIncluded
+        - modules
+        - objects
+        - relations
+        - sceneReferences
       additionalProperties: false
   parameters:
     IfMatch:

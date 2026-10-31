@@ -1,0 +1,67 @@
+{
+  "environment": {
+    "date": "2026-10-31T16:57:39.914Z",
+    "node": "v26.8.1",
+    "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+    "memoryGiB": 31.251102447509766
+  },
+  "methodology": "Services communs + vraie PostgreSQL locale, sans transport HTTP ; corpus synthétique 9 000 personnages, 500 lieux, 500 événements. 120 recherches séquentielles, 20 résultats/page, canari autre projet. Rafales de 6 autosaves indépendants × 16 et 16 mutations références + 16 bascules module sur le même projet. Aucun retry automatique ni erreur masquée. Enveloppe locale, pas une mesure multi-utilisateurs réseau de production.",
+  "seedMs": 78845.795771,
+  "search": {
+    "objects": 10000,
+    "queries": 120,
+    "latencyMs": {
+      "samples": 120,
+      "p50": 23.409,
+      "p95": 25.229,
+      "p99": 27.563,
+      "max": 35.289
+    },
+    "errors": [],
+    "nfr03LocalP95Below2s": true
+  },
+  "mixed": {
+    "autosaveMs": {
+      "samples": 96,
+      "p50": 31.73,
+      "p95": 81.288,
+      "p99": 127.845,
+      "max": 127.845
+    },
+    "graphPairMs": {
+      "samples": 16,
+      "p50": 19.196,
+      "p95": 694.454,
+      "p99": 694.454,
+      "max": 694.454
+    },
+    "elapsedMs": 1113.1403419999988,
+    "successfulAutosaves": 96,
+    "successfulReferenceWrites": 16,
+    "successfulModuleWrites": 16,
+    "errors": [],
+    "projectSharedWaitMs": {
+      "samples": 110,
+      "p50": 0.179,
+      "p95": 0.349,
+      "p99": 9.234,
+      "max": 15.849
+    },
+    "projectExclusiveWaitMs": {
+      "samples": 32,
+      "p50": 0.164,
+      "p95": 10.08,
+      "p99": 637.282,
+      "max": 637.282
+    },
+    "projectExclusiveHoldMs": {
+      "samples": 32,
+      "p50": 9.385,
+      "p95": 11.198,
+      "p99": 16.253,
+      "max": 16.253
+    },
+    "integrity": "7 scènes : révision exacte, snapshot texte/références exact, hash canonique exact, aucune perte"
+  }
+}

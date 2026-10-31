@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { readFile,readdir } from 'node:fs/promises';
 import pg from 'pg';
+import {PostgresNarrativeStore} from './narrative.ts';
 import { PostgresEditorialStore } from './editorial.ts';
 import type { PoolClient, QueryResultRow } from 'pg';
 import type { Actor, AuditEvent, Identity, Project, ProjectWithRole, Role, User } from '@storymaster/domain';
@@ -58,9 +59,9 @@ export class PostgresUnitOfWork implements UnitOfWork {
 }
 class PostgresTransaction implements Transaction {
   private lockStarted?: number;
-  readonly editorial:PostgresEditorialStore;
+  readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
   private lockMode:'exclusive'|'shared'='exclusive';
-  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.editorial=new PostgresEditorialStore(client,observe);}
+  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
   finish() { this.editorial.finish();if (this.lockStarted !== undefined) this.observe({name:'project.lock_hold_ms',value:performance.now()-this.lockStarted,mode:this.lockMode}); }
   async assertActor(actor: Actor) {
     const result = await this.client.query(`SELECT u.id FROM sessions s JOIN app_users u ON u.id=s.user_id

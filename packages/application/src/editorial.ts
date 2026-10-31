@@ -1,9 +1,11 @@
+import {getNarrativeObject,checkDependencies,assertModuleEnabled,requireActive} from './narrative.ts';
+import {withProject} from './project-access.ts';
 import { randomUUID } from 'node:crypto';
-import { AppError,narrativePermitted,notFound } from '@storymaster/domain';
-import type { Actor,EditorialKind,EditorialNode,NarrativePermission,ProjectWithRole,RichDocument,SceneRevision } from '@storymaster/domain';
-import { normalizeDocument,emptyDocument,countCanonicalWords,DocumentError,fromDoc } from '@storymaster/editor';
+import { AppError,notFound,referenceAccepts } from '@storymaster/domain';
+import type { Actor,EditorialKind,EditorialNode,NarrativePermission,ProjectWithRole,RichDocument,SceneRevision,SceneReference,StoredSceneReference } from '@storymaster/domain';
+import { normalizeDocument,emptyDocument,canonicalDocumentStats,DocumentError,fromDoc } from '@storymaster/editor';
 import { markdownExport } from '@storymaster/editor/markdown';
-import type { EditorialCreate,EditorialUpdate,EditorialMove,EditorialAck,EditorialOutline,EditorialItem,SceneDto,SceneSaveAck,RevisionPage,EditorialExport } from '@storymaster/contracts';
+import type { EditorialCreate,EditorialUpdate,EditorialMove,EditorialAck,EditorialOutline,EditorialItem,SceneDto,SceneSaveAck,RevisionPage,EditorialExport,SceneReferencesInput } from '@storymaster/contracts';
 import { fingerprint } from './index.ts';
 import type { UnitOfWork,Transaction } from './index.ts';
 const parentKind={manuscript:'project',chapter:'manuscript',scene:'chapter'} as const;
@@ -14,20 +16,11 @@ function expected(actual:number,wanted:number){if(!Number.isSafeInteger(wanted)|
 const metadata=(n:EditorialNode)=>({title:n.title,summary:n.summary,status:n.status,archived:n.archived,parentId:n.parentId,writingStatuses:n.writingStatuses});
 const item=(n:EditorialNode):EditorialItem=>{const rest={...n};delete rest.content;delete rest.contentHash;return rest;};
 function document(value:unknown):RichDocument {try{return normalizeDocument(value);}catch(e){if(e instanceof DocumentError)throw new AppError('VALIDATION_FAILED',e.message,e.code==='DOCUMENT_TOO_LARGE' ? 413 : 422);throw e;}}
-function sceneDto(n:EditorialNode):SceneDto{return {id:n.id,projectId:n.projectId,chapterId:n.parentId,title:n.title,summary:n.summary,status:n.status,archived:n.archived,revision:n.revision,contentFormatVersion:1,content:document(n.content),contentHash:n.contentHash!,wordCount:n.wordCount,createdAt:n.createdAt,updatedAt:n.updatedAt,references:[]};}
+function sceneDto(n:EditorialNode,references:SceneReference[]=[]):SceneDto{return {id:n.id,projectId:n.projectId,chapterId:n.parentId,title:n.title,summary:n.summary,status:n.status,archived:n.archived,revision:n.revision,contentFormatVersion:1,content:document(n.content),contentHash:n.contentHash!,wordCount:n.wordCount,createdAt:n.createdAt,updatedAt:n.updatedAt,references};}
 export class EditorialService {
  constructor(private db:UnitOfWork,private contentLock:'project'|'scene'='scene'){}
  private async context<T>(actor:Actor,projectId:string,permission:NarrativePermission,work:(tx:Transaction,project:ProjectWithRole)=>Promise<T>,contentOnly=false):Promise<T>{
-  uuid(projectId);if(actor.type!=='human')throw new AppError('FORBIDDEN','Cette opération est réservée aux humains autorisés.',403);
-  return this.db.transaction(async tx=>{
-   if(!await tx.getProject(actor.userId,projectId))throw notFound();
-   const write=permission==='narrative.write'||permission==='narrative.archive';
-   await tx.lockProject(projectId,write&&!(contentOnly&&this.contentLock==='scene') ? 'exclusive' : 'shared');await tx.assertActor(actor);
-   const project=await tx.getProject(actor.userId,projectId);if(!project)throw notFound();
-   if(!narrativePermitted(project.role,permission,actor.type))throw new AppError('FORBIDDEN','Vos droits ne permettent pas cette opération.',403);
-   if(write&&project.status!=='active')throw new AppError('INVALID_STATE_TRANSITION','Ce projet est archivé.',409);
-   return work(tx,project);
-  });
+  return withProject(this.db,actor,projectId,permission,work,(permission==='narrative.write'||permission==='narrative.archive')&&!(contentOnly&&this.contentLock==='scene')?'exclusive':'shared');
  }
  private async get(tx:Transaction,kind:EditorialKind,p:string,id:string){uuid(id);const n=await tx.editorial.get(kind,p,id);if(!n)throw notFound();return n;}
  private async parent(tx:Transaction,kind:EditorialKind,p:string,id:string){const k=parentKind[kind];if(k==='project'){if(id!==p)throw notFound();return {kind:k,id,structureRevision:(await tx.editorial.projectVersions(p)).structureRevision};}const n=await this.get(tx,k,p,id);await this.active(tx,n);return {kind:k,id,structureRevision:n.structureRevision};}
@@ -101,17 +94,33 @@ export class EditorialService {
   await this.record(tx,actor,next,kind+'.moved',corr,old,{sourceParentId:source.id,targetParentId:target.id,sourceOrder:from.filter(n=>n.id!==id).map(n=>n.id),targetOrder:ids});
   const response=await this.ack(tx,next);await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;
  });}
- async getScene(actor:Actor,p:string,id:string):Promise<SceneDto>{return this.context(actor,p,'narrative.read',async tx=>sceneDto(await this.get(tx,'scene',p,id)));}
+ async getScene(actor:Actor,p:string,id:string):Promise<SceneDto>{return this.context(actor,p,'narrative.read',async tx=>sceneDto(await this.get(tx,'scene',p,id),await tx.narrative.references(p,id)));}
  async saveScene(actor:Actor,p:string,id:string,content:unknown,revision:number,key:string,corr:string):Promise<SceneSaveAck>{
-  const normalized=document(content),hash=fingerprint(normalized),wordCount=countCanonicalWords(normalized);
+  const normalized=document(content),hash=fingerprint(normalized),stats=canonicalDocumentStats(normalized),wordCount=stats.wordCount;
   return this.context(actor,p,'narrative.write',async tx=>{
    uuid(id);await tx.editorial.lockScene(p,id);const old=await this.get(tx,'scene',p,id);await this.active(tx,old);const replay=await this.replay<SceneSaveAck>(tx,actor,p,'scene.save',id,key,{content:normalized,revision});if(replay.response)return replay.response;expected(old.revision,revision);
    let next=old,changeSetId:string;
    if(old.contentHash===hash){const snapshot=await tx.editorial.revision(p,id,old.revision);changeSetId=snapshot!.changeSetId;}
-   else {next={...old,content:normalized,contentHash:hash,wordCount,revision:old.revision+1,updatedAt:new Date().toISOString()};await tx.editorial.update(next);changeSetId=await this.record(tx,actor,next,'scene.saved',corr,old);}
+   else {next={...old,content:normalized,contentHash:hash,wordCount,revision:old.revision+1,updatedAt:new Date().toISOString()};await tx.editorial.update(next,stats.text);changeSetId=await this.record(tx,actor,next,'scene.saved',corr,old);}
    const response={id,revision:next.revision,contentHash:next.contentHash!,wordCount:next.wordCount,updatedAt:next.updatedAt,changeSetId};await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;
   },true);
  }
+ async replaceReferences(actor:Actor,p:string,id:string,input:SceneReferencesInput,revision:number,key:string,corr:string):Promise<SceneSaveAck>{return this.context(actor,p,'narrative.write',async tx=>{
+  if(input.references.some(r=>Object.keys(r.metadata).length))throw new AppError('VALIDATION_FAILED','Métadonnées de référence non prises en charge.',422);
+  uuid(id);await tx.editorial.lockScene(p,id);const old=await this.get(tx,'scene',p,id);await this.active(tx,old);const replay=await this.replay<SceneSaveAck>(tx,actor,p,'scene.references',id,key,{input,revision});if(replay.response)return replay.response;expected(old.revision,revision);
+  const stored=await tx.narrative.storedReferences(p,id),active=stored.filter(r=>r.status==='active'),semantic=(r:SceneReference)=>r.objectId+'|'+r.referenceType,newKeys=input.references.map(r=>r.objectRef.id+'|'+r.referenceType);
+  if(new Set(newKeys).size!==newKeys.length)throw invalid('Une référence apparaît plusieurs fois.');if(input.references.filter(r=>r.referenceType==='point_of_view').length>1)throw invalid('Une scène possède au plus un point de vue structuré.');
+  await checkDependencies(tx,p,[...active.map(r=>r.objectId),...input.references.map(r=>r.objectRef.id)],input.dependencyRevisions);
+  const removed=active.filter(r=>!newKeys.includes(semantic(r))),added=input.references.filter(r=>!active.some(a=>semantic(a)===r.objectRef.id+'|'+r.referenceType));
+  for(const r of removed){const target=await getNarrativeObject(tx,p,r.objectId,true);await assertModuleEnabled(tx,p,target.typeKey);}
+  for(const r of added){const target=await getNarrativeObject(tx,p,r.objectRef.id,true);await assertModuleEnabled(tx,p,target.typeKey);requireActive(target);if(!referenceAccepts(r.referenceType,target.typeKey))throw invalid('Le type de référence ne correspond pas à cette fiche.');}
+  if(!removed.length&&!added.length){const snapshot=await tx.editorial.revision(p,id,old.revision),response={id,revision:old.revision,contentHash:old.contentHash!,wordCount:old.wordCount,updatedAt:old.updatedAt,changeSetId:snapshot!.changeSetId};await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;}
+  // Retirer avant d’ajouter permet le changement atomique de POV sans violer l’unicité partielle.
+  for(const r of removed)await tx.narrative.putReference({...r,status:'removed',revision:r.revision+1},false);
+  for(const r of added){const previous=stored.find(a=>semantic(a)===r.objectRef.id+'|'+r.referenceType);const next:StoredSceneReference=previous?{...previous,status:'active',revision:previous.revision+1}:{id:randomUUID(),projectId:p,sceneId:id,objectId:r.objectRef.id,referenceType:r.referenceType,metadata:{},revision:1,status:'active'};await tx.narrative.putReference(next,!previous);}
+  const next={...old,revision:old.revision+1,updatedAt:new Date().toISOString()};if(!await tx.editorial.advanceSceneRevision(p,id,next.revision,next.updatedAt))throw new AppError('REVISION_CONFLICT','La scène a changé.',412);
+  const changeSetId=await this.record(tx,actor,next,'scene.references_updated',corr,old,{referenceIds:(await tx.narrative.references(p,id)).map(r=>r.id)}),response={id,revision:next.revision,contentHash:next.contentHash!,wordCount:next.wordCount,updatedAt:next.updatedAt,changeSetId};await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;
+ });}
  async history(actor:Actor,p:string,id:string,limit=20,beforeRevision?:number):Promise<RevisionPage>{return this.context(actor,p,'narrative.read',async tx=>{
   await this.get(tx,'scene',p,id);const rows=await tx.editorial.revisions(p,id,limit+1,beforeRevision),items=rows.slice(0,limit).map(r=>({sceneId:r.sceneId,projectId:r.projectId,revision:r.revision,contentFormatVersion:r.contentFormatVersion,title:r.metadata.title,author:r.author,createdAt:r.createdAt,changeSetId:r.changeSetId,restoredFromRevision:r.restoredFromRevision,action:r.action}));return {items,hasMore:rows.length>limit,nextBeforeRevision:rows.length>limit?items.at(-1)!.revision:null};
  });}
@@ -119,12 +128,12 @@ export class EditorialService {
  async compare(actor:Actor,p:string,id:string,from:number,to:number){return this.context(actor,p,'narrative.read',async tx=>{await this.get(tx,'scene',p,id);const before=await tx.editorial.revision(p,id,from),after=await tx.editorial.revision(p,id,to);if(!before||!after)throw notFound();return {before,after};});}
  async restore(actor:Actor,p:string,id:string,source:number,revision:number,key:string,corr:string){return this.context(actor,p,'narrative.write',async tx=>{
   uuid(id);await tx.editorial.lockScene(p,id);const old=await this.get(tx,'scene',p,id);await this.active(tx,old);const replay=await this.replay<SceneSaveAck>(tx,actor,p,'scene.restore',id,key,{source,revision});if(replay.response)return replay.response;expected(old.revision,revision);
-  const snapshot=await tx.editorial.revision(p,id,source);if(!snapshot)throw notFound();const content=document(snapshot.content),next={...old,content,contentHash:fingerprint(content),wordCount:countCanonicalWords(content),revision:old.revision+1,updatedAt:new Date().toISOString()};
-  await tx.editorial.update(next);const changeSetId=await this.record(tx,actor,next,'scene.restored',corr,old,{restoredFromRevision:source},source),response={id,revision:next.revision,contentHash:next.contentHash,wordCount:next.wordCount,updatedAt:next.updatedAt,changeSetId};await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;
+  const snapshot=await tx.editorial.revision(p,id,source);if(!snapshot)throw notFound();const content=document(snapshot.content),stats=canonicalDocumentStats(content),next={...old,content,contentHash:fingerprint(content),wordCount:stats.wordCount,revision:old.revision+1,updatedAt:new Date().toISOString()};
+  await tx.editorial.update(next,stats.text);const changeSetId=await this.record(tx,actor,next,'scene.restored',corr,old,{restoredFromRevision:source},source),response={id,revision:next.revision,contentHash:next.contentHash,wordCount:next.wordCount,updatedAt:next.updatedAt,changeSetId};await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;
  },true);}
  async export(actor:Actor,p:string,id:string,format:'markdown'|'json'):Promise<EditorialExport>{return this.context(actor,p,'export.create',async tx=>{
   const manuscript=await this.get(tx,'manuscript',p,id),view=await tx.editorial.view(p,id),chapters=view.nodes.filter(n=>n.kind==='chapter'),warnings:EditorialExport['warnings']=[],structure=[];
-  let size=0;for(const chapter of chapters){const scenes=view.nodes.filter(n=>n.kind==='scene'&&n.parentId===chapter.id);for(const s of scenes){size+=Buffer.byteLength(JSON.stringify(s.content),'utf8');if(size>32*1024*1024)throw new AppError('VALIDATION_FAILED','Cet export direct dépasse la capacité technique de 32 Mio. Exportez des manuscrits plus petits.',413);}structure.push({...item(chapter),wordCount:chapter.archived?0:scenes.filter(s=>!s.archived).reduce((sum,s)=>sum+s.wordCount,0),scenes:scenes.map(s=>({...sceneDto(s),position:s.position}))});}
+  let size=0;for(const chapter of chapters){const scenes=view.nodes.filter(n=>n.kind==='scene'&&n.parentId===chapter.id);for(const s of scenes){size+=Buffer.byteLength(JSON.stringify(s.content),'utf8');if(size>32*1024*1024)throw new AppError('VALIDATION_FAILED','Cet export direct dépasse la capacité technique de 32 Mio. Exportez des manuscrits plus petits.',413);}structure.push({...item(chapter),wordCount:chapter.archived?0:scenes.filter(s=>!s.archived).reduce((sum,s)=>sum+s.wordCount,0),scenes:await Promise.all(scenes.map(async s=>({...sceneDto(s,await tx.narrative.references(p,s.id)),position:s.position})))});}
   const editorial={format:'storymaster-editorial',formatVersion:1,exportedAt:new Date().toISOString(),projectId:p,includesArchived:true,historyIncluded:false,manuscript:{...item(manuscript),wordCount:manuscript.archived?0:structure.reduce((sum,c)=>sum+c.wordCount,0),chapters:structure}};
   let text:string;
   if(format==='json')text=JSON.stringify(editorial,null,2);
