@@ -44,6 +44,29 @@ class ValidatorTests(unittest.TestCase):
         mutate(document)
         path.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n")
 
+    def test_lot7_cannot_make_download_public(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['paths']['/projects/{projectId}/exports/{jobId}/download']['get']['security']=[]
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot7(oas,self.root)
+
+    def test_lot7_cannot_drop_essential_family_with_same_count(self):
+        def mutate(d):
+            properties=d['properties']['families']['properties']
+            properties['sessions']=properties.pop('narrative_relations')
+        self.mutate_json('docs/spec/project-archive.schema.json',mutate)
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot7(oas,self.root)
+
+    def test_lot7_cannot_expose_artifact_path(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['ExportJob']['properties']['artifactName']={'type':'string'}
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot7(oas,self.root)
+
+    def test_lot7_cannot_hide_history_restriction(self):
+        self.mutate_json('docs/spec/project-archive.schema.json',lambda d:d['required'].remove('access'))
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot7(oas,self.root)
+
     def test_lot6_cannot_promote_default_read(self):
         oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
         oas['components']['schemas']['DelegationCreate']['properties']['scopes']['default'].append('proposal:write')
@@ -327,6 +350,16 @@ class ValidatorTests(unittest.TestCase):
             mutate(operation)
             with self.subTest(mutation=operation), self.assertRaises(validation.InvalidSpecification):
                 validation.schema_validate(schema, operation, "Opération hostile")
+
+    def test_lot7_matrix_cannot_silently_change_priority_or_replace_id(self):
+        path=self.root / 'docs/MVP-EVIDENCE-MATRIX.md'
+        original=path.read_text()
+        for before,after in [('OBJ-01 | MUST','OBJ-01 | SHOULD'),('OBJ-01 | MUST','OBJ-99 | MUST')]:
+            with self.subTest(after=after):
+                path.write_text(original.replace(before,after,1))
+                with self.assertRaisesRegex(validation.InvalidSpecification, 'matrice'):
+                    validation.validate_contracts(self.root)
+        path.write_text(original)
 
     def test_cli_failure_from_another_working_directory(self):
         self.mutate_json("docs/spec/requirements.json",

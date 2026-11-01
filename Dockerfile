@@ -14,6 +14,7 @@ RUN npm ci --no-audit --no-fund
 COPY . .
 
 FROM dependencies AS api
+RUN mkdir -p /var/lib/storymaster/exports && chown node:node /var/lib/storymaster/exports && chmod 700 /var/lib/storymaster/exports
 ENV NODE_ENV=production
 USER node
 EXPOSE 3001

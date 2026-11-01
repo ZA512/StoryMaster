@@ -2,8 +2,8 @@ openapi: 3.1.1
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 info:
   title: StoryMaster — contrats de spécification
-  version: 0.9.0
-  description: Contrats MVP. Lots 0–4 humains, Lot 5 phase A simulée et Lot 6 MCP local exécutables ; phase B commerciale et exposition publique différées.
+  version: 0.9.1
+  description: Contrats MVP. Lots 0–4 humains, Lot 5 phase A simulée, Lot 6 MCP local et Lot 7 récupération locale ; phase B commerciale et exposition publique différées.
 servers:
   - url: http://localhost:3000/api/v1
     description: Docker Compose local seulement
@@ -9711,7 +9711,7 @@ paths:
         - *a2
         - name: beforeRevision
           in: query
-          schema: &a3
+          schema: &a4
             type: integer
             minimum: 1
             maximum: 9007199254740991
@@ -9728,6 +9728,330 @@ paths:
                 required:
                   - data
                 additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/exports:
+    post:
+      operationId: projectArchiveRequest
+      summary: projectArchiveRequest
+      x-lot: 7
+      x-permission: export.create
+      x-owner-bound: true
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: &a3
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+      responses:
+        "202":
+          description: Archive personnelle, contrôle projet courant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ExportJob"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+    get:
+      operationId: projectArchiveList
+      summary: projectArchiveList
+      x-lot: 7
+      x-permission: export.create
+      x-owner-bound: true
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a3
+      responses:
+        "200":
+          description: Archive personnelle, contrôle projet courant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ExportJobList"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/exports/{jobId}:
+    get:
+      operationId: projectArchiveGet
+      summary: projectArchiveGet
+      x-lot: 7
+      x-permission: export.create
+      x-owner-bound: true
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a3
+        - name: jobId
+          in: path
+          required: true
+          schema: *a3
+      responses:
+        "200":
+          description: Archive personnelle, contrôle projet courant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ExportJob"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/exports/{jobId}/cancel:
+    post:
+      operationId: projectArchiveCancel
+      summary: projectArchiveCancel
+      x-lot: 7
+      x-permission: export.create
+      x-owner-bound: true
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a3
+        - name: jobId
+          in: path
+          required: true
+          schema: *a3
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Archive personnelle, contrôle projet courant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ExportJob"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/exports/{jobId}/download:
+    get:
+      operationId: projectArchiveDownload
+      summary: projectArchiveDownload
+      x-lot: 7
+      x-permission: export.create
+      x-owner-bound: true
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: *a3
+        - name: jobId
+          in: path
+          required: true
+          schema: *a3
+      responses:
+        "200":
+          description: Archive personnelle, contrôle projet courant
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
         "400":
           $ref: "#/components/responses/Error400"
         "401":
@@ -16112,7 +16436,7 @@ components:
           type: string
           maxLength: 200
         grantId: *a1
-        grantRevision: *a3
+        grantRevision: *a4
         executionId: *a1
       required:
         - initiatorId
@@ -16298,7 +16622,7 @@ components:
           maxItems: 100
         allowedScopes:
           type: array
-          items: &a4
+          items: &a5
             enum:
               - projects:read
               - project:read
@@ -16310,7 +16634,7 @@ components:
           enum:
             - active
             - disabled
-        revision: *a3
+        revision: *a4
       required:
         - id
         - oauthClientId
@@ -16332,21 +16656,21 @@ components:
           maxItems: 100
         scopes:
           type: array
-          items: *a4
+          items: *a5
           maxItems: 100
-        expiresAt: &a5
+        expiresAt: &a6
           type: string
           format: date-time
         status:
           enum:
             - active
             - revoked
-        revision: *a3
-        createdAt: *a5
-        updatedAt: *a5
+        revision: *a4
+        createdAt: *a6
+        updatedAt: *a6
         revokedAt:
           anyOf:
-            - *a5
+            - *a6
             - type: "null"
       required:
         - id
@@ -16385,13 +16709,13 @@ components:
       properties:
         id: *a1
         grantId: *a1
-        revision: *a3
+        revision: *a4
         action:
           enum:
             - grant.created
             - grant.updated
             - grant.revoked
-        createdAt: *a5
+        createdAt: *a6
         snapshot:
           $ref: "#/components/schemas/Delegation"
       required:
@@ -16414,12 +16738,92 @@ components:
           type: boolean
         nextBeforeRevision:
           anyOf:
-            - *a3
+            - *a4
             - type: "null"
       required:
         - items
         - hasMore
         - nextBeforeRevision
+      additionalProperties: false
+    ExportJob:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        projectId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        requesterId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        status:
+          type: string
+          enum:
+            - queued
+            - running
+            - ready
+            - failed
+            - cancelled
+            - expired
+        revision:
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 9007199254740991
+        createdAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        updatedAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        expiresAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        bytes:
+          anyOf:
+            - type: integer
+              exclusiveMinimum: 0
+              maximum: 67108864
+            - type: "null"
+        sha256:
+          anyOf:
+            - type: string
+              pattern: ^[a-f0-9]{64}$
+            - type: "null"
+        errorCode:
+          anyOf:
+            - type: string
+              maxLength: 100
+            - type: "null"
+      required:
+        - id
+        - projectId
+        - requesterId
+        - status
+        - revision
+        - createdAt
+        - updatedAt
+        - expiresAt
+        - bytes
+        - sha256
+        - errorCode
+      additionalProperties: false
+    ExportJobList:
+      type: object
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/ExportJob"
+      required:
+        - items
       additionalProperties: false
   parameters:
     IfMatch:

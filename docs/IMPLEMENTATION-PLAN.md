@@ -276,7 +276,9 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Objectif :** Prouver récupération, confidentialité et usage complet du MVP.
 
-**Prérequis / dépendances :** Lots 0–6 ; GO-04 exploitation, rétention, accès opérateurs et risques résiduels validés.
+**État :** réalisation locale autorisée par mission distincte après réception technique du Lot 6 et CI main e9657b3 verte. Main uniquement.
+
+**Prérequis / dépendances :** Lots 0–4, Lot 5 phase A et Lot 6 reçus ; phase B commerciale différée. GO-04 à préparer, non approuvé : son accord reste requis avant purge/suppression irréversible, restauration sur l’installation principale ou exploitation publique, sans bloquer les fonctions locales sûres et les restaurations isolées.
 
 **Exigences PRD couvertes :** OBJ-12, EXPORT-02, EXPORT-03, EXPORT-04, UX-06, UX-07, UX-09, UX-10, SEC-07, SEC-11, NFR-02, NFR-03, NFR-05, NFR-06, NFR-07, NFR-08. Les exigences transversales continuent à être vérifiées dans les lots suivants.
 

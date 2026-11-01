@@ -2,14 +2,16 @@ import {createHash} from 'node:crypto';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {dirname} from 'node:path';
 import {Pool} from '@storymaster/infrastructure';
-const tables=['projects','project_memberships','project_revisions','manuscripts','chapters','scenes','scene_revisions','editorial_changes','editorial_clocks','narrative_objects','narrative_relations','scene_references','narrative_revisions','narrative_changes','module_activations','invitations','comment_threads','comments','text_anchors','collaboration_revisions','collaboration_clocks','audit_events','change_proposals','proposal_revisions','proposal_reviews','proposal_events','proposal_change_sets','proposal_change_events','provider_credentials','ai_budgets','ai_conversations','ai_context_plans','ai_executions','ai_consents','ai_messages','ai_tool_results','ai_provider_calls','ai_events'];
+
 const output=process.argv[2];if(!output)throw Error('Chemin de sortie requis. Lecture seule, aucun contenu narratif exporté.');
 const pool=new Pool({connectionString:process.env.DATABASE_URL}),client=await pool.connect();
 type Entry={count:number;digest:string;columns?:string[]};
 try{
  await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
  const before=process.argv[3]?JSON.parse(await readFile(process.argv[3],'utf8')) as {tables:Record<string,Entry>}:null,result:Record<string,Entry>={};
+ const tables:string[]=before?Object.keys(before.tables):(await client.query("SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename<>'schema_migrations' ORDER BY tablename")).rows.map(r=>r.tablename);
  for(const table of tables){
+  if(!/^[a-z][a-z0-9_]*$/.test(table))throw Error('Nom de table invalide.');
   const columns:string[]=before?.tables[table]?.columns??(await client.query("SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name=$1 ORDER BY ordinal_position",[table])).rows.map(r=>r.column_name);
   const projection=columns.map(c=>'"'+c.replaceAll('"','""')+'"').join(',');
   const rows=(await client.query(`SELECT to_jsonb(t) AS value FROM (SELECT ${projection} FROM ${table}) t ORDER BY to_jsonb(t)::text`)).rows.map(r=>r.value);

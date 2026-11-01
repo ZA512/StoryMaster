@@ -1,6 +1,6 @@
 # ADR-0015 — MCP local, OAuth et délégations persistantes
 
-**Statut :** mise en œuvre locale autorisée par la mission Lot 6 ; réception attendue. **Date :** 1er novembre 2026. [Décisions](../HUMAN-DECISIONS.md), [ADR-0002](0002-api-metier-unique-et-mcp.md), [ADR-0008 partiel](0008-identite-delegation-et-politiques.md).
+**Statut :** choix acceptés dans leur portée strictement locale et Lot 6 reçu techniquement avec réserves par la mission Lot 7 ; aucune exposition publique acceptée. **Date :** 1er novembre 2026. [Décisions](../HUMAN-DECISIONS.md), [ADR-0002](0002-api-metier-unique-et-mcp.md), [ADR-0008 partiel](0008-identite-delegation-et-politiques.md).
 
 ## Contexte et choix à qualifier par le Spike C
 

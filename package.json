@@ -15,7 +15,7 @@
     "dev:web": "npm run dev -w @storymaster/web",
     "build": "npm run typecheck && npm run build -w @storymaster/web",
     "typecheck": "tsc --noEmit && tsc --noEmit -p apps/web/tsconfig.json",
-    "lint": "eslint . && node scripts/check-architecture.mjs && node --import tsx scripts/sync-editorial-contracts.mjs --check && node --import tsx scripts/sync-narrative-contracts.mjs --check && node --import tsx scripts/publish-narrative-registry.ts --check && node --import tsx scripts/sync-collaboration-contracts.mjs --check && node --import tsx scripts/sync-proposal-contracts.mjs --check && node --import tsx scripts/sync-ai-contracts.mjs --check && node --import tsx scripts/check-ai-boundaries.mjs && node --import tsx scripts/sync-mcp-contracts.mjs --check && node --import tsx scripts/check-mcp-boundaries.mjs",
+    "lint": "eslint . && node scripts/check-architecture.mjs && node --import tsx scripts/sync-editorial-contracts.mjs --check && node --import tsx scripts/sync-narrative-contracts.mjs --check && node --import tsx scripts/publish-narrative-registry.ts --check && node --import tsx scripts/sync-collaboration-contracts.mjs --check && node --import tsx scripts/sync-proposal-contracts.mjs --check && node --import tsx scripts/sync-ai-contracts.mjs --check && node --import tsx scripts/check-ai-boundaries.mjs && node --import tsx scripts/sync-mcp-contracts.mjs --check && node --import tsx scripts/check-mcp-boundaries.mjs && node --import tsx scripts/sync-archive-contracts.mjs --check",
     "test": "node --env-file-if-exists=.env --import tsx --test --test-concurrency=1 tests/*.test.ts",
     "test:e2e": "playwright test",
     "db:migrate": "node --env-file-if-exists=.env --import tsx scripts/migrate.ts",
@@ -28,7 +28,15 @@
     "dev:mcp": "node --env-file-if-exists=.env --import tsx apps/mcp/src/server.ts",
     "mcp:ensure-keycloak": "node --env-file-if-exists=.env --import tsx scripts/ensure-mcp-keycloak.ts",
     "test:mcp": "node --env-file-if-exists=.env --import tsx --test --test-concurrency=1 tests/mcp-*.test.ts",
-    "mcp:qualify": "node --env-file-if-exists=.env --import tsx scripts/qualify-mcp.ts"
+    "mcp:qualify": "node --env-file-if-exists=.env --import tsx scripts/qualify-mcp.ts",
+    "backup": "node --env-file-if-exists=.env --import tsx scripts/operations/backup.ts",
+    "test:recovery": "RUN_RECOVERY_TESTS=true node --env-file-if-exists=.env --import tsx --test --test-concurrency=1 tests/installation-recovery.test.ts",
+    "authority:init": "node --env-file-if-exists=.env --import tsx scripts/operations/init-current.ts",
+    "ops:health": "node --env-file-if-exists=.env --import tsx scripts/operations/health.ts",
+    "ops:retention-preview": "node --env-file-if-exists=.env --import tsx scripts/operations/retention-preview.ts",
+    "bench:recovery": "node --env-file-if-exists=.env --import tsx scripts/measure-recovery.ts",
+    "backup:scheduler": "node --env-file-if-exists=.env --import tsx scripts/operations/backup-scheduler.ts",
+    "ops:cleanup-exports": "node --env-file-if-exists=.env --import tsx scripts/operations/cleanup-exports.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
@@ -39,11 +47,12 @@
     "@types/pg": "8.23.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/yazl": "3.3.1",
     "eslint": "10.14.0",
     "globals": "16.5.0",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",
-    "yaml": "2.8.2"
+    "yaml": "2.8.3"
   }
 }

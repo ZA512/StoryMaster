@@ -50,15 +50,43 @@ services:
     depends_on:
       postgres: {condition: service_healthy}
     networks: [private]
+  initialize-authority:
+    profiles: [operations]
+    build: {context: ., target: api}
+    user: "${APP_RUNTIME_UID:-1000}:${APP_RUNTIME_GID:-1000}"
+    command: [node, --import, tsx, scripts/operations/init-current.ts, /authority/current.json]
+    environment:
+      MIGRATION_DATABASE_URL: postgresql://storymaster_migrator:${MIGRATION_DB_PASSWORD}@postgres:5432/storymaster
+    volumes:
+      - ${AUTHORIZATION_EPOCH_DIRECTORY_HOST:?Préparer un répertoire privé 0700}:/authority
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    networks: [private]
+  prepare-exports:
+    build: {context: ., target: api}
+    user: '0:0'
+    command: [node, --import, tsx, scripts/operations/prepare-export-directory.ts]
+    environment:
+      APP_RUNTIME_UID: ${APP_RUNTIME_UID:-1000}
+      APP_RUNTIME_GID: ${APP_RUNTIME_GID:-1000}
+    volumes: [archive_data:/var/lib/storymaster/exports]
+    network_mode: none
   api:
+    user: "${APP_RUNTIME_UID:-1000}:${APP_RUNTIME_GID:-1000}"
+    volumes:
+      - ${AUTHORIZATION_EPOCH_DIRECTORY_HOST:?Initialiser l’époque hors sauvegarde}:/run/storymaster-authority
+      - archive_data:/var/lib/storymaster/exports
     build: {context: ., target: api}
     environment:
+      AUTHORIZATION_EPOCH_FILE: /run/storymaster-authority/current.json
       APP_ENV: ${APP_ENV:-local}
       PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:3000}
       OIDC_ISSUER: ${OIDC_ISSUER:-http://localhost:8080/realms/storymaster}
       OIDC_INTERNAL_ORIGIN: http://keycloak:8080
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-storymaster-web}
       SESSION_SECRET: ${SESSION_SECRET:?Configurer .env}
+      EXPORT_DIRECTORY: /var/lib/storymaster/exports
+      API_BIND_HOST: 0.0.0.0
       MCP_ENABLED: ${MCP_ENABLED:-false}
       MCP_RESOURCE_CLIENT_SECRET: ${MCP_RESOURCE_CLIENT_SECRET:-}
       AI_SIMULATION_ENABLED: ${AI_SIMULATION_ENABLED:-false}
@@ -69,6 +97,7 @@ services:
       DATABASE_URL: postgresql://storymaster_app:${APP_DB_PASSWORD}@postgres:5432/storymaster
     depends_on:
       migrate: {condition: service_completed_successfully}
+      prepare-exports: {condition: service_completed_successfully}
       keycloak: {condition: service_healthy}
     healthcheck:
       test: [CMD, node, -e, "fetch('http://localhost:3001/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
@@ -77,9 +106,13 @@ services:
       retries: 20
     networks: [private]
   mcp:
+    user: "${APP_RUNTIME_UID:-1000}:${APP_RUNTIME_GID:-1000}"
+    volumes:
+      - ${AUTHORIZATION_EPOCH_DIRECTORY_HOST:?Initialiser l’époque hors sauvegarde}:/run/storymaster-authority
     profiles: [mcp]
     build: {context: ., target: mcp}
     environment:
+      AUTHORIZATION_EPOCH_FILE: /run/storymaster-authority/current.json
       APP_ENV: ${APP_ENV:-local}
       MCP_ENABLED: ${MCP_ENABLED:-false}
       MCP_BIND_HOST: 0.0.0.0
@@ -117,3 +150,4 @@ networks:
   edge: {}
 volumes:
   postgres_data:
+  archive_data:

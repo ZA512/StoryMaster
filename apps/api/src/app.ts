@@ -1,3 +1,6 @@
+import {registerArchives} from './archives.ts';
+import {ArchiveService} from '@storymaster/application';
+import {PrivateArchiveArtifacts} from '@storymaster/infrastructure';
 import {registerDelegations} from './delegation.ts';
 import {DelegationService,ProjectContextService} from '@storymaster/application';
 import {KeycloakMCPVerifier} from '@storymaster/infrastructure';
@@ -15,23 +18,27 @@ import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@storymaster/domain';
 import { IdentityService, ProjectService,EditorialService,NarrativeService,CollaborationService,ProposalService,AIAssistantService,AIOrchestrator } from '@storymaster/application';
 import { createProjectSchema,updateProjectSchema,listProjectsSchema,idempotencyKeySchema,emptyBodySchema } from '@storymaster/contracts';
-import { Pool,PostgresUnitOfWork,SessionStore,OidcProvider,assertApplicationSchema,EnvelopeCredentialCipher,LocalAIProvider } from '@storymaster/infrastructure';
+import { AuthorizationEpochGuard,Pool,PostgresUnitOfWork,SessionStore,OidcProvider,assertApplicationSchema,EnvelopeCredentialCipher,LocalAIProvider } from '@storymaster/infrastructure';
 import type { Session,LoginSecret } from '@storymaster/infrastructure';
 import { registerEditorial } from './editorial.ts';
 import type {ProviderAdapter} from '@storymaster/application';
 import type { Config } from './config.ts';
 
 declare module 'fastify' { interface FastifyRequest { session:Session|null; externalActor:Actor|null } }
-export async function buildApp(config:Config, options:{logStream?:Writable;rateMax?:number;aiAdapter?:ProviderAdapter;aiWorker?:boolean}={}) {
+export async function buildApp(config:Config, options:{logStream?:Writable;rateMax?:number;authRateMax?:number;aiAdapter?:ProviderAdapter;aiWorker?:boolean;archiveWorker?:boolean}={}) {
   const pool=new Pool({connectionString:config.databaseUrl,max:20,connectionTimeoutMillis:5000});
   try{await assertApplicationSchema(pool);}catch(e){await pool.end();throw e;}
-  const db=new PostgresUnitOfWork(pool),projects=new ProjectService(db,config.secret),identities=new IdentityService(db,config.issuer);
-  const sessions=new SessionStore(pool,config.secret,config.sessionSeconds);
+  const epoch=new AuthorizationEpochGuard(config.authorizationEpochFile??process.env.AUTHORIZATION_EPOCH_FILE??'');
+  try{await epoch.assert(pool);}catch(e){await pool.end();throw e;}
+  const db=new PostgresUnitOfWork(pool,undefined,epoch),projects=new ProjectService(db,config.secret),identities=new IdentityService(db,config.issuer);
+  const sessions=new SessionStore(pool,config.secret,config.sessionSeconds,epoch);
   const provider=new OidcProvider({issuer:config.issuer,clientId:config.clientId,publicOrigin:config.publicOrigin,internalOrigin:config.internalOidcOrigin,local:config.local});
   const app=Fastify({bodyLimit:32768,genReqId:()=>randomUUID(),logger:{level:'info',...(options.logStream ? {stream:options.logStream} : {}),redact:['req.headers.authorization','req.headers.cookie','res.headers.set-cookie'],serializers:{req(req){return {method:req.method,path:String(req.url).split('?')[0]};},res(res){return {statusCode:res.statusCode};}}}});
   pool.on('error',()=>app.log.warn({code:'DATABASE_CONNECTION_LOST'},'Connexion inactive à la base interrompue'));
   await app.register(cookie);
   await app.register(rateLimit,{max:options.rateMax ?? 300,timeWindow:'1 minute',hook:'preHandler',keyGenerator:req=>req.session?.actor.userId ?? req.ip});
+  const bearerAdmission=app.createRateLimit({max:options.authRateMax??600,timeWindow:'1 minute',keyGenerator:req=>'bearer-admission:'+req.ip});
+  let authenticatingBearers=0;
   app.decorateRequest('session',null);app.decorateRequest('externalActor',null);
   const delegations=new DelegationService(db),mcpVerifier=config.mcp?new KeycloakMCPVerifier(config.mcp):null;
   const secure=!config.local, sessionCookie=secure ? '__Host-sm_session' : 'sm_session_local',loginCookie=secure ? '__Host-sm_login' : 'sm_login_local';
@@ -40,7 +47,13 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   app.addHook('onRequest',async(req,reply)=>{
     reply.header('X-Correlation-ID',req.id).header('Cache-Control','private, no-store').header('X-Content-Type-Options','nosniff').header('Referrer-Policy','no-referrer');
     if (req.url.startsWith('/api/')) {
-      if(req.headers.authorization!==undefined){if(!mcpVerifier||!req.headers.authorization.startsWith('Bearer ')||req.headers.authorization.includes(','))throw new AppError('UNAUTHENTICATED','Jeton OAuth non accepté.',401);if(req.headers.origin!==undefined&&req.headers.origin!==config.publicOrigin)throw new AppError('FORBIDDEN','Origine interdite.',403);const grant=req.headers['storymaster-grant-id'];if(typeof grant!=='string')throw new AppError('FORBIDDEN','Délégation requise.',403);req.externalActor=await delegations.bindVerifiedToken(await mcpVerifier.verify(req.headers.authorization.slice(7)),grant,req.id);if(!/^\/api\/v1\/projects(?:\/|$)/.test(req.url.split('?')[0]!))throw new AppError('FORBIDDEN','Ce canal ne peut pas administrer votre compte.',403);return;}
+      if(req.headers.authorization!==undefined){
+        const admission=await bearerAdmission(req);
+        if(!admission.isAllowed&&admission.isExceeded){reply.header('Retry-After',String(admission.ttlInSeconds));throw new AppError('RATE_LIMITED','Trop de demandes d’authentification. Réessayez dans un instant.',429);}
+        if(authenticatingBearers>=8){reply.header('Retry-After','1');throw new AppError('RATE_LIMITED','Trop d’authentifications simultanées.',429);}
+        authenticatingBearers++;
+        try{ if(!mcpVerifier||!req.headers.authorization.startsWith('Bearer ')||req.headers.authorization.includes(','))throw new AppError('UNAUTHENTICATED','Jeton OAuth non accepté.',401);if(req.headers.origin!==undefined&&req.headers.origin!==config.publicOrigin)throw new AppError('FORBIDDEN','Origine interdite.',403);const grant=req.headers['storymaster-grant-id'];if(typeof grant!=='string')throw new AppError('FORBIDDEN','Délégation requise.',403);req.externalActor=await delegations.bindVerifiedToken(await mcpVerifier.verify(req.headers.authorization.slice(7)),grant,req.id);if(!/^\/api\/v1\/projects(?:\/|$)/.test(req.url.split('?')[0]!))throw new AppError('FORBIDDEN','Ce canal ne peut pas administrer votre compte.',403);return;}finally{authenticatingBearers--;}
+      }
       req.session=await sessions.read(req.cookies[sessionCookie]);
       if (!['GET','HEAD','OPTIONS'].includes(req.method)) {
         if (req.headers.origin!==config.publicOrigin || !sessions.validCsrf(req.session.rawToken,req.headers['x-csrf-token'])) throw new AppError('FORBIDDEN','La vérification de sécurité a échoué. Rechargez la page.',403);
@@ -71,7 +84,7 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
     return idempotencyKeySchema.parse(value);
   };
   app.get('/health/live',async()=>({status:'ok'}));
-  app.get('/health/ready',async()=>{await pool.query('SELECT 1');return {status:'ready'};});
+  app.get('/health/ready',async()=>{await epoch.assert(pool);await assertApplicationSchema(pool);return {status:'ready'};});
   app.get('/auth/login',{config:{rateLimit:{max:10,timeWindow:'1 minute'}}},async(_req,reply)=>{
     const login=await provider.start(),pending=await sessions.beginLogin(login.secret);
     reply.setCookie(loginCookie,pending,{...cookieOptions,maxAge:600});
@@ -124,6 +137,10 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
       reply.header('ETag',`"r${result.revision}"`);return {data:result};
     });
   }
+  const archives=new ArchiveService(db,new PrivateArchiveArtifacts(config.exportDirectory??process.env.EXPORT_DIRECTORY??''),async()=>(await epoch.current()).instanceId);
+  await registerArchives(app,archives,{actor,key,expected});
+  let exportRunning:Promise<unknown>|null=null;
+  const exportTimer=options.archiveWorker===false?null:setInterval(()=>{if(exportRunning)return;exportRunning=archives.runOne().catch(()=>app.log.warn({code:'EXPORT_WORKER_FAILED'},'Traitement export interrompu')).finally(()=>{exportRunning=null;});},500);exportTimer?.unref();
   registerDelegations(app,delegations,{actor,key,expected});
   app.get<{Params:{projectId:string}}>('/api/v1/projects/:projectId/context',async r=>({data:await new ProjectContextService(db,config.secret).get(actor(r),r.params.projectId)}));
   const editorial=new EditorialService(db);
@@ -135,6 +152,6 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   await registerAI(app,ai,{actor,key,expected});
   const orchestrator=config.ai?.enabled?new AIOrchestrator(ai,options.aiAdapter??new LocalAIProvider()):null;
   if(options.aiWorker!==false)orchestrator?.start();
-  app.addHook('onClose',async()=>{await orchestrator?.close();await pool.end();});
+  app.addHook('onClose',async()=>{if(exportTimer)clearInterval(exportTimer);await exportRunning;await orchestrator?.close();await pool.end();});
   return app;
 }

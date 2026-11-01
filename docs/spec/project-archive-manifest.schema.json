@@ -1,0 +1,343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://storymaster.invalid/schemas/project-archive-manifest.v1",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "storymaster-project-archive-manifest"
+    },
+    "formatVersion": {
+      "const": 1
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "access": {
+      "type": "object",
+      "properties": {
+        "commentHistory": {
+          "enum": [
+            "full",
+            "own"
+          ]
+        },
+        "membershipHistory": {
+          "enum": [
+            "full",
+            "excluded"
+          ]
+        },
+        "completeForProject": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "commentHistory",
+        "membershipHistory",
+        "completeForProject"
+      ],
+      "additionalProperties": false
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sceneId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sceneId",
+          "kind",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "schemaVersions": {
+      "type": "object",
+      "properties": {
+        "archive": {
+          "const": 1
+        },
+        "richDocument": {
+          "const": 1
+        },
+        "narrative": {
+          "const": 1
+        },
+        "proposalPolicy": {
+          "const": 1
+        }
+      },
+      "required": [
+        "archive",
+        "richDocument",
+        "narrative",
+        "proposalPolicy"
+      ],
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "projects": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "project_revisions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "project_memberships": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "manuscripts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "chapters": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "scenes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "scene_revisions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "editorial_changes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "editorial_clocks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "narrative_objects": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "narrative_relations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "scene_references": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "narrative_revisions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "narrative_changes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "module_activations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "module_definitions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "comment_threads": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "comments": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "text_anchors": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "collaboration_revisions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "collaboration_clocks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "change_proposals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "proposal_revisions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "proposal_reviews": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "proposal_events": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "proposal_change_sets": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "proposal_change_events": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "audit_events": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        }
+      },
+      "required": [
+        "projects",
+        "project_revisions",
+        "project_memberships",
+        "manuscripts",
+        "chapters",
+        "scenes",
+        "scene_revisions",
+        "editorial_changes",
+        "editorial_clocks",
+        "narrative_objects",
+        "narrative_relations",
+        "scene_references",
+        "narrative_revisions",
+        "narrative_changes",
+        "module_activations",
+        "module_definitions",
+        "comment_threads",
+        "comments",
+        "text_anchors",
+        "collaboration_revisions",
+        "collaboration_clocks",
+        "change_proposals",
+        "proposal_revisions",
+        "proposal_reviews",
+        "proposal_events",
+        "proposal_change_sets",
+        "proposal_change_events",
+        "audit_events"
+      ],
+      "additionalProperties": false
+    },
+    "files": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "enum": [
+              "project.json",
+              "manuscript.md"
+            ]
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 67108864
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limits": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "format",
+    "formatVersion",
+    "project",
+    "generatedAt",
+    "capturedAt",
+    "access",
+    "warnings",
+    "schemaVersions",
+    "counts",
+    "files",
+    "exclusions",
+    "limits"
+  ],
+  "additionalProperties": false
+}

@@ -1,3 +1,4 @@
+import type {ArchivePort} from './archive-ports.ts';
 import type {MCPPort} from './mcp-ports.ts';
 import type {AIPort} from './ai-ports.ts';
 import type {ProposalPort} from './proposal-ports.ts';
@@ -11,7 +12,7 @@ import type { Page, ProjectDto } from '@storymaster/contracts';
 
 export interface ProjectPosition { timestamp: string; id: string }
 export interface Transaction {
-  readonly mcp:MCPPort;readonly ai:AIPort;readonly proposals:ProposalPort;readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
+  readonly archive:ArchivePort;readonly mcp:MCPPort;readonly ai:AIPort;readonly proposals:ProposalPort;readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
   assertActor(actor: Actor): Promise<void>;
   getProject(userId: string, projectId: string): Promise<ProjectWithRole | null>;
   listProjects(userId: string, limit: number, after?: ProjectPosition,projectIds?:string[]): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
@@ -180,3 +181,6 @@ export * from './mcp-ports.ts';
 
 export * from './delegation.ts';
 export {MCPService,ProjectContextService,mcpToolScopes,MCP_RESULT_BYTES} from './mcp.ts';
+
+export * from './archive-ports.ts';
+export * from './archive.ts';

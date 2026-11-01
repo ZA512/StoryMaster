@@ -33,3 +33,11 @@
 @media(max-width:850px){.ai-home-grid,.ai-workspace{grid-template-columns:1fr}.ai-select-grid{grid-template-columns:1fr}.ai-panel{padding:1.1rem}.ai-consent{padding:1rem}}
 
 .ai-panel .section-line .status-badge{color:#42593d;white-space:normal}
+/* Lot 7 : préférences limitées, sans changement de navigation. */
+.preferences{font-size:12px;margin:12px 0;max-height:40vh;overflow:auto}.preferences summary{cursor:pointer;padding:8px 0}.preferences label{display:block;margin-top:8px}.preferences input[type=checkbox]{width:auto;margin-right:6px}.preferences select{width:100%}.preferences p{font-size:11px}.tiptap{font-size:var(--writer-font-size,18px)}.export-list{padding:0;list-style:none;display:grid;gap:16px}.export-list>li{padding:22px}.export-list .text-button{margin-left:16px}.export-list p{overflow-wrap:anywhere}
+:root[data-theme=dark]{color-scheme:dark;--paper:#161f1b;--panel:#202c25;--ink:#edf3ec;--muted:#b5c2b8;--green:#a8d9b8;--green-dark:#284735;--line:#46594b;--cream:#26362c;--accent:#efb58e;--error:#ffb4ad}
+[data-theme=dark] .sidebar,[data-theme=dark] .topbar,[data-theme=dark] .outline-panel,[data-theme=dark] .manuscript-paper,[data-theme=dark] dialog,[data-theme=dark] input,[data-theme=dark] textarea,[data-theme=dark] select{background:var(--panel);color:var(--ink)}
+[data-theme=dark] .nav-link,[data-theme=dark] .avatar,[data-theme=dark] .module-notice,[data-theme=dark] .scene-references-panel,[data-theme=dark] .parent-choice,[data-theme=dark] .empty-state,[data-theme=dark] .chapter summary,[data-theme=dark] .selected,[data-theme=dark] .notice{background:var(--cream);color:var(--ink)}
+[data-theme=dark] .button{color:#11271a;background:var(--green)}[data-theme=dark] .button.secondary{background:transparent;color:var(--green)}[data-theme=dark] .button:hover{background:#bee7c9}[data-theme=dark] .eyebrow,[data-theme=dark] .sidebar-label,[data-theme=dark] .outline-panel .muted,[data-theme=dark] .chapter summary small{color:var(--muted)}[data-theme=dark] .notice.error{border-color:var(--error);color:var(--error)}[data-theme=dark] .tiptap,[data-theme=dark] .rich-view{color:var(--ink)}
+@media(max-width:700px){.export-list .button{white-space:normal}.export-list .text-button{display:block;margin-left:0}.preferences{max-height:35vh}}
+[data-theme=dark] .logout{color:var(--muted)}

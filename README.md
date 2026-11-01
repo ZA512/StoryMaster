@@ -1,6 +1,6 @@
 # StoryMaster
 
-Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Lot 2 reçu techniquement avec réserves maintenues ; le **Lot 3** ajoute invitations, membres, discussions et ancrages versionnés. Lot 3 reçu techniquement avec réserves et CI verte ; le **Lot 4** ajoute les propositions humaines, la revue et la fusion atomique multi-objets. Lot 4 reçu techniquement avec réserves et CI verte ; le **Lot 5 phase A** ajoute un assistant intégré simulé local. Le **Lot 6** ajoute MCP local et délégations révocables sans modèle ; réception humaine attendue. Lot 5 phase B reste différé et GO-03 reste à valider avant tout fournisseur réel. [Rapport phase A](docs/LOT-5-REPORT.md) · [Décision GO-03](docs/GO-03-DECISION-PROPOSAL.md). [Rapport du Lot 4](docs/LOT-4-REPORT.md) · [Rapport du Lot 3](docs/LOT-3-REPORT.md) · [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
+Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Lot 2 reçu techniquement avec réserves maintenues ; le **Lot 3** ajoute invitations, membres, discussions et ancrages versionnés. Lot 3 reçu techniquement avec réserves et CI verte ; le **Lot 4** ajoute les propositions humaines, la revue et la fusion atomique multi-objets. Lot 4 reçu techniquement avec réserves et CI verte ; le **Lot 5 phase A** ajoute un assistant intégré simulé local. Le **Lot 6** ajoute MCP local et délégations révocables sans modèle ; reçu techniquement dans sa portée locale avec réserves. Le **Lot 7** ajoute archives de projet, sauvegardes chiffrées et restauration isolée avec témoin de révocation ; réception humaine attendue. Lot 5 phase B reste différé et GO-03 reste à valider avant tout fournisseur réel. [Rapport phase A](docs/LOT-5-REPORT.md) · [Décision GO-03](docs/GO-03-DECISION-PROPOSAL.md). [Rapport du Lot 4](docs/LOT-4-REPORT.md) · [Rapport du Lot 3](docs/LOT-3-REPORT.md) · [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
 
 ## Démarrage local
 
@@ -8,10 +8,17 @@ Prérequis : Docker Engine avec Compose et suffisamment de disque libre pour les
 
 ```bash
 cp .env.example .env
-docker compose up -d --build --wait
+# Adapter le répertoire/fichier d’époque dans .env pour une installation persistante.
+# /tmp ci-dessous est uniquement l’exemple de qualification locale éphémère.
+mkdir -p -m 700 /tmp/storymaster-authority
+docker compose up -d --build --wait postgres keycloak migrate
+docker compose --profile operations run --rm initialize-authority
+docker compose up -d --build --wait api web
 ```
 
 Ouvrir **http://localhost:3000** puis « Se connecter ». Comptes de démonstration : **alice**, **bob** ou **carol**, mot de passe **local-only-storymaster**. Ces identifiants, le realm sans TLS et tous les mots de passe de `.env.example` sont exclusivement locaux. Aucun secret réel n’est fourni. `.env` est ignoré par Git et exclu des images.
+
+L’initialisation de l’époque s’exécute une seule fois sur l’installation courante, jamais pour contourner une restauration ou un désaccord. Utiliser un emplacement persistant hors backup historique en exploitation personnelle ; `/tmp` peut être nettoyé par le système et provoquer un arrêt fermé. Le même UID doit posséder le répertoire et exécuter API/MCP (`APP_RUNTIME_UID`/`APP_RUNTIME_GID`, 1000 par défaut). Voir le [runbook](docs/OPERATIONS-RUNBOOK.md).
 
 Les projets sont persistés dans le volume `postgres_data`. Au premier démarrage, PostgreSQL crée les rôles distincts, Keycloak importe le realm et le conteneur `migrate` applique la migration avant le démarrage de l’API. Une relance rejoue la migration sans réinitialiser les données.
 
@@ -176,3 +183,11 @@ MCP_ENABLED=false docker compose -f compose.yaml -f compose.test.yaml up -d --wa
 ```
 
 Pas de tunnel, TLS public, découverte de clients distants, enregistrement dynamique, sampling, tâche durable ou nouveau moteur de propositions. Les mêmes cas d’usage bloquent canon/approve/merge par HTTP ou appel direct, même pour un humain propriétaire sous-jacent. Les limites locales et la contention sont documentées dans le rapport. La refonte visuelle reste à arbitrer ultérieurement.
+
+## Consolidation et récupération — Lot 7
+
+Depuis un projet, **Archives complètes** prépare un ZIP privé puis propose son téléchargement autorisé. JSON riche, schémas, historique permis, bible, commentaires et propositions sont conservés avec inventaire et SHA-256 ; les conversations IA privées et secrets restent exclus. L’auteur conserve les restrictions d’historique des commentaires ; le manifeste indique cette portée. Aucun réimport automatique. Les brouillons non confirmés restent en mémoire : [ADR-0017](docs/adr/0017-recuperation-locale-des-brouillons.md).
+
+[Rapport Lot 7](docs/LOT-7-REPORT.md) · [Format d’archive](docs/ARCHIVE-FORMAT.md) · [Runbook backup/reprise](docs/OPERATIONS-RUNBOOK.md) · [GO-04 proposé](docs/GO-04-DECISION-PROPOSAL.md). `npm run backup -- ...`, `npm run test:recovery`, `npm run ops:health`, `npm run ops:retention-preview`. L’ordonnanceur de sauvegarde n’est pas activé : `npm run backup:scheduler -- --preview`. Toute purge utilisateur, restauration sur l’installation principale, politique de rétention irréversible ou exposition publique exige une décision distincte.
+
+Préférences par compte : clair/sombre, taille du texte et raccourci facultatif. Seuls ces réglages d’affichage sont conservés localement. Le français est initial ; le catalogue typé commence par les exports, la traduction générale de l’interface reste progressive. TLS complet, disponibilité de production et conformité WCAG intégrale ne sont pas déclarés qualifiés.

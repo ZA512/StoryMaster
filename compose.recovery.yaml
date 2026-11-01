@@ -1,0 +1,28 @@
+# Isolated physical restore only. No network, no ports, no API, MCP or worker.
+services:
+  restore-files:
+    image: postgres:18@sha256:979bccfde35445db618c65107d27d08c6c21339d8dc3ad4c830c6633947be0e4
+    profiles: [restore]
+    network_mode: none
+    entrypoint: [sh, -ec]
+    environment:
+      PGDATA: /var/lib/postgresql/18/docker
+    volumes:
+      - recovery_data:/var/lib/postgresql
+      - ${RECOVERY_SOCKET_DIRECTORY:?Répertoire temporaire privé requis}:/recovery-socket
+  postgres-recovery:
+    image: postgres:18@sha256:979bccfde35445db618c65107d27d08c6c21339d8dc3ad4c830c6633947be0e4
+    network_mode: none
+    command: [postgres, -c, listen_addresses=, -c, unix_socket_directories=/recovery-socket, -c, archive_mode=off, -c, archive_command=, -c, restore_command=, -c, primary_conninfo=, -c, shared_preload_libraries=, -c, session_preload_libraries=, -c, local_preload_libraries=, -c, log_error_verbosity=terse, -c, log_min_error_statement=panic]
+    environment:
+      PGDATA: /var/lib/postgresql/18/docker
+    volumes:
+      - recovery_data:/var/lib/postgresql
+      - ${RECOVERY_SOCKET_DIRECTORY:?Répertoire temporaire privé requis}:/recovery-socket
+    healthcheck:
+      test: [CMD, pg_isready, -h, /recovery-socket, -U, postgres, -d, postgres]
+      interval: 2s
+      timeout: 3s
+      retries: 40
+volumes:
+  recovery_data:

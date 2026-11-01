@@ -673,6 +673,50 @@ def validate_lot6(oas, root):
         schema_validate({'$ref':'#/components/schemas/'+name,'components':oas['components']},value,'Lot 6 : exemple '+name)
 
 
+def validate_lot7(oas, root):
+    operations = [op for path in oas['paths'].values() for method,op in path.items()
+                  if method in {'get','post','put','patch','delete'} and op.get('x-lot') == 7]
+    same_keys({'projectArchiveRequest','projectArchiveList','projectArchiveGet','projectArchiveCancel','projectArchiveDownload'}, [op['operationId'] for op in operations], 'Lot 7 : routes archives')
+    for op in operations:
+        require(op.get('security') == [{'webSession': []}] and op.get('x-owner-bound') is True and op.get('x-permission') == 'export.create', 'Lot 7 : export humain autorisé et personnel')
+        headers={dereference(oas,p)['name']:dereference(oas,p) for p in op['parameters'] if dereference(oas,p)['in']=='header'}
+        if 'requestBody' in op:
+            require(all(headers.get(n,{}).get('required') is True for n in ['Origin','X-CSRF-Token']), 'Lot 7 : CSRF export')
+        if op['operationId']=='projectArchiveRequest':
+            require(headers.get('Idempotency-Key',{}).get('required') is True and '202' in op['responses'], 'Lot 7 : demande durable asynchrone')
+        if op['operationId']=='projectArchiveCancel':
+            require(headers.get('If-Match',{}).get('required') is True, 'Lot 7 : annulation CAS')
+    job=oas['components']['schemas']['ExportJob']
+    require(job.get('additionalProperties') is False and set(job['properties']['status']['enum'])=={'queued','running','ready','failed','cancelled','expired'}, 'Lot 7 : états fermés de job')
+    require(not {'sessionHash','epoch','artifactName','leaseId','capability'} & set(job['properties']), 'Lot 7 : job sans autorité ni chemin privé')
+    expected={'projects','project_revisions','project_memberships','manuscripts','chapters','scenes','scene_revisions','editorial_changes','editorial_clocks','narrative_objects','narrative_relations','scene_references','narrative_revisions','narrative_changes','module_activations','module_definitions','comment_threads','comments','text_anchors','collaboration_revisions','collaboration_clocks','change_proposals','proposal_revisions','proposal_reviews','proposal_events','proposal_change_sets','proposal_change_events','audit_events'}
+    archive=load_json(root/'docs/spec/project-archive.schema.json'); manifest=load_json(root/'docs/spec/project-archive-manifest.schema.json')
+    for schema,part in [(archive,'families'),(manifest,'counts')]:
+        require(schema['properties']['formatVersion'].get('const')==1, 'Lot 7 : archive versionnée')
+        fields=schema['properties'][part]
+        same_keys(expected,fields['properties'],'Lot 7 : familles essentielles exactes')
+        same_keys(expected,fields['required'],'Lot 7 : aucune famille omise silencieusement')
+        require(fields.get('additionalProperties') is False, 'Lot 7 : pas de famille auth ou privée')
+        require('access' in schema['required'] and schema['properties']['access']['properties']['commentHistory']['enum']==['full','own'], 'Lot 7 : visibilité explicite des historiques')
+    requirements=load_json(root/'docs/spec/requirements.json')['requirements']
+    matrix=(root/'docs/MVP-EVIDENCE-MATRIX.md').read_text(encoding='utf-8')
+    rows=[line.split('|')[1:5] for line in matrix.splitlines() if re.match(r'^\| (?:[A-Z]+-)+[0-9]{2} \|',line)]
+    same_keys({r['id'] for r in requirements},[row[0].strip() for row in rows], 'Lot 7 : matrice des identifiants exacts')
+    require(len(rows)==len(requirements), 'Lot 7 : matrice sans doublon')
+    by_id={row[0].strip():row for row in rows}
+    for requirement in requirements:
+        priority=requirement['priority'] or ('objectif NFR' if requirement['id'].startswith('NFR-') else '—')
+        lot=requirement['lot'] if requirement['lot'] is not None else '—'
+        expected=f"{priority} / {requirement['targetVersion']} / {lot}"
+        row=by_id[requirement['id']]
+        require(row[1].strip()==expected and row[2].strip() and row[3].strip(), 'Lot 7 : matrice priorité/version/lot et preuve explicite')
+    require('NON SATISFAIT' in by_id['SEC-07'][2], 'Lot 7 : réserve SEC-07 visible')
+    cases=load_json(root/'docs/spec/lot7-scenarios.json')['scenarios']
+    same_keys({'CT-24','CT-27','CT-33','CT-34','CT-35','CT-36','CT-39','CT-43','CT-44','CT-47'},[c['contractTest'] for c in cases], 'Lot 7 : scénarios prioritaires')
+    for case in cases:
+        require(case['scope'] and case['oracle'] and (root/case['executableTest']).is_file(), 'Lot 7 : scénario et oracle traçables')
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -688,6 +732,7 @@ def validate_contracts(root):
     validate_lot4(oas, root)
     validate_lot5(oas, root)
     validate_lot6(oas, root)
+    validate_lot7(oas, root)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and

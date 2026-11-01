@@ -1080,3 +1080,7 @@ Détails [ADR-0013](adr/0013-moteur-de-propositions-et-fusion.md), [preuves](LOT
 
 
 La prévisualisation signale les impacts structurels potentiels des fiches modifiées : relations, scènes et fiches liées avant/après à relire, sans diagnostic sémantique ni écriture supplémentaire. Ce contrôle soutient PROP-11 et ne prétend pas résoudre automatiquement la cohérence narrative.
+
+## Jobs d’archive et reprise — Lot 7
+
+ExportJob est une intention temporaire liée au projet, à son demandeur humain et à l’instance d’autorisation de reprise ; queued/running/ready/failed/cancelled/expired, revision CAS, bail et publication unique. Les chemins, sessionHash et capacités ne sont jamais des champs publics. La portée historique capturée reste liée au rôle et est recontrôlée après déclassement. Les artefacts expirables sont reconstructibles depuis le canon ; leur nettoyage n’est pas une purge de l’historique. Le témoin externe de révocation et la nouvelle instance de restauration sont distincts : une révocation ordinaire ne change pas l’identité des jobs ; une restauration annule les anciens jobs. [Contrat](ARCHIVE-FORMAT.md).

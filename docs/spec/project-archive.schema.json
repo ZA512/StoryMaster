@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://storymaster.invalid/schemas/project-archive.v1",
+  "title": "StoryMaster project archive v1",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "storymaster-project-archive"
+    },
+    "formatVersion": {
+      "const": 1
+    },
+    "projectId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "access": {
+      "type": "object",
+      "properties": {
+        "commentHistory": {
+          "enum": [
+            "full",
+            "own"
+          ]
+        },
+        "membershipHistory": {
+          "enum": [
+            "full",
+            "excluded"
+          ]
+        },
+        "completeForProject": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "commentHistory",
+        "membershipHistory",
+        "completeForProject"
+      ],
+      "additionalProperties": false
+    },
+    "families": {
+      "type": "object",
+      "properties": {
+        "projects": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "project_revisions": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "project_memberships": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "manuscripts": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "chapters": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "scenes": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "scene_revisions": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "editorial_changes": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "editorial_clocks": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "narrative_objects": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "narrative_relations": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "scene_references": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "narrative_revisions": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "narrative_changes": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "module_activations": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "module_definitions": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "comment_threads": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "text_anchors": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "collaboration_revisions": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "collaboration_clocks": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "change_proposals": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "proposal_revisions": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "proposal_reviews": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "proposal_events": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "proposal_change_sets": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "proposal_change_events": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        },
+        "audit_events": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "projects",
+        "project_revisions",
+        "project_memberships",
+        "manuscripts",
+        "chapters",
+        "scenes",
+        "scene_revisions",
+        "editorial_changes",
+        "editorial_clocks",
+        "narrative_objects",
+        "narrative_relations",
+        "scene_references",
+        "narrative_revisions",
+        "narrative_changes",
+        "module_activations",
+        "module_definitions",
+        "comment_threads",
+        "comments",
+        "text_anchors",
+        "collaboration_revisions",
+        "collaboration_clocks",
+        "change_proposals",
+        "proposal_revisions",
+        "proposal_reviews",
+        "proposal_events",
+        "proposal_change_sets",
+        "proposal_change_events",
+        "audit_events"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "format",
+    "formatVersion",
+    "projectId",
+    "capturedAt",
+    "access",
+    "families"
+  ],
+  "additionalProperties": false
+}

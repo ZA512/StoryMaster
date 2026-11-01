@@ -1,0 +1,6 @@
+import {createInstallationBackup} from './installation-backup.ts';
+// Opt-in operator process only; never installed or started by Compose/CI.
+const intervalSeconds=Number(process.env.BACKUP_INTERVAL_SECONDS??86400),root=process.env.BACKUP_ROOT,keyPath=process.env.BACKUP_KEY_FILE;
+if(!Number.isSafeInteger(intervalSeconds)||intervalSeconds<600||intervalSeconds>2678400)throw Error('Intervalle technique requis : entre 600 secondes et 31 jours.');
+if(process.argv.includes('--preview')||process.env.BACKUP_SCHEDULE_APPROVED!=='true'){console.log(JSON.stringify({mode:'preview-only',enabled:false,intervalSeconds,reason:'Activation opérateur et GO-04 requis ; aucune sauvegarde ni suppression déclenchée.'}));}
+else {if(!root||!keyPath)throw Error('BACKUP_ROOT et BACKUP_KEY_FILE requis.');let stopped=false;for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{stopped=true;});do{const started=performance.now();try{const backup=await createInstallationBackup(root,keyPath);console.log(JSON.stringify({event:'backup.completed',id:backup.manifest.id,durationMs:performance.now()-started}));}catch{console.error(JSON.stringify({event:'backup.failed',code:'BACKUP_FAILED',durationMs:performance.now()-started}));}let remaining=intervalSeconds;while(!stopped&&remaining>0){await new Promise(r=>setTimeout(r,1000));remaining--;}}while(!stopped);}

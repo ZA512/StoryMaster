@@ -1,4 +1,5 @@
 'use client';
+import {PreferencesPanel} from './preferences';
 import Link from 'next/link';
 import { usePathname,useRouter } from 'next/navigation';
 import { useEffect,useState } from 'react';
@@ -24,7 +25,7 @@ export function Shell({children,writing=false}:{children:ReactNode;writing?:bool
     <aside className="sidebar"><Link href="/projets" className="brand-link" aria-label="StoryMaster, vos projets"><Brand/></Link><div className="sidebar-label">VOTRE ATELIER</div>
       <nav aria-label="Navigation principale"><Link aria-current={pathname.startsWith('/projets') ? 'page' : undefined} href="/projets" className="nav-link"><span aria-hidden="true">▤</span> Mes projets</Link><Link aria-current={pathname==='/delegations'?'page':undefined} href="/delegations" className="nav-link">Délégations locales</Link></nav>
       <div className="privacy"><span aria-hidden="true">◇</span><div><strong>Un espace privé</strong><p>Vos projets vous appartiennent. Vous choisissez avec qui les partager.</p></div></div>
-      <div className="account"><span className="avatar" aria-hidden="true">{me.user.displayName.slice(0,1)}</span><div><strong>{me.user.displayName}</strong><span>Mon espace personnel</span></div></div>
+      <PreferencesPanel/><div className="account"><span className="avatar" aria-hidden="true">{me.user.displayName.slice(0,1)}</span><div><strong>{me.user.displayName}</strong><span>Mon espace personnel</span></div></div>
       <button className="logout" disabled={leaving} onClick={()=>void logout()}>{leaving ? 'Déconnexion…' : 'Se déconnecter'}</button>
       {logoutError && <ErrorNotice message={logoutError}/>}
     </aside><div className="main-column"><header className="topbar"><span>ATELIER D’ÉCRITURE</span><span className="private-tag">◇ &nbsp; Espace privé</span></header><main id="contenu" className="content">{children}</main><footer className="workspace-footer">StoryMaster <span>Un espace pour construire vos histoires.</span></footer></div>

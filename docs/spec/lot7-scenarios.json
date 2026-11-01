@@ -1,0 +1,65 @@
+{
+  "status": "Contrats de qualification ; résultats effectivement exécutés distincts dans LOT-7-REPORT.md.",
+  "scenarios": [
+    {
+      "contractTest": "CT-24",
+      "scope": "archive_complete",
+      "oracle": "Snapshot cohérent, inventaire exact, JSON riche et historiques permis, hashes et absence de secrets/interprojet.",
+      "executableTest": "tests/archives.test.ts"
+    },
+    {
+      "contractTest": "CT-27",
+      "scope": "restored_jobs",
+      "oracle": "Exports hérités annulés, exécution IA running neutralisée, aucune ancienne tâche ne publie ou n’envoie.",
+      "executableTest": "tests/installation-recovery.test.ts"
+    },
+    {
+      "contractTest": "CT-33",
+      "scope": "crash_commit",
+      "oracle": "Crash autour du commit : régression du moteur de propositions, témoin externe avancé suivi d’un rollback et reprise de bail export sans double publication.",
+      "executableTest": "tests/proposals-atomicity.test.ts"
+    },
+    {
+      "contractTest": "CT-34",
+      "scope": "key_rotation",
+      "oracle": "Clé erronée et rotation de clé de backup : ancienne version conservée et copie historique toujours lisible ; clés fictives seulement.",
+      "executableTest": "tests/backup-crypto.test.ts"
+    },
+    {
+      "contractTest": "CT-35",
+      "scope": "rich_text_xss",
+      "oracle": "Régression des documents riches et liens dangereux ; archive JSON canonique jamais rendue comme HTML exécutable.",
+      "executableTest": "tests/editor-document.test.ts"
+    },
+    {
+      "contractTest": "CT-36",
+      "scope": "export_csrf",
+      "oracle": "Demande et annulation authentifiées : Origin, CSRF, CAS et absence de mutation après refus.",
+      "executableTest": "tests/archives-http.test.ts"
+    },
+    {
+      "contractTest": "CT-39",
+      "scope": "backup_restoration",
+      "oracle": "Backup physique, PostgreSQL démarré sans réseau, empreintes/contraintes, secrets fictifs et anciens accès refusés.",
+      "executableTest": "tests/installation-recovery.test.ts"
+    },
+    {
+      "contractTest": "CT-43",
+      "scope": "replay",
+      "oracle": "Même demande idempotente après réponse perdue, bail abandonné repris, publication unique, annulation CAS.",
+      "executableTest": "tests/archives.test.ts"
+    },
+    {
+      "contractTest": "CT-44",
+      "scope": "private_archives",
+      "oracle": "Aucun chemin statique/public ; téléchargement authentifié et refus après retrait/déclassement.",
+      "executableTest": "tests/archives-http.test.ts"
+    },
+    {
+      "contractTest": "CT-47",
+      "scope": "portable_archive",
+      "oracle": "Inventaire complet autorisé, identifiants et contenu riche conservés, versions/hashes/exclusions et visibilité explicite.",
+      "executableTest": "tests/archives.test.ts"
+    }
+  ]
+}

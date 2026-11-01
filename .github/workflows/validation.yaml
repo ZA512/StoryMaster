@@ -1,4 +1,4 @@
-name: Documentation et Lots 0–6 locaux sans fournisseur IA
+name: Documentation et Lots 0–7 locaux sans fournisseur IA
 on:
   push:
   pull_request:
@@ -40,13 +40,18 @@ jobs:
       - name: Environnement réel PostgreSQL, Keycloak, API et web
         run: |
           cp .env.example .env
-          docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait
+          printf '\nAPP_RUNTIME_UID=%s\nAPP_RUNTIME_GID=%s\n' "$(id -u)" "$(id -g)" >> .env
+          docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait postgres keycloak migrate
+          npm run authority:init -- /tmp/storymaster-authority/current.json
+          docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait api web
       - name: Navigateur de qualification OAuth sans modèle
         run: npx playwright install --with-deps chromium
       - name: Clients Keycloak MCP locaux préenregistrés
         run: npm run mcp:ensure-keycloak
       - name: Tests applicatifs PostgreSQL, MCP réel et IA simulée sans clé réelle
         run: npm test
+      - name: Sauvegarde et vraie restauration isolée, anciens accès invalides
+        run: npm run test:recovery
       - name: Qualification préliminaire de contention
         run: npm run bench:contention
       - name: Contention des scènes et comparaison des barrières
@@ -57,6 +62,8 @@ jobs:
         run: npm run bench:collaboration
       - name: Qualification du merge contre autosauvegardes indépendantes
         run: npm run bench:proposals
+      - name: Archives et charge mixte avec témoin externe
+        run: npm run bench:recovery
       - name: Activation locale explicite et client MCP sans LLM
         run: |
           MCP_ENABLED=true docker compose -f compose.yaml -f compose.test.yaml --profile mcp up -d --wait api web mcp

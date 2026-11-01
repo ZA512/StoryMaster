@@ -25,7 +25,8 @@
     "packages/**/*.ts",
     "tests/**/*.ts",
     "scripts/*.ts",
-    "playwright.config.ts"
+    "playwright.config.ts",
+    "scripts/operations/**/*.ts"
   ],
   "exclude": [
     "node_modules",

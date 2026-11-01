@@ -822,3 +822,7 @@ Le MergeResult durable contient ChangeSet, versions des ressources et mapping te
 Les neuf kinds restent fermés dans operations.schema.json, générés depuis les contrats exécutables. Le statut de scène suit les valeurs configurées par le manuscrit ; move_scene.position est le rang positif. Références temporaires exclusivement typées. [ADR-0013](adr/0013-moteur-de-propositions-et-fusion.md) précise ces alignements. 26 réponses HTTP réelles Lot 4 sont comparées à OpenAPI dans le test dédié, sans journalisation des corps.
 
 Les **13 outils MCP** restent des contrats futurs synchronisés, aucun nouveau serveur ni grant activé. Les fixtures maladie/conflit restent synthétiques : leurs parcours humains sont éprouvés par les tests Lot 4, leurs variantes assistant/external_ai/MCP ne sont pas exécutées. [Sélection exacte des CT](spec/lot4-scenarios.json), [rapport](LOT-4-REPORT.md).
+
+## Lot 7 — export asynchrone local
+
+POST /projects/{projectId}/exports (202, corps vide strict, clé idempotence), GET collection/job, POST job/cancel (If-Match) et GET job/download (ZIP authentifié) sont exécutables. Session humaine, rôle export et demandeur courant requis ; aucun chemin ni jeton de stockage dans le DTO. Les exemples et schémas sont synchronisés par scripts/sync-archive-contracts.mjs. Les quinze réponses HTTP nouvelles effectivement observées sont confrontées à OpenAPI ; le ZIP et ses fichiers sont vérifiés séparément contre les schémas d’archive et manifeste. [Contrat complet](ARCHIVE-FORMAT.md).

@@ -1,3 +1,5 @@
+import {PostgresArchiveStore} from './archive.ts';
+import type {AuthorizationEpochGuard} from './authorization-epoch.ts';
 import {PostgresMCPStore} from './mcp.ts';
 import {PostgresAIStore} from './ai.ts';
 import {PostgresProposalStore} from './proposals.ts';
@@ -45,17 +47,19 @@ function project(row: ProjectRow): ProjectWithRole {
     visibility:row.visibility,status:row.status,revision:Number(row.revision),createdAt:row.created_at.toISOString(),updatedAt:row.updated_at.toISOString(),role:row.role};
 }
 export class PostgresUnitOfWork implements UnitOfWork {
-  constructor(public pool: pg.Pool, private observe: (metric: Metric) => void = () => {}) {}
+  constructor(public pool: pg.Pool, private observe: (metric: Metric) => void = () => {},private epoch?:AuthorizationEpochGuard) {}
   async transaction<T>(work: (tx: Transaction) => Promise<T>): Promise<T> {
     const client = await this.pool.connect();
     let broken=false;
     const connectionError=()=>{broken=true;};client.on('error',connectionError);
-    const tx = new PostgresTransaction(client,this.observe);
+    const tx = new PostgresTransaction(client,this.observe,this.epoch);
     try {
       await client.query('BEGIN');
       await client.query("SET LOCAL lock_timeout = '5s'");
       await client.query("SET LOCAL statement_timeout = '10s'");
+      if(this.epoch)await this.epoch.assert(client);
       const result = await work(tx);
+      if(this.epoch){await this.epoch.assert(client);await this.epoch.sealTransaction(client);}
       await client.query('COMMIT');
       return result;
     } catch (error) {
@@ -67,11 +71,12 @@ export class PostgresUnitOfWork implements UnitOfWork {
 }
 class PostgresTransaction implements Transaction {
   private lockStarted?: number;
-  readonly mcp:PostgresMCPStore;readonly ai:PostgresAIStore;readonly proposals:PostgresProposalStore;readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
+  readonly archive:PostgresArchiveStore;readonly mcp:PostgresMCPStore;readonly ai:PostgresAIStore;readonly proposals:PostgresProposalStore;readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
   private lockMode:'exclusive'|'shared'='exclusive';
-  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.mcp=new PostgresMCPStore(client);this.ai=new PostgresAIStore(client);this.proposals=new PostgresProposalStore(client);this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
+  constructor(private client: PoolClient, private observe: (metric: Metric) => void,private epoch?:AuthorizationEpochGuard) {this.archive=new PostgresArchiveStore(client);this.mcp=new PostgresMCPStore(client);this.ai=new PostgresAIStore(client);this.proposals=new PostgresProposalStore(client);this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
   finish() { this.editorial.finish();if (this.lockStarted !== undefined) this.observe({name:'project.lock_hold_ms',value:performance.now()-this.lockStarted,mode:this.lockMode}); }
   async assertActor(actor: Actor) {
+    if(this.epoch)await this.epoch.assert(this.client);
     if(actor.type==='external_ai'){await this.mcp.assertActor(actor);return;}
     const result = await this.client.query(`SELECT u.id FROM sessions s JOIN app_users u ON u.id=s.user_id
       WHERE s.token_hash=$1 AND s.user_id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active' FOR SHARE OF s`,[actor.sessionHash,actor.userId]);

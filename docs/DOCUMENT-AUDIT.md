@@ -173,3 +173,15 @@ Le [rapport Lot 4](LOT-4-REPORT.md) distingue les portions humaines de CT-07..16
 ## Dérogation de séquencement et Lot 6 local — 1er novembre 2026
 
 Instruction explicite du propriétaire : Lot 5 phase A reçu techniquement avec réserves ; priorité aux parcours humains, phase B commerciale différée et GO-03 maintenu ouvert ; Lot 6 local sans LLM autorisé séparément. [CI de 58ec5a9](https://github.com/ZA512/StoryMaster/actions/runs/41303083199) vérifiée verte, départ propre. AGENTS/décisions/plan actualisés sur cette autorité ; aucune exigence, priorité ou ID changé. Ce changement de séquencement n’accepte pas tous les détails d’ADR-0008 ; exposition publique, clients non enregistrés et exploitation restent à arbitrer. Spike C réel en premier, puis catalogue/UI et qualification ; pas de refonte graphique, Ollama ou fournisseur commercial. Réception avant Lot 7.
+
+## Instruction Lot 7 — portée et prérequis
+
+La mission distincte reçoit Lot 6 et ADR-0015 strictement locaux et impose main uniquement. CI main e9657b3 vérifiée success, références comparées et ancienne branche sans commit unique supprimée. Le plan est corrigé : GO-04 proposé ne bloque pas développement non destructif et qualification isolée autorisés explicitement ; sa validation reste nécessaire avant politique destructive, restauration principale ou exposition publique. Aucun changement des 150 IDs, priorités, versions ou 100 MUST MVP. Les choix locaux de récupération et risques sont documentés séparément ; aucune réception finale ni approbation GO-04 déduite.
+
+## Lot 7 — décisions, limites et corrections de consolidation
+
+La mission autorise les outils locaux non destructifs et la vraie restauration isolée, sans approuver GO-04. L’adoption initiale de l’époque conserve toutes les données préexistantes ; les reprises créent une nouvelle époque et invalident l’autorité héritée. Le scellement write-ahead est une exception documentée pour une barrière de refus, pas un effet externe métier avant commit. Les ADR-0016..18 restent soumis à réception dans leur portée, jamais acceptés par simple présence.
+
+Les spécifications d’archives, OpenAPI, scripts CI, runbook, proposition GO-04 et matrice de preuves sont synchronisés. La revue indépendante a révélé puis motivé la correction de deux défauts runtime, sans changement de priorité : historique administratif par acteur externe et admission trop tardive de l’authentification HTTP. Les correctifs de dépendances sont ciblés (Ajv 8.18.0, yaml 2.8.3) ; la chaîne lint minimatch reste analysée et signalée, sans migration majeure aveugle.
+
+Les brouillons persistants chiffrés sont différés conformément à l’alternative explicitement autorisée ; le risque de perte non confirmée reste ouvert. TLS complet/SEC-07 et l’activation de l’exploitation GO-04 restent à décider, ainsi que les risques IdP/RLS/capacité/WCAG. Aucun texte du PRD ni des 150 exigences n’est modifié pour masquer ces réserves.
