@@ -12,7 +12,10 @@ export async function readAuthorizationEpoch(path:string):Promise<AuthorizationE
 export class AuthorizationEpochGuard {
  constructor(private path:string){if(!path)throw closed();}
  async current(){const e=await readAuthorizationEpoch(this.path);if(e.state!=='active')throw closed();return e;}
- async assert(db:Pool|PoolClient){const e=await this.current();const r=(await db.query('SELECT instance_id,epoch,state FROM runtime_authorization_state WHERE singleton=true')).rows[0];if(!r||r.instance_id!==e.instanceId||r.epoch!==e.epoch||r.state!=='active')throw closed();return e;}
+ // A concurrent security transaction seals the file before its SQL COMMIT. Briefly
+ // re-read only the checkpoint pair; never replay work or accept a mismatched pair.
+ // Missing/quarantined/other-installation checkpoints still fail immediately.
+ async assert(db:Pool|PoolClient){const deadline=performance.now()+250;for(let attempt=0;attempt<25;attempt++){const e=await this.current();const r=(await db.query('SELECT instance_id,epoch,state FROM runtime_authorization_state WHERE singleton=true')).rows[0];if(!r||r.instance_id!==e.instanceId||r.state!=='active')throw closed();if(r.epoch===e.epoch)return e;if(performance.now()>=deadline||attempt===24)throw closed();await new Promise(resolve=>setTimeout(resolve,10));}throw closed();}
  // Security state is deliberately write-ahead: if commit is lost/rolled back after this seal,
  // external and SQL epochs disagree and all services stay closed. Recovery must quarantine;
  // never copy an old checkpoint back to regain availability.

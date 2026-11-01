@@ -4,7 +4,7 @@ Statut : **analyse et correction proposée, non activée**. R-CONT-01 reste ouve
 
 ## Mesure réellement exécutée
 
-Sur Ryzen 5 3600X / 12 threads, 31,25 Gio de RAM, PostgreSQL 18.6 et corpus de 10 000 objets, quinze archives ZIP de 2,43–2,48 Mo ont été produites. En charge mixte : 80 autosaves, 40 commentaires, 8 merges, 120 lectures et 120 recherches ; aucune erreur ni retry. Génération p50 2 111 ms/p95 3 275 ms ; merge p50 207 ms/p95 1 674 ms (huit échantillons, aucun p99 revendiqué). Attente projet p95 3,8 ms/p99 428 ms/max 1 511 ms ; détention p95 155 ms/p99 1 690 ms/max 1 744 ms. Les autres campagnes et le rapport donnent leurs corpus distincts.
+Sur Ryzen 5 3600X / 12 threads, 31,25 Gio RAM, PostgreSQL 18.6 et 10 000 objets, quinze ZIP de 2,47–2,50 Mo ont été produits après correction de la revalidation du témoin. Charge mixte : 80 autosaves, 40 commentaires, 8 merges, 120 lectures et 120 recherches ; aucune erreur ni retry métier. Génération p50 2 325,048 ms/p95 3 610,073 ms ; merge p50 173,480 ms/p95 1 860,066 ms (huit échantillons, aucun p99). Attente projet p95 1,345 ms/p99 549,208 ms/max 1 694,717 ms ; détention p95 164,253 ms/p99 1 881,012 ms/max 1 924,358 ms. Le rapport conserve les mesures précédentes séparément et précise CPU/RAM et portée locale.
 
 Le snapshot utilise une seule requête MVCC sous barrière projet partagée. Les autosaves indépendants continuent, mais un merge ou une révocation exigeant la barrière exclusive attend la capture. Compression ZIP et réseau restent hors transaction ; les déplacer encore ne résoudrait pas le coût SQL/JSON. La nouvelle ligne de témoin sérialise en outre les seules mutations de sécurité ; son coût de fsync n’est pas un substitut à la mesure de la barrière projet.
 

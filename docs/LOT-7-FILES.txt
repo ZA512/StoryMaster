@@ -12,6 +12,7 @@ apps/mcp/src/app.ts
 apps/web/app/globals.css
 apps/web/app/projets/[projectId]/exports/page.tsx
 apps/web/app/projets/[projectId]/page.tsx
+apps/web/components/assistant/workspace.tsx
 apps/web/components/preferences.tsx
 apps/web/components/shell.tsx
 apps/web/components/writer/writer.tsx
@@ -93,6 +94,7 @@ tests/archives-http.test.ts
 tests/archives.test.ts
 tests/backup-crypto.test.ts
 tests/database.helper.ts
+tests/e2e/lot5.spec.ts
 tests/e2e/lot7.spec.ts
 tests/foundations.test.ts
 tests/http-admission.test.ts

@@ -6,11 +6,11 @@
     "mainUnchanged": true,
     "network": "none",
     "ports": [],
-    "backupId": "2590a1d4-24ae-404b-b6f9-0185b6235c6e",
-    "backupBytes": 118921432,
-    "backupMs": 1299.3463569999994,
-    "restoreMs": 5472.557429999999,
-    "totalMs": 11408.399145,
+    "backupId": "8919ccf4-17ff-4841-8d8b-ee5340a4aea4",
+    "backupBytes": 134108888,
+    "backupMs": 2439.8162119999997,
+    "restoreMs": 6506.347341,
+    "totalMs": 12675.531766,
     "tablesVerified": 55,
     "rowsVerified": 234,
     "constraintsVerified": 826,
@@ -31,110 +31,117 @@
     "rewoundEpochRejected": true,
     "recoveryLoss": {
       "knownPostBackupSceneWritesNotRecovered": 1,
-      "lostWriteAt": "2026-11-01T22:49:24.033Z",
-      "backupStartedAt": "2026-11-01T22:49:22.961Z",
-      "rollbackWindowUpperBoundMs": 1072,
+      "lostWriteAt": "2026-11-01T23:06:01.765Z",
+      "backupStartedAt": "2026-11-01T23:05:59.564Z",
+      "rollbackWindowUpperBoundMs": 2201,
       "statement": "Une écriture synthétique après backup est absente conformément au point restauré ; pas de RPO temporel global démontré."
     }
   },
   "mixedPerformance": {
+    "resources": {
+      "scope": "Processus Node du benchmark, cinq archives hors charge et charge mixte ; PostgreSQL/Keycloak séparés non inclus. Pic RSS de toute la vie du processus, CPU depuis avant première archive.",
+      "cpuUserMs": 23476.725,
+      "cpuSystemMs": 2228.233,
+      "peakRssKiB": 699028,
+      "rssAtEndBytes": 469159936
+    },
     "environment": {
-      "date": "2026-11-01T22:31:23.448Z",
+      "date": "2026-11-01T23:08:47.474Z",
       "node": "v26.8.1",
       "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
       "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
       "logicalCpus": 12,
       "memoryGiB": 31.251102447509766,
-      "diskAvailableBytes": 21548871680
+      "diskAvailableBytes": 19814137856
     },
     "methodology": "Corpus synthétique _test >=10 000 objets issu de bench:narrative. Services communs, vraie PostgreSQL, garde/témoin externes et ZIP réels ; transport navigateur mesuré séparément. 5 archives hors charge + 10 en rafale avec 80 autosaves / 40 commentaires / 8 merges / 120 lectures / 120 recherches. Aucune tentative cachée, aucun retry. p99 réservé aux catégories >=100 échantillons.",
     "objects": 10000,
     "archiveBytes": {
-      "min": 2433985,
-      "max": 2477994
+      "min": 2466954,
+      "max": 2504545
     },
     "latencyMs": {
       "archive": {
         "samples": 15,
-        "p50": 2111.473,
-        "p95": 3274.759,
-        "max": 3274.759
+        "p50": 2325.048,
+        "p95": 3610.073,
+        "max": 3610.073
       },
       "download": {
         "samples": 15,
-        "p50": 6.528,
-        "p95": 147.796,
-        "max": 147.796
+        "p50": 6.908,
+        "p95": 21.084,
+        "max": 21.084
       },
       "hash": {
         "samples": 15,
-        "p50": 1.268,
-        "p95": 1.387,
-        "max": 1.387
+        "p50": 1.287,
+        "p95": 1.395,
+        "max": 1.395
       },
       "autosave": {
         "samples": 80,
-        "p50": 11.004,
-        "p95": 116.612,
-        "max": 150.019
+        "p50": 11.516,
+        "p95": 149.567,
+        "max": 163.845
       },
       "comment": {
         "samples": 40,
-        "p50": 10.958,
-        "p95": 117.602,
-        "max": 150.09
+        "p50": 10.984,
+        "p95": 148.684,
+        "max": 162.497
       },
       "merge": {
         "samples": 8,
-        "p50": 206.529,
-        "p95": 1674.383,
-        "max": 1674.383
+        "p50": 173.48,
+        "p95": 1860.066,
+        "max": 1860.066
       },
       "read": {
         "samples": 120,
-        "p50": 5.937,
-        "p95": 111.669,
-        "p99": 144.482,
-        "max": 176.438
+        "p50": 6.193,
+        "p95": 97.543,
+        "p99": 147.865,
+        "max": 172.744
       },
       "search": {
         "samples": 120,
-        "p50": 27.055,
-        "p95": 309.176,
-        "p99": 440.711,
-        "max": 708.949
+        "p50": 26.784,
+        "p95": 302.113,
+        "p99": 538.843,
+        "max": 549.845
       }
     },
     "locks": {
       "project.lock_wait_ms": {
         "samples": 490,
-        "p50": 0.203,
-        "p95": 3.826,
-        "p99": 428.017,
-        "max": 1511.11
+        "p50": 0.198,
+        "p95": 1.345,
+        "p99": 549.208,
+        "max": 1694.717
       },
       "scene.lock_wait_ms": {
         "samples": 80,
-        "p50": 0.235,
-        "p95": 0.527,
-        "max": 1.485
+        "p50": 0.252,
+        "p95": 0.989,
+        "max": 43.502
       },
       "scene.lock_hold_ms": {
         "samples": 80,
-        "p50": 7.315,
-        "p95": 53.456,
-        "max": 145.712
+        "p50": 7.77,
+        "p95": 59.834,
+        "max": 147.583
       },
       "project.lock_hold_ms": {
         "samples": 490,
-        "p50": 8.938,
-        "p95": 154.524,
-        "p99": 1689.826,
-        "max": 1743.919
+        "p50": 9.239,
+        "p95": 164.253,
+        "p99": 1881.012,
+        "max": 1924.358
       }
     },
-    "elapsedMs": 25293.442721000003,
-    "successfulCommandsPerSecond": 14.944584814710245,
+    "elapsedMs": 27400.006657,
+    "successfulCommandsPerSecond": 13.79561708622544,
     "errors": [],
     "retries": 0,
     "integrity": "Deux scènes r41 exactes, snapshots/hashes contrôlés, hashes de 15 ZIP contrôlés ; huit merges et leurs contraintes transactionnelles. Aucun SLA local extrapolé."
@@ -3656,8 +3663,8 @@
   },
   "executed": {
     "application": {
-      "tests": 276,
-      "passed": 275,
+      "tests": 277,
+      "passed": 276,
       "skipped": 1,
       "failed": 0,
       "skipReason": "Restauration physique exécutée séparément via test:recovery"
@@ -3692,5 +3699,284 @@
     "spikeVulnerabilities": 0,
     "rootToolingModerateEntries": 11,
     "rootHighOrCritical": 0
+  },
+  "previousPhysicalRecovery": {
+    "actual": true,
+    "physical": true,
+    "mainUnchanged": true,
+    "network": "none",
+    "ports": [],
+    "backupId": "2590a1d4-24ae-404b-b6f9-0185b6235c6e",
+    "backupBytes": 118921432,
+    "backupMs": 1299.3463569999994,
+    "restoreMs": 5472.557429999999,
+    "totalMs": 11408.399145,
+    "tablesVerified": 55,
+    "rowsVerified": 234,
+    "constraintsVerified": 826,
+    "keycloakTablesVerified": 6,
+    "keycloakConstraintsVerified": 530,
+    "keycloakIdentityPreserved": true,
+    "completedSimulatedConversationPreserved": true,
+    "nativeVerified": true,
+    "oldGrantRestoredActive": true,
+    "dbRollbackAloneRejectedByExternalWitness": true,
+    "oldGrantRejectedAfterQuarantine": true,
+    "oldOAuthStillValidAtOriginalIdP": true,
+    "oldSessionRejected": true,
+    "oldProofRejected": true,
+    "privateSimulatedCredentialDecrypted": true,
+    "inheritedJobsQuarantined": true,
+    "freshHumanSessionQualified": true,
+    "rewoundEpochRejected": true,
+    "recoveryLoss": {
+      "knownPostBackupSceneWritesNotRecovered": 1,
+      "lostWriteAt": "2026-11-01T22:49:24.033Z",
+      "backupStartedAt": "2026-11-01T22:49:22.961Z",
+      "rollbackWindowUpperBoundMs": 1072,
+      "statement": "Une écriture synthétique après backup est absente conformément au point restauré ; pas de RPO temporel global démontré."
+    }
+  },
+  "previousMixedPerformance": {
+    "environment": {
+      "date": "2026-11-01T22:31:23.448Z",
+      "node": "v26.8.1",
+      "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+      "logicalCpus": 12,
+      "memoryGiB": 31.251102447509766,
+      "diskAvailableBytes": 21548871680
+    },
+    "methodology": "Corpus synthétique _test >=10 000 objets issu de bench:narrative. Services communs, vraie PostgreSQL, garde/témoin externes et ZIP réels ; transport navigateur mesuré séparément. 5 archives hors charge + 10 en rafale avec 80 autosaves / 40 commentaires / 8 merges / 120 lectures / 120 recherches. Aucune tentative cachée, aucun retry. p99 réservé aux catégories >=100 échantillons.",
+    "objects": 10000,
+    "archiveBytes": {
+      "min": 2433985,
+      "max": 2477994
+    },
+    "latencyMs": {
+      "archive": {
+        "samples": 15,
+        "p50": 2111.473,
+        "p95": 3274.759,
+        "max": 3274.759
+      },
+      "download": {
+        "samples": 15,
+        "p50": 6.528,
+        "p95": 147.796,
+        "max": 147.796
+      },
+      "hash": {
+        "samples": 15,
+        "p50": 1.268,
+        "p95": 1.387,
+        "max": 1.387
+      },
+      "autosave": {
+        "samples": 80,
+        "p50": 11.004,
+        "p95": 116.612,
+        "max": 150.019
+      },
+      "comment": {
+        "samples": 40,
+        "p50": 10.958,
+        "p95": 117.602,
+        "max": 150.09
+      },
+      "merge": {
+        "samples": 8,
+        "p50": 206.529,
+        "p95": 1674.383,
+        "max": 1674.383
+      },
+      "read": {
+        "samples": 120,
+        "p50": 5.937,
+        "p95": 111.669,
+        "p99": 144.482,
+        "max": 176.438
+      },
+      "search": {
+        "samples": 120,
+        "p50": 27.055,
+        "p95": 309.176,
+        "p99": 440.711,
+        "max": 708.949
+      }
+    },
+    "locks": {
+      "project.lock_wait_ms": {
+        "samples": 490,
+        "p50": 0.203,
+        "p95": 3.826,
+        "p99": 428.017,
+        "max": 1511.11
+      },
+      "scene.lock_wait_ms": {
+        "samples": 80,
+        "p50": 0.235,
+        "p95": 0.527,
+        "max": 1.485
+      },
+      "scene.lock_hold_ms": {
+        "samples": 80,
+        "p50": 7.315,
+        "p95": 53.456,
+        "max": 145.712
+      },
+      "project.lock_hold_ms": {
+        "samples": 490,
+        "p50": 8.938,
+        "p95": 154.524,
+        "p99": 1689.826,
+        "max": 1743.919
+      }
+    },
+    "elapsedMs": 25293.442721000003,
+    "successfulCommandsPerSecond": 14.944584814710245,
+    "errors": [],
+    "retries": 0,
+    "integrity": "Deux scènes r41 exactes, snapshots/hashes contrôlés, hashes de 15 ZIP contrôlés ; huit merges et leurs contraintes transactionnelles. Aucun SLA local extrapolé."
+  },
+  "instrumentedBuildOverlap": {
+    "scope": "Passe réussie mais simultanée à une construction Docker ; exclue de la référence de latence contrôlée.",
+    "result": {
+      "resources": {
+        "scope": "Processus Node du benchmark, cinq archives hors charge et charge mixte ; PostgreSQL/Keycloak séparés non inclus. Pic RSS de toute la vie du processus, CPU depuis avant première archive.",
+        "cpuUserMs": 23409.327,
+        "cpuSystemMs": 2392.001,
+        "peakRssKiB": 804536,
+        "rssAtEndBytes": 362577920
+      },
+      "environment": {
+        "date": "2026-11-01T23:07:56.902Z",
+        "node": "v26.8.1",
+        "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+        "logicalCpus": 12,
+        "memoryGiB": 31.251102447509766,
+        "diskAvailableBytes": 19790200832
+      },
+      "methodology": "Corpus synthétique _test >=10 000 objets issu de bench:narrative. Services communs, vraie PostgreSQL, garde/témoin externes et ZIP réels ; transport navigateur mesuré séparément. 5 archives hors charge + 10 en rafale avec 80 autosaves / 40 commentaires / 8 merges / 120 lectures / 120 recherches. Aucune tentative cachée, aucun retry. p99 réservé aux catégories >=100 échantillons.",
+      "objects": 10000,
+      "archiveBytes": {
+        "min": 2423272,
+        "max": 2465963
+      },
+      "latencyMs": {
+        "archive": {
+          "samples": 15,
+          "p50": 2327.214,
+          "p95": 3560.73,
+          "max": 3560.73
+        },
+        "download": {
+          "samples": 15,
+          "p50": 7.593,
+          "p95": 145.931,
+          "max": 145.931
+        },
+        "hash": {
+          "samples": 15,
+          "p50": 1.28,
+          "p95": 2.326,
+          "max": 2.326
+        },
+        "autosave": {
+          "samples": 80,
+          "p50": 12.189,
+          "p95": 113.655,
+          "max": 171.691
+        },
+        "comment": {
+          "samples": 40,
+          "p50": 11.534,
+          "p95": 150.341,
+          "max": 173.18
+        },
+        "merge": {
+          "samples": 8,
+          "p50": 182.342,
+          "p95": 1808.244,
+          "max": 1808.244
+        },
+        "read": {
+          "samples": 120,
+          "p50": 6.26,
+          "p95": 89.316,
+          "p99": 158.862,
+          "max": 159.231
+        },
+        "search": {
+          "samples": 120,
+          "p50": 27.617,
+          "p95": 308.355,
+          "p99": 497.92,
+          "max": 756.483
+        }
+      },
+      "locks": {
+        "project.lock_wait_ms": {
+          "samples": 490,
+          "p50": 0.21,
+          "p95": 3.6,
+          "p99": 419.387,
+          "max": 1628.204
+        },
+        "scene.lock_wait_ms": {
+          "samples": 80,
+          "p50": 0.265,
+          "p95": 0.652,
+          "max": 7.144
+        },
+        "scene.lock_hold_ms": {
+          "samples": 80,
+          "p50": 8.104,
+          "p95": 45.497,
+          "max": 164.222
+        },
+        "project.lock_hold_ms": {
+          "samples": 490,
+          "p50": 9.401,
+          "p95": 159.094,
+          "p99": 1844.594,
+          "max": 1878.497
+        }
+      },
+      "elapsedMs": 26822.295278999998,
+      "successfulCommandsPerSecond": 14.092753661389592,
+      "errors": [],
+      "retries": 0,
+      "integrity": "Deux scènes r41 exactes, snapshots/hashes contrôlés, hashes de 15 ZIP contrôlés ; huit merges et leurs contraintes transactionnelles. Aucun SLA local extrapolé."
+    }
+  },
+  "witnessRaceCorrection": {
+    "observedFailure": "503 transitoire lors du scellement fichier avant COMMIT SQL dans une passe instrumentée supplémentaire.",
+    "fix": "Revalidation de la seule paire active de la même installation, 250 ms/25 lectures maximum ; jamais de rejeu métier ni acceptation de discordance.",
+    "deterministicPostgresTestPassed": true,
+    "fullRegressionPassed": 276,
+    "fullRegressionSkippedPhysicalSeparatelyPassed": 1,
+    "controlledMixedErrors": [],
+    "controlledMixedRetries": 0
+  },
+  "browserRequalification": {
+    "firstRemoteCI": {
+      "runId": 41359553421,
+      "commit": "07c8efacfb780ccc1af0160c309d3a0f47c381e3",
+      "passed": 26,
+      "failed": 1,
+      "failure": "Annulation lente simulée sans état terminal attendu ; course CAS rendue explicite puis testée."
+    },
+    "localAfterCorrections": {
+      "fullRunPassed": 26,
+      "fullRunFailed": 1,
+      "failure": "Assertion de préparation attendait 409 alors que le refus CAS contractuel est 412. Corrigée sans changement serveur.",
+      "targetedCancellationPassed": 1,
+      "targetedCancellationFailed": 0,
+      "forcedStalePrecondition": 412,
+      "automaticCancelAfterConflict": false,
+      "secondHumanClickQualified": true
+    }
   }
 }

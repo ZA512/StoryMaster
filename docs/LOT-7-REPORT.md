@@ -8,7 +8,9 @@
 
 Main contient e9657b350afb78e4d72f97bc5d8e84eee5d82d8a ; [CI du Lot 6 sur main](https://github.com/ZA512/StoryMaster/actions/runs/41324705992) vérifiée terminée success. Dépôt initial propre, main/origin/main identiques. Ancienne codex/lot6-mcp-local supprimée localement et à distance après égalité explicite des quatre SHA, zéro commit unique et absence de worktree utilisateur. Aucune nouvelle branche ou PR ; aucun force push/réécriture. Lot 6 reçu techniquement avec réserves, ADR-0015 accepté strictement localement.
 
-Les changements de ce lot sont effectués sur main uniquement. Au moment de rédaction initiale de ce rapport, les validations locales ci-dessous sont exécutées ; la nouvelle CI distante sera renseignée après push et observation de son résultat. Une réussite locale ne vaut pas CI distante verte. Les 150 exigences et 100 MUST MVP, leurs priorités et leurs versions restent inchangés.
+Implémentation committée et poussée sur main : 07c8efacfb780ccc1af0160c309d3a0f47c381e3. La [première CI Lot 7](https://github.com/ZA512/StoryMaster/actions/runs/41359553421) a échoué sur l’annulation lente simulée : 26 parcours sur 27 réussis, autres campagnes et Spike A verts. Cet échec est conservé comme tel. La révision affichée peut devenir périmée avant le clic ; un test force désormais ce cas 412 et vérifie une actualisation suivie d’une nouvelle décision humaine, sans rejeu automatique. Le correctif de revalidation du témoin et ce parcours sont livrés dans le commit de clôture suivant. Une réussite locale ne vaut pas CI distante verte.
+
+La preuve distante de clôture se consulte par SHA dans les [exécutions push de main](https://github.com/ZA512/StoryMaster/actions?query=branch%3Amain+event%3Apush) ; le compte rendu de réception fournit le SHA et le lien daté après observation. Le statut courant reste visible dans le [badge CI de main](https://github.com/ZA512/StoryMaster/actions/workflows/validation.yaml/badge.svg?branch=main), plutôt qu’une affirmation permanente de réussite inscrite avant exécution. Les 150 exigences et 100 MUST MVP, leurs priorités et leurs versions restent inchangés.
 
 ## Capacités livrées
 
@@ -31,9 +33,9 @@ L’interface ajoute le suivi des archives et leurs erreurs, focus de navigation
 | npm run lint ; npm run typecheck | Réussite, frontières et générateurs de contrats synchronisés | Contrôles statiques |
 | python scripts/validate_specifications.py | JSON/Schema/OpenAPI, 13 outils MCP, liens, 150 IDs/100 MUST et lots conformes | Validation documentaire |
 | python -m unittest discover -s scripts/tests | 53 tests réussis, dont mutations de contrats Lot 7 | Aucun test produit déduit de ces fixtures |
-| npm test | 276 tests : 275 réussis, 0 échec, 1 skip physique explicite | Bases dédiées _test ; le skip est exécuté séparément ci-dessous |
+| npm test | 277 tests : 276 réussis, 0 échec, 1 skip physique explicite | Bases dédiées _test ; le skip est exécuté séparément ci-dessous |
 | npm run test:recovery | 1 restauration physique réelle réussie après migration 0014 | Environnement séparé, réseau none ; aucun écrasement principal |
-| npm run test:e2e, MCP_ENABLED=true | 27 parcours Chromium réussis, dont incident réel | Local Keycloak, pas de fournisseur réel |
+| npm run test:e2e, MCP_ENABLED=true | Campagne initiale : 27 réussis ; reprise après correctifs : 26 + annulation ciblée, puis campagne distante de clôture | Local Keycloak, pas de fournisseur réel ; échecs de préparation conservés |
 | Spike A : typecheck, test, bench, test:browser | 48 tests PostgreSQL et 3 navigateur réussis ; mesures produites | Yjs reste isolé hors production |
 | Spike B pertinent | Atomicité, kill de processus, réponse perdue et courses proposals-atomicity/concurrency réussis dans npm test | Vraie PostgreSQL, pas une spécification présentée comme preuve |
 | Spike C / MCP | Suites OAuth/JWT/network/concurrency/spike réussies ; CLI deux protocoles 2026-07-28 et 2025-11-25 | Treize outils, client sans LLM, portée locale |
@@ -53,30 +55,38 @@ La construction Docker des trois images API/web/MCP a réussi après les dernier
 
 Un backup principal chiffré a été créé et restauré avant les migrations nouvelles. Les migrations 0010..0014 sont additives ; 0001..0009 inchangées. Comparaison des anciennes colonnes/lignes sur les 51 tables préexistantes avant 0010..0013 : toutes empreintes inchangées ; même comparaison avant/après 0014 : inchangée. Les tests navigateur ont ensuite ajouté volontairement leurs projets et données synthétiques, sans réinitialiser la base principale. Aucun volume utilisateur supprimé. Les volumes temporaires de récupération restent conservés et arrêtés ; leur retrait futur exige un choix opérateur ciblé, aucun prune global.
 
-Dernier exercice après 0014 : backup 2590a1d4-24ae-404b-b6f9-0185b6235c6e, **118 921 432 octets chiffrés**, **1 299 ms** de création ; **5 473 ms** de restauration/vérification/quarantaine, **11 408 ms** pour l’exercice global. Contrôle exact avant quarantaine : **55 tables / 234 lignes / 826 contraintes** applicatives, **6 tables d’identité Keycloak / 530 contraintes**, empreintes des lignes, scènes/snapshots, objets/liens/commentaires/propositions/ChangeSets/audits et conversation simulée complétée. Déchiffrement uniquement de credential fictive. Les données de l’installation principale sont restées identiques pendant l’exercice ; un vrai redémarrage est également traversé par les anciens parcours.
+Exercice de référence après 0014 et correctif du témoin : backup 8919ccf4-17ff-4841-8d8b-ee5340a4aea4, **134 108 888 octets chiffrés**, **2 440 ms** de création ; **6 506 ms** de restauration/vérification/quarantaine, **12 676 ms** pour l’exercice global. Contrôle exact avant quarantaine : **55 tables / 234 lignes / 826 contraintes** applicatives, **6 tables d’identité Keycloak / 530 contraintes**, empreintes des lignes, scènes/snapshots, objets/liens/commentaires/propositions/ChangeSets/audits et conversation simulée complétée. Déchiffrement uniquement de credential fictive. Les données de l’installation principale sont restées identiques pendant l’exercice ; un vrai redémarrage est également traversé par les anciens parcours.
 
 Le grant est actif dans le backup, révoqué après backup, puis observé actif dans le SQL restauré **avant quarantaine** : le témoin externe courant refuse déjà ce SQL ancien. Après quarantaine puis activation isolée explicite, ancien OAuth (toujours valide chez l’IdP d’origine), session et preuve restent refusés ; anciennes capacités nulles, jobs annulés, aucun fournisseur/contact externe. Une nouvelle session humaine peut lire ses données. Recopier un ancien témoin externe est interdit ; une sauvegarde SQL seule ne constitue jamais l’autorité.
 
-**RPO mesuré :** une écriture synthétique après backup est absente au point restauré ; fenêtre supérieure observée de 1 072 ms entre début du backup et cette écriture. Aucun RPO temporel global n’est démontré sans fréquence/copie hors machine approuvées. **RTO mesuré :** 5,47 s pour l’outil local, pas le délai complet disque perdu/récupération clé/validation humaine. Les objectifs de 24 h restent provisoires et non garantis. Keycloak a ses données vérifiées, sans prétendre invalider globalement tous ses tokens ni qualifier tout un redémarrage IdP restauré en production.
+**RPO mesuré :** une écriture synthétique après backup est absente au point restauré ; fenêtre supérieure observée de 2 201 ms entre début du backup et cette écriture. Aucun RPO temporel global n’est démontré sans fréquence/copie hors machine approuvées. **RTO mesuré :** 6,51 s pour l’outil local, pas le délai complet disque perdu/récupération clé/validation humaine. Les objectifs de 24 h restent provisoires et non garantis. Keycloak a ses données vérifiées, sans prétendre invalider globalement tous ses tokens ni qualifier tout un redémarrage IdP restauré en production.
+
+Après commit, un second backup principal **31cc63d9-e032-4423-9573-896701adec91** (121 688 732 octets) référence exactement 07c8efacfb780ccc1af0160c309d3a0f47c381e3 avec sourceWorkingTreeDirty=false. Sa restauration isolée native et sa quarantaine ont réussi en 6 043 ms ; conteneur arrêté, volume conservé. Il complète l’exercice détaillé de fixture sans prétendre en répéter chaque assertion d’accès. Le contrôle de santé final authentifie ce nouveau backup, avec MCP désactivé et les quatre services locaux sains.
 
 ## Performances et contention
 
-Ryzen 5 3600X, 12 threads, 31,25 Gio RAM, PostgreSQL 18.6, Node 26.8.1 ; environ 20 Gio de disque disponibles pendant la clôture. Corpus 10 000 objets, 15 ZIP de 2,43–2,48 Mo ; 5 hors charge puis 10 avec 80 autosaves sur deux scènes indépendantes, 40 commentaires, 8 merges, 120 lectures et 120 recherches. Débit 14,945 commandes/s sur 25,293 s, zéro erreur/retry ; deux scènes r41 exactes et hashes des quinze ZIP contrôlés.
+Ryzen 5 3600X, 12 threads, 31,25 Gio RAM, PostgreSQL 18.6, Node 26.8.1 ; environ 18.5 Gio de disque disponibles pendant cette mesure. Les capacités sont celles de l’hôte. Le processus Node de mesure a consommé 23,477 s CPU utilisateur + 2,228 s système pour cinq archives hors charge puis la charge mixte ; pic RSS 682,6 Mio sur toute sa vie et RSS finale 447,4 Mio. Ces mesures ne comprennent pas les processus PostgreSQL/Keycloak ; aucun pic CPU/RAM de ces composants ni endurance de production revendiqués. Reproduction : bench:narrative puis bench:recovery, qui publie désormais resources.
+
+Référence après correction du témoin, sans construction Docker simultanée : corpus 10 000 objets, 15 ZIP de 2,47–2,50 Mo ; 5 hors charge puis 10 avec 80 autosaves sur deux scènes indépendantes, 40 commentaires, 8 merges, 120 lectures et 120 recherches. Débit 13,796 commandes/s sur 27,400 s, zéro erreur/retry métier ; deux scènes r41 exactes et hashes des quinze ZIP contrôlés. La première référence et une passe instrumentée simultanée à une construction Docker sont conservées séparément dans les mesures, sans mélanger leurs percentiles.
 
 | Opération | n | p50 ms | p95 ms | p99 ms |
 |---|---:|---:|---:|---:|
-| Archive | 15 | 2 111,473 | 3 274,759 | non revendiqué |
-| Téléchargement | 15 | 6,528 | 147,796 | non revendiqué |
-| SHA-256 | 15 | 1,268 | 1,387 | non revendiqué |
-| Autosave | 80 | 11,004 | 116,612 | non revendiqué |
-| Commentaire | 40 | 10,958 | 117,602 | non revendiqué |
-| Merge | 8 | 206,529 | 1 674,383 | non revendiqué |
-| Lecture | 120 | 5,937 | 111,669 | 144,482 |
-| Recherche | 120 | 27,055 | 309,176 | 440,711 |
+| Archive | 15 | 2 325,048 | 3 610,073 | non revendiqué |
+| Téléchargement | 15 | 6,908 | 21,084 | non revendiqué |
+| SHA-256 | 15 | 1,287 | 1,395 | non revendiqué |
+| Autosave | 80 | 11,516 | 149,567 | non revendiqué |
+| Commentaire | 40 | 10,984 | 148,684 | non revendiqué |
+| Merge | 8 | 173,480 | 1 860,066 | non revendiqué |
+| Lecture | 120 | 6,193 | 97,543 | 147,865 |
+| Recherche | 120 | 26,784 | 302,113 | 538,843 |
 
-Attente projet p95 3,826 ms/p99 428,017 ms/max 1 511,11 ms ; détention p95 154,524 ms/p99 1 689,826 ms/max 1 743,919 ms. Scènes indépendantes : attente p95 0,527 ms/détention p95 53,456 ms. Les seuils locaux NFR-02/03 sont respectés sur cet échantillon métier, sans extrapolation publique. L’archive retient une barrière partagée pendant sa capture et retarde merge/révocation exclusifs ; le merge exclusif bloque aussi les écritures sur des scènes indépendantes. **R-CONT-01 demeure ouvert.** L’[ADR-0018](adr/0018-contention-des-archives.md) propose une future capture dédiée sans relâcher atomicité, cohérence ni contrôle d’autorisation. Aucun p99 n’est inventé pour huit merges.
+Attente projet p95 1,345 ms/p99 549,208 ms/max 1 694,717 ms ; détention p95 164,253 ms/p99 1 881,012 ms/max 1 924,358 ms. Scènes indépendantes : attente p95 0,989 ms/détention p95 59,834 ms. Les seuils locaux NFR-02/03 sont respectés sur cet échantillon métier, sans extrapolation publique. L’archive retient une barrière partagée pendant sa capture et retarde merge/révocation exclusifs ; le merge exclusif bloque aussi les écritures sur des scènes indépendantes. **R-CONT-01 demeure ouvert.** L’[ADR-0018](adr/0018-contention-des-archives.md) propose une future capture dédiée sans relâcher atomicité, cohérence ni contrôle d’autorisation. Aucun p99 n’est inventé pour huit merges.
 
 ## Anomalies corrigées et fonctions reportées
+
+Une passe complémentaire instrumentée a révélé un 503 transitoire lorsque le fichier d’époque était déjà scellé et le COMMIT encore en vol. Correction : relecture bornée de la seule paire témoin/SQL (250 ms/25 lectures au plus), jamais acceptation d’une discordance ou rejeu métier. Test déterministe PostgreSQL ajouté ; régression complète et restauration après révocation rejouées. Cette passe échouée n’est pas comptée comme succès.
+
+Le parcours d’annulation IA traite désormais le conflit de révision en actualisant la carte et en demandant un nouveau clic explicite ; son test force un CAS périmé, prouve l’absence d’annulation automatique puis termine l’annulation humaine. La première CI échouée n’est pas comptée parmi les succès.
 
 Corrections : portée des historiques de commentaires et déclassement avant téléchargement ; admission OAuth avant coût d’introspection ; historique administratif réservé à members.admin ; bind API local par défaut ; bornes et rejeu de jobs ; restauration native et chemin Unix suffisamment court ; nettoyage journalisé dans une table opérateur distincte sans faux acteur humain ; contraste et sélecteurs des nouveaux parcours. Ajv/yaml mis à jour de façon ciblée. Production et Spike A : audit dépendances zéro ; onze entrées modérées d’outillage ESLint/minimatch restantes, aucune haute/critique, justification dans la synthèse sécurité.
 

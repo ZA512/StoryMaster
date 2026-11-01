@@ -145,8 +145,8 @@ Les liens de suite identifient les oracles exécutés, pas une association autom
 | SEC-13 | MUST / MVP / 1 | **Local qualifié** — Permissions et isolement serveur ; suites HTTP/AI/MCP/archives et régression de sécurité Lot 7. | [editor-document.test.ts](../tests/editor-document.test.ts) |
 | SEC-14 | MUST / MVP / 6 | **Local qualifié** — Admission IP avant OAuth, huit authentifications simultanées, limites API/MCP ; http-admission/mcp-network. | [http-admission.test.ts](../tests/http-admission.test.ts) |
 | NFR-01 | objectif NFR / MVP / 1 | **Local qualifié, réserve saisie** — Atomicité/CAS pour confirmé ; brouillons non confirmés en mémoire uniquement. | [autosave.test.ts](../tests/autosave.test.ts) |
-| NFR-02 | objectif NFR / MVP / 7 | **Mesuré localement** — 120 lectures : p95 111,669 ms, p99 144,482 ms ; services + vraie PG, pas SLA HTTP/public. | [archives.test.ts](../tests/archives.test.ts) |
-| NFR-03 | objectif NFR / MVP / 7 | **Mesuré localement** — 10 000 objets, 120 recherches : p95 309,176 ms, p99 440,711 ms ; pas SLA public. | [archives.test.ts](../tests/archives.test.ts) |
+| NFR-02 | objectif NFR / MVP / 7 | **Mesuré localement** — 120 lectures : p95 97,543 ms, p99 147,865 ms ; services + vraie PG, pas SLA HTTP/public. | [archives.test.ts](../tests/archives.test.ts) |
+| NFR-03 | objectif NFR / MVP / 7 | **Mesuré localement** — 10 000 objets, 120 recherches : p95 302,113 ms, p99 538,843 ms ; pas SLA public. | [archives.test.ts](../tests/archives.test.ts) |
 | NFR-04 | objectif NFR / MVP / 1 | **Qualification partielle** — Retour visible autosave testé ; cible 2 s non garantie sous toute charge/panne. | [autosave.test.ts](../tests/autosave.test.ts) |
 | NFR-05 | objectif NFR / MVP / 7 | **Réserve GO-04** — Ordonnanceur livré désactivé, aperçu exécuté ; restauration réelle réussie, automatisation non activée. | [installation-recovery.test.ts](../tests/installation-recovery.test.ts) |
 | NFR-06 | objectif NFR / MVP / 7 | **Non qualifié** — Disponibilité 99,5 % de production non mesurée ; aucun SLA déduit. | [Plan](IMPLEMENTATION-PLAN.md) |

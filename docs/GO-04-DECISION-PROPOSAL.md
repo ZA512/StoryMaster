@@ -26,7 +26,7 @@ SEC-07 reste **MUST non satisfait** : HTTP local et PostgreSQL privé ne chiffre
 
 ## Mesures disponibles pour décider
 
-Le dernier exercice après migration 0014 a restauré réellement 55 tables applicatives (234 lignes de fixture, 826 contraintes) et vérifié six tables d’identité Keycloak plus ses 530 contraintes. Sauvegarde 1,30 s et restauration isolée avec vérification/quarantaine 5,47 s sur la machine locale ; une écriture synthétique postérieure au backup n’est pas récupérée (fenêtre supérieure observée 1 072 ms). Ces nombres décrivent un exercice, pas un engagement RPO/RTO. La fréquence reste désactivée : l’objectif provisoire de 24 h n’est donc pas une garantie opérationnelle. Voir le [rapport](LOT-7-REPORT.md).
+L’exercice de référence après migration 0014 a restauré réellement 55 tables applicatives (234 lignes de fixture, 826 contraintes) et vérifié six tables d’identité Keycloak plus ses 530 contraintes. Sauvegarde 2,44 s et restauration isolée avec vérification/quarantaine 6,51 s sur la machine locale ; une écriture synthétique postérieure au backup n’est pas récupérée (fenêtre supérieure observée 2 201 ms). Ces nombres décrivent un exercice, pas un engagement RPO/RTO. La fréquence reste désactivée : l’objectif provisoire de 24 h n’est donc pas une garantie opérationnelle. Voir le [rapport](LOT-7-REPORT.md).
 
 ## Ce qui reste fermé tant que GO-04 n’est pas accepté
 
