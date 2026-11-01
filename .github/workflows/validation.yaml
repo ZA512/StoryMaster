@@ -1,4 +1,4 @@
-name: Documentation et Lots 0–4
+name: Documentation et Lots 0–5 phase A
 on:
   push:
   pull_request:
@@ -10,7 +10,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
     env:
       NEXT_TELEMETRY_DISABLED: '1'
     steps:
@@ -41,7 +41,7 @@ jobs:
         run: |
           cp .env.example .env
           docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait
-      - name: Tests applicatifs et PostgreSQL
+      - name: Tests applicatifs PostgreSQL et IA simulée sans clé réelle
         run: npm test
       - name: Qualification préliminaire de contention
         run: npm run bench:contention
@@ -53,7 +53,7 @@ jobs:
         run: npm run bench:collaboration
       - name: Qualification du merge contre autosauvegardes indépendantes
         run: npm run bench:proposals
-      - name: Navigateur
+      - name: Navigateur avec Keycloak et assistant simulé
         run: |
           npx playwright install --with-deps chromium
           npm run test:e2e

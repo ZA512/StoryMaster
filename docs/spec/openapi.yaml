@@ -2,9 +2,9 @@ openapi: 3.1.1
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 info:
   title: StoryMaster — contrats de spécification
-  version: 0.7.0
-  description: Contrats MVP. x-lot 0/1/2/3/4 implémentés pour session humaine ; autres opérations et MCP
-    spécifiés seulement.
+  version: 0.8.0
+  description: Contrats MVP. Lots 0–4 humains et Lot 5 phase A simulée exécutables ; fournisseurs réels soumis à
+    GO-03, MCP spécifié seulement.
 servers:
   - url: http://localhost:3000/api/v1
     description: Docker Compose local seulement
@@ -7736,6 +7736,1548 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
+  /projects/{projectId}/ai/config:
+    get:
+      operationId: aiConfig
+      summary: aiConfig
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIConfig"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/ai/credentials:
+    get:
+      operationId: aiCredentials
+      summary: aiCredentials
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AICredentialList"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    post:
+      operationId: aiCredentialCreate
+      summary: aiCredentialCreate
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+      responses:
+        "201":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AICredential"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AICredentialCreate"
+  /projects/{projectId}/ai/credentials/{credentialId}/replace:
+    post:
+      operationId: aiCredentialReplace
+      summary: aiCredentialReplace
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: credentialId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AICredential"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AICredentialReplace"
+  /projects/{projectId}/ai/credentials/{credentialId}/revoke:
+    post:
+      operationId: aiCredentialRevoke
+      summary: aiCredentialRevoke
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: credentialId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AICredential"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/ai/credentials/{credentialId}/rewrap:
+    post:
+      operationId: aiCredentialRewrap
+      summary: aiCredentialRewrap
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: credentialId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AICredential"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/ai/conversations:
+    get:
+      operationId: aiConversations
+      summary: aiConversations
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: beforeId
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIConversationPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    post:
+      operationId: aiConversationCreate
+      summary: aiConversationCreate
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+      responses:
+        "201":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIConversation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIConversationCreate"
+  /projects/{projectId}/ai/conversations/{conversationId}:
+    get:
+      operationId: aiConversationGet
+      summary: aiConversationGet
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: beforeSequence
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIConversationDetail"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/ai/conversations/{conversationId}/close:
+    post:
+      operationId: aiConversationClose
+      summary: aiConversationClose
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIConversation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/ai/conversations/{conversationId}/retention:
+    post:
+      operationId: aiConversationRetention
+      summary: aiConversationRetention
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIConversation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIRetentionUpdate"
+  /projects/{projectId}/ai/conversations/{conversationId}/revoke_consent:
+    post:
+      operationId: aiConversationRevokeConsent
+      summary: aiConversationRevokeConsent
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIConversation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/ai/conversations/{conversationId}/context:
+    post:
+      operationId: aiContextPrepare
+      summary: aiContextPrepare
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIContextPlan"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIContextPrepare"
+  /projects/{projectId}/ai/conversations/{conversationId}/messages:
+    post:
+      operationId: aiExecutionCreate
+      summary: aiExecutionCreate
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "202":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIExecution"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AISend"
+  /projects/{projectId}/ai/executions/{executionId}:
+    get:
+      operationId: aiExecutionGet
+      summary: aiExecutionGet
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIExecution"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/ai/executions/{executionId}/sources:
+    get:
+      operationId: aiSources
+      summary: aiSources
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AISources"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /projects/{projectId}/ai/executions/{executionId}/cancel:
+    post:
+      operationId: aiExecutionCancel
+      summary: aiExecutionCancel
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIExecution"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /projects/{projectId}/ai/budget:
+    get:
+      operationId: aiBudgetGet
+      summary: aiBudgetGet
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIBudget"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    put:
+      operationId: aiBudgetUpdate
+      summary: aiBudgetUpdate
+      x-lot: 5
+      x-ai-phase: A
+      x-owner-bound: true
+      x-permission: ai.personal
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - name: If-Match
+          in: header
+          required: true
+          schema:
+            type: string
+            pattern: ^"r[1-9][0-9]*"$
+      responses:
+        "200":
+          description: Résultat privé de phase A simulée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/AIBudget"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIBudgetUpdate"
 components:
   schemas:
     Id:
@@ -9100,8 +10642,7 @@ components:
             userId:
               type: string
               minLength: 1
-              maxLength: 128
-              pattern: ^[A-Za-z0-9_-]+$
+              maxLength: 200
             clientId:
               type: string
               minLength: 1
@@ -9148,6 +10689,8 @@ components:
             - type: string
               format: date-time
             - type: "null"
+        aiProvenance:
+          $ref: "#/components/schemas/AIProvenance"
       required:
         - id
         - projectId
@@ -12877,6 +14420,9 @@ components:
             - id
             - displayName
           additionalProperties: false
+        aiExecutionId:
+          type: string
+          format: uuid
       required:
         - title
         - description
@@ -13064,6 +14610,999 @@ components:
         - createdAt
         - result
         - events
+      additionalProperties: false
+    AICredentialCreate:
+      type: object
+      properties:
+        provider:
+          type: string
+          const: local-simulator
+        label:
+          type: string
+          maxLength: 200
+        secret:
+          type: string
+          pattern: ^demo-storymaster-[A-Za-z0-9_-]{8,100}$
+      required:
+        - provider
+        - label
+        - secret
+      additionalProperties: false
+    AICredentialReplace:
+      type: object
+      properties:
+        label:
+          type: string
+          maxLength: 200
+        secret:
+          type: string
+          pattern: ^demo-storymaster-[A-Za-z0-9_-]{8,100}$
+      required:
+        - label
+        - secret
+      additionalProperties: false
+    AIConversationCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        credentialId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        model:
+          type: string
+          enum:
+            - discussion-v1
+            - narrative-v1
+            - slow-v1
+            - unknown-v1
+            - unavailable-v1
+      required:
+        - title
+        - credentialId
+        - model
+      additionalProperties: false
+    AIContextPrepare:
+      type: object
+      properties:
+        message:
+          type: string
+          maxLength: 8000
+        intent:
+          type: string
+          enum:
+            - discuss
+            - propose
+        selection:
+          type: object
+          properties:
+            sceneId:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            objectId:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            proposalId:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            includeRelated:
+              default: true
+              type: boolean
+            searchQuery:
+              default: ""
+              type: string
+              maxLength: 200
+          required:
+            - includeRelated
+            - searchQuery
+          additionalProperties: false
+        limits:
+          type: object
+          properties:
+            maxCalls:
+              type: integer
+              minimum: 1
+              maximum: 6
+            maxTools:
+              type: integer
+              minimum: 1
+              maximum: 12
+            maxOutputTokens:
+              type: integer
+              minimum: 32
+              maximum: 4096
+            durationMs:
+              type: integer
+              minimum: 200
+              maximum: 60000
+          additionalProperties: false
+      required:
+        - message
+        - intent
+        - selection
+      additionalProperties: false
+    AISend:
+      type: object
+      properties:
+        planId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        contextHash:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        consent:
+          type: boolean
+          const: true
+      required:
+        - planId
+        - contextHash
+        - consent
+      additionalProperties: false
+    AIBudgetUpdate:
+      type: object
+      properties:
+        limits:
+          type: object
+          properties:
+            maxCalls:
+              type: integer
+              minimum: 0
+              maximum: 100000
+            maxTokens:
+              type: integer
+              minimum: 0
+              maximum: 1000000000
+            maxCostMicros:
+              anyOf:
+                - type: integer
+                  minimum: 0
+                  maximum: 1000000000
+                - type: "null"
+            maxConcurrent:
+              type: integer
+              minimum: 1
+              maximum: 2
+          required:
+            - maxCalls
+            - maxTokens
+            - maxCostMicros
+            - maxConcurrent
+          additionalProperties: false
+      required:
+        - limits
+      additionalProperties: false
+    AIRetentionUpdate:
+      type: object
+      properties:
+        retentionDays:
+          anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 3650
+            - type: "null"
+      required:
+        - retentionDays
+      additionalProperties: false
+    AIPolicy:
+      type: object
+      properties:
+        maxCalls:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        maxTools:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        maxInputTokens:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        maxOutputTokens:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        maxContextBytes:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        durationMs:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        maxConcurrent:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+      required:
+        - maxCalls
+        - maxTools
+        - maxInputTokens
+        - maxOutputTokens
+        - maxContextBytes
+        - durationMs
+        - maxConcurrent
+      additionalProperties: false
+    AIConfig:
+      type: object
+      properties:
+        phase:
+          const: A
+        simulated:
+          const: true
+        externalProvidersEnabled:
+          const: false
+        provider:
+          type: object
+          properties:
+            id:
+              const: local-simulator
+            name:
+              type: string
+            models:
+              type: array
+              items:
+                enum:
+                  - discussion-v1
+                  - narrative-v1
+                  - slow-v1
+                  - unknown-v1
+                  - unavailable-v1
+            capabilities:
+              type: object
+              properties:
+                tools:
+                  const: true
+                structuredOutput:
+                  const: true
+                usage:
+                  const: true
+                cancellation:
+                  const: best_effort
+                timeout:
+                  const: unknown_after_send
+              required:
+                - tools
+                - structuredOutput
+                - usage
+                - cancellation
+                - timeout
+              additionalProperties: false
+          required:
+            - id
+            - name
+            - models
+            - capabilities
+          additionalProperties: false
+        hardLimits:
+          $ref: "#/components/schemas/AIPolicy"
+      required:
+        - phase
+        - simulated
+        - externalProvidersEnabled
+        - provider
+        - hardLimits
+      additionalProperties: false
+    AICredential:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        provider:
+          const: local-simulator
+        label:
+          type: string
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        keyVersion:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        protectionVersion:
+          type: string
+        status:
+          enum:
+            - active
+            - revoked
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - ownerId
+        - provider
+        - label
+        - revision
+        - keyVersion
+        - protectionVersion
+        - status
+        - createdAt
+        - updatedAt
+      additionalProperties: false
+    AICredentialList:
+      type: array
+      items:
+        $ref: "#/components/schemas/AICredential"
+    AIConversation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        credentialId:
+          type: string
+          format: uuid
+        credentialRevision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        provider:
+          const: local-simulator
+        model:
+          enum:
+            - discussion-v1
+            - narrative-v1
+            - slow-v1
+            - unknown-v1
+            - unavailable-v1
+        title:
+          type: string
+        status:
+          enum:
+            - active
+            - closed
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        retentionDays:
+          anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 9007199254740991
+            - type: "null"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - projectId
+        - ownerId
+        - credentialId
+        - credentialRevision
+        - provider
+        - model
+        - title
+        - status
+        - revision
+        - retentionDays
+        - createdAt
+        - updatedAt
+      additionalProperties: false
+    AIConversationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIConversation"
+        hasMore:
+          type: boolean
+        nextBeforeId:
+          anyOf:
+            - type: string
+              format: uuid
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextBeforeId
+      additionalProperties: false
+    ContextReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        resourceType:
+          enum:
+            - project
+            - manuscript
+            - chapter
+            - scene
+            - object
+            - relation
+            - module
+            - proposal
+        resourceId:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        contentHash:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        selectionReason:
+          type: string
+        title:
+          type: string
+        range:
+          anyOf:
+            - type: object
+              properties:
+                from:
+                  type: integer
+                  minimum: 0
+                  maximum: 9007199254740991
+                to:
+                  type: integer
+                  minimum: 0
+                  maximum: 9007199254740991
+                unit:
+                  const: utf16_text
+              required:
+                - from
+                - to
+                - unit
+              additionalProperties: false
+            - type: "null"
+        excerpt:
+          type: boolean
+        data:
+          type: object
+      required:
+        - id
+        - projectId
+        - resourceType
+        - resourceId
+        - revision
+        - contentHash
+        - selectionReason
+        - title
+        - range
+        - excerpt
+        - data
+      additionalProperties: false
+    AIContextPlan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversationId:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        credentialId:
+          type: string
+          format: uuid
+        credentialRevision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        provider:
+          const: local-simulator
+        model:
+          enum:
+            - discussion-v1
+            - narrative-v1
+            - slow-v1
+            - unknown-v1
+            - unavailable-v1
+        message:
+          type: string
+        intent:
+          enum:
+            - discuss
+            - propose
+        selection:
+          type: object
+          properties:
+            sceneId:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            objectId:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            proposalId:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            includeRelated:
+              default: true
+              type: boolean
+            searchQuery:
+              default: ""
+              type: string
+              maxLength: 200
+          required:
+            - includeRelated
+            - searchQuery
+          additionalProperties: false
+        contextHash:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContextReference"
+        history:
+          type: array
+          maxItems: 4
+          items:
+            type: object
+            properties:
+              role:
+                enum:
+                  - human
+                  - assistant
+              text:
+                type: string
+            required:
+              - role
+              - text
+            additionalProperties: false
+        policy:
+          $ref: "#/components/schemas/AIPolicy"
+        bytes:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        warnings:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - projectId
+        - ownerId
+        - credentialId
+        - credentialRevision
+        - provider
+        - model
+        - message
+        - intent
+        - selection
+        - contextHash
+        - sources
+        - history
+        - policy
+        - bytes
+        - warnings
+        - createdAt
+        - expiresAt
+      additionalProperties: false
+    AIUsage:
+      type: object
+      properties:
+        calls:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        inputTokens:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        outputTokens:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        estimatedCostMicros:
+          anyOf:
+            - type: integer
+              minimum: 0
+              maximum: 9007199254740991
+            - type: "null"
+        currency:
+          const: USD
+        simulated:
+          const: true
+      required:
+        - calls
+        - inputTokens
+        - outputTokens
+        - estimatedCostMicros
+        - currency
+        - simulated
+      additionalProperties: false
+    AIReservation:
+      type: object
+      properties:
+        calls:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        tokens:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        costMicros:
+          anyOf:
+            - type: integer
+              minimum: 0
+              maximum: 9007199254740991
+            - type: "null"
+      required:
+        - calls
+        - tokens
+        - costMicros
+      additionalProperties: false
+    AIExecution:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversationId:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        credentialId:
+          type: string
+          format: uuid
+        credentialRevision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        provider:
+          const: local-simulator
+        model:
+          enum:
+            - discussion-v1
+            - narrative-v1
+            - slow-v1
+            - unknown-v1
+            - unavailable-v1
+        planId:
+          type: string
+          format: uuid
+        status:
+          enum:
+            - queued
+            - running
+            - succeeded
+            - failed
+            - cancelled
+            - unknown
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        canPropose:
+          type: boolean
+        cancelRequested:
+          type: boolean
+        policy:
+          $ref: "#/components/schemas/AIPolicy"
+        usage:
+          $ref: "#/components/schemas/AIUsage"
+        reserved:
+          $ref: "#/components/schemas/AIReservation"
+        proposalIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        errorCode:
+          anyOf:
+            - type: string
+            - type: "null"
+        errorMessage:
+          anyOf:
+            - type: string
+            - type: "null"
+        costState:
+          enum:
+            - estimated
+            - unknown
+            - not_sent
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        endedAt:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        leaseUntil:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        sentCalls:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - id
+        - conversationId
+        - projectId
+        - ownerId
+        - credentialId
+        - credentialRevision
+        - provider
+        - model
+        - planId
+        - status
+        - revision
+        - canPropose
+        - cancelRequested
+        - policy
+        - usage
+        - reserved
+        - proposalIds
+        - errorCode
+        - errorMessage
+        - costState
+        - createdAt
+        - startedAt
+        - endedAt
+        - leaseUntil
+        - sentCalls
+      additionalProperties: false
+    AIMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        conversationId:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        executionId:
+          anyOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        sequence:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        role:
+          enum:
+            - human
+            - assistant
+            - tool_call
+            - tool_result
+        text:
+          type: string
+        payload:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - projectId
+        - executionId
+        - sequence
+        - role
+        - text
+        - payload
+        - createdAt
+      additionalProperties: false
+    AIConversationDetail:
+      type: object
+      properties:
+        conversation:
+          $ref: "#/components/schemas/AIConversation"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIMessage"
+        executions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIExecution"
+        hasMoreMessages:
+          type: boolean
+        nextBeforeSequence:
+          anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 9007199254740991
+            - type: "null"
+      required:
+        - conversation
+        - messages
+        - executions
+        - hasMoreMessages
+        - nextBeforeSequence
+      additionalProperties: false
+    AIBudget:
+      type: object
+      properties:
+        projectId:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        limits:
+          type: object
+          properties:
+            maxCalls:
+              type: integer
+              minimum: 0
+              maximum: 100000
+            maxTokens:
+              type: integer
+              minimum: 0
+              maximum: 1000000000
+            maxCostMicros:
+              anyOf:
+                - type: integer
+                  minimum: 0
+                  maximum: 1000000000
+                - type: "null"
+            maxConcurrent:
+              type: integer
+              minimum: 1
+              maximum: 2
+          required:
+            - maxCalls
+            - maxTokens
+            - maxCostMicros
+            - maxConcurrent
+          additionalProperties: false
+        spent:
+          type: object
+          properties:
+            calls:
+              type: integer
+              minimum: 0
+              maximum: 9007199254740991
+            tokens:
+              type: integer
+              minimum: 0
+              maximum: 9007199254740991
+            costMicros:
+              type: integer
+              minimum: 0
+              maximum: 9007199254740991
+          required:
+            - calls
+            - tokens
+            - costMicros
+          additionalProperties: false
+        reserved:
+          type: object
+          properties:
+            calls:
+              type: integer
+              minimum: 0
+              maximum: 9007199254740991
+            tokens:
+              type: integer
+              minimum: 0
+              maximum: 9007199254740991
+            costMicros:
+              type: integer
+              minimum: 0
+              maximum: 9007199254740991
+          required:
+            - calls
+            - tokens
+            - costMicros
+          additionalProperties: false
+        activeExecutions:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+        - projectId
+        - ownerId
+        - revision
+        - limits
+        - spent
+        - reserved
+        - activeExecutions
+      additionalProperties: false
+    AISources:
+      type: object
+      properties:
+        executionId:
+          type: string
+          format: uuid
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContextReference"
+        contextHash:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+      required:
+        - executionId
+        - sources
+        - contextHash
+      additionalProperties: false
+    AIProvenance:
+      type: object
+      properties:
+        executionId:
+          type: string
+          format: uuid
+        initiatorId:
+          type: string
+          format: uuid
+        provider:
+          const: local-simulator
+        model:
+          enum:
+            - discussion-v1
+            - narrative-v1
+            - slow-v1
+            - unknown-v1
+            - unavailable-v1
+        simulated:
+          const: true
+      required:
+        - executionId
+        - initiatorId
+        - provider
+        - model
+        - simulated
       additionalProperties: false
   parameters:
     IfMatch:

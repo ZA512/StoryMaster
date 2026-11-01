@@ -1028,6 +1028,14 @@ Un projet avec plusieurs manuscrits partage déjà ses objets. Une série dans c
 
 Modèle relationnel hybride recommandé (confiance élevée, ADR-0006), plutôt que graphe séparé ou documents entièrement libres ; opérations fermées plutôt que JSON Patch universel ; snapshot de scène plutôt que positions textuelles fragiles. Ces choix limitent les conflits fins, mais permettent une revue et une transaction fiables. Permissions projet, confidentialité des conversations et valeurs d'approbation sont des recommandations à valider, pas des exigences PRD inventées. Éditeur exact/spike A, rétention, transfert de propriété et partage d'univers restent ouverts au plan.
 
+## Modèle exécuté au Lot 5 — phase A
+
+ADR-0014 ajoute AIConversation (projet, initiateur, credential personnel et modèle), AIMessage (human/assistant/tool_call/tool_result), AIContextPlan immuable (incluant l’intention sélectionnée à réviser sans avis humains) et ContextReference (type, ID, révision, hash, raison, plage/extrait éventuel). Les messages et plans ne deviennent jamais du canon. AIExecution distingue queued/running/succeeded/failed/cancelled/unknown, révision CAS, limites, usage connu, estimation synthétique et réservation restante. Le consentement référence exactement plan, conversation et exécution.
+
+ProviderCredential appartient à un utilisateur, enveloppe AES-256-GCM versionnée ; aucune valeur déchiffrée dans un DTO. AIBudget personnel par projet est réservé atomiquement avant admission de l’exécution complète. Un résultat unknown conserve prudemment la partie non rapprochée. Conversations, inventaires et résultats restent privés à l’initiateur encore membre, y compris face à owner/admin. Durée souhaitée configurable sans purge automatique avant décision GO-03.
+
+Une proposition integrated_ai conserve immuablement executionId, fournisseur, modèle et initiateur humain vérifiés en DB. Une révision ultérieure porte son propre aiExecutionId si produite par l’assistant ; une révision humaine reste humaine. Le créateur logiciel et l’initiateur humain sont distincts ; l’auto-approbation compare toujours ce dernier. Le moteur commun conserve approbations versionnées, validation actuelle et merge humain atomique. external_ai reste inactif, MCP futur.
+
 ## Critères d'acceptation du document
 
 Chaque entité demandée a identité, ownership, attributs, cardinalités, cycle, suppression, version et autorisation ; chaque kind de operations.schema.json a une cible et des invariants ; les deux fixtures se projettent sans ambiguïté ; les états approve→révision→submit invalident l'ancienne review ; aucun objet V1 n'est nécessaire à une écriture MVP ; Mermaid décrit les frontières et associations principales.

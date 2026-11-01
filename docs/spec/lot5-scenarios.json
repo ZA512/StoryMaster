@@ -1,0 +1,71 @@
+{
+  "status": "Phase A simulée ; preuves exactes et limites dans LOT-5-REPORT.md, aucun fournisseur réel ni variante MCP exécutés.",
+  "scenarios": [
+    {
+      "contractTest": "CT-21",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Échec avant envoi versus unknown après admission, aucun retry, canon inchangé.",
+      "executableTest": "tests/ai-resilience.test.ts"
+    },
+    {
+      "contractTest": "CT-22",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Injections scène, fiche et recherche, outils et ressources hors inventaire refusés.",
+      "executableTest": "tests/ai-security.test.ts"
+    },
+    {
+      "contractTest": "CT-23",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Clé canari/token absents des réponses et logs ; contextes contrôlés aussi dans ai-security.",
+      "executableTest": "tests/ai-http.test.ts"
+    },
+    {
+      "contractTest": "CT-27",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Membership/session/configuration revalidés au claim et avant publication, révocation pendant attente.",
+      "executableTest": "tests/ai-concurrency.test.ts"
+    },
+    {
+      "contractTest": "CT-28",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Budget insuffisant avant appel, limites de tokens/appels/outils.",
+      "executableTest": "tests/ai-resilience.test.ts"
+    },
+    {
+      "contractTest": "CT-30",
+      "scope": "integrated_ai_simulated_partial",
+      "oracle": "Provenance serveur humain initiateur, canal integrated_ai, exécution/fournisseur/modèle et audit. Pas de clientId/grantId tiers en phase A.",
+      "executableTest": "tests/ai.test.ts"
+    },
+    {
+      "contractTest": "CT-32",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Identité intégrée forgée refusée, capacité vérifiée, canon/approve/merge interdits même owner. Session HTTP seule établit une identité humaine, bearer arbitraire sans autorité.",
+      "executableTest": "tests/ai-security.test.ts"
+    },
+    {
+      "contractTest": "CT-34",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Chiffrement authentifié et AAD, rewrap, remplacement/révocation ; ancienne version non admise.",
+      "executableTest": "tests/ai-security.test.ts"
+    },
+    {
+      "contractTest": "CT-37",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Deux réservations concurrentes, une seule admise sous plafond, autre BUDGET_EXCEEDED.",
+      "executableTest": "tests/ai-concurrency.test.ts"
+    },
+    {
+      "contractTest": "CT-38",
+      "scope": "integrated_ai_simulated",
+      "oracle": "Autre membre même owner/admin 404, accès initiateur et membership courant, export sans transcript.",
+      "executableTest": "tests/ai.test.ts"
+    },
+    {
+      "contractTest": "CT-41",
+      "scope": "integrated_ai_simulated_partial",
+      "oracle": "URL/fournisseur libre et outils fetch/sql/shell refusés avant egress ; simulateur sans transport.",
+      "executableTest": "tests/ai-security.test.ts"
+    }
+  ]
+}

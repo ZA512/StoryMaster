@@ -1,3 +1,4 @@
+import type {AIPort} from './ai-ports.ts';
 import type {ProposalPort} from './proposal-ports.ts';
 import type {CollaborationPort} from './collaboration-ports.ts';
 import type {NarrativePort} from './narrative-ports.ts';
@@ -9,7 +10,7 @@ import type { Page, ProjectDto } from '@storymaster/contracts';
 
 export interface ProjectPosition { timestamp: string; id: string }
 export interface Transaction {
-  readonly proposals:ProposalPort;readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
+  readonly ai:AIPort;readonly proposals:ProposalPort;readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
   assertActor(actor: Actor): Promise<void>;
   getProject(userId: string, projectId: string): Promise<ProjectWithRole | null>;
   listProjects(userId: string, limit: number, after?: ProjectPosition): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
@@ -161,3 +162,13 @@ export * from './collaboration.ts';
 
 export * from './proposal-ports.ts';
 export * from './proposals.ts';
+
+export * from './ai-ports.ts';
+
+export * from './ai-service.ts';
+export * from './ai-context.ts';
+export * from './ai-budget.ts';
+export * from './ai-tools.ts';
+
+export * from './ai-executor.ts';
+export * from './ai-orchestrator.ts';

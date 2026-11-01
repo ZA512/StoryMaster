@@ -78,7 +78,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Tâches (ordre proposé) :** Initialiser dépôt/CI/environnement reproductible ; cas d’usage d’identité OIDC et sessions ; Project, Membership et autorisation commune ; schémas/erreurs/CAS/idempotence et audit minimal ; rôle DB sans privilèges globaux ; stratégie transaction/verrou projet ; tests de refus et données fictives.
 
-**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis Lots 2, 3 et 4 autorisés par instructions distinctes ; arrêt avant Lot 5 après réception du moteur de propositions.
+**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis Lots 2, 3 et 4 autorisés par instructions distinctes ; phase A du Lot 5 autorisée séparément après réception du moteur de propositions ; GO-03 avant phase B.
 
 **Risques :** Divergence adaptateurs, mauvaise identité email, secret en CI, décision IdP tardive.
 
@@ -184,7 +184,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 ### Lot 4 — Propositions
 
-**État :** implémentation complète autorisée le 31 octobre 2026 après réception technique du Lot 3 ; réalisation et preuves dans [LOT-4-REPORT](LOT-4-REPORT.md), choix [ADR-0013](adr/0013-moteur-de-propositions-et-fusion.md), [mesures](measurements/LOT-4-PROPOSALS.md). Réception humaine attendue ; aucun Lot 5 autorisé.
+**État :** implémentation complète autorisée le 31 octobre 2026 après réception technique du Lot 3 ; réalisation et preuves dans [LOT-4-REPORT](LOT-4-REPORT.md), choix [ADR-0013](adr/0013-moteur-de-propositions-et-fusion.md), [mesures](measurements/LOT-4-PROPOSALS.md). Réception technique et principes ADR-0013 acceptés par instruction Lot 5, CI de 9c2df0b vérifiée verte ; réserves maintenues. Phase A du Lot 5 autorisée, GO-03 toujours proposé.
 
 **Objectif :** Examiner et fusionner une intention multi-objets atomique.
 
@@ -213,6 +213,8 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 
 ### Lot 5 — Assistant IA intégré
+
+**État :** phase A locale autorisée au 1er novembre 2026. [GO-03 proposé](GO-03-DECISION-PROPOSAL.md), [ADR-0014](adr/0014-assistant-integre-et-executions-bornees.md), [rapport phase A](LOT-5-REPORT.md). Aucun fournisseur réel, clé réelle ou appel facturable avant accord explicite du propriétaire. La réception finale reste en phase B ; arrêt avant Lot 6.
 
 **Objectif :** Permettre consultation ciblée et propositions sous revue humaine.
 

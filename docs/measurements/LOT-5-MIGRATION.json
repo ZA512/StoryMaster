@@ -1,0 +1,943 @@
+{
+  "date": "2026-11-01T10:08:21.473Z",
+  "method": "Snapshot PostgreSQL REPEATABLE READ READ ONLY ; colonnes préexistantes et lignes triées, SHA-256 de leur JSON ; aucun texte exporté",
+  "tables": {
+    "projects": {
+      "count": 141,
+      "digest": "4803ef9c84c5cc1b3770ff9a33514d6f41241c40460e133a637ceb8bb8b75b38",
+      "columns": [
+        "id",
+        "owner_id",
+        "name",
+        "description",
+        "language",
+        "visibility",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "editorial_revision",
+        "editorial_structure_revision"
+      ]
+    },
+    "project_memberships": {
+      "count": 200,
+      "digest": "360bc30339ebe1ae51fa64e671db7ec1d8594f21c8507c003b8883e1c6f32d3b",
+      "columns": [
+        "project_id",
+        "user_id",
+        "role",
+        "status",
+        "revision",
+        "change_sequence",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "project_revisions": {
+      "count": 200,
+      "digest": "13489ffbfd70dfc8b77fcbebed44061a567b3893de21dc4f44a2541eb3a539b4",
+      "columns": [
+        "project_id",
+        "revision",
+        "snapshot",
+        "actor_user_id",
+        "created_at"
+      ]
+    },
+    "manuscripts": {
+      "count": 124,
+      "digest": "e8d011d44f50f7b1a348e8268f8ee16befece68f953e04f7c6b998a37da67dc8",
+      "columns": [
+        "id",
+        "project_id",
+        "title",
+        "description",
+        "position",
+        "revision",
+        "structure_revision",
+        "archived",
+        "writing_statuses",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "chapters": {
+      "count": 136,
+      "digest": "ba442e3d09daefeea5855c087fd9e4648dfb654f15971310138418bc58730c4c",
+      "columns": [
+        "id",
+        "project_id",
+        "manuscript_id",
+        "title",
+        "summary",
+        "position",
+        "revision",
+        "structure_revision",
+        "archived",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "scenes": {
+      "count": 186,
+      "digest": "3513305d6f74fece22db129c01ef1e5467c7bc134fc9ab5caac9510ba9af2db0",
+      "columns": [
+        "id",
+        "project_id",
+        "chapter_id",
+        "title",
+        "summary",
+        "status",
+        "archived",
+        "position",
+        "revision",
+        "content_format_version",
+        "content",
+        "content_hash",
+        "word_count",
+        "created_at",
+        "updated_at",
+        "search_text",
+        "search_vector"
+      ]
+    },
+    "scene_revisions": {
+      "count": 515,
+      "digest": "a9c502c6f042edd29f8974c4f86ff96137b7d9ea0ef82a5b1ae603997da6991a",
+      "columns": [
+        "project_id",
+        "scene_id",
+        "revision",
+        "content_snapshot",
+        "content_hash",
+        "metadata_snapshot",
+        "actor_user_id",
+        "actor_display_name",
+        "change_set_id",
+        "action",
+        "restored_from_revision",
+        "created_at",
+        "reference_snapshot"
+      ]
+    },
+    "editorial_changes": {
+      "count": 775,
+      "digest": "39aac040ad05863f079d8c5468fcec8d63e1d8a21042621163614e954c17585d",
+      "columns": [
+        "id",
+        "project_id",
+        "resource_id",
+        "resource_type",
+        "action",
+        "before_revision",
+        "after_revision",
+        "actor_user_id",
+        "correlation_id",
+        "details",
+        "created_at"
+      ]
+    },
+    "editorial_clocks": {
+      "count": 141,
+      "digest": "c0bf5a63fb198b9bfd2b0021caa7e95a7b36ad9ccc1e281dc89880fa4b1a60df",
+      "columns": [
+        "project_id",
+        "revision"
+      ]
+    },
+    "narrative_objects": {
+      "count": 84,
+      "digest": "5b86552aef3b7794ce804a52ae1ea2c24d3de0ff5a8023b0012a01f84300eeee",
+      "columns": [
+        "id",
+        "project_id",
+        "type_key",
+        "schema_version",
+        "name",
+        "summary",
+        "attributes",
+        "notes",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+        "parent_place_id",
+        "parent_type",
+        "ordinal_position",
+        "search_text",
+        "search_vector"
+      ]
+    },
+    "narrative_relations": {
+      "count": 12,
+      "digest": "d3efc505e5004c453401293e36b135eddc0a5a1c6af5c521b18ee5fca0b5e1fe",
+      "columns": [
+        "id",
+        "project_id",
+        "source_object_id",
+        "target_object_id",
+        "relation_type",
+        "attributes",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by"
+      ]
+    },
+    "scene_references": {
+      "count": 44,
+      "digest": "e3480ffa43558762cb02ff4d1eacb8e3d7bb951cc47e24f3d158448e02689974",
+      "columns": [
+        "id",
+        "project_id",
+        "scene_id",
+        "object_id",
+        "reference_type",
+        "metadata",
+        "revision",
+        "status"
+      ]
+    },
+    "narrative_revisions": {
+      "count": 709,
+      "digest": "1cf18810df908e65b1e99b8b64e31a2cb1f991eb53ae852ab68af20ff8958f17",
+      "columns": [
+        "project_id",
+        "resource_type",
+        "resource_id",
+        "revision",
+        "snapshot",
+        "actor_user_id",
+        "actor_display_name",
+        "actor_type",
+        "created_at",
+        "change_set_id",
+        "action",
+        "restored_from_revision"
+      ]
+    },
+    "narrative_changes": {
+      "count": 709,
+      "digest": "07b2d84fd2a3f6e957791bccf0c084549ce625ff52f42e2258af163f400e47b4",
+      "columns": [
+        "id",
+        "project_id",
+        "resource_id",
+        "resource_type",
+        "after_revision",
+        "actor_user_id",
+        "actor_type",
+        "action",
+        "correlation_id",
+        "created_at"
+      ]
+    },
+    "module_activations": {
+      "count": 423,
+      "digest": "70d079472c98aadd440465829b72ffb04b7bae63d468b5940e41871700afe325",
+      "columns": [
+        "id",
+        "project_id",
+        "module_key",
+        "module_version",
+        "enabled",
+        "revision",
+        "updated_at"
+      ]
+    },
+    "invitations": {
+      "count": 33,
+      "digest": "741a8062d8bb58b38981ec6be012f58c43110c9526f601ae4cebdc9d2c19c7c6",
+      "columns": [
+        "id",
+        "project_id",
+        "email_canonical",
+        "role",
+        "token_hash",
+        "inviter_id",
+        "status",
+        "revision",
+        "issued_sequence",
+        "expires_at",
+        "created_at",
+        "accepted_by",
+        "declined_by",
+        "reason"
+      ]
+    },
+    "comment_threads": {
+      "count": 17,
+      "digest": "86d7d28aeff1d4a584b2d67c71f6158509433703ae5ced5d4115433ee6d47554",
+      "columns": [
+        "root_comment_id",
+        "id",
+        "project_id",
+        "target_type",
+        "target_id",
+        "scene_id",
+        "object_id",
+        "author_id",
+        "author_name",
+        "state",
+        "revision",
+        "comment_count",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "comments": {
+      "count": 27,
+      "digest": "53dc86c1a300dedc7b37ae25f8526359ab37b4a16bf293e4583211e36e0e20ba",
+      "columns": [
+        "id",
+        "project_id",
+        "thread_id",
+        "author_id",
+        "author_name",
+        "body",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "updated_by",
+        "updated_by_name",
+        "withdrawal_reason"
+      ]
+    },
+    "text_anchors": {
+      "count": 8,
+      "digest": "de9514f3893fcf1dfa9e52715302647481d4aaf2432f0fbd6113c2892040bf8b",
+      "columns": [
+        "id",
+        "project_id",
+        "thread_id",
+        "scene_id",
+        "scene_revision",
+        "from_pos",
+        "to_pos",
+        "quote",
+        "prefix",
+        "suffix",
+        "state",
+        "author_id",
+        "created_at"
+      ]
+    },
+    "collaboration_revisions": {
+      "count": 337,
+      "digest": "5fa82732f6f1215cb5fe601f752a6db6d308a8a2749625b620d7f27b8ab851b9",
+      "columns": [
+        "project_id",
+        "resource_type",
+        "resource_id",
+        "revision",
+        "snapshot",
+        "actor_id",
+        "actor_name",
+        "actor_type",
+        "action",
+        "correlation_id",
+        "created_at"
+      ]
+    },
+    "collaboration_clocks": {
+      "count": 141,
+      "digest": "469dbbb0360a4a12d59cb74fe77e70571c9e04a4bf0e3e7a3222c5a8e378dd8d",
+      "columns": [
+        "project_id",
+        "sequence"
+      ]
+    },
+    "audit_events": {
+      "count": 1964,
+      "digest": "a9d9a0f16e25fadaf1b8625da6afce5fe2a285c16a65a853889c3045bff66335",
+      "columns": [
+        "id",
+        "project_id",
+        "actor_user_id",
+        "actor_type",
+        "action",
+        "resource_id",
+        "before_revision",
+        "after_revision",
+        "correlation_id",
+        "created_at"
+      ]
+    },
+    "change_proposals": {
+      "count": 11,
+      "digest": "6ec7bad4afcace56b5634d49edf7e0aa4490aaa6c81801b518c45fbeb7ef3158",
+      "columns": [
+        "id",
+        "project_id",
+        "origin",
+        "creator_id",
+        "creator_name",
+        "proposal_revision",
+        "state_version",
+        "status",
+        "created_at",
+        "updated_at",
+        "submitted_at",
+        "merged_at",
+        "merged_change_set_id"
+      ]
+    },
+    "proposal_revisions": {
+      "count": 35,
+      "digest": "c2b56fea1919546507141eecd9595fa17a2eb8feeb16b138754a1f34d1635f2c",
+      "columns": [
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "content",
+        "content_hash",
+        "policy_version",
+        "actor_id",
+        "actor_name",
+        "created_at"
+      ]
+    },
+    "proposal_reviews": {
+      "count": 13,
+      "digest": "de080548abc9e320f42ef5878bfda0b24faa80df163f44b97935fea83f93aa0e",
+      "columns": [
+        "id",
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "content_hash",
+        "reviewer_id",
+        "reviewer_name",
+        "reviewer_role",
+        "reviewer_membership_revision",
+        "state_version",
+        "decision",
+        "comment",
+        "created_at"
+      ]
+    },
+    "proposal_events": {
+      "count": 67,
+      "digest": "e9528098b1217670afc2671a07e547acb7b1663c56a6fe445ee5fc229e1cdee4",
+      "columns": [
+        "id",
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "state_version",
+        "status",
+        "action",
+        "actor_id",
+        "actor_name",
+        "created_at",
+        "correlation_id",
+        "snapshot",
+        "details"
+      ]
+    },
+    "proposal_change_sets": {
+      "count": 4,
+      "digest": "aef9df0f62aa934266cea2d3d4681aa493fc11d217e434b0063f9c4825f11b77",
+      "columns": [
+        "id",
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "content_hash",
+        "actor_id",
+        "actor_name",
+        "created_at",
+        "result"
+      ]
+    },
+    "proposal_change_events": {
+      "count": 13,
+      "digest": "fdcfcb265607880bf5cdc9ab04ba7beac9bd6a9f94823dbb3c7493a59dc232dd",
+      "columns": [
+        "project_id",
+        "change_set_id",
+        "resource_type",
+        "resource_id",
+        "before_snapshot",
+        "after_snapshot",
+        "operation_ids"
+      ]
+    }
+  },
+  "before": {
+    "projects": {
+      "count": 141,
+      "digest": "4803ef9c84c5cc1b3770ff9a33514d6f41241c40460e133a637ceb8bb8b75b38",
+      "columns": [
+        "id",
+        "owner_id",
+        "name",
+        "description",
+        "language",
+        "visibility",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "editorial_revision",
+        "editorial_structure_revision"
+      ]
+    },
+    "project_memberships": {
+      "count": 200,
+      "digest": "360bc30339ebe1ae51fa64e671db7ec1d8594f21c8507c003b8883e1c6f32d3b",
+      "columns": [
+        "project_id",
+        "user_id",
+        "role",
+        "status",
+        "revision",
+        "change_sequence",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "project_revisions": {
+      "count": 200,
+      "digest": "13489ffbfd70dfc8b77fcbebed44061a567b3893de21dc4f44a2541eb3a539b4",
+      "columns": [
+        "project_id",
+        "revision",
+        "snapshot",
+        "actor_user_id",
+        "created_at"
+      ]
+    },
+    "manuscripts": {
+      "count": 124,
+      "digest": "e8d011d44f50f7b1a348e8268f8ee16befece68f953e04f7c6b998a37da67dc8",
+      "columns": [
+        "id",
+        "project_id",
+        "title",
+        "description",
+        "position",
+        "revision",
+        "structure_revision",
+        "archived",
+        "writing_statuses",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "chapters": {
+      "count": 136,
+      "digest": "ba442e3d09daefeea5855c087fd9e4648dfb654f15971310138418bc58730c4c",
+      "columns": [
+        "id",
+        "project_id",
+        "manuscript_id",
+        "title",
+        "summary",
+        "position",
+        "revision",
+        "structure_revision",
+        "archived",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "scenes": {
+      "count": 186,
+      "digest": "3513305d6f74fece22db129c01ef1e5467c7bc134fc9ab5caac9510ba9af2db0",
+      "columns": [
+        "id",
+        "project_id",
+        "chapter_id",
+        "title",
+        "summary",
+        "status",
+        "archived",
+        "position",
+        "revision",
+        "content_format_version",
+        "content",
+        "content_hash",
+        "word_count",
+        "created_at",
+        "updated_at",
+        "search_text",
+        "search_vector"
+      ]
+    },
+    "scene_revisions": {
+      "count": 515,
+      "digest": "a9c502c6f042edd29f8974c4f86ff96137b7d9ea0ef82a5b1ae603997da6991a",
+      "columns": [
+        "project_id",
+        "scene_id",
+        "revision",
+        "content_snapshot",
+        "content_hash",
+        "metadata_snapshot",
+        "actor_user_id",
+        "actor_display_name",
+        "change_set_id",
+        "action",
+        "restored_from_revision",
+        "created_at",
+        "reference_snapshot"
+      ]
+    },
+    "editorial_changes": {
+      "count": 775,
+      "digest": "39aac040ad05863f079d8c5468fcec8d63e1d8a21042621163614e954c17585d",
+      "columns": [
+        "id",
+        "project_id",
+        "resource_id",
+        "resource_type",
+        "action",
+        "before_revision",
+        "after_revision",
+        "actor_user_id",
+        "correlation_id",
+        "details",
+        "created_at"
+      ]
+    },
+    "editorial_clocks": {
+      "count": 141,
+      "digest": "c0bf5a63fb198b9bfd2b0021caa7e95a7b36ad9ccc1e281dc89880fa4b1a60df",
+      "columns": [
+        "project_id",
+        "revision"
+      ]
+    },
+    "narrative_objects": {
+      "count": 84,
+      "digest": "5b86552aef3b7794ce804a52ae1ea2c24d3de0ff5a8023b0012a01f84300eeee",
+      "columns": [
+        "id",
+        "project_id",
+        "type_key",
+        "schema_version",
+        "name",
+        "summary",
+        "attributes",
+        "notes",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+        "parent_place_id",
+        "parent_type",
+        "ordinal_position",
+        "search_text",
+        "search_vector"
+      ]
+    },
+    "narrative_relations": {
+      "count": 12,
+      "digest": "d3efc505e5004c453401293e36b135eddc0a5a1c6af5c521b18ee5fca0b5e1fe",
+      "columns": [
+        "id",
+        "project_id",
+        "source_object_id",
+        "target_object_id",
+        "relation_type",
+        "attributes",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by"
+      ]
+    },
+    "scene_references": {
+      "count": 44,
+      "digest": "e3480ffa43558762cb02ff4d1eacb8e3d7bb951cc47e24f3d158448e02689974",
+      "columns": [
+        "id",
+        "project_id",
+        "scene_id",
+        "object_id",
+        "reference_type",
+        "metadata",
+        "revision",
+        "status"
+      ]
+    },
+    "narrative_revisions": {
+      "count": 709,
+      "digest": "1cf18810df908e65b1e99b8b64e31a2cb1f991eb53ae852ab68af20ff8958f17",
+      "columns": [
+        "project_id",
+        "resource_type",
+        "resource_id",
+        "revision",
+        "snapshot",
+        "actor_user_id",
+        "actor_display_name",
+        "actor_type",
+        "created_at",
+        "change_set_id",
+        "action",
+        "restored_from_revision"
+      ]
+    },
+    "narrative_changes": {
+      "count": 709,
+      "digest": "07b2d84fd2a3f6e957791bccf0c084549ce625ff52f42e2258af163f400e47b4",
+      "columns": [
+        "id",
+        "project_id",
+        "resource_id",
+        "resource_type",
+        "after_revision",
+        "actor_user_id",
+        "actor_type",
+        "action",
+        "correlation_id",
+        "created_at"
+      ]
+    },
+    "module_activations": {
+      "count": 423,
+      "digest": "70d079472c98aadd440465829b72ffb04b7bae63d468b5940e41871700afe325",
+      "columns": [
+        "id",
+        "project_id",
+        "module_key",
+        "module_version",
+        "enabled",
+        "revision",
+        "updated_at"
+      ]
+    },
+    "invitations": {
+      "count": 33,
+      "digest": "741a8062d8bb58b38981ec6be012f58c43110c9526f601ae4cebdc9d2c19c7c6",
+      "columns": [
+        "id",
+        "project_id",
+        "email_canonical",
+        "role",
+        "token_hash",
+        "inviter_id",
+        "status",
+        "revision",
+        "issued_sequence",
+        "expires_at",
+        "created_at",
+        "accepted_by",
+        "declined_by",
+        "reason"
+      ]
+    },
+    "comment_threads": {
+      "count": 17,
+      "digest": "86d7d28aeff1d4a584b2d67c71f6158509433703ae5ced5d4115433ee6d47554",
+      "columns": [
+        "root_comment_id",
+        "id",
+        "project_id",
+        "target_type",
+        "target_id",
+        "scene_id",
+        "object_id",
+        "author_id",
+        "author_name",
+        "state",
+        "revision",
+        "comment_count",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "comments": {
+      "count": 27,
+      "digest": "53dc86c1a300dedc7b37ae25f8526359ab37b4a16bf293e4583211e36e0e20ba",
+      "columns": [
+        "id",
+        "project_id",
+        "thread_id",
+        "author_id",
+        "author_name",
+        "body",
+        "status",
+        "revision",
+        "created_at",
+        "updated_at",
+        "updated_by",
+        "updated_by_name",
+        "withdrawal_reason"
+      ]
+    },
+    "text_anchors": {
+      "count": 8,
+      "digest": "de9514f3893fcf1dfa9e52715302647481d4aaf2432f0fbd6113c2892040bf8b",
+      "columns": [
+        "id",
+        "project_id",
+        "thread_id",
+        "scene_id",
+        "scene_revision",
+        "from_pos",
+        "to_pos",
+        "quote",
+        "prefix",
+        "suffix",
+        "state",
+        "author_id",
+        "created_at"
+      ]
+    },
+    "collaboration_revisions": {
+      "count": 337,
+      "digest": "5fa82732f6f1215cb5fe601f752a6db6d308a8a2749625b620d7f27b8ab851b9",
+      "columns": [
+        "project_id",
+        "resource_type",
+        "resource_id",
+        "revision",
+        "snapshot",
+        "actor_id",
+        "actor_name",
+        "actor_type",
+        "action",
+        "correlation_id",
+        "created_at"
+      ]
+    },
+    "collaboration_clocks": {
+      "count": 141,
+      "digest": "469dbbb0360a4a12d59cb74fe77e70571c9e04a4bf0e3e7a3222c5a8e378dd8d",
+      "columns": [
+        "project_id",
+        "sequence"
+      ]
+    },
+    "audit_events": {
+      "count": 1964,
+      "digest": "a9d9a0f16e25fadaf1b8625da6afce5fe2a285c16a65a853889c3045bff66335",
+      "columns": [
+        "id",
+        "project_id",
+        "actor_user_id",
+        "actor_type",
+        "action",
+        "resource_id",
+        "before_revision",
+        "after_revision",
+        "correlation_id",
+        "created_at"
+      ]
+    },
+    "change_proposals": {
+      "count": 11,
+      "digest": "6ec7bad4afcace56b5634d49edf7e0aa4490aaa6c81801b518c45fbeb7ef3158",
+      "columns": [
+        "id",
+        "project_id",
+        "origin",
+        "creator_id",
+        "creator_name",
+        "proposal_revision",
+        "state_version",
+        "status",
+        "created_at",
+        "updated_at",
+        "submitted_at",
+        "merged_at",
+        "merged_change_set_id"
+      ]
+    },
+    "proposal_revisions": {
+      "count": 35,
+      "digest": "c2b56fea1919546507141eecd9595fa17a2eb8feeb16b138754a1f34d1635f2c",
+      "columns": [
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "content",
+        "content_hash",
+        "policy_version",
+        "actor_id",
+        "actor_name",
+        "created_at"
+      ]
+    },
+    "proposal_reviews": {
+      "count": 13,
+      "digest": "de080548abc9e320f42ef5878bfda0b24faa80df163f44b97935fea83f93aa0e",
+      "columns": [
+        "id",
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "content_hash",
+        "reviewer_id",
+        "reviewer_name",
+        "reviewer_role",
+        "reviewer_membership_revision",
+        "state_version",
+        "decision",
+        "comment",
+        "created_at"
+      ]
+    },
+    "proposal_events": {
+      "count": 67,
+      "digest": "e9528098b1217670afc2671a07e547acb7b1663c56a6fe445ee5fc229e1cdee4",
+      "columns": [
+        "id",
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "state_version",
+        "status",
+        "action",
+        "actor_id",
+        "actor_name",
+        "created_at",
+        "correlation_id",
+        "snapshot",
+        "details"
+      ]
+    },
+    "proposal_change_sets": {
+      "count": 4,
+      "digest": "aef9df0f62aa934266cea2d3d4681aa493fc11d217e434b0063f9c4825f11b77",
+      "columns": [
+        "id",
+        "project_id",
+        "proposal_id",
+        "proposal_revision",
+        "content_hash",
+        "actor_id",
+        "actor_name",
+        "created_at",
+        "result"
+      ]
+    },
+    "proposal_change_events": {
+      "count": 13,
+      "digest": "fdcfcb265607880bf5cdc9ab04ba7beac9bd6a9f94823dbb3c7493a59dc232dd",
+      "columns": [
+        "project_id",
+        "change_set_id",
+        "resource_type",
+        "resource_id",
+        "before_snapshot",
+        "after_snapshot",
+        "operation_ids"
+      ]
+    }
+  },
+  "allOriginalDataUnchanged": true
+}

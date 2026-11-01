@@ -560,6 +560,77 @@ def validate_lot4(oas, root=None):
             require(scenario['scope'] in ['human','partial'] and (root/scenario['executableTest']).is_file(),'Lot 4 : preuve exécutable et portée '+scenario['contractTest'])
 
 
+def validate_lot5(oas, root=None):
+    schemas = oas['components']['schemas']
+    operations = [op for path in oas['paths'].values() for method, op in path.items()
+                  if method in ('get','post','put','patch','delete') and op.get('x-lot') == 5]
+    expected = {'aiConfig','aiCredentials','aiCredentialCreate','aiCredentialReplace','aiCredentialRevoke',
+                'aiCredentialRewrap','aiConversations','aiConversationCreate','aiConversationGet',
+                'aiConversationClose','aiConversationRetention','aiConversationRevokeConsent',
+                'aiContextPrepare','aiExecutionCreate','aiExecutionGet','aiSources','aiExecutionCancel',
+                'aiBudgetGet','aiBudgetUpdate'}
+    same_keys(expected, [op['operationId'] for op in operations], 'Lot 5 : routes privées')
+    for op in operations:
+        require(op.get('security') == [{'webSession': []}] and op.get('x-owner-bound') is True
+                and op.get('x-ai-phase') == 'A', 'Lot 5 : identité humaine et propriétaire obligatoires')
+        if 'requestBody' in op:
+            headers = {p['name']:p for p in op['parameters'] if p['in'] == 'header'}
+            require(all(headers.get(n,{}).get('required') is True for n in
+                        ['Origin','X-CSRF-Token','Idempotency-Key']), 'Lot 5 : protection des écritures')
+            if op['operationId'] not in ['aiCredentialCreate','aiConversationCreate']:
+                require(headers.get('If-Match',{}).get('required') is True,
+                        'Lot 5 : CAS obligatoire')
+    require('202' in oas['paths']['/projects/{projectId}/ai/conversations/{conversationId}/messages']['post']['responses'],
+            'Lot 5 : admission asynchrone 202')
+    config = schemas['AIConfig']['properties']
+    require(config['externalProvidersEnabled'].get('const') is False and config['phase'].get('const') == 'A',
+            'Lot 5 : aucun fournisseur réel avant GO-03')
+    models = ['discussion-v1','narrative-v1','slow-v1','unknown-v1','unavailable-v1']
+    require(schemas['AIConversationCreate']['properties']['model'].get('enum') == models,
+            'Lot 5 : modèles simulés fermés')
+    require(schemas['AICredentialCreate']['properties']['provider'].get('const') == 'local-simulator',
+            'Lot 5 : fournisseur simulé seulement')
+    require(schemas['AISend']['properties']['consent'].get('const') is True,
+            'Lot 5 : consentement explicite')
+    for name in ['AICredentialCreate','AIConversationCreate','AIContextPrepare','AISend','AIBudgetUpdate']:
+        require(schemas[name].get('additionalProperties') is False, 'Lot 5 : schéma fermé '+name)
+        require(not set(schemas[name]['properties']) & {'actor','actorType','ownerId','projectId','url','providerUrl'},
+                'Lot 5 : identité/destination non contrôlée par client')
+    for name in ['AICredential','AIExecution','AIConversation']:
+        require(not set(schemas[name]['properties']) & {'secret','envelope','capabilityHash','sessionHash','aiCapability'},
+                'Lot 5 : DTO sans secret '+name)
+    require(schemas['AIExecution']['properties']['status'].get('enum') ==
+            ['queued','running','succeeded','failed','cancelled','unknown'], 'Lot 5 : états bornés')
+    require(schemas['AIProvenance']['properties']['simulated'].get('const') is True,
+            'Lot 5 : provenance simulée explicite')
+    if root:
+        catalog = load_json(root/'docs/spec/ai-tools.json')
+        require(catalog['phase'] == 'A' and catalog['externalProvidersEnabled'] is False,
+                'Lot 5 : catalogue phase A')
+        tools = catalog['tools']
+        expected_tools = ['project_get_context','entity_search','scene_read','entity_get','relation_list',
+                          'timeline_list','object_references','proposal_create','proposal_set_operations',
+                          'proposal_revise','proposal_get','proposal_preview','proposal_validate','proposal_submit']
+        require([t['name'] for t in tools] == expected_tools, 'Lot 5 : outils fermés sans fusion/approbation')
+        for tool in tools:
+            schema = tool['inputSchema']
+            Draft202012Validator.check_schema(schema)
+            require(schema.get('additionalProperties') is False and not set(schema['properties']) &
+                    {'actor','actorType','projectId','credentialId','url','providerUrl'},
+                    'Lot 5 : paramètres outil non privilégiés '+tool['name'])
+        scenarios = load_json(root/'docs/spec/lot5-scenarios.json')['scenarios']
+        require([x['contractTest'] for x in scenarios] == ['CT-21','CT-22','CT-23','CT-27','CT-28','CT-30','CT-32','CT-34','CT-37','CT-38','CT-41'],
+                'Lot 5 : sélection CT et limites explicites')
+        for scenario in scenarios:
+            require(scenario['scope'].startswith('integrated_ai_simulated') and scenario['oracle']
+                    and (root/scenario['executableTest']).is_file(), 'Lot 5 : preuve simulée traçable')
+        fixture = load_json(root/'docs/spec/examples/ai-phase-a.json')
+        for name, value in fixture.items():
+            errors = list(Draft202012Validator({'$ref':'#/components/schemas/'+name,'components':oas['components']},
+                          format_checker=FormatChecker()).iter_errors(value))
+            require(not errors, 'Lot 5 : exemple '+name+' invalide : '+str(errors[:1]))
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -573,6 +644,7 @@ def validate_contracts(root):
     validate_lot2(oas, root)
     validate_lot3(oas, root)
     validate_lot4(oas, root)
+    validate_lot5(oas, root)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and

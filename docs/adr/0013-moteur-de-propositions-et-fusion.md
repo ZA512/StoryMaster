@@ -1,10 +1,10 @@
 # ADR-0013 — Moteur de propositions et fusion atomique
 
-**Statut :** mise en œuvre du Lot 4 autorisé, réception attendue. **Date :** 31 octobre 2026. **Références :** [ADR-0003](0003-propositions-transactionnelles.md), [décisions humaines](../HUMAN-DECISIONS.md), [plan](../IMPLEMENTATION-PLAN.md).
+**Statut :** principes acceptés et Lot 4 reçu techniquement avec réserves par instruction Lot 5, CI 9c2df0b vérifiée verte. **Date :** 31 octobre 2026. **Références :** [ADR-0003](0003-propositions-transactionnelles.md), [décisions humaines](../HUMAN-DECISIONS.md), [plan](../IMPLEMENTATION-PLAN.md).
 
 ## Décision et invariants
 
-Proposition = intention ; seul merge humain owner/admin modifie le canon. Révisions de contenu immuables (titre, justification, opérations, dépendances, version de politique) et hash canonique, distinctes de stateVersion. Avis humains immuables liés à cette révision/hash et à la version d’appartenance de l’approbateur ; validité calculée sur droits actuels, aucune approbation ancienne restaurée après retrait/réactivation. Auto-approbation du créateur uniquement owner humain d’un projet encore individuel ; aucun agent activé ou simulé.
+Proposition = intention ; seul merge humain owner/admin modifie le canon. Révisions de contenu immuables (titre, justification, opérations, dépendances, version de politique) et hash canonique, distinctes de stateVersion. Avis humains immuables liés à cette révision/hash et à la version d’appartenance de l’approbateur ; validité calculée sur droits actuels, aucune approbation ancienne restaurée après retrait/réactivation. Auto-approbation du créateur uniquement owner humain d’un projet encore individuel ; au Lot 4 aucun agent activé ; extension integrated_ai sous capacité serveur au Lot 5 décrite par [ADR-0014](0014-assistant-integre-et-executions-bornees.md).
 
 Validateurs canoniques extraits des services existants et partagés par commandes directes et projection finale. Aucun second langage de patch. Neuf opérations typées du catalogue conservées ; refs temporaires résolues uniquement dans les champs typés et après création. Opérations complémentaires sur une même scène partagent la base et avancent une seule révision ; doublon du même kind/cible refusé. Mutations de relations/references préparées dans un état final, retrait des liens remplacés avant ajout pour respecter les uniques PostgreSQL sans état intermédiaire visible.
 

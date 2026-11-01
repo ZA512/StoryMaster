@@ -76,3 +76,10 @@ Lot 4 complet autorisé : propositions humaines versionnées, revue/approbation 
 [Rapport de réalisation](LOT-4-REPORT.md), [ADR-0013 d’exécution](adr/0013-moteur-de-propositions-et-fusion.md) et [mesures B](measurements/LOT-4-PROPOSALS.md) présentés au propriétaire. La réception du Lot 4 reste à décider après revue des parcours multi-objets et conflictuels ; cet ajout n’enregistre aucun accord nouveau. Choix à examiner : preview avec verrous partagés ciblés, base explicite sans rebase automatique, invalidation par version d’appartenance, résultat durable par proposition et limites locales de la barrière exclusive. L’atomicité et les interdictions IA restent des invariants déjà imposés, pas des options à rouvrir.
 
 La revue UX humaine complète, conservation des brouillons après crash/fermeture, R-CONT-01, enveloppe de charge et exploitation publique restent ouverts. La CI du commit Lot 4 doit encore être exécutée ; le seul succès distant observé pendant cette mission concerne le commit Lot 3. Aucune autorisation du Lot 5 n’est déduite de la réception technique proposée.
+
+
+## Réception technique Lot 4 et autorisation Lot 5 phase A — 1er novembre 2026
+
+Instruction explicite « Réception du Lot 4 et implémentation du Lot 5 : Assistant IA intégré ». Principes ADR-0013 acceptés (proposition distincte du canon, approbation versionnée, fusion atomique humaine), réception technique avec réserves ; [CI de 9c2df0ba811652a48d1454eea7535f12d423bb71](https://github.com/ZA512/StoryMaster/actions/runs/41291953747) vérifiée terminée avec succès, jobs validate/spike-a. Réserves UX, brouillons en mémoire, contention, RLS, IdP, sauvegardes et exploitation publique maintenues.
+
+GO-03 **non approuvé** : [proposition](GO-03-DECISION-PROPOSAL.md). Phase A seule autorisée : module intégré, chiffrement, contexte, consentement, budgets, simulateurs, UI et tests réels PostgreSQL/navigateur avec clés fictives. Aucune clé réelle, activation fournisseur, donnée narrative sortante ou dépense avant validation explicite du propriétaire et autorisation d’essai borné. Pas de réception finale du Lot 5 ou autorisation du Lot 6 déduite de cette instruction.

@@ -1,0 +1,3387 @@
+{
+  "date": "2026-11-01",
+  "scope": "Rejeu local des cinq benchmarks antérieurs, en base dédiée _test ; aucun plafond commercial ni qualification publique. Charge de machine partagée avec Spike A et parcours Lot 5 ciblés ; mesures non comparables à une campagne isolée. Aucun test PostgreSQL parallèle au navigateur complet qui redémarre PostgreSQL.",
+  "benchmarks": {
+    "contention": {
+      "environment": {
+        "date": "2026-11-01T10:13:07.187Z",
+        "node": "v26.8.1",
+        "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "os": "linux 7.2.8-9-omarchy",
+        "cpus": 12,
+        "memoryGiB": 31.3,
+        "workers": 8,
+        "writesPerWorker": 20
+      },
+      "limits": "Qualification locale courte des métadonnées uniquement, sans scènes, sans garantie de capacité ni SLA. Temps client, réseau/pool inclus dans les latences ; verrou chronométré côté adaptateur. Spike B multi-scènes requis ultérieurement.",
+      "results": [
+        {
+          "mode": "same_project",
+          "successfulWrites": 160,
+          "retries": 618,
+          "failures": 0,
+          "deadlocks": 0,
+          "elapsedMs": 1733.59,
+          "writesPerSecond": 92.29,
+          "operationMs": {
+            "samples": 160,
+            "p50": 10.817,
+            "p95": 262.551,
+            "p99": 1348.254,
+            "max": 1613.273
+          },
+          "attemptMs": {
+            "samples": 778,
+            "p50": 9.246,
+            "p95": 16.198,
+            "p99": 22.299,
+            "max": 33.984
+          },
+          "lockWaitMs": {
+            "samples": 778,
+            "p50": 6.447,
+            "p95": 13.468,
+            "p99": 18.074,
+            "max": 31.919
+          },
+          "lockHoldMs": {
+            "samples": 778,
+            "p50": 1.447,
+            "p95": 4.392,
+            "p99": 6.868,
+            "max": 25.852
+          },
+          "invariants": [
+            {
+              "revision": 161,
+              "snapshots": 161,
+              "audits": 161,
+              "owners": 1
+            }
+          ]
+        },
+        {
+          "mode": "different_projects",
+          "successfulWrites": 160,
+          "retries": 0,
+          "failures": 0,
+          "deadlocks": 0,
+          "elapsedMs": 260.21,
+          "writesPerSecond": 614.88,
+          "operationMs": {
+            "samples": 160,
+            "p50": 11.937,
+            "p95": 17.749,
+            "p99": 20.268,
+            "max": 20.582
+          },
+          "attemptMs": {
+            "samples": 160,
+            "p50": 8.2,
+            "p95": 12.195,
+            "p99": 15.124,
+            "max": 15.628
+          },
+          "lockWaitMs": {
+            "samples": 160,
+            "p50": 0.329,
+            "p95": 0.775,
+            "p99": 1.411,
+            "max": 4.485
+          },
+          "lockHoldMs": {
+            "samples": 160,
+            "p50": 6.446,
+            "p95": 9.846,
+            "p99": 12.425,
+            "max": 12.494
+          },
+          "invariants": [
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            },
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            },
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            },
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            },
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            },
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            },
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            },
+            {
+              "revision": 21,
+              "snapshots": 21,
+              "audits": 21,
+              "owners": 1
+            }
+          ]
+        }
+      ]
+    },
+    "scene-contention": {
+      "environment": {
+        "date": "2026-11-01T10:13:29.415Z",
+        "node": "v26.8.1",
+        "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+        "cpus": 12,
+        "memoryGiB": 31.251102447509766,
+        "kernel": "7.2.8-9-omarchy",
+        "autosaveDebounceMs": 600,
+        "processModel": "Un processus Node, pools PostgreSQL, auteurs distincts ; corpus synthétique, pas de réseau distant.",
+        "transport": "Services applicatifs + PostgreSQL loopback ; JSON validé et compté côté serveur, sans mocks."
+      },
+      "methodology": "Enveloppe technique synthétique, rafales par auteur, une scène distincte par auteur ; aucun retry masque une erreur. Les mesures client incluent CPU/SQL, attente/détention instrumentées autour de SQL/commit. B-02 utilise une barrière explicite et observation de pg_stat_activity. B-06 propositions non implémenté.",
+      "results": [
+        {
+          "strategy": "project",
+          "case": "B-01",
+          "workers": 2,
+          "writesPerWorker": 8,
+          "blocks": 8,
+          "jsonBytes": 2442,
+          "sequential": true,
+          "distinctProjects": false,
+          "successfulWrites": 16,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 490.9738510000001,
+          "writesPerSecond": 32.58829358714666,
+          "latencyMs": {
+            "samples": 16,
+            "p50": 31.584,
+            "p95": 43.738,
+            "p99": 43.738,
+            "max": 43.738
+          },
+          "lockWaitMs": {
+            "samples": 16,
+            "p50": 0.199,
+            "p95": 0.435,
+            "p99": 0.435,
+            "max": 0.435
+          },
+          "lockHoldMs": {
+            "samples": 16,
+            "p50": 27.536,
+            "p95": 42.04,
+            "p99": 42.04,
+            "max": 42.04
+          },
+          "sceneLockWaitMs": {
+            "samples": 16,
+            "p50": 0.211,
+            "p95": 0.279,
+            "p99": 0.279,
+            "max": 0.279
+          },
+          "sceneLockHoldMs": {
+            "samples": 16,
+            "p50": 26.627,
+            "p95": 41.243,
+            "p99": 41.243,
+            "max": 41.243
+          },
+          "fairnessJain": 0.9991581548732908,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 252.53073199999994,
+              "latencies": {
+                "samples": 8,
+                "p50": 31.584,
+                "p95": 43.738,
+                "p99": 43.738,
+                "max": 43.738
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 238.28395799999998,
+              "latencies": {
+                "samples": 8,
+                "p50": 28.006,
+                "p95": 38.875,
+                "p99": 38.875,
+                "max": 38.875
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-03-1",
+          "workers": 1,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 8,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 211.76140899999996,
+          "writesPerSecond": 37.778365934465434,
+          "latencyMs": {
+            "samples": 8,
+            "p50": 23.992,
+            "p95": 36.375,
+            "p99": 36.375,
+            "max": 36.375
+          },
+          "lockWaitMs": {
+            "samples": 8,
+            "p50": 0.217,
+            "p95": 0.258,
+            "p99": 0.258,
+            "max": 0.258
+          },
+          "lockHoldMs": {
+            "samples": 8,
+            "p50": 18.429,
+            "p95": 32.824,
+            "p99": 32.824,
+            "max": 32.824
+          },
+          "sceneLockWaitMs": {
+            "samples": 8,
+            "p50": 0.215,
+            "p95": 0.299,
+            "p99": 0.299,
+            "max": 0.299
+          },
+          "sceneLockHoldMs": {
+            "samples": 8,
+            "p50": 17.589,
+            "p95": 31.765,
+            "p99": 31.765,
+            "max": 31.765
+          },
+          "fairnessJain": 1,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 211.67040799999995,
+              "latencies": {
+                "samples": 8,
+                "p50": 23.992,
+                "p95": 36.375,
+                "p99": 36.375,
+                "max": 36.375
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-03-2",
+          "workers": 2,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 16,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 259.2107369999999,
+          "writesPerSecond": 61.7258381546132,
+          "latencyMs": {
+            "samples": 16,
+            "p50": 29.741,
+            "p95": 45.02,
+            "p99": 45.02,
+            "max": 45.02
+          },
+          "lockWaitMs": {
+            "samples": 16,
+            "p50": 13.449,
+            "p95": 28.81,
+            "p99": 28.81,
+            "max": 28.81
+          },
+          "lockHoldMs": {
+            "samples": 16,
+            "p50": 12.543,
+            "p95": 28.285,
+            "p99": 28.285,
+            "max": 28.285
+          },
+          "sceneLockWaitMs": {
+            "samples": 16,
+            "p50": 0.27,
+            "p95": 0.359,
+            "p99": 0.359,
+            "max": 0.359
+          },
+          "sceneLockHoldMs": {
+            "samples": 16,
+            "p50": 11.078,
+            "p95": 26.564,
+            "p99": 26.564,
+            "max": 26.564
+          },
+          "fairnessJain": 0.9995324839898827,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 246.60478000000012,
+              "latencies": {
+                "samples": 8,
+                "p50": 29.741,
+                "p95": 45.02,
+                "p99": 45.02,
+                "max": 45.02
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 257.5073,
+              "latencies": {
+                "samples": 8,
+                "p50": 29.58,
+                "p95": 43.725,
+                "p99": 43.725,
+                "max": 43.725
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-03-4",
+          "workers": 4,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 32,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 541.6946419999999,
+          "writesPerSecond": 59.07387210228305,
+          "latencyMs": {
+            "samples": 32,
+            "p50": 67.324,
+            "p95": 81.718,
+            "p99": 84.573,
+            "max": 84.573
+          },
+          "lockWaitMs": {
+            "samples": 32,
+            "p50": 47.82,
+            "p95": 60.721,
+            "p99": 63.903,
+            "max": 63.903
+          },
+          "lockHoldMs": {
+            "samples": 32,
+            "p50": 14.243,
+            "p95": 19.702,
+            "p99": 20.034,
+            "max": 20.034
+          },
+          "sceneLockWaitMs": {
+            "samples": 32,
+            "p50": 0.296,
+            "p95": 1.129,
+            "p99": 1.242,
+            "max": 1.242
+          },
+          "sceneLockHoldMs": {
+            "samples": 32,
+            "p50": 11.969,
+            "p95": 17.501,
+            "p99": 18.487,
+            "max": 18.487
+          },
+          "fairnessJain": 0.9991970623656599,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 515.578473,
+              "latencies": {
+                "samples": 8,
+                "p50": 65.05,
+                "p95": 80.48,
+                "p99": 80.48,
+                "max": 80.48
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 539.997856,
+              "latencies": {
+                "samples": 8,
+                "p50": 67.324,
+                "p95": 84.573,
+                "p99": 84.573,
+                "max": 84.573
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 499.1123510000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 66.642,
+                "p95": 81.718,
+                "p99": 81.718,
+                "max": 81.718
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 523.3626330000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 62.698,
+                "p95": 80.15,
+                "p99": 80.15,
+                "max": 80.15
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-03-8",
+          "workers": 8,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 64,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 901.9829710000004,
+          "writesPerSecond": 70.95477637348874,
+          "latencyMs": {
+            "samples": 64,
+            "p50": 110.131,
+            "p95": 123.018,
+            "p99": 142.694,
+            "max": 142.694
+          },
+          "lockWaitMs": {
+            "samples": 64,
+            "p50": 94.216,
+            "p95": 105.786,
+            "p99": 116.995,
+            "max": 116.995
+          },
+          "lockHoldMs": {
+            "samples": 64,
+            "p50": 11.153,
+            "p95": 17.551,
+            "p99": 21.913,
+            "max": 21.913
+          },
+          "sceneLockWaitMs": {
+            "samples": 64,
+            "p50": 0.247,
+            "p95": 0.481,
+            "p99": 1.013,
+            "max": 1.013
+          },
+          "sceneLockHoldMs": {
+            "samples": 64,
+            "p50": 9.981,
+            "p95": 15.6,
+            "p99": 19.728,
+            "max": 19.728
+          },
+          "fairnessJain": 0.9993693337578785,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 861.7350189999997,
+              "latencies": {
+                "samples": 8,
+                "p50": 108.25,
+                "p95": 119.453,
+                "p99": 119.453,
+                "max": 119.453
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 829.434467,
+              "latencies": {
+                "samples": 8,
+                "p50": 110.131,
+                "p95": 128.28,
+                "p99": 128.28,
+                "max": 128.28
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 867.953622,
+              "latencies": {
+                "samples": 8,
+                "p50": 106.617,
+                "p95": 116.922,
+                "p99": 116.922,
+                "max": 116.922
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 836.1899229999999,
+              "latencies": {
+                "samples": 8,
+                "p50": 109.029,
+                "p95": 120.492,
+                "p99": 120.492,
+                "max": 120.492
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 872.7910110000003,
+              "latencies": {
+                "samples": 8,
+                "p50": 108.767,
+                "p95": 118.293,
+                "p99": 118.293,
+                "max": 118.293
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 892.030193,
+              "latencies": {
+                "samples": 8,
+                "p50": 111.553,
+                "p95": 142.694,
+                "p99": 142.694,
+                "max": 142.694
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 878.1545509999996,
+              "latencies": {
+                "samples": 8,
+                "p50": 110.621,
+                "p95": 123.289,
+                "p99": 123.289,
+                "max": 123.289
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 834.9901380000001,
+              "latencies": {
+                "samples": 8,
+                "p50": 108.725,
+                "p95": 116.406,
+                "p99": 116.406,
+                "max": 116.406
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-03-16",
+          "workers": 16,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 128,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 1701.665977,
+          "writesPerSecond": 75.22040267012989,
+          "latencyMs": {
+            "samples": 128,
+            "p50": 209.631,
+            "p95": 227.533,
+            "p99": 230.019,
+            "max": 235.199
+          },
+          "lockWaitMs": {
+            "samples": 128,
+            "p50": 195.581,
+            "p95": 211.884,
+            "p99": 217.053,
+            "max": 217.412
+          },
+          "lockHoldMs": {
+            "samples": 128,
+            "p50": 11.215,
+            "p95": 15.124,
+            "p99": 15.864,
+            "max": 17.807
+          },
+          "sceneLockWaitMs": {
+            "samples": 128,
+            "p50": 0.257,
+            "p95": 0.591,
+            "p99": 0.732,
+            "max": 0.748
+          },
+          "sceneLockHoldMs": {
+            "samples": 128,
+            "p50": 9.852,
+            "p95": 13.531,
+            "p99": 14.57,
+            "max": 16.779
+          },
+          "fairnessJain": 0.9988460953277364,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1527.2161990000004,
+              "latencies": {
+                "samples": 8,
+                "p50": 209.801,
+                "p95": 225.045,
+                "p99": 225.045,
+                "max": 225.045
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1569.9987100000003,
+              "latencies": {
+                "samples": 8,
+                "p50": 205.694,
+                "p95": 228.049,
+                "p99": 228.049,
+                "max": 228.049
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1698.7966959999999,
+              "latencies": {
+                "samples": 8,
+                "p50": 209.631,
+                "p95": 235.199,
+                "p99": 235.199,
+                "max": 235.199
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1665.3667409999998,
+              "latencies": {
+                "samples": 8,
+                "p50": 209.189,
+                "p95": 220.877,
+                "p99": 220.877,
+                "max": 220.877
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1685.4674360000004,
+              "latencies": {
+                "samples": 8,
+                "p50": 211.998,
+                "p95": 221.681,
+                "p99": 221.681,
+                "max": 221.681
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1531.7477760000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 209.005,
+                "p95": 223.932,
+                "p99": 223.932,
+                "max": 223.932
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1569.9366300000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 206.633,
+                "p95": 227.476,
+                "p99": 227.476,
+                "max": 227.476
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1580.1837889999997,
+              "latencies": {
+                "samples": 8,
+                "p50": 202.562,
+                "p95": 229.282,
+                "p99": 229.282,
+                "max": 229.282
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1619.0214950000004,
+              "latencies": {
+                "samples": 8,
+                "p50": 206.656,
+                "p95": 228.643,
+                "p99": 228.643,
+                "max": 228.643
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1546.1110899999999,
+              "latencies": {
+                "samples": 8,
+                "p50": 206.585,
+                "p95": 227.533,
+                "p99": 227.533,
+                "max": 227.533
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1629.4362150000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 205.359,
+                "p95": 224.573,
+                "p99": 224.573,
+                "max": 224.573
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1641.141259,
+              "latencies": {
+                "samples": 8,
+                "p50": 209.604,
+                "p95": 223.838,
+                "p99": 223.838,
+                "max": 223.838
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1599.5624520000001,
+              "latencies": {
+                "samples": 8,
+                "p50": 203.355,
+                "p95": 229.592,
+                "p99": 229.592,
+                "max": 229.592
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1585.2658390000001,
+              "latencies": {
+                "samples": 8,
+                "p50": 201.55,
+                "p95": 230.019,
+                "p99": 230.019,
+                "max": 230.019
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1658.2035330000003,
+              "latencies": {
+                "samples": 8,
+                "p50": 211.802,
+                "p95": 218.915,
+                "p99": 218.915,
+                "max": 218.915
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 1528.1598729999996,
+              "latencies": {
+                "samples": 8,
+                "p50": 209.122,
+                "p95": 225.352,
+                "p99": 225.352,
+                "max": 225.352
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-05",
+          "workers": 8,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": true,
+          "successfulWrites": 64,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 275.4284690000004,
+          "writesPerSecond": 232.36523164204897,
+          "latencyMs": {
+            "samples": 64,
+            "p50": 33.286,
+            "p95": 39.057,
+            "p99": 41.045,
+            "max": 41.045
+          },
+          "lockWaitMs": {
+            "samples": 64,
+            "p50": 0.402,
+            "p95": 1.83,
+            "p99": 2.163,
+            "max": 2.163
+          },
+          "lockHoldMs": {
+            "samples": 64,
+            "p50": 25.677,
+            "p95": 31.02,
+            "p99": 31.772,
+            "max": 31.772
+          },
+          "sceneLockWaitMs": {
+            "samples": 64,
+            "p50": 0.386,
+            "p95": 2.767,
+            "p99": 5.106,
+            "max": 5.106
+          },
+          "sceneLockHoldMs": {
+            "samples": 64,
+            "p50": 22.869,
+            "p95": 28.601,
+            "p99": 29.836,
+            "max": 29.836
+          },
+          "fairnessJain": 0.9995965332573045,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 275.412609,
+              "latencies": {
+                "samples": 8,
+                "p50": 35.846,
+                "p95": 38.813,
+                "p99": 38.813,
+                "max": 38.813
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 267.0734079999993,
+              "latencies": {
+                "samples": 8,
+                "p50": 32.982,
+                "p95": 38.381,
+                "p99": 38.381,
+                "max": 38.381
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 270.52558000000045,
+              "latencies": {
+                "samples": 8,
+                "p50": 33.539,
+                "p95": 41.045,
+                "p99": 41.045,
+                "max": 41.045
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 265.8191319999996,
+              "latencies": {
+                "samples": 8,
+                "p50": 34.028,
+                "p95": 35.607,
+                "p99": 35.607,
+                "max": 35.607
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 264.24393600000076,
+              "latencies": {
+                "samples": 8,
+                "p50": 33.518,
+                "p95": 36.846,
+                "p99": 36.846,
+                "max": 36.846
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 262.9627110000001,
+              "latencies": {
+                "samples": 8,
+                "p50": 32.288,
+                "p95": 39.971,
+                "p99": 39.971,
+                "max": 39.971
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 260.22931100000005,
+              "latencies": {
+                "samples": 8,
+                "p50": 30.748,
+                "p95": 39.057,
+                "p99": 39.057,
+                "max": 39.057
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 257.2289010000004,
+              "latencies": {
+                "samples": 8,
+                "p50": 31.375,
+                "p95": 33.807,
+                "p99": 33.807,
+                "max": 33.807
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-03-long",
+          "workers": 8,
+          "writesPerWorker": 3,
+          "blocks": 3000,
+          "jsonBytes": 913916,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 24,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 6300.836031999999,
+          "writesPerSecond": 3.809018339488826,
+          "latencyMs": {
+            "samples": 24,
+            "p50": 1954.105,
+            "p95": 2129.06,
+            "p99": 2129.252,
+            "max": 2129.252
+          },
+          "lockWaitMs": {
+            "samples": 24,
+            "p50": 1685.08,
+            "p95": 1819.612,
+            "p99": 1867.753,
+            "max": 1867.753
+          },
+          "lockHoldMs": {
+            "samples": 24,
+            "p50": 197.335,
+            "p95": 259.338,
+            "p99": 271.651,
+            "max": 271.651
+          },
+          "sceneLockWaitMs": {
+            "samples": 24,
+            "p50": 0.22,
+            "p95": 0.503,
+            "p99": 0.727,
+            "max": 0.727
+          },
+          "sceneLockHoldMs": {
+            "samples": 24,
+            "p50": 193.617,
+            "p95": 217.23,
+            "p99": 220.357,
+            "max": 220.357
+          },
+          "fairnessJain": 0.9921237961555529,
+          "perWorker": [
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 5507.203756000001,
+              "latencies": {
+                "samples": 3,
+                "p50": 1950.955,
+                "p95": 2018.692,
+                "p99": 2018.692,
+                "max": 2018.692
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 5809.574868999999,
+              "latencies": {
+                "samples": 3,
+                "p50": 1954.105,
+                "p95": 2063.453,
+                "p99": 2063.453,
+                "max": 2063.453
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 5549.554177,
+              "latencies": {
+                "samples": 3,
+                "p50": 1885.964,
+                "p95": 2026.909,
+                "p99": 2026.909,
+                "max": 2026.909
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 4688.267766,
+              "latencies": {
+                "samples": 3,
+                "p50": 2023.599,
+                "p95": 2129.06,
+                "p99": 2129.06,
+                "max": 2129.06
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 4820.820938,
+              "latencies": {
+                "samples": 3,
+                "p50": 2007.876,
+                "p95": 2069.441,
+                "p99": 2069.441,
+                "max": 2069.441
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 5738.50173,
+              "latencies": {
+                "samples": 3,
+                "p50": 1936.854,
+                "p95": 2093.121,
+                "p99": 2093.121,
+                "max": 2093.121
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 5890.926316,
+              "latencies": {
+                "samples": 3,
+                "p50": 2110.883,
+                "p95": 2129.252,
+                "p99": 2129.252,
+                "max": 2129.252
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 4833.9154770000005,
+              "latencies": {
+                "samples": 3,
+                "p50": 2006.519,
+                "p95": 2019.49,
+                "p99": 2019.49,
+                "max": 2019.49
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-01",
+          "workers": 2,
+          "writesPerWorker": 8,
+          "blocks": 8,
+          "jsonBytes": 2442,
+          "sequential": true,
+          "distinctProjects": false,
+          "successfulWrites": 16,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 145.14250800000082,
+          "writesPerSecond": 110.23648564760856,
+          "latencyMs": {
+            "samples": 16,
+            "p50": 8.645,
+            "p95": 16.286,
+            "p99": 16.286,
+            "max": 16.286
+          },
+          "lockWaitMs": {
+            "samples": 16,
+            "p50": 0.198,
+            "p95": 0.429,
+            "p99": 0.429,
+            "max": 0.429
+          },
+          "lockHoldMs": {
+            "samples": 16,
+            "p50": 7.04,
+            "p95": 7.909,
+            "p99": 7.909,
+            "max": 7.909
+          },
+          "sceneLockWaitMs": {
+            "samples": 16,
+            "p50": 0.208,
+            "p95": 0.388,
+            "p99": 0.388,
+            "max": 0.388
+          },
+          "sceneLockHoldMs": {
+            "samples": 16,
+            "p50": 6.101,
+            "p95": 7.16,
+            "p99": 7.16,
+            "max": 7.16
+          },
+          "fairnessJain": 0.9963833499737318,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 68.18543700000009,
+              "latencies": {
+                "samples": 8,
+                "p50": 8.388,
+                "p95": 9.738,
+                "p99": 9.738,
+                "max": 9.738
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 76.92819000000054,
+              "latencies": {
+                "samples": 8,
+                "p50": 8.645,
+                "p95": 16.286,
+                "p99": 16.286,
+                "max": 16.286
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-03-1",
+          "workers": 1,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 8,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 123.0369040000005,
+          "writesPerSecond": 65.02114194941029,
+          "latencyMs": {
+            "samples": 8,
+            "p50": 14.761,
+            "p95": 17.858,
+            "p99": 17.858,
+            "max": 17.858
+          },
+          "lockWaitMs": {
+            "samples": 8,
+            "p50": 0.225,
+            "p95": 0.263,
+            "p99": 0.263,
+            "max": 0.263
+          },
+          "lockHoldMs": {
+            "samples": 8,
+            "p50": 11.813,
+            "p95": 14.07,
+            "p99": 14.07,
+            "max": 14.07
+          },
+          "sceneLockWaitMs": {
+            "samples": 8,
+            "p50": 0.247,
+            "p95": 0.385,
+            "p99": 0.385,
+            "max": 0.385
+          },
+          "sceneLockHoldMs": {
+            "samples": 8,
+            "p50": 10.795,
+            "p95": 13.229,
+            "p99": 13.229,
+            "max": 13.229
+          },
+          "fairnessJain": 1,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 123.01039400000082,
+              "latencies": {
+                "samples": 8,
+                "p50": 14.761,
+                "p95": 17.858,
+                "p99": 17.858,
+                "max": 17.858
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-03-2",
+          "workers": 2,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 16,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 120.04048300000068,
+          "writesPerSecond": 133.28836739185655,
+          "latencyMs": {
+            "samples": 16,
+            "p50": 14.123,
+            "p95": 16.814,
+            "p99": 16.814,
+            "max": 16.814
+          },
+          "lockWaitMs": {
+            "samples": 16,
+            "p50": 0.186,
+            "p95": 0.543,
+            "p99": 0.543,
+            "max": 0.543
+          },
+          "lockHoldMs": {
+            "samples": 16,
+            "p50": 11.101,
+            "p95": 13.924,
+            "p99": 13.924,
+            "max": 13.924
+          },
+          "sceneLockWaitMs": {
+            "samples": 16,
+            "p50": 0.222,
+            "p95": 0.251,
+            "p99": 0.251,
+            "max": 0.251
+          },
+          "sceneLockHoldMs": {
+            "samples": 16,
+            "p50": 10.461,
+            "p95": 13.131,
+            "p99": 13.131,
+            "max": 13.131
+          },
+          "fairnessJain": 0.9978640580348365,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 120.01540299999942,
+              "latencies": {
+                "samples": 8,
+                "p50": 14.153,
+                "p95": 16.814,
+                "p99": 16.814,
+                "max": 16.814
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 109.4012819999989,
+              "latencies": {
+                "samples": 8,
+                "p50": 13.021,
+                "p95": 16.245,
+                "p99": 16.245,
+                "max": 16.245
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-03-4",
+          "workers": 4,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 32,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 188.00900999999976,
+          "writesPerSecond": 170.2046088110354,
+          "latencyMs": {
+            "samples": 32,
+            "p50": 21.168,
+            "p95": 32.762,
+            "p99": 39.967,
+            "max": 39.967
+          },
+          "lockWaitMs": {
+            "samples": 32,
+            "p50": 0.242,
+            "p95": 1.753,
+            "p99": 11.619,
+            "max": 11.619
+          },
+          "lockHoldMs": {
+            "samples": 32,
+            "p50": 17.476,
+            "p95": 29.509,
+            "p99": 33.553,
+            "max": 33.553
+          },
+          "sceneLockWaitMs": {
+            "samples": 32,
+            "p50": 0.249,
+            "p95": 1.684,
+            "p99": 1.832,
+            "max": 1.832
+          },
+          "sceneLockHoldMs": {
+            "samples": 32,
+            "p50": 15.839,
+            "p95": 26.54,
+            "p99": 32.651,
+            "max": 32.651
+          },
+          "fairnessJain": 0.9994334283441059,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 187.99368999999933,
+              "latencies": {
+                "samples": 8,
+                "p50": 20.691,
+                "p95": 39.967,
+                "p99": 39.967,
+                "max": 39.967
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 180.57044200000018,
+              "latencies": {
+                "samples": 8,
+                "p50": 21.614,
+                "p95": 30.084,
+                "p99": 30.084,
+                "max": 30.084
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 183.08657100000164,
+              "latencies": {
+                "samples": 8,
+                "p50": 19.262,
+                "p95": 32.762,
+                "p99": 32.762,
+                "max": 32.762
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 175.9996339999998,
+              "latencies": {
+                "samples": 8,
+                "p50": 20.075,
+                "p95": 28.953,
+                "p99": 28.953,
+                "max": 28.953
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-03-8",
+          "workers": 8,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 64,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 368.1533499999987,
+          "writesPerSecond": 173.84060202087045,
+          "latencyMs": {
+            "samples": 64,
+            "p50": 40.171,
+            "p95": 64.113,
+            "p99": 86.918,
+            "max": 86.918
+          },
+          "lockWaitMs": {
+            "samples": 64,
+            "p50": 0.382,
+            "p95": 1.088,
+            "p99": 3.074,
+            "max": 3.074
+          },
+          "lockHoldMs": {
+            "samples": 64,
+            "p50": 34.543,
+            "p95": 60.079,
+            "p99": 81.17,
+            "max": 81.17
+          },
+          "sceneLockWaitMs": {
+            "samples": 64,
+            "p50": 0.52,
+            "p95": 2.367,
+            "p99": 2.96,
+            "max": 2.96
+          },
+          "sceneLockHoldMs": {
+            "samples": 64,
+            "p50": 32.112,
+            "p95": 56.596,
+            "p99": 78.234,
+            "max": 78.234
+          },
+          "fairnessJain": 0.9880926493219044,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 318.12948099999994,
+              "latencies": {
+                "samples": 8,
+                "p50": 35.972,
+                "p95": 53.396,
+                "p99": 53.396,
+                "max": 53.396
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 346.5911479999995,
+              "latencies": {
+                "samples": 8,
+                "p50": 40.171,
+                "p95": 68.901,
+                "p99": 68.901,
+                "max": 68.901
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 341.90451100000064,
+              "latencies": {
+                "samples": 8,
+                "p50": 40.566,
+                "p95": 53.11,
+                "p99": 53.11,
+                "max": 53.11
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 332.8878360000017,
+              "latencies": {
+                "samples": 8,
+                "p50": 37.993,
+                "p95": 63.794,
+                "p99": 63.794,
+                "max": 63.794
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 353.0858530000005,
+              "latencies": {
+                "samples": 8,
+                "p50": 39.662,
+                "p95": 68.299,
+                "p99": 68.299,
+                "max": 68.299
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 360.6181610000003,
+              "latencies": {
+                "samples": 8,
+                "p50": 47.071,
+                "p95": 86.918,
+                "p99": 86.918,
+                "max": 86.918
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 257.0009690000006,
+              "latencies": {
+                "samples": 8,
+                "p50": 28.441,
+                "p95": 42.943,
+                "p99": 42.943,
+                "max": 42.943
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 339.7752520000013,
+              "latencies": {
+                "samples": 8,
+                "p50": 40.82,
+                "p95": 64.113,
+                "p99": 64.113,
+                "max": 64.113
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-03-16",
+          "workers": 16,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 128,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 729.6922349999986,
+          "writesPerSecond": 175.41642059545865,
+          "latencyMs": {
+            "samples": 128,
+            "p50": 63.646,
+            "p95": 198.623,
+            "p99": 268.339,
+            "max": 331.14
+          },
+          "lockWaitMs": {
+            "samples": 128,
+            "p50": 0.327,
+            "p95": 1.977,
+            "p99": 3.644,
+            "max": 3.708
+          },
+          "lockHoldMs": {
+            "samples": 128,
+            "p50": 56.661,
+            "p95": 195.084,
+            "p99": 260.716,
+            "max": 323.704
+          },
+          "sceneLockWaitMs": {
+            "samples": 128,
+            "p50": 0.315,
+            "p95": 2.694,
+            "p99": 4.13,
+            "max": 4.4
+          },
+          "sceneLockHoldMs": {
+            "samples": 128,
+            "p50": 53.513,
+            "p95": 192.554,
+            "p99": 257.462,
+            "max": 322.485
+          },
+          "fairnessJain": 0.9714682869644015,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 632.3925080000008,
+              "latencies": {
+                "samples": 8,
+                "p50": 64.285,
+                "p95": 151.052,
+                "p99": 151.052,
+                "max": 151.052
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 691.5772199999992,
+              "latencies": {
+                "samples": 8,
+                "p50": 78.916,
+                "p95": 198.623,
+                "p99": 198.623,
+                "max": 198.623
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 687.800706,
+              "latencies": {
+                "samples": 8,
+                "p50": 43.582,
+                "p95": 331.14,
+                "p99": 331.14,
+                "max": 331.14
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 675.5167199999996,
+              "latencies": {
+                "samples": 8,
+                "p50": 56.885,
+                "p95": 197.799,
+                "p99": 197.799,
+                "max": 197.799
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 651.9756309999993,
+              "latencies": {
+                "samples": 8,
+                "p50": 79.95,
+                "p95": 167.509,
+                "p99": 167.509,
+                "max": 167.509
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 442.8416820000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 33.264,
+                "p95": 94.837,
+                "p99": 94.837,
+                "max": 94.837
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 633.6507820000006,
+              "latencies": {
+                "samples": 8,
+                "p50": 72.884,
+                "p95": 105.374,
+                "p99": 105.374,
+                "max": 105.374
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 655.1932939999988,
+              "latencies": {
+                "samples": 8,
+                "p50": 33.687,
+                "p95": 268.339,
+                "p99": 268.339,
+                "max": 268.339
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 568.3390760000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 57.461,
+                "p95": 185.841,
+                "p99": 185.841,
+                "max": 185.841
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 711.8451980000009,
+              "latencies": {
+                "samples": 8,
+                "p50": 18.127,
+                "p95": 252.756,
+                "p99": 252.756,
+                "max": 252.756
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 567.1384899999994,
+              "latencies": {
+                "samples": 8,
+                "p50": 53.175,
+                "p95": 208.437,
+                "p99": 208.437,
+                "max": 208.437
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 631.9402850000006,
+              "latencies": {
+                "samples": 8,
+                "p50": 61.93,
+                "p95": 187.218,
+                "p99": 187.218,
+                "max": 187.218
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 679.414385,
+              "latencies": {
+                "samples": 8,
+                "p50": 33.797,
+                "p95": 210.953,
+                "p99": 210.953,
+                "max": 210.953
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 574.1709780000001,
+              "latencies": {
+                "samples": 8,
+                "p50": 50.71,
+                "p95": 128.255,
+                "p99": 128.255,
+                "max": 128.255
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 406.67435599999953,
+              "latencies": {
+                "samples": 8,
+                "p50": 34.631,
+                "p95": 117.49,
+                "p99": 117.49,
+                "max": 117.49
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 628.9568740000013,
+              "latencies": {
+                "samples": 8,
+                "p50": 66.578,
+                "p95": 176.229,
+                "p99": 176.229,
+                "max": 176.229
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-05",
+          "workers": 8,
+          "writesPerWorker": 8,
+          "blocks": 64,
+          "jsonBytes": 19408,
+          "sequential": false,
+          "distinctProjects": true,
+          "successfulWrites": 64,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 306.28629700000056,
+          "writesPerSecond": 208.95482634014112,
+          "latencyMs": {
+            "samples": 64,
+            "p50": 36.08,
+            "p95": 46.716,
+            "p99": 51.369,
+            "max": 51.369
+          },
+          "lockWaitMs": {
+            "samples": 64,
+            "p50": 0.542,
+            "p95": 1.928,
+            "p99": 7.128,
+            "max": 7.128
+          },
+          "lockHoldMs": {
+            "samples": 64,
+            "p50": 27.123,
+            "p95": 36.512,
+            "p99": 41.153,
+            "max": 41.153
+          },
+          "sceneLockWaitMs": {
+            "samples": 64,
+            "p50": 0.672,
+            "p95": 2.679,
+            "p99": 6.07,
+            "max": 6.07
+          },
+          "sceneLockHoldMs": {
+            "samples": 64,
+            "p50": 24.236,
+            "p95": 33.402,
+            "p99": 37.707,
+            "max": 37.707
+          },
+          "fairnessJain": 0.9989480152971009,
+          "perWorker": [
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 306.25814700000046,
+              "latencies": {
+                "samples": 8,
+                "p50": 39.169,
+                "p95": 48.863,
+                "p99": 48.863,
+                "max": 48.863
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 273.1117919999997,
+              "latencies": {
+                "samples": 8,
+                "p50": 33.165,
+                "p95": 40.071,
+                "p99": 40.071,
+                "max": 40.071
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 298.3680669999994,
+              "latencies": {
+                "samples": 8,
+                "p50": 35.342,
+                "p95": 43.921,
+                "p99": 43.921,
+                "max": 43.921
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 289.2786019999985,
+              "latencies": {
+                "samples": 8,
+                "p50": 36.08,
+                "p95": 46.716,
+                "p99": 46.716,
+                "max": 46.716
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 290.35006599999906,
+              "latencies": {
+                "samples": 8,
+                "p50": 29.879,
+                "p95": 51.369,
+                "p99": 51.369,
+                "max": 51.369
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 291.9587620000002,
+              "latencies": {
+                "samples": 8,
+                "p50": 34.627,
+                "p95": 45.559,
+                "p99": 45.559,
+                "max": 45.559
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 285.2079969999995,
+              "latencies": {
+                "samples": 8,
+                "p50": 36.012,
+                "p95": 43.338,
+                "p99": 43.338,
+                "max": 43.338
+              }
+            },
+            {
+              "successes": 8,
+              "lastIteration": 7,
+              "errors": [],
+              "elapsedMs": 282.2712760000013,
+              "latencies": {
+                "samples": 8,
+                "p50": 32.893,
+                "p95": 49.928,
+                "p99": 49.928,
+                "max": 49.928
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 9,
+              "snapshots": 9,
+              "changes": 9,
+              "audits": 9
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-03-long",
+          "workers": 8,
+          "writesPerWorker": 3,
+          "blocks": 3000,
+          "jsonBytes": 913916,
+          "sequential": false,
+          "distinctProjects": false,
+          "successfulWrites": 24,
+          "errors": [],
+          "retries": 0,
+          "elapsedMs": 2739.899936,
+          "writesPerSecond": 8.759443979927887,
+          "latencyMs": {
+            "samples": 24,
+            "p50": 778.161,
+            "p95": 1151.038,
+            "p99": 1191.236,
+            "max": 1191.236
+          },
+          "lockWaitMs": {
+            "samples": 24,
+            "p50": 1.086,
+            "p95": 81.944,
+            "p99": 84.209,
+            "max": 84.209
+          },
+          "lockHoldMs": {
+            "samples": 24,
+            "p50": 650.396,
+            "p95": 895.385,
+            "p99": 975.405,
+            "max": 975.405
+          },
+          "sceneLockWaitMs": {
+            "samples": 24,
+            "p50": 1.051,
+            "p95": 72.012,
+            "p99": 81.887,
+            "max": 81.887
+          },
+          "sceneLockHoldMs": {
+            "samples": 24,
+            "p50": 609.569,
+            "p95": 892.795,
+            "p99": 972.242,
+            "max": 972.242
+          },
+          "fairnessJain": 0.9956113344711621,
+          "perWorker": [
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2467.7141180000017,
+              "latencies": {
+                "samples": 3,
+                "p50": 778.161,
+                "p95": 911.199,
+                "p99": 911.199,
+                "max": 911.199
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2437.8768249999994,
+              "latencies": {
+                "samples": 3,
+                "p50": 675.238,
+                "p95": 1109.935,
+                "p99": 1109.935,
+                "max": 1109.935
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2432.100784000002,
+              "latencies": {
+                "samples": 3,
+                "p50": 891.346,
+                "p95": 923.028,
+                "p99": 923.028,
+                "max": 923.028
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2523.8635790000008,
+              "latencies": {
+                "samples": 3,
+                "p50": 880.889,
+                "p95": 1191.236,
+                "p99": 1191.236,
+                "max": 1191.236
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2397.222201999997,
+              "latencies": {
+                "samples": 3,
+                "p50": 874.016,
+                "p95": 1016.467,
+                "p99": 1016.467,
+                "max": 1016.467
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2443.6852670000007,
+              "latencies": {
+                "samples": 3,
+                "p50": 882.829,
+                "p95": 1151.038,
+                "p99": 1151.038,
+                "max": 1151.038
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2092.3815710000017,
+              "latencies": {
+                "samples": 3,
+                "p50": 738.156,
+                "p95": 804.668,
+                "p99": 804.668,
+                "max": 804.668
+              }
+            },
+            {
+              "successes": 3,
+              "lastIteration": 2,
+              "errors": [],
+              "elapsedMs": 2150.1591389999994,
+              "latencies": {
+                "samples": 3,
+                "p50": 676.331,
+                "p95": 936.032,
+                "p99": 936.032,
+                "max": 936.032
+              }
+            }
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 4,
+              "snapshots": 4,
+              "changes": 4,
+              "audits": 4
+            }
+          ]
+        },
+        {
+          "strategy": "project",
+          "case": "B-02",
+          "observedWait": true,
+          "revisions": [
+            2,
+            2
+          ],
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 2,
+              "snapshots": 2,
+              "changes": 2,
+              "audits": 2
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 2,
+              "snapshots": 2,
+              "changes": 2,
+              "audits": 2
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-02-independent",
+          "otherCommittedBeforeRelease": true,
+          "invariants": [
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 2,
+              "snapshots": 2,
+              "changes": 2,
+              "audits": 2
+            },
+            {
+              "contentAndHashMatch": true,
+              "revisionSequenceExact": true,
+              "revision": 2,
+              "snapshots": 2,
+              "changes": 2,
+              "audits": 2
+            }
+          ]
+        },
+        {
+          "strategy": "scene",
+          "case": "B-04",
+          "successes": 1,
+          "expectedConflicts": [
+            "REVISION_CONFLICT"
+          ],
+          "invariants": {
+            "contentAndHashMatch": true,
+            "revisionSequenceExact": true,
+            "revision": 2,
+            "snapshots": 2,
+            "changes": 2,
+            "audits": 2
+          }
+        }
+      ]
+    },
+    "narrative-qualification": {
+      "environment": {
+        "date": "2026-11-01T10:14:44.460Z",
+        "node": "v26.8.1",
+        "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+        "memoryGiB": 31.251102447509766
+      },
+      "methodology": "Services communs + vraie PostgreSQL locale, sans transport HTTP ; corpus synthétique 9 000 personnages, 500 lieux, 500 événements. 120 recherches séquentielles, 20 résultats/page, canari autre projet. Rafales de 6 autosaves indépendants × 16 et 16 mutations références + 16 bascules module sur le même projet. Aucun retry automatique ni erreur masquée. Enveloppe locale, pas une mesure multi-utilisateurs réseau de production.",
+      "seedMs": 69593.800023,
+      "search": {
+        "objects": 10000,
+        "queries": 120,
+        "latencyMs": {
+          "samples": 120,
+          "p50": 24.682,
+          "p95": 41.278,
+          "p99": 53.233,
+          "max": 72.635
+        },
+        "errors": [],
+        "nfr03LocalP95Below2s": true
+      },
+      "mixed": {
+        "autosaveMs": {
+          "samples": 96,
+          "p50": 31.876,
+          "p95": 78.537,
+          "p99": 118.152,
+          "max": 118.152
+        },
+        "graphPairMs": {
+          "samples": 16,
+          "p50": 21.225,
+          "p95": 682.983,
+          "p99": 682.983,
+          "max": 682.983
+        },
+        "elapsedMs": 1180.9679800000013,
+        "successfulAutosaves": 96,
+        "successfulReferenceWrites": 16,
+        "successfulModuleWrites": 16,
+        "errors": [],
+        "projectSharedWaitMs": {
+          "samples": 110,
+          "p50": 0.188,
+          "p95": 0.339,
+          "p99": 9.013,
+          "max": 18.937
+        },
+        "projectExclusiveWaitMs": {
+          "samples": 32,
+          "p50": 0.179,
+          "p95": 10.498,
+          "p99": 624.525,
+          "max": 624.525
+        },
+        "projectExclusiveHoldMs": {
+          "samples": 32,
+          "p50": 9.978,
+          "p95": 22.378,
+          "p99": 36.377,
+          "max": 36.377
+        },
+        "integrity": "7 scènes : révision exacte, snapshot texte/références exact, hash canonique exact, aucune perte"
+      }
+    },
+    "collaboration-qualification": {
+      "environment": {
+        "date": "2026-11-01T10:14:47.962Z",
+        "node": "v26.8.1",
+        "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+        "memoryGiB": 31.251102447509766
+      },
+      "methodology": "Services communs + PostgreSQL locale dédiée _test ; acteurs de test avec sessions vérifiées (pas IdP ni HTTP). Même projet : quatre auteurs × 16 autosaves, deux reviewers × (16 réponses + 4 changements état), huit changements de rôle, 24 lectures en parallèle. Aucun retry, aucune erreur masquée. Scène longue 1 000 paragraphes, 20 lectures après ajout de préface, preuve par bloc unique. Mesure locale sans promesse de charge publique.",
+      "mixed": {
+        "successfulMutations": 112,
+        "elapsedMs": 778.038109,
+        "mutationsPerSecond": 143.95181766090073,
+        "latencyMs": {
+          "autosave": {
+            "samples": 64,
+            "p50": 37.548,
+            "p95": 59.053,
+            "p99": 90.624,
+            "max": 90.624
+          },
+          "reply": {
+            "samples": 32,
+            "p50": 24.231,
+            "p95": 40.017,
+            "p99": 45.844,
+            "max": 45.844
+          },
+          "state": {
+            "samples": 8,
+            "p50": 17.865,
+            "p95": 35.603,
+            "p99": 35.603,
+            "max": 35.603
+          },
+          "administration": {
+            "samples": 8,
+            "p50": 8.444,
+            "p95": 614.163,
+            "p99": 614.163,
+            "max": 614.163
+          },
+          "read": {
+            "samples": 24,
+            "p50": 20.647,
+            "p95": 30.321,
+            "p99": 52.299,
+            "max": 52.299
+          }
+        },
+        "errors": [],
+        "projectSharedWaitMs": {
+          "samples": 140,
+          "p50": 0.184,
+          "p95": 0.392,
+          "p99": 2.195,
+          "max": 2.71
+        },
+        "projectExclusiveWaitMs": {
+          "samples": 8,
+          "p50": 0.139,
+          "p95": 588.87,
+          "p99": 588.87,
+          "max": 588.87
+        },
+        "projectExclusiveHoldMs": {
+          "samples": 8,
+          "p50": 7.82,
+          "p95": 12.041,
+          "p99": 12.041,
+          "max": 12.041
+        },
+        "integrity": "4 scènes r18, hashes/snapshots exacts ; 2 fils r21/17 messages attribués ; ancres originales immuables ; membership r9/historique exact"
+      },
+      "longScene": {
+        "characters": 939986,
+        "paragraphs": 1000,
+        "anchorFrom": 895760,
+        "reads": 20,
+        "latencyMs": {
+          "samples": 20,
+          "p50": 46.133,
+          "p95": 53.394,
+          "p99": 57.436,
+          "max": 57.436
+        },
+        "state": "relocated",
+        "falseCertainPositions": 0,
+        "sceneRevisionAfterComments": 3
+      }
+    },
+    "proposal-qualification": {
+      "environment": {
+        "date": "2026-11-01T10:14:50.458Z",
+        "node": "v26.8.1",
+        "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+        "memoryGiB": 31.251102447509766,
+        "poolMax": 24
+      },
+      "methodology": "Vrais services et PostgreSQL locale _test ; sessions humaines synthétiques, sans transport HTTP/IdP. Même projet : 8 fusions successives de 4 ressources, chacune préparée/revue sur bases actuelles, contre 2 auteurs × 40 autosaves de scènes indépendantes (~25 k caractères). Aucun retry automatique ni erreur masquée. Les barrières déterministes B-06/B-07 et fautes sont testées séparément.",
+      "results": {
+        "merges": 8,
+        "autosaves": 80,
+        "elapsedMs": 1550.828109,
+        "successfulCommandsPerSecond": 56.74387734482313,
+        "mergeMs": {
+          "samples": 8,
+          "p50": 21.788,
+          "p95": 837.04,
+          "p99": 837.04,
+          "max": 837.04
+        },
+        "autosaveMs": {
+          "samples": 80,
+          "p50": 20.353,
+          "p95": 26.711,
+          "p99": 96.742,
+          "max": 96.742
+        },
+        "projectExclusiveWaitMs": {
+          "samples": 8,
+          "p50": 0.156,
+          "p95": 808.512,
+          "p99": 808.512,
+          "max": 808.512
+        },
+        "projectExclusiveHoldMs": {
+          "samples": 8,
+          "p50": 21.049,
+          "p95": 27.524,
+          "p99": 27.524,
+          "max": 27.524
+        },
+        "projectSharedWaitMs": {
+          "samples": 120,
+          "p50": 0.177,
+          "p95": 0.287,
+          "p99": 0.336,
+          "max": 0.348
+        },
+        "errors": [],
+        "retries": 0,
+        "integrity": "8 ChangeSets uniques, chacun 4 événements ; scène ciblée r10/personnage r9 ; deux scènes autosave r41 avec contenu, hashes et snapshots exacts ; mappings durables au rejeu"
+      }
+    }
+  }
+}

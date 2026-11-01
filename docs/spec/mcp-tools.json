@@ -3556,8 +3556,7 @@
                   "userId": {
                     "type": "string",
                     "minLength": 1,
-                    "maxLength": 128,
-                    "pattern": "^[A-Za-z0-9_-]+$"
+                    "maxLength": 200
                   },
                   "clientId": {
                     "type": "string",
@@ -3629,6 +3628,9 @@
                     "type": "null"
                   }
                 ]
+              },
+              "aiProvenance": {
+                "$ref": "#/$defs/AIProvenance"
               }
             },
             "required": [
@@ -4222,6 +4224,42 @@
               "decision",
               "validity",
               "createdAt"
+            ],
+            "additionalProperties": false
+          },
+          "AIProvenance": {
+            "type": "object",
+            "properties": {
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "provider": {
+                "const": "local-simulator"
+              },
+              "model": {
+                "enum": [
+                  "discussion-v1",
+                  "narrative-v1",
+                  "slow-v1",
+                  "unknown-v1",
+                  "unavailable-v1"
+                ]
+              },
+              "simulated": {
+                "const": true
+              }
+            },
+            "required": [
+              "executionId",
+              "initiatorId",
+              "provider",
+              "model",
+              "simulated"
             ],
             "additionalProperties": false
           }
@@ -6085,8 +6123,7 @@
                   "userId": {
                     "type": "string",
                     "minLength": 1,
-                    "maxLength": 128,
-                    "pattern": "^[A-Za-z0-9_-]+$"
+                    "maxLength": 200
                   },
                   "clientId": {
                     "type": "string",
@@ -6158,6 +6195,9 @@
                     "type": "null"
                   }
                 ]
+              },
+              "aiProvenance": {
+                "$ref": "#/$defs/AIProvenance"
               }
             },
             "required": [
@@ -6751,6 +6791,42 @@
               "decision",
               "validity",
               "createdAt"
+            ],
+            "additionalProperties": false
+          },
+          "AIProvenance": {
+            "type": "object",
+            "properties": {
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "provider": {
+                "const": "local-simulator"
+              },
+              "model": {
+                "enum": [
+                  "discussion-v1",
+                  "narrative-v1",
+                  "slow-v1",
+                  "unknown-v1",
+                  "unavailable-v1"
+                ]
+              },
+              "simulated": {
+                "const": true
+              }
+            },
+            "required": [
+              "executionId",
+              "initiatorId",
+              "provider",
+              "model",
+              "simulated"
             ],
             "additionalProperties": false
           }
@@ -8167,8 +8243,7 @@
                   "userId": {
                     "type": "string",
                     "minLength": 1,
-                    "maxLength": 128,
-                    "pattern": "^[A-Za-z0-9_-]+$"
+                    "maxLength": 200
                   },
                   "clientId": {
                     "type": "string",
@@ -8240,6 +8315,9 @@
                     "type": "null"
                   }
                 ]
+              },
+              "aiProvenance": {
+                "$ref": "#/$defs/AIProvenance"
               }
             },
             "required": [
@@ -8833,6 +8911,42 @@
               "decision",
               "validity",
               "createdAt"
+            ],
+            "additionalProperties": false
+          },
+          "AIProvenance": {
+            "type": "object",
+            "properties": {
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "provider": {
+                "const": "local-simulator"
+              },
+              "model": {
+                "enum": [
+                  "discussion-v1",
+                  "narrative-v1",
+                  "slow-v1",
+                  "unknown-v1",
+                  "unavailable-v1"
+                ]
+              },
+              "simulated": {
+                "const": true
+              }
+            },
+            "required": [
+              "executionId",
+              "initiatorId",
+              "provider",
+              "model",
+              "simulated"
             ],
             "additionalProperties": false
           }
@@ -9610,8 +9724,7 @@
                   "userId": {
                     "type": "string",
                     "minLength": 1,
-                    "maxLength": 128,
-                    "pattern": "^[A-Za-z0-9_-]+$"
+                    "maxLength": 200
                   },
                   "clientId": {
                     "type": "string",
@@ -9683,6 +9796,9 @@
                     "type": "null"
                   }
                 ]
+              },
+              "aiProvenance": {
+                "$ref": "#/$defs/AIProvenance"
               }
             },
             "required": [
@@ -10276,6 +10392,42 @@
               "decision",
               "validity",
               "createdAt"
+            ],
+            "additionalProperties": false
+          },
+          "AIProvenance": {
+            "type": "object",
+            "properties": {
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "provider": {
+                "const": "local-simulator"
+              },
+              "model": {
+                "enum": [
+                  "discussion-v1",
+                  "narrative-v1",
+                  "slow-v1",
+                  "unknown-v1",
+                  "unavailable-v1"
+                ]
+              },
+              "simulated": {
+                "const": true
+              }
+            },
+            "required": [
+              "executionId",
+              "initiatorId",
+              "provider",
+              "model",
+              "simulated"
             ],
             "additionalProperties": false
           }

@@ -92,6 +92,14 @@ L'outillage de validation est désormais versionné dans `scripts/`, avec dépen
 
 Sur-spécification des modules, coût du moteur de propositions, contrats OAuth/client évolutifs. Les questions produit du PRD restent visibles dans le plan ; aucun arbitrage durable n'est présenté comme accepté.
 
+## Passage au Lot 5 — 1er novembre 2026
+
+Instruction explicite : réception technique du Lot 4 sous réserve de sa CI et des réserves documentées ; principes ADR-0013 acceptés. Départ propre 9c2df0ba811652a48d1454eea7535f12d423bb71 ; [CI 41291953747](https://github.com/ZA512/StoryMaster/actions/runs/41291953747) vérifiée terminée avec succès validate/spike-a. Cela ne clôt ni UX, brouillons après crash, R-CONT-01, RLS, révocation IdP, sauvegardes ni qualification publique.
+
+Autorisation en deux phases : phase A complète locale avec simulateurs, tests et UI ; phase B arrêtée jusqu’à GO-03 explicite, sans clé personnelle réelle ni appel facturable. [GO-03](GO-03-DECISION-PROPOSAL.md) présente options, sources officielles consultées et éléments à valider. ADR-0014 décrit capacité serveur, contexte/consentement bornés, BYOK enveloppe et budget prudent. Les principes ne deviennent pas un accord produit par présence d’un fichier. AGENTS, décisions et plan actualisés sans ouvrir Lot 6.
+
+Aucun des 150 identifiants/textes/priorités/cibles ni des 100 MUST MVP et huit lots n’est modifié ; PRD, requirements et backlog conservés. Proposition IA via le moteur commun, provenance immuable et initiateur humain distinct. La règle d’auto-approbation conserve owner individuel et compare cet initiateur. Les 13 contrats MCP sont synchronisés sans serveur ; 14 outils internes ont un catalogue distinct. Migration 0008 additive ; anciennes migrations gelées, comparaison des 28 tables/colonnes préexistantes sans contenu exporté. Réserves et qualification réelle explicitement distinctes dans [rapport Phase A](LOT-5-REPORT.md).
+
 ## Critères d'acceptation du document
 
 Les 28 sections du PRD et toutes les grandes sections des deux recherches ont une conclusion ; divergences identifiées sans résolution silencieuse ; le registre des sources permet de distinguer vérifié, inaccessible et hypothétique ; les livrables existants ont été lus avant modification.

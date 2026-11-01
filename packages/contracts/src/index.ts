@@ -24,3 +24,5 @@ export * from './narrative.ts';
 export * from './collaboration.ts';
 
 export * from './proposals.ts';
+
+export * from './ai.ts';

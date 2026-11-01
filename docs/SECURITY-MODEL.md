@@ -590,6 +590,27 @@ Restaurer sur environnement isolé, accès opérateur borné, egress IA/notifica
 
 Autorisation applicative centrale obligatoire ; RLS recommandée en défense en profondeur plutôt que comme unique contrôle. Chiffrement au repos protège copies/disques, pas un processus autorisé à déchiffrer ; chiffrement de bout en bout incompatible avec recherche/IA serveur telle que proposée, donc non promis. Alternative auto-hébergée permet de choisir d'autres opérateurs/fournisseurs sans supprimer les menaces. Residuals opérateur, fournisseur et coût incertain ne sont pas acceptés silencieusement : GO-04 avant lot 7, GO-03 avant lot 5/6. La rétention exacte, IdP/AS et l'exposition distante sont ouverts.
 
+## Matrice exécutée — Lot 5 phase A
+
+| Surface | Autorité requise | Plafond / refus |
+|---|---|---|
+| Credential personnel | Session humaine, propriétaire de la configuration, membership projet | Autre utilisateur refusé même admin ; clé réelle/fournisseur/URL libre refusés phase A |
+| Conversation / messages / sources / exécution | Initiateur humain ET membership courant du projet | Autre membre 404, y compris owner ; export sans transcript |
+| Préparer contexte / discuter | Tout rôle humain encore membre, consentement exact par demande | Inventaire borné, sources et versions revérifiées, pas de secret ni texte non enregistré |
+| Exécution integrated_ai lecture | Capacité serveur vérifiée, session/membership/credential/consentement actuels | Faux actorType et bearer arbitraire sans autorité ; projet et inventaire imposés |
+| Préparer/réviser/soumettre proposition | Même capacité + rôle actuel owner/admin/author/reviewer + intention propose | Reader refusé ; uniquement propositions de sa conversation autorisées |
+| Écriture canonique, commentaire, export, administration, approve/merge | Humain selon politique existante | integrated_ai toujours refusé même si initiateur owner ; aucun outil correspondant |
+| Arrêt / retrait / remplacement / consentement révoqué | Contrôle frais avant nouvelle étape et publication | Appel engagé best-effort annulé, aucune réponse tardive publiée après retrait |
+| Budget / coût inconnu | Réservation atomique personnelle par projet + plafonds serveur | Aucun retry automatique après envoi incertain, réservation prudente conservée |
+
+Secrets : enveloppe authentifiée AAD propriétaire/credential/fournisseur/version, clé de protection hors DB et versionnée ; rewrap ne change pas le secret, remplacement incrémente keyVersion, révocation bloque la suite. Logs sur liste fermée method/path/code/correlationId sans corps, tokens, réponse brute du fournisseur ni prompts. Un serveur compromis pouvant déchiffrer et les anciennes sauvegardes restent des risques ; les chaînes JavaScript ne garantissent pas l’effacement mémoire. Aucune clé réelle testée avant GO-03.
+
+Résultats d’outils bornés au contenu consenti : recherche renvoie la source sélectionnée sans snippet supplémentaire ; preview/validation renvoient métadonnées/codes sans diff canonique ni avis humains. Une cible disponible seulement en extrait ne peut être modifiée par outil ; nouvelle sélection complète et consentement nécessaires. Une proposition antérieure choisie à réviser est montrée dans l’inventaire, sans avis humains ; version/état modifiés avant lecture refusés.
+
+Sources narratives et réponses du simulateur sont non fiables ; noms/arguments d’outils fermés, autorisation indépendante du modèle, limite de taille/profondeur, IDs filtrés dans l’inventaire, aucun egress arbitraire. Tests d’injection dans scène/fiche/recherche et faux outils ne prétendent pas rendre toute injection impossible. Les textes générés sont rendus comme texte React, jamais HTML de modèle. Une mauvaise suggestion peut toujours être approuvée par un humain ; revue nécessaire.
+
+Transactions courtes et appels hors DB, deadlines y compris adapter ignorant AbortSignal, contrôle de révocation en attente, atomicité budget/transcript/publication/audit, reprise orpheline unknown. Aucun service IA ne peut établir une identité depuis HTTP. Voir [ADR-0014](adr/0014-assistant-integre-et-executions-bornees.md), [GO-03 encore proposé](GO-03-DECISION-PROPOSAL.md).
+
 ## Critères d'acceptation du document
 
 Chaque menace critique a mitigation concrète et scénario vérifiable ; matrice autorisations testable par rôle et canal ; les clients ne fournissent jamais leur propre identité d'autorité ; chaque copie/transfert a une règle d'accès ; résiduels élevés ont décision et lot ; la sécurité ne repose ni sur le prompt ni sur la liste d'outils seule. Les tests spécifiés ne sont pas présentés comme exécutés sur une application absente.
@@ -603,7 +624,7 @@ RLS, MFA, administration des membres, grants MCP, stockage de clés IA, backups 
 
 ## Contrôles appliqués au Lot 1
 
-Lecture/historique/compare : cinq rôles humains ; écriture/restauration/export : owner/admin/author ; archive/réactivation et configuration des statuts : owner/admin. IA refusée avant tout accès narratif. Chaque chemin revalide session/utilisateur/membership après sa barrière serveur. Les IDs et destinations interprojets ne donnent aucun accès. L’[ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md) conserve la barrière projet même pour les scènes indépendantes ; droits fraîchement révoqués et archivage concurrent sont testés en vraie PostgreSQL.
+Lecture/historique/compare : cinq rôles humains ; écriture/restauration/export : owner/admin/author ; archive/réactivation et configuration des statuts : owner/admin. Au Lot 5, lecture integrated_ai uniquement sous capacité serveur vérifiée ; mutations canoniques et export restent refusés. Chaque chemin revalide session/utilisateur/membership après sa barrière serveur. Les IDs et destinations interprojets ne donnent aucun accès. L’[ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md) conserve la barrière projet même pour les scènes indépendantes ; droits fraîchement révoqués et archivage concurrent sont testés en vraie PostgreSQL.
 
 JSON narratif strict, liens http/https/mailto sans credentials, aucune image/HTML/script dans le schéma. RichView rend des nœuds React et non du HTML brut. CSP reste active ; diff et comptage de brouillon passent dans un Worker local sans réseau fournisseur. Les brouillons sont en mémoire de l’onglet, jamais en localStorage/sessionStorage ; aucune promesse hors ligne ou de conservation après fermeture forcée. Les erreurs ne journalisent pas de contenu narratif ni jetons. Limites de ressources explicites, refus sans troncature ; voir rapport de réception.
 
@@ -628,7 +649,7 @@ Révocation : Project exclusif et droits frais après attente ; commentaire/auto
 
 ## Contrôles de propositions effectivement exécutés — Lot 4
 
-Politique centrale `proposalPermission`, puis relecture session/membership sous la barrière projet. Reader lit ; author/reviewer prépare/soumet ses propositions et commente la revue, sans pouvoir écrire le canon par ce chemin. Owner/admin révise, approuve/rejette et fusionne. Auto-approbation seulement owner humain créateur, projet encore individuel. Les origines integrated_ai/external_ai sont refusées pour tous les cas d’usage Lot 4 jusqu’à disponibilité d’une délégation serveur vérifiée ; jamais d’autorité issue de clientInfo ou actorType reçu par HTTP.
+Politique centrale `proposalPermission`, puis relecture session/membership sous la barrière projet. Reader lit ; author/reviewer prépare/soumet ses propositions et commente la revue, sans pouvoir écrire le canon par ce chemin. Owner/admin révise, approuve/rejette et fusionne. Auto-approbation seulement owner humain créateur, projet encore individuel. Au Lot 5 phase A, integrated_ai est limité à lecture et préparation sous capacité serveur vérifiée (ADR-0014) ; external_ai reste refusé ; jamais d’autorité issue de clientInfo ou actorType reçu par HTTP.
 
 Merge contrôle de nouveau l’auteur, le fusionneur, le réviseur et la révision de son appartenance. Une ancienne approbation ne redevient pas valide après restitution des droits. Contenu/révision/hash exacts, droits actifs, absence de demande de révision postérieure et projet actif sont requis. Approbation seule sans mutation canonique, merge explicitement humain. Rejeu durable autorisé seulement après les contrôles actuels ; un utilisateur retiré ne récupère pas un résultat devenu inaccessible.
 

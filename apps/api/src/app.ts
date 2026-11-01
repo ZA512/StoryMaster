@@ -1,3 +1,4 @@
+import {registerAI} from './ai.ts';
 import {registerProposals} from './proposals.ts';
 import {registerCollaboration,invitationCookie} from './collaboration.ts';
 import {registerNarrative} from './narrative.ts';
@@ -8,15 +9,16 @@ import type { FastifyRequest } from 'fastify';
 import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@storymaster/domain';
-import { IdentityService, ProjectService,EditorialService,NarrativeService,CollaborationService,ProposalService } from '@storymaster/application';
+import { IdentityService, ProjectService,EditorialService,NarrativeService,CollaborationService,ProposalService,AIAssistantService,AIOrchestrator } from '@storymaster/application';
 import { createProjectSchema,updateProjectSchema,listProjectsSchema,idempotencyKeySchema,emptyBodySchema } from '@storymaster/contracts';
-import { Pool,PostgresUnitOfWork,SessionStore,OidcProvider,assertApplicationSchema } from '@storymaster/infrastructure';
+import { Pool,PostgresUnitOfWork,SessionStore,OidcProvider,assertApplicationSchema,EnvelopeCredentialCipher,LocalAIProvider } from '@storymaster/infrastructure';
 import type { Session,LoginSecret } from '@storymaster/infrastructure';
 import { registerEditorial } from './editorial.ts';
+import type {ProviderAdapter} from '@storymaster/application';
 import type { Config } from './config.ts';
 
 declare module 'fastify' { interface FastifyRequest { session:Session|null } }
-export async function buildApp(config:Config, options:{logStream?:Writable;rateMax?:number}={}) {
+export async function buildApp(config:Config, options:{logStream?:Writable;rateMax?:number;aiAdapter?:ProviderAdapter;aiWorker?:boolean}={}) {
   const pool=new Pool({connectionString:config.databaseUrl,max:20,connectionTimeoutMillis:5000});
   try{await assertApplicationSchema(pool);}catch(e){await pool.end();throw e;}
   const db=new PostgresUnitOfWork(pool),projects=new ProjectService(db,config.secret),identities=new IdentityService(db,config.issuer);
@@ -120,6 +122,10 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   await registerNarrative(app,new NarrativeService(db,config.secret),editorial,{actor,key,expected});
   await registerProposals(app,new ProposalService(db,config.secret),{actor,key});
   await registerCollaboration(app,new CollaborationService(db,config.secret,{publicOrigin:config.publicOrigin,invitationTtlSeconds:config.invitationTtlSeconds}),{actor,key,expected},invitationOptions);
-  app.addHook('onClose',()=>pool.end());
+  const ai=new AIAssistantService(db,config.secret,config.ai?.enabled?new EnvelopeCredentialCipher(config.ai.keyring,config.ai.activeVersion):null,!!config.ai?.enabled);
+  await registerAI(app,ai,{actor,key,expected});
+  const orchestrator=config.ai?.enabled?new AIOrchestrator(ai,options.aiAdapter??new LocalAIProvider()):null;
+  if(options.aiWorker!==false)orchestrator?.start();
+  app.addHook('onClose',async()=>{await orchestrator?.close();await pool.end();});
   return app;
 }

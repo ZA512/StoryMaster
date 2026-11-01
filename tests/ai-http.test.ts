@@ -1,0 +1,31 @@
+import {before,after,test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {Writable} from 'node:stream';
+import {buildApp} from '../apps/api/src/app.ts';
+import {issuer,secret,sessions,reset,close} from './database.helper.ts';
+import {aiFixture,protectionKey,demoKey} from './ai.helper.ts';
+import {member} from './narrative.helper.ts';
+before(reset);after(close);
+test('HTTP assistant : session humaine, contrats observés, consentement, CAS, idempotence et confidentialité',async()=>{
+ let logs='';const app=await buildApp({databaseUrl:process.env.TEST_APP_DATABASE_URL!,issuer,clientId:'storymaster-web',publicOrigin:'http://localhost:3000',secret,local:true,port:3001,sessionSeconds:3600,ai:{enabled:true,keyring:{test_v1:protectionKey},activeVersion:'test_v1'}},{rateMax:1000,aiWorker:false,logStream:new Writable({write(chunk,_encoding,next){logs+=String(chunk);next();}})});
+ try{const f=await aiFixture(),owner=f.owner,p=f.project.id,other=await member(p,'admin'),base='/api/v1/projects/'+p+'/ai',template='/projects/{projectId}/ai',observed:unknown[]=[];
+ const call=async(method:'GET'|'POST'|'PUT',path:string,t:string,status:number,payload?:unknown,who=owner,etag?:string,extra:Record<string,string>={})=>{const response=await app.inject({method,url:base+path,headers:{cookie:'sm_session_local='+who.raw,origin:'http://localhost:3000','x-csrf-token':sessions.csrf(who.raw),'idempotency-key':randomUUID(),...(etag?{'if-match':etag}:{}),...extra},...(payload?{payload}:{})});assert.equal(response.statusCode,status,response.body);observed.push({method:method.toLowerCase(),path:template+t,status,body:response.json()});assert.ok(!response.body.includes(demoKey));assert.ok(!response.body.includes('capabilityHash'));assert.ok(!response.body.includes('sessionHash'));assert.ok(!response.body.includes('wrappedKey'));return response.json().data;};
+ await call('GET','/config','/config',200);await call('GET','/credentials','/credentials',200);
+ await call('POST','/credentials','/credentials',422,{provider:'openai',label:'Réel interdit',secret:'sk-real-not-used'});
+ await call('POST','/credentials','/credentials',403,{provider:'local-simulator',label:'Demo',secret:demoKey},owner,undefined,{'x-csrf-token':'forged'});
+ const credential=await call('POST','/credentials','/credentials',201,{provider:'local-simulator',label:'Demo HTTP',secret:demoKey});
+ const body={title:'Conversation HTTP privée',credentialId:credential.id,model:'discussion-v1'},idempotency=randomUUID();const c=await call('POST','/conversations','/conversations',201,body,owner,undefined,{'idempotency-key':idempotency});assert.deepEqual(await call('POST','/conversations','/conversations',201,body,owner,undefined,{'idempotency-key':idempotency}),c);
+ await call('GET','/conversations','/conversations',200);const path='/conversations/'+c.id,t='/conversations/{conversationId}';await call('GET',path,t,404,undefined,other);await call('GET',path,t,200);
+ const context={message:'CANARY_HTTP_PRIVATE',intent:'discuss',selection:{sceneId:f.s.id,includeRelated:true}};await call('POST',path+'/context',t+'/context',428,context);await call('POST',path+'/context',t+'/context',412,context,owner,'"r99"');await call('POST',path+'/context',t+'/context',422,{...context,actorType:'integrated_ai'},owner,'"r1"');const plan=await call('POST',path+'/context',t+'/context',200,context,owner,'"r1"');
+ await call('POST',path+'/messages',t+'/messages',422,{planId:plan.id,contextHash:plan.contextHash,consent:false},owner,'"r1"');const execution=await call('POST',path+'/messages',t+'/messages',202,{planId:plan.id,contextHash:plan.contextHash,consent:true},owner,'"r1"');const ep='/executions/'+execution.id,et='/executions/{executionId}';await call('GET',ep,et,404,undefined,other);await call('GET',ep,et,200);await call('GET',ep+'/sources',et+'/sources',200);await call('POST',ep+'/cancel',et+'/cancel',200,{},owner,'"r1"');
+ const budget=await call('GET','/budget','/budget',200);await call('PUT','/budget','/budget',200,{limits:{maxCalls:100,maxTokens:5000000,maxConcurrent:2,maxCostMicros:null}},owner,`"r${budget.revision}"`);
+ await call('POST',path+'/retention',t+'/retention',200,{retentionDays:30},owner,'"r2"');await call('POST',path+'/revoke_consent',t+'/revoke_consent',200,{},owner,'"r3"');await call('POST',path+'/close',t+'/close',200,{},owner,'"r4"');
+ await call('POST','/credentials/'+credential.id+'/rewrap','/credentials/{credentialId}/rewrap',200,{},owner,'"r1"');await call('POST','/credentials/'+credential.id+'/replace','/credentials/{credentialId}/replace',200,{secret:demoKey,label:'Demo remplacée'},owner,'"r2"');await call('POST','/credentials/'+credential.id+'/revoke','/credentials/{credentialId}/revoke',200,{},owner,'"r3"');
+ const forged=await app.inject({url:base+'/config',headers:{authorization:'Bearer fabricated-ai-capability'}});assert.equal(forged.statusCode,401);
+ const canonical=await app.inject({method:'PUT',url:'/api/v1/projects/'+p+'/scenes/'+f.s.id+'/content',headers:{authorization:'Bearer fabricated-ai-capability',origin:'http://localhost:3000','x-csrf-token':'forged'},payload:{actorType:'integrated_ai',contentFormatVersion:1,content:{type:'doc',content:[]}}});assert.ok([401,403].includes(canonical.statusCode));
+ const spoof=await app.inject({method:'PUT',url:'/api/v1/projects/'+p+'/scenes/'+f.s.id+'/content',headers:{cookie:'sm_session_local='+owner.raw,origin:'http://localhost:3000','x-csrf-token':sessions.csrf(owner.raw),'idempotency-key':randomUUID(),'if-match':'"r3"'},payload:{actorType:'integrated_ai',executionId:execution.id,contentFormatVersion:1,content:{type:'doc',content:[]}}});assert.equal(spoof.statusCode,422);
+ assert.ok(!logs.includes(demoKey));assert.ok(!logs.includes('CANARY_HTTP_PRIVATE'));assert.ok(!logs.includes(owner.raw));const checked=spawnSync(process.env.DOCUMENT_PYTHON??'python3',['scripts/validate_runtime_contracts.py'],{input:JSON.stringify(observed),encoding:'utf8'});assert.equal(checked.status,0,checked.stdout+checked.stderr);console.log(checked.stdout.trim());
+ }finally{await app.close();}
+});

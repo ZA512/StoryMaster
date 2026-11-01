@@ -23,7 +23,8 @@ Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style
 
 | ADR-0012 | [Collaboration asynchrone et ancrages conservateurs](0012-collaboration-asynchrone-et-ancrages.md) | Principes acceptés ; Lot 3 reçu techniquement avec réserves |
 
-| ADR-0013 | [Moteur de propositions et fusion atomique](0013-moteur-de-propositions-et-fusion.md) | Mise en œuvre Lot 4 ; réception humaine attendue |
+| ADR-0013 | [Moteur de propositions et fusion atomique](0013-moteur-de-propositions-et-fusion.md) | Principes acceptés ; réception technique Lot 4 avec réserves et CI verte |
+| ADR-0014 | [Assistant intégré et exécutions bornées](0014-assistant-integre-et-executions-bornees.md) | Phase A autorisée ; GO-03 et réception finale attendus |
 
 ## Décisions proposées et alternatives
 

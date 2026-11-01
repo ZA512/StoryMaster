@@ -1,8 +1,8 @@
 export const roles = ['owner', 'admin', 'author', 'reviewer', 'reader'] as const;
 export type Role = typeof roles[number];
 export type ActorType = 'human' | 'integrated_ai' | 'external_ai' | 'system';
-export interface Actor { type: ActorType; userId: string; sessionHash: string; clientId?: string; grantId?: string }
-export type ErrorCode = 'PROPOSAL_CONFLICT' | 'MODULE_DISABLED' | 'UNAUTHENTICATED' | 'FORBIDDEN' | 'NOT_FOUND' | 'VALIDATION_FAILED' | 'REVISION_CONFLICT' | 'PRECONDITION_REQUIRED' | 'IDEMPOTENCY_KEY_REUSED' | 'INVALID_STATE_TRANSITION' | 'RATE_LIMITED' | 'TEMPORARILY_UNAVAILABLE' | 'INTERNAL_ERROR';
+export interface Actor { type: ActorType; userId: string; sessionHash: string; clientId?: string; grantId?: string; executionId?:string; aiCapability?:string }
+export type ErrorCode = 'BUDGET_EXCEEDED' | 'AI_DISABLED' | 'AI_LIMIT_EXCEEDED' | 'AI_EXECUTION_UNKNOWN' | 'AI_CONTEXT_STALE' | 'CONSENT_REQUIRED' | 'PROVIDER_UNAVAILABLE' | 'PROPOSAL_CONFLICT' | 'MODULE_DISABLED' | 'UNAUTHENTICATED' | 'FORBIDDEN' | 'NOT_FOUND' | 'VALIDATION_FAILED' | 'REVISION_CONFLICT' | 'PRECONDITION_REQUIRED' | 'IDEMPOTENCY_KEY_REUSED' | 'INVALID_STATE_TRANSITION' | 'RATE_LIMITED' | 'TEMPORARILY_UNAVAILABLE' | 'INTERNAL_ERROR';
 export class AppError extends Error {
   constructor(public code: ErrorCode, message: string, public status: number, public details?: Record<string, unknown>) { super(message); }
 }
@@ -34,6 +34,7 @@ export interface AuditEvent {
 }
 export type NarrativePermission = 'narrative.read'|'narrative.write'|'narrative.archive'|'export.create'|'project.admin'|'members.read'|'members.admin'|'membership.leave'|'comment.write';
 export function narrativePermitted(role:Role, permission:NarrativePermission, actor:ActorType):boolean {
+ if(actor==='integrated_ai')return permission==='narrative.read';
   if(actor!=='human')return false;
   switch(permission){case 'members.read':case 'membership.leave':case 'narrative.read':return roles.includes(role);case 'members.admin':case 'project.admin':case 'narrative.archive':return role==='owner'||role==='admin';case 'comment.write':return ['owner','admin','author','reviewer'].includes(role);case 'narrative.write':case 'export.create':return ['owner','admin','author'].includes(role);default:return false;}
 }
@@ -57,3 +58,5 @@ export * from './narrative.ts';
 export * from './collaboration.ts';
 
 export * from './proposals.ts';
+
+export * from './ai.ts';

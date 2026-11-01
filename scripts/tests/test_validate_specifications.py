@@ -69,6 +69,31 @@ class ValidatorTests(unittest.TestCase):
         oas['components']['schemas']['MergeResult']['required'].remove('temporaryIds')
         with self.assertRaises(validation.InvalidSpecification): validation.validate_lot4(oas)
 
+    def test_lot5_cannot_expose_real_provider(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['AIConfig']['properties']['externalProvidersEnabled']['const']=True
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot5(oas)
+
+    def test_lot5_cannot_skip_consent(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['AISend']['properties']['consent']['const']=False
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot5(oas)
+
+    def test_lot5_cannot_leak_capability(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['AIExecution']['properties']['aiCapability']={'type':'string'}
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot5(oas)
+
+    def test_lot5_cannot_add_merge_tool(self):
+        self.mutate_json('docs/spec/ai-tools.json',lambda d:d['tools'][-1].update(name='proposal_merge'))
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot5(oas,self.root)
+
+    def test_lot5_cannot_drop_owner_check(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['paths']['/projects/{projectId}/ai/conversations/{conversationId}']['get']['x-owner-bound']=False
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot5(oas)
+
     def test_current_dossier(self):
         with contextlib.redirect_stdout(io.StringIO()):
             validation.validate_all(self.root)

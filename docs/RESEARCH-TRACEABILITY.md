@@ -191,6 +191,12 @@ Les divergences D01–D17 sont décrites dans [DOCUMENT-AUDIT.md](DOCUMENT-AUDIT
 
 Reproduire tous les concurrents rendrait le MVP ingérable. Un moteur de faits complet, un schéma arbitraire ou une recherche vectorielle dès le socle créeraient des obligations V1 cachées. Alternative retenue : noyau typé, propositions atomiques, extensions documentées sans implémentation. Les questions Q-01..15 restent au plan ; états « confirmé » ci-dessus indiquent un lien documentaire, jamais une fonctionnalité construite ni une décision humaine acceptée.
 
+## Preuves du Lot 5 — phase A simulée seulement
+
+Les définitions et rattachements d’exigences ci-dessus restent inchangés. Le socle relie AI-01..06/08..14 et AI-SEC-01..05 à AIAssistantService, ContextBuilder, AIOrchestrator, outils fermés, chiffrement enveloppe, budgets et UI. AI-07 (MCP) n’est pas implémenté. AI-02/03 et les transferts externes restent partiellement qualifiés : provider et modèles simulés, aucune intégration réelle avant GO-03. Les garanties indépendantes du modèle (permissions, provenance, publication sans canon, confidentialité, atomicité) sont exercées sur PostgreSQL et HTTP ; aucun résultat simulé ne prouve la qualité d’une IA ou les conditions d’un fournisseur.
+
+[Scénarios exacts](spec/lot5-scenarios.json) relient CT-21/22/23/27/28/30/32/34/37/38/41 à leurs tests ; CT-30 est limité à integrated_ai sans client/grant tiers, CT-41 à refus de destination avant egress sans requête réseau réelle. Les variantes MCP ne sont jamais décomptées. [Rapport](LOT-5-REPORT.md) distingue tests applicatifs, HTTP observé, migration remplie, navigateur avec Keycloak, replay des lots antérieurs et CI distante du seul commit réellement observé. [GO-03](GO-03-DECISION-PROPOSAL.md) reste à décider, arrêt avant Lot 6.
+
 ## Critères d'acceptation du document
 
 Chaque identifiant PRD apparaît exactement une fois dans la matrice ; tout MUST MVP a un lot dans le plan ; les MUST V1 ne sont pas agrégés aux MUST MVP ; toutes les grandes familles des recherches ont une décision et une justification ; aucune citation `turn…` héritée n'est présentée comme vérifiée.

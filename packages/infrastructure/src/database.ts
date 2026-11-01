@@ -1,3 +1,4 @@
+import {PostgresAIStore} from './ai.ts';
 import {PostgresProposalStore} from './proposals.ts';
 import { createHash, randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
@@ -65,9 +66,9 @@ export class PostgresUnitOfWork implements UnitOfWork {
 }
 class PostgresTransaction implements Transaction {
   private lockStarted?: number;
-  readonly proposals:PostgresProposalStore;readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
+  readonly ai:PostgresAIStore;readonly proposals:PostgresProposalStore;readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
   private lockMode:'exclusive'|'shared'='exclusive';
-  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.proposals=new PostgresProposalStore(client);this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
+  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.ai=new PostgresAIStore(client);this.proposals=new PostgresProposalStore(client);this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
   finish() { this.editorial.finish();if (this.lockStarted !== undefined) this.observe({name:'project.lock_hold_ms',value:performance.now()-this.lockStarted,mode:this.lockMode}); }
   async assertActor(actor: Actor) {
     const result = await this.client.query(`SELECT u.id FROM sessions s JOIN app_users u ON u.id=s.user_id
@@ -109,7 +110,8 @@ class PostgresTransaction implements Transaction {
     await this.client.query('INSERT INTO project_revisions(project_id,revision,snapshot,actor_user_id) VALUES ($1,$2,$3,$4)',[p.id,p.revision,JSON.stringify({id,ownerId,name,description,language,visibility,status,revision,createdAt,updatedAt}),actor.userId]);
   }
   async audit(e:AuditEvent) {
-    await this.client.query('INSERT INTO audit_events(id,project_id,actor_user_id,actor_type,action,resource_id,before_revision,after_revision,correlation_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),e.projectId ?? null,e.actor.userId,e.actor.type,e.action,e.resourceId,e.beforeRevision ?? null,e.afterRevision ?? null,e.correlationId]);
+    if(e.actor.type!=='integrated_ai'){await this.client.query('INSERT INTO audit_events(id,project_id,actor_user_id,actor_type,action,resource_id,before_revision,after_revision,correlation_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),e.projectId??null,e.actor.userId,e.actor.type,e.action,e.resourceId,e.beforeRevision??null,e.afterRevision??null,e.correlationId]);return;}
+    await this.client.query('INSERT INTO audit_events(id,project_id,actor_user_id,actor_type,action,resource_id,before_revision,after_revision,correlation_id,ai_execution_id,ai_provider,ai_model) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(SELECT provider FROM ai_executions WHERE id=$10 AND project_id=$2 AND owner_id=$3),(SELECT model FROM ai_executions WHERE id=$10 AND project_id=$2 AND owner_id=$3))',[randomUUID(),e.projectId ?? null,e.actor.userId,e.actor.type,e.action,e.resourceId,e.beforeRevision ?? null,e.afterRevision ?? null,e.correlationId,e.actor.type==='integrated_ai'?e.actor.executionId??null:null]);
   }
   async resolveIdentity(identity:Identity): Promise<{user:User;created:boolean}> {
     await this.client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[JSON.stringify([identity.issuer,identity.subject])]);
