@@ -26,6 +26,8 @@ Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style
 | ADR-0013 | [Moteur de propositions et fusion atomique](0013-moteur-de-propositions-et-fusion.md) | Principes acceptés ; réception technique Lot 4 avec réserves et CI verte |
 | ADR-0014 | [Assistant intégré et exécutions bornées](0014-assistant-integre-et-executions-bornees.md) | Phase A autorisée ; GO-03 et réception finale attendus |
 
+| ADR-0015 | [MCP local, OAuth et délégations persistantes](0015-mcp-local-oauth-et-grants.md) | Réalisation locale autorisée ; réception Lot 6 attendue ; public/dynamique différés |
+
 ## Décisions proposées et alternatives
 
 Accepter/refuser chaque proposition explicitement avec date et auteur de validation. Un changement durable ajoute un ADR supersédant et met à jour les contrats ; aucune recommandation ne devient acceptée par sa seule présence dans le dépôt.

@@ -100,6 +100,16 @@ Autorisation en deux phases : phase A complète locale avec simulateurs, tests e
 
 Aucun des 150 identifiants/textes/priorités/cibles ni des 100 MUST MVP et huit lots n’est modifié ; PRD, requirements et backlog conservés. Proposition IA via le moteur commun, provenance immuable et initiateur humain distinct. La règle d’auto-approbation conserve owner individuel et compare cet initiateur. Les 13 contrats MCP sont synchronisés sans serveur ; 14 outils internes ont un catalogue distinct. Migration 0008 additive ; anciennes migrations gelées, comparaison des 28 tables/colonnes préexistantes sans contenu exporté. Réserves et qualification réelle explicitement distinctes dans [rapport Phase A](LOT-5-REPORT.md).
 
+## Alignements minimaux du Lot 6 local
+
+Source : mission explicite de réception Lot 5 phase A et autorisation Lot 6 sans modèle. Aucun des 150 IDs, textes, priorités, versions ou lots principaux du PRD/registre/backlog n’a changé. Le séquencement commercial est dérogé explicitement, pas par inférence d’un ADR.
+
+Écarts de contrats corrigés : scène historique renvoyée comme SceneRevision via SceneRead ; EntityRead permet une page de références inverses, incompatible avec une révision historique. HTTP/MCP emploient les mêmes paramètres/services et les treize noms restent identiques. Les grants personnels, leur provenance et leurs protections sont décrits par les schémas/générateurs et ADR-0015. L’exemple de maladie garde ses ressources/opérations narratives ; les identités synthétiques externes sont mises au format UUID et une provenance complète est ajoutée. Aucune fiction de fournisseur/modèle attesté.
+
+Keycloak Resource Indicators émet une audience URL tandis que l’introspection contrôle clientId ∈ audience ; client ressource préenregistré identifié par cette URL, sans désactiver la vérification. La fonctionnalité reste expérimentale. Les règles publique/dynamique restent non approuvées. Refus des acteurs délégués placé avant la disponibilité de l’assistant pour produire 403, et écoute des erreurs de connexions inactives MCP ajoutée pour reprise après redémarrage PostgreSQL. Les indisponibilités IdP transitoires restent des refus 503, puis un grant révoqué reste 403 après récupération.
+
+Le risque R-CONT-01 est explicite : lectures/préviews et merges peuvent retarder révocations et scènes indépendantes. Tests, benchmarks et limites sont reliés au rapport ; aucun test documentaire n’est compté comme test produit. Les nouveaux documents restent soumis à réception humaine, la future UX est seulement inventoriée.
+
 ## Critères d'acceptation du document
 
 Les 28 sections du PRD et toutes les grandes sections des deux recherches ont une conclusion ; divergences identifiées sans résolution silencieuse ; le registre des sources permet de distinguer vérifié, inaccessible et hypothétique ; les livrables existants ont été lus avant modification.
@@ -158,3 +168,8 @@ Migrations additives 0006/0007, anciennes migrations 0001..0005 inchangées. Une
 Autres corrections : URL de plan /manuscripts, alias YAML générés supprimés pour rester lisibles par le validateur strict, contrastes et libellés de revue, aperçu stable avec références et base historique, message réseau « non confirmé » après résultat inconnu, identifiants d’opérations distincts dans l’historique de plusieurs déplacements. Les assertions de tests ont aussi été ajustées au contrat (null/labels/annonceur Next), sans affaiblir les règles. Les tests d’observation/terminaison de connexion utilisent le rôle applicatif propriétaire de ces connexions, sans lui accorder des privilèges supplémentaires.
 
 Le [rapport Lot 4](LOT-4-REPORT.md) distingue les portions humaines de CT-07..16/29/33/45/48 des variantes IA/MCP non développées. Les preuves transactionnelles incluent neuf points de faute, arrêt réel du processus avant/après COMMIT, réponse perdue, concurrence/révocation/timeout, B-06 commit/rollback et B-07 merge. [Mesures locales](measurements/LOT-4-PROPOSALS.md) : attente exclusive significative malgré courte détention, R-CONT-01 maintenu. Aucun nouveau commit/CI distante Lot 4 revendiqué avant exécution correspondante ; réception humaine attendue.
+
+
+## Dérogation de séquencement et Lot 6 local — 1er novembre 2026
+
+Instruction explicite du propriétaire : Lot 5 phase A reçu techniquement avec réserves ; priorité aux parcours humains, phase B commerciale différée et GO-03 maintenu ouvert ; Lot 6 local sans LLM autorisé séparément. [CI de 58ec5a9](https://github.com/ZA512/StoryMaster/actions/runs/41303083199) vérifiée verte, départ propre. AGENTS/décisions/plan actualisés sur cette autorité ; aucune exigence, priorité ou ID changé. Ce changement de séquencement n’accepte pas tous les détails d’ADR-0008 ; exposition publique, clients non enregistrés et exploitation restent à arbitrer. Spike C réel en premier, puis catalogue/UI et qualification ; pas de refonte graphique, Ollama ou fournisseur commercial. Réception avant Lot 7.

@@ -1036,6 +1036,14 @@ ProviderCredential appartient à un utilisateur, enveloppe AES-256-GCM versionn�
 
 Une proposition integrated_ai conserve immuablement executionId, fournisseur, modèle et initiateur humain vérifiés en DB. Une révision ultérieure porte son propre aiExecutionId si produite par l’assistant ; une révision humaine reste humaine. Le créateur logiciel et l’initiateur humain sont distincts ; l’auto-approbation compare toujours ce dernier. Le moteur commun conserve approbations versionnées, validation actuelle et merge humain atomique. external_ai reste inactif, MCP futur.
 
+## Lot 6 — identités externes et délégations locales
+
+ExternalClient associe ID stable, client OAuth préenregistré, redirects exacts, scopes autorisés, état et version. DelegatedGrant appartient à un humain et un client, sélectionne explicitement les projets et scopes, porte expiration/statut/révision et événements immuables. Révocation terminale ; modifier le périmètre ou la durée crée une version et invalide les preuves précédentes. Les droits ne dépassent jamais les memberships actuels. La liste des outils n’est pas une preuve d’autorisation.
+
+MCPAuthorization contient une preuve serveur liée au token vérifié, à l’humain/client/grant/version et à la requête. MCPCall et ses références immuables relient lecture/intention aux ressources et versions sans conserver arguments, texte ou bearer. Une proposition external_ai porte initiateur, client OAuth, grant/version et requête de création ; ses révisions portent leur requête propre. Aucun champ d’origine n’est choisi par un outil. Les snapshots et ChangeSets du moteur Lot 4 conservent la chaîne après fusion humaine. Une origine révoquée/expirée ne peut être fusionnée ; duplication humaine explicite en nouvelle proposition possible, sans reprendre les avis.
+
+Migration additive 0009 ; migrations 0001..0008 inchangées. [ADR-0015](adr/0015-mcp-local-oauth-et-grants.md).
+
 ## Critères d'acceptation du document
 
 Chaque entité demandée a identité, ownership, attributs, cardinalités, cycle, suppression, version et autorisation ; chaque kind de operations.schema.json a une cible et des invariants ; les deux fixtures se projettent sans ambiguïté ; les états approve→révision→submit invalident l'ancienne review ; aucun objet V1 n'est nécessaire à une écriture MVP ; Mermaid décrit les frontières et associations principales.

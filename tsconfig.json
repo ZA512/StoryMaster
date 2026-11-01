@@ -21,6 +21,7 @@
   },
   "include": [
     "apps/api/**/*.ts",
+    "apps/mcp/**/*.ts",
     "packages/**/*.ts",
     "tests/**/*.ts",
     "scripts/*.ts",

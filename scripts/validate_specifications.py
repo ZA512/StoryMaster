@@ -631,6 +631,48 @@ def validate_lot5(oas, root=None):
             require(not errors, 'Lot 5 : exemple '+name+' invalide : '+str(errors[:1]))
 
 
+def validate_lot6(oas, root):
+    schemas = oas['components']['schemas']
+    expected = {'externalClientList','delegationList','delegationCreate','delegationGet','delegationUpdate','delegationRevoke','delegationEvents','projectGetContext'}
+    operations = [op for path in oas['paths'].values() for method,op in path.items()
+                  if method in {'get','post','put','patch','delete','head','options'} and op.get('x-lot') == 6]
+    same_keys(expected, [op['operationId'] for op in operations], 'Lot 6 : routes personnelles et contexte')
+    for op in operations:
+        if op['operationId'] == 'projectGetContext':
+            continue
+        require(op.get('security') == [{'webSession': []}] and op.get('x-owner-bound') is True,
+                'Lot 6 : gestion de grants humaine et personnelle')
+        if 'requestBody' in op:
+            headers = {dereference(oas,p)['name']:dereference(oas,p) for p in op['parameters']
+                       if dereference(oas,p)['in'] == 'header'}
+            require(all(headers.get(n,{}).get('required') is True for n in ['Origin','X-CSRF-Token','Idempotency-Key']),
+                    'Lot 6 : protection mutations de grants')
+            if op['operationId'] != 'delegationCreate':
+                require(headers.get('If-Match',{}).get('required') is True, 'Lot 6 : CAS du grant obligatoire')
+    for name in ['DelegationCreate','DelegationUpdate']:
+        props = schemas[name]['properties']
+        require(schemas[name].get('additionalProperties') is False and
+                not {'userId','ownerId','actorType','token','secret'} & set(props), 'Lot 6 : identité de grant non déclarative')
+        require(props['projectIds'].get('uniqueItems') is True and props['projectIds'].get('maxItems') == 100,
+                'Lot 6 : projets du grant explicites et bornés')
+        require(props['scopes']['items']['enum'] == ['projects:read','project:read','proposal:read','proposal:write','proposal:submit'],
+                'Lot 6 : scopes fermés sans approve/merge')
+        require(props['allowProposals'].get('default') is False and props['scopes']['default'] == ['projects:read','project:read','proposal:read'],
+                'Lot 6 : lecture par défaut et consentement supplémentaire')
+    require({'external_ai','human','integrated_ai'} == set(schemas['Proposal']['properties']['origin']['enum']),
+            'Lot 6 : origine de proposition fermée')
+    require(set(schemas['ExternalProvenance']['required']) == {'initiatorId','clientId','oauthClientId','grantId','grantRevision','executionId'},
+            'Lot 6 : provenance externe complète')
+    cases = load_json(root/'docs/spec/lot6-scenarios.json')['scenarios']
+    require([x['contractTest'] for x in cases] == ['CT-17','CT-18','CT-19','CT-20','CT-27','CT-30','CT-31','CT-32','CT-40','CT-41','CT-43'],
+            'Lot 6 : sélection des scénarios exacte')
+    for case in cases:
+        require(case['scope'] and case['oracle'] and (root/case['executableTest']).is_file(), 'Lot 6 : preuve traçable et portée explicite')
+    fixture = load_json(root/'docs/spec/examples/mcp-local.json')
+    for name,value in fixture.items():
+        schema_validate({'$ref':'#/components/schemas/'+name,'components':oas['components']},value,'Lot 6 : exemple '+name)
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -645,6 +687,7 @@ def validate_contracts(root):
     validate_lot3(oas, root)
     validate_lot4(oas, root)
     validate_lot5(oas, root)
+    validate_lot6(oas, root)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and

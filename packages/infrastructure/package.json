@@ -4,12 +4,13 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@storymaster/domain": "*",
     "@storymaster/application": "*",
     "@storymaster/contracts": "*",
-    "pg": "8.23.1",
+    "@storymaster/domain": "*",
+    "@storymaster/editor": "*",
+    "jose": "6.1.3",
     "openid-client": "6.8.8",
-    "@storymaster/editor": "*"
+    "pg": "8.23.1"
   },
   "exports": {
     ".": "./src/index.ts"

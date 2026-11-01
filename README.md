@@ -1,6 +1,6 @@
 # StoryMaster
 
-Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Lot 2 reçu techniquement avec réserves maintenues ; le **Lot 3** ajoute invitations, membres, discussions et ancrages versionnés. Lot 3 reçu techniquement avec réserves et CI verte ; le **Lot 4** ajoute les propositions humaines, la revue et la fusion atomique multi-objets. Lot 4 reçu techniquement avec réserves et CI verte ; le **Lot 5 phase A** ajoute un assistant intégré simulé local. GO-03 reste à valider avant tout fournisseur réel. [Rapport phase A](docs/LOT-5-REPORT.md) · [Décision GO-03](docs/GO-03-DECISION-PROPOSAL.md). [Rapport du Lot 4](docs/LOT-4-REPORT.md) · [Rapport du Lot 3](docs/LOT-3-REPORT.md) · [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
+Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Lot 2 reçu techniquement avec réserves maintenues ; le **Lot 3** ajoute invitations, membres, discussions et ancrages versionnés. Lot 3 reçu techniquement avec réserves et CI verte ; le **Lot 4** ajoute les propositions humaines, la revue et la fusion atomique multi-objets. Lot 4 reçu techniquement avec réserves et CI verte ; le **Lot 5 phase A** ajoute un assistant intégré simulé local. Le **Lot 6** ajoute MCP local et délégations révocables sans modèle ; réception humaine attendue. Lot 5 phase B reste différé et GO-03 reste à valider avant tout fournisseur réel. [Rapport phase A](docs/LOT-5-REPORT.md) · [Décision GO-03](docs/GO-03-DECISION-PROPOSAL.md). [Rapport du Lot 4](docs/LOT-4-REPORT.md) · [Rapport du Lot 3](docs/LOT-3-REPORT.md) · [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
 
 ## Démarrage local
 
@@ -21,7 +21,7 @@ docker compose stop
 docker compose up -d --wait
 ```
 
-Seuls web (127.0.0.1:3000) et Keycloak (127.0.0.1:8080) sont publiés. L’API et PostgreSQL sont sur le réseau interne. Le réseau `edge` permet les ports loopback de web/Keycloak ; `private` est interne. Aucun environnement public n’est configuré. Les valeurs d’origine/issuer doivent correspondre exactement à `localhost`, y compris dans le navigateur.
+Par défaut, seuls web (127.0.0.1:3000) et Keycloak (127.0.0.1:8080) sont publiés ; le profile MCP activé explicitement ajoute 127.0.0.1:3500. L’API et PostgreSQL sont sur le réseau interne. Le réseau `edge` permet les ports loopback de web/Keycloak ; `private` est interne. Aucun environnement public n’est configuré. Les valeurs d’origine/issuer doivent correspondre exactement à `localhost`, y compris dans le navigateur.
 
 L’import Keycloak ignore un realm déjà présent : modifier le JSON ne modifie pas silencieusement les comptes existants. Son administration locale est disponible sur http://localhost:8080/admin (admin-local, mot de passe `KEYCLOAK_ADMIN_PASSWORD` de `.env`).
 
@@ -141,4 +141,38 @@ Depuis un projet, l’atelier ou une fiche, ouvrir **Assistant IA**. Ajouter une
 
 Les conversations restent privées à leur initiateur encore membre ; un owner ne lit pas celles des autres. Clés fictives chiffrées par enveloppe, remplacement/révocation/rotation disponibles. Le contexte est limité aux versions enregistrées, sources sélectionnées/révisions et historique récent borné. Conversations exclues des exports narratifs. Rétention souhaitée configurable sans purge. Les plafonds du budget sont personnels par projet ; les montants sont synthétiques, unknown conserve une réservation et ne provoque aucun renvoi automatique. Les brouillons non enregistrés restent en mémoire.
 
-OpenAI et Anthropic sont des candidats documentés, aucun adaptateur réel ni clé réelle accepté en phase A. **GO-03 doit être explicitement validé avant phase B, tout transfert narratif externe ou essai facturable**. [Choix proposés](docs/GO-03-DECISION-PROPOSAL.md), [ADR-0014](docs/adr/0014-assistant-integre-et-executions-bornees.md), [rapport](docs/LOT-5-REPORT.md), [inventaire](docs/LOT-5-FILES.txt). Arrêt avant Lot 6.
+OpenAI et Anthropic sont des candidats documentés, aucun adaptateur réel ni clé réelle accepté en phase A. **GO-03 doit être explicitement validé avant phase B, tout transfert narratif externe ou essai facturable**. [Choix proposés](docs/GO-03-DECISION-PROPOSAL.md), [ADR-0014](docs/adr/0014-assistant-integre-et-executions-bornees.md), [rapport](docs/LOT-5-REPORT.md), [inventaire](docs/LOT-5-FILES.txt). Lot 6 local autorisé séparément ; arrêt avant Lot 7 pour réception humaine.
+
+## MCP local sans modèle — Lot 6
+
+Le Lot 5 phase A est reçu avec réserves ; sa phase B commerciale et GO-03 restent différés. Le Lot 6 local est autorisé séparément : [rapport](docs/LOT-6-REPORT.md), [ADR-0015](docs/adr/0015-mcp-local-oauth-et-grants.md), [future UX documentaire](docs/UX-FUTURE-ROADMAP.md). Arrêt avant Lot 7 pour réception humaine. Aucun LLM, fournisseur, clé réelle ou appel payant requis.
+
+MCP est désactivé par défaut (`MCP_ENABLED=false`, profile `mcp` facultatif). Pour un `.env` existant, ajouter le secret local fictif MCP de `.env.example` sans remplacer vos autres valeurs. Les commandes suivantes qualifient les services locaux et des projets synthétiques ; elles conservent les comptes existants :
+
+```bash
+npm ci --no-audit --no-fund
+npx playwright install chromium
+npm run mcp:ensure-keycloak
+MCP_ENABLED=true docker compose -f compose.yaml -f compose.test.yaml --profile mcp up -d --build --wait api web mcp
+MCP_ENABLED=true npm run mcp:qualify
+```
+
+Point d’accès : `http://localhost:3500/mcp`, publié seulement sur 127.0.0.1. Keycloak local utilise Resource Indicators expérimental. Seuls les clients `storymaster-mcp-cli` et `storymaster-mcp-secondary` sont préenregistrés ; callbacks exacts 127.0.0.1:8765/callback et :8766/callback. Le client de qualification ouvre des navigateurs locaux pour Code/PKCE S256 et consentement, avec Alice de démonstration. Les tokens restent en mémoire, les projets/propositions synthétiques restent traçables et les grants du CLI sont révoqués en fin de parcours.
+
+Dans **Délégations locales**, sélectionner le client, les projets et la durée. Lecture seule initialement ; cocher explicitement le droit de préparer/soumettre pour le permettre. La configuration du client fournit le header `StoryMaster-Grant-Id` de votre délégation, avec son bearer OAuth destiné à cette ressource. L’ID du grant et le clientInfo ne sont jamais des preuves d’identité. Réduire le périmètre ou révoquer ne modifie aucun texte ; un grant d’origine révoqué/expiré bloque la fusion de sa proposition externe. Nouvelle intention humaine explicite possible sans reprendre les avis.
+
+Le CLI exerce les deux versions `2026-07-28` et `2025-11-25`, lecture/recherche, refus de proposition sans scope, préparation/révision/preview/validation/soumission, canon intact, rejeu idempotent et révocation. Mesures locales dans `artifacts/local/lot6-mcp-qualification.json` ; aucune capacité publique déduite. Pour les tests PostgreSQL/protocole, arrêter d’abord le conteneur MCP qui occuperait le même port :
+
+```bash
+docker compose -f compose.yaml -f compose.test.yaml --profile mcp stop mcp
+npm run test:mcp
+```
+
+Pour refermer l’accès délégué après qualification :
+
+```bash
+docker compose -f compose.yaml -f compose.test.yaml --profile mcp stop mcp
+MCP_ENABLED=false docker compose -f compose.yaml -f compose.test.yaml up -d --wait api web
+```
+
+Pas de tunnel, TLS public, découverte de clients distants, enregistrement dynamique, sampling, tâche durable ou nouveau moteur de propositions. Les mêmes cas d’usage bloquent canon/approve/merge par HTTP ou appel direct, même pour un humain propriétaire sous-jacent. Les limites locales et la contention sont documentées dans le rapport. La refonte visuelle reste à arbitrer ultérieurement.

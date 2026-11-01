@@ -53,7 +53,7 @@ Les montants de test éventuels sont synthétiques et étiquetés tels quels ; i
 5. Bornes d’appels/tokens/durée/concurrence et plafond financier éventuel ; tarifs applicables, devise et traitement des réservations unknown.
 6. Autorisation d’un essai réel borné : identifiant de test fourni explicitement, contenu synthétique choisi et coût maximal accepté. L’accord GO-03 général ne vaut pas autorisation illimitée d’essais.
 
-Sans cet accord, arrêt après présentation du socle simulé vérifié. Même après GO-03, réception finale du Lot 5 avant Lot 6. Les invariants canon/proposition, permissions et fusion humaine ne sont pas des options à rouvrir.
+Sans cet accord, arrêt après présentation du socle simulé vérifié. Dérogation explicite du propriétaire au 1er novembre 2026 : Lot 6 MCP local sans modèle autorisé avant phase B, celle-ci différée après qualification humaine. GO-03 commercial reste ouvert et aucune intégration réelle n’est autorisée par cette dérogation. Les invariants canon/proposition, permissions et fusion humaine ne sont pas des options à rouvrir.
 
 ## Critères d'acceptation du document
 

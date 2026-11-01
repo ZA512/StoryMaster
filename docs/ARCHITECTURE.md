@@ -718,6 +718,14 @@ Queue durable, un seul traitement actif par conversation, bail et capacité rév
 
 R-CONT-01 est conservé : construction/revalidation du contexte et preview prennent la barrière projet et peuvent prolonger l’attente d’un merge exclusif sur des scènes indépendantes. Aucun appel simulé ou futur externe n’est maintenu sous ce verrou. Le worker supplémentaire ne supprime pas cette contention. Voir [ADR-0014](adr/0014-assistant-integre-et-executions-bornees.md).
 
+## Lot 6 local — adaptateur MCP commun
+
+Mise en œuvre autorisée séparément de Lot 5 phase B : [ADR-0015](adr/0015-mcp-local-oauth-et-grants.md). `apps/mcp` compose les mêmes ProjectService, EditorialService, NarrativeService et ProposalService que HTTP ; MCPService n’est qu’un dispatch fermé de treize outils. SDK serveur/client 2.4.0, Fastify 2.0.1, Node 2.1.2. Streamable HTTP moderne 2026-07-28 et compatibilité stateless 2025-11-25 ; aucune session MCP comme autorité. Le client CLI exerce le réseau et Keycloak sans modèle.
+
+OAuth est vérifié hors transaction narrative. La preuve interne opaque conserve uniquement l’empreinte du token et de la capacité, jamais le bearer. Les grants sont persistants et distincts des sessions/credentials IA. Les mutations de grants prennent Project exclusif pour tous les anciens/nouveaux projets triés, puis grant exclusif ; les commandes prennent Project partagé, autorisation fraîche, puis verrous du moteur de propositions. Le dispatch lie les services à la même transaction pour borner le résultat avant COMMIT ; journaux de requêtes et références ressources restent dans cette transaction. Aucun appel AS sous Project. Toute mutation canonique reste humaine.
+
+**R-CONT-01 :** même une lecture MCP peut retarder un merge ou une révocation qui attend Project exclusif. Une fusion bloque aussi des scènes indépendantes ; ajouter des clients accroît cette contention. Les mesures de huit lectures et les courses déterministes ne démontrent ni absence de famine ni débit public. Le risque et les cinq benchmarks antérieurs restent ouverts. Aucun verrou plus fin introduit par commodité.
+
 ## Critères d'acceptation du document
 
 Lecture, préparation, preview et merge sont retraçables avec identités, transactions et stockage ; le diagramme interdit tout accès IA/MCP direct à DB ; chaque effet externe a une politique de reprise ; les 25 questions ont une réponse ou décision ouverte ; la stratégie de verrou explique cycles et concurrence création/suppression, pas seulement les mises à jour de lignes existantes.

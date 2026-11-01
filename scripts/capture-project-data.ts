@@ -2,7 +2,7 @@ import {createHash} from 'node:crypto';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {dirname} from 'node:path';
 import {Pool} from '@storymaster/infrastructure';
-const tables=['projects','project_memberships','project_revisions','manuscripts','chapters','scenes','scene_revisions','editorial_changes','editorial_clocks','narrative_objects','narrative_relations','scene_references','narrative_revisions','narrative_changes','module_activations','invitations','comment_threads','comments','text_anchors','collaboration_revisions','collaboration_clocks','audit_events','change_proposals','proposal_revisions','proposal_reviews','proposal_events','proposal_change_sets','proposal_change_events'];
+const tables=['projects','project_memberships','project_revisions','manuscripts','chapters','scenes','scene_revisions','editorial_changes','editorial_clocks','narrative_objects','narrative_relations','scene_references','narrative_revisions','narrative_changes','module_activations','invitations','comment_threads','comments','text_anchors','collaboration_revisions','collaboration_clocks','audit_events','change_proposals','proposal_revisions','proposal_reviews','proposal_events','proposal_change_sets','proposal_change_events','provider_credentials','ai_budgets','ai_conversations','ai_context_plans','ai_executions','ai_consents','ai_messages','ai_tool_results','ai_provider_calls','ai_events'];
 const output=process.argv[2];if(!output)throw Error('Chemin de sortie requis. Lecture seule, aucun contenu narratif exporté.');
 const pool=new Pool({connectionString:process.env.DATABASE_URL}),client=await pool.connect();
 type Entry={count:number;digest:string;columns?:string[]};

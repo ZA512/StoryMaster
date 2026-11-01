@@ -769,6 +769,18 @@ Contexte préparé puis inventaire/hash exact confirmé par `{planId,contextHash
 
 [Catalogue IA interne](spec/ai-tools.json) généré depuis Zod, contrôlé en CI ; validation finale des opérations et RichDocument par les mêmes services du Lot 4. Ce catalogue ne lance aucun serveur MCP et préserve les 13 contrats futurs. Les réponses HTTP observées sont validées contre les schémas OpenAPI, en complément des tests d’autorisation et PostgreSQL ; ce contrôle ne prouve aucune intégration fournisseur réelle.
 
+## Alignement exécuté du Lot 6 local
+
+[ADR-0015](adr/0015-mcp-local-oauth-et-grants.md) et [catalogue](spec/mcp-tools.json). Les treize noms sont conservés. SceneRead est l’union de la scène actuelle et du snapshot SceneRevision lorsque revision est fourni ; HTTP GET scène accepte le même paramètre. EntityRead ajoute facultativement une page de références inverses avec includeReferences/limit/cursor ; la combinaison références actuelles et révision historique est refusée. Le même NarrativeService sert HTTP et MCP. ProjectContext reste l’inventaire borné projet/manuscrits/modules, sans exporter tout le projet. Les curseurs sont signés, liés à acteur/client/grant/version/recherche et expirent ; leur échéance peut différer entre deux réponses normalisées.
+
+Gestion humaine : GET /external-clients ; GET/POST /delegations ; GET/PUT /delegations/{id} ; POST /delegations/{id}/revoke ; GET /delegations/{id}/events. Cookie opaque, CSRF et Origin pour mutations ; idempotence et If-Match rN pour modification/révocation. Corps stricts sans propriétaire fourni. Paginations personnelles de 50 au maximum. Interface /delegations. Ces routes n’acceptent aucune identité déléguée.
+
+MCP : http://localhost:3500/mcp ; métadonnées publiques http://localhost:3500/.well-known/oauth-protected-resource/mcp. Toutes requêtes MCP utilisent Authorization Bearer et StoryMaster-Grant-Id ; identité et scopes frais à chaque requête. HTTP de lecture et de ses propositions accepte cette même délégation uniquement en configuration locale explicite, sans substituer une session cookie ; x-storymaster-delegated-security décrit cette extension au contrat web historique. Approve/merge/canon restent refusés.
+
+2026-07-28 : server/discover puis requêtes enveloppées/headers gérés par le SDK. 2025-11-25 : initialize/initialized puis outils en Streamable HTTP stateless ; compatibilité délibérée pour cette génération, aucun ancien SSE séparé. Les résultats structurés contiennent data OU error ; erreurs métier sûres avec code/correlationId/retryable, isError sur les refus d’outils. Erreurs de framing/version/outil inconnu restent des erreurs de protocole SDK. GET/DELETE de session non pris en charge, HTTP 405 après authentification. Aucun identifiant de session ne remplace OAuth.
+
+Coupure après COMMIT : le client rejoue la même intention et sa clé avec une nouvelle authentification ; pas de double proposition/révision, droits frais exigés. Le serveur ne reprend aucun flux ni notification durable. La borne de résultat est vérifiée avant COMMIT du dispatch ; un résultat trop grand est refusé et la mutation rollback. Aucune capacité commerciale ou modèle IA implicite.
+
 ## Critères d'acceptation du document
 
 Chaque opération demandée a entrée, sortie, permission, version, idempotence, erreurs, audit et transaction ; OpenAPI se valide syntaxiquement et ses références se résolvent ; catalogue MCP est machine lisible et sans outil de fusion ; les deux exemples sont conformes aux schémas ; tests HTTP/MCP partagent les mêmes oracles métier et les erreurs n'exposent aucun projet interdit.

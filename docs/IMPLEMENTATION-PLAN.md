@@ -27,8 +27,8 @@ flowchart LR
     L1 --> L2[Lot 2 Référentiel]
     L2 --> L3[Lot 3 Collaboration]
     L3 --> L4[Lot 4 Propositions]
-    L4 --> L5[Lot 5 IA intégrée]
-    L5 --> L6[Lot 6 MCP]
+    L4 --> L5[Lot 5 phase A simulée]
+    L5 -->|Phase B commerciale différée| L6[Lot 6 MCP local sans modèle]
     L6 --> L7[Lot 7 Consolidation]
 ```
 
@@ -214,7 +214,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 ### Lot 5 — Assistant IA intégré
 
-**État :** phase A locale autorisée au 1er novembre 2026. [GO-03 proposé](GO-03-DECISION-PROPOSAL.md), [ADR-0014](adr/0014-assistant-integre-et-executions-bornees.md), [rapport phase A](LOT-5-REPORT.md). Aucun fournisseur réel, clé réelle ou appel facturable avant accord explicite du propriétaire. La réception finale reste en phase B ; arrêt avant Lot 6.
+**État :** phase A locale autorisée au 1er novembre 2026. [GO-03 proposé](GO-03-DECISION-PROPOSAL.md), [ADR-0014](adr/0014-assistant-integre-et-executions-bornees.md), [rapport phase A](LOT-5-REPORT.md). Aucun fournisseur réel, clé réelle ou appel facturable avant accord explicite du propriétaire. Phase A reçue techniquement avec réserves par instruction Lot 6, CI 58ec5a9 vérifiée verte. Phase B et GO-03 commercial différés après qualification humaine ; dérogation de séquencement autorisant MCP local sans LLM avant cette phase B.
 
 **Objectif :** Permettre consultation ciblée et propositions sous revue humaine.
 
@@ -244,9 +244,11 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 ### Lot 6 — MCP externe
 
+**État :** implémentation locale réalisée et qualification en clôture ; réception humaine attendue. Autorisation distincte du 1er novembre 2026 après CI verte de 58ec5a9 ; arrêt avant Lot 7. Aucun fournisseur réel ou essai facturable.
+
 **Objectif :** Exposer les mêmes lectures/propositions avec délégation révocable.
 
-**Prérequis / dépendances :** Lots 0–5 ; spike C ; AS, profils clients/versions supportées et ADR-0008 validés.
+**Prérequis / dépendances :** Lots 0–4 et Lot 5 phase A reçus ; Spike C exécuté au début du Lot 6, OAuth local et clients préenregistrés qualifiés. Dérogation explicite du 1er novembre 2026 : phase B commerciale du Lot 5 différée, pas prérequise pour MCP local sans modèle. ADR-0008 reste partiellement validé, aucune approbation d’exposition publique ou de clients arbitraires.
 
 **Exigences PRD couvertes :** OBJ-07, AI-07, AI-08, AI-SEC-02, SEC-14, NFR-12. Les exigences transversales continuent à être vérifiées dans les lots suivants.
 
@@ -300,13 +302,13 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 ## Prototypes techniques et état d’exécution
 
-Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-REPORT.md), ADR-0007 accepté et Lot 1 explicitement autorisé. B-01..05 et B-07 autosave sont exécutés sur PostgreSQL ; B-06 et B-07 merge sont désormais exécutés au Lot 4 avec barrières, rollback, révocation et timeout réel. C non exécuté. Voir [rapport Lot 1](LOT-1-REPORT.md).
+Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-REPORT.md), ADR-0007 accepté et Lot 1 explicitement autorisé. B-01..05 et B-07 autosave sont exécutés sur PostgreSQL ; B-06 et B-07 merge sont désormais exécutés au Lot 4 avec barrières, rollback, révocation et timeout réel. C exécuté au début du Lot 6 avec le client SDK officiel, sans modèle ni client commercial ; preuves dans le rapport Lot 6. Voir [rapport Lot 1](LOT-1-REPORT.md).
 
 | Spike | Hypothèse / question | Protocole et métriques | Résultat attendu | Go / no-go |
 |---|---|---|---|---|
 | A — Éditeur et révisions | JSON Tiptap/ProseMirror suffit au MVP et peut initialiser Yjs sans perdre contenu ; quel diff riche fiable ? | Corpus français : paragraphes, marks/liens, listes, Unicode composé, emoji, dialogues, déplacements et suppressions ; sérialiser→sauver→recharger→restaurer→diff ; importer une fois en Y.Doc puis updates binaires et rechargement ; mesurer pertes de nœuds/marks, stabilité round-trip, lisibilité diff, latence/poids par taille | Conservation intégrale sous schéma choisi ; nouvelle révision à restore ; diff lisible ou fallback explicite ; continuité Y.Doc sans recréation répétée | GO si aucune perte d'information autorisée, round-trip stable après normalisation documentée et commentaires ambigus signalés ; NO-GO à perte silencieuse ou dépendance payante non validée ; objectifs de latence NFR mesurés, pas arbitrairement imposés |
 | B — Fusion transactionnelle | Une transaction sous verrou projet protège état final, CAS et cardinalités | Jeu maladie : modifier scène r7→8 et personnage r3→4, créer événement et relation ; injecter échec sur chaque opération/snapshot/audit/outbox puis avant/après commit ; lancer écriture concurrente et révocation ; répéter merge après réponse perdue ; mesurer nombre de mutations partielles, doublons, conflits, attente de locks, retries | Soit toutes ressources + historique + mapping, soit aucun changement ; aucune approbation ancienne réutilisée | GO si zéro application partielle/doublon et tous conflits/révocations observés dans un ordre sérialisé ; NO-GO si invariant de graphe violé ou transaction dépend d'un effet externe |
-| C — API ↔ MCP | Deux adaptateurs utilisent strictement les mêmes cas d'usage et erreurs | Même ReadScene/Search/CreateProposal via HTTP et client SDK MCP moderne ; token lecture seule puis proposant, projet non délégué, token révoqué, identité clientInfo falsifiée ; vérifier version/header/enveloppe ; tester clients OpenAI/Claude visés avec versions enregistrées et compatibilité legacy si nécessaire | Même résultat métier après retrait enveloppe/correlationId ; audit canal distinct et identité humaine/client fiable | GO si parité droits/résultats, refus interprojets et merge impossible, au moins un client cible compatible ; NO-GO si fallback élargit droits ou exige un second moteur métier |
+| C — API ↔ MCP | Deux adaptateurs utilisent strictement les mêmes cas d'usage et erreurs | Même ReadScene/Search/CreateProposal via HTTP et client SDK MCP moderne ; token lecture seule puis proposant, projet non délégué, token révoqué, identité clientInfo falsifiée ; vérifier version/header/enveloppe ; qualifier le client SDK officiel local sans LLM sur 2026-07-28/2025-11-25 ; clients commerciaux différés par instruction explicite | Même résultat métier après retrait enveloppe/correlationId ; audit canal distinct et identité humaine/client fiable | GO si parité droits/résultats, refus interprojets et merge impossible, au moins un client cible compatible ; NO-GO si fallback élargit droits ou exige un second moteur métier |
 
 ### Complément obligatoire du spike B — scènes indépendantes et contention
 
@@ -520,7 +522,7 @@ Commencer par IA donnerait une démo rapide mais laisserait persistance et sécu
 
 ## Critères d'acceptation du document
 
-Exactement Lots 0–7 avec objectif, prérequis, exigences, tâches, dépendances, risques, livrables, AC fonctionnels/sécurité/données/résilience, tests et sortie ; chaque MUST MVP du registre a un lot numérique ; chaque MUST V1 reste hors lot MVP ; trois spikes complets et non réalisés ; AC-01..12 conservés et complétés ; Q-01..15 visibles ; pas de calendrier inventé.
+Exactement Lots 0–7 avec objectif, prérequis, exigences, tâches, dépendances, risques, livrables, AC fonctionnels/sécurité/données/résilience, tests et sortie ; chaque MUST MVP du registre a un lot numérique ; chaque MUST V1 reste hors lot MVP ; trois protocoles de spikes et leurs preuves séparées dans les rapports ; AC-01..12 conservés et complétés ; Q-01..15 visibles ; pas de calendrier inventé.
 
 ## Décisions requérant validation humaine avant implémentation
 

@@ -19,7 +19,7 @@ services:
     networks: [private]
   keycloak:
     image: quay.io/keycloak/keycloak:26.8.1@sha256:a78d6b79572168cb25886b80a8b5b8d4ed4390743e3eecb810538683e209dd6b
-    command: [start-dev, --import-realm]
+    command: [start-dev, --import-realm, --features=resource-indicators]
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
@@ -59,6 +59,8 @@ services:
       OIDC_INTERNAL_ORIGIN: http://keycloak:8080
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-storymaster-web}
       SESSION_SECRET: ${SESSION_SECRET:?Configurer .env}
+      MCP_ENABLED: ${MCP_ENABLED:-false}
+      MCP_RESOURCE_CLIENT_SECRET: ${MCP_RESOURCE_CLIENT_SECRET:-}
       AI_SIMULATION_ENABLED: ${AI_SIMULATION_ENABLED:-false}
       AI_KEYRING_JSON: ${AI_KEYRING_JSON:-}
       AI_ACTIVE_KEY_VERSION: ${AI_ACTIVE_KEY_VERSION:-}
@@ -74,6 +76,28 @@ services:
       timeout: 5s
       retries: 20
     networks: [private]
+  mcp:
+    profiles: [mcp]
+    build: {context: ., target: mcp}
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      MCP_ENABLED: ${MCP_ENABLED:-false}
+      MCP_BIND_HOST: 0.0.0.0
+      MCP_RESOURCE_CLIENT_SECRET: ${MCP_RESOURCE_CLIENT_SECRET:-}
+      DATABASE_URL: postgresql://storymaster_app:${APP_DB_PASSWORD}@postgres:5432/storymaster
+      SESSION_SECRET: ${SESSION_SECRET:?Configurer .env}
+      OIDC_ISSUER: ${OIDC_ISSUER:-http://localhost:8080/realms/storymaster}
+      OIDC_INTERNAL_ORIGIN: http://keycloak:8080
+    ports: ['127.0.0.1:3500:3500']
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://localhost:3500/.well-known/oauth-protected-resource/mcp').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      keycloak: {condition: service_healthy}
+    networks: [private, edge]
   web:
     build: {context: ., target: web}
     environment:

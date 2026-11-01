@@ -26,3 +26,5 @@ export * from './collaboration.ts';
 export * from './proposals.ts';
 
 export * from './ai.ts';
+
+export * from './mcp.ts';

@@ -15,7 +15,7 @@
     "dev:web": "npm run dev -w @storymaster/web",
     "build": "npm run typecheck && npm run build -w @storymaster/web",
     "typecheck": "tsc --noEmit && tsc --noEmit -p apps/web/tsconfig.json",
-    "lint": "eslint . && node scripts/check-architecture.mjs && node --import tsx scripts/sync-editorial-contracts.mjs --check && node --import tsx scripts/sync-narrative-contracts.mjs --check && node --import tsx scripts/publish-narrative-registry.ts --check && node --import tsx scripts/sync-collaboration-contracts.mjs --check && node --import tsx scripts/sync-proposal-contracts.mjs --check && node --import tsx scripts/sync-ai-contracts.mjs --check && node --import tsx scripts/check-ai-boundaries.mjs",
+    "lint": "eslint . && node scripts/check-architecture.mjs && node --import tsx scripts/sync-editorial-contracts.mjs --check && node --import tsx scripts/sync-narrative-contracts.mjs --check && node --import tsx scripts/publish-narrative-registry.ts --check && node --import tsx scripts/sync-collaboration-contracts.mjs --check && node --import tsx scripts/sync-proposal-contracts.mjs --check && node --import tsx scripts/sync-ai-contracts.mjs --check && node --import tsx scripts/check-ai-boundaries.mjs && node --import tsx scripts/sync-mcp-contracts.mjs --check && node --import tsx scripts/check-mcp-boundaries.mjs",
     "test": "node --env-file-if-exists=.env --import tsx --test --test-concurrency=1 tests/*.test.ts",
     "test:e2e": "playwright test",
     "db:migrate": "node --env-file-if-exists=.env --import tsx scripts/migrate.ts",
@@ -24,11 +24,16 @@
     "bench:narrative": "node --env-file-if-exists=.env --import tsx scripts/measure-narrative.ts",
     "bench:collaboration": "node --env-file-if-exists=.env --import tsx scripts/measure-collaboration.ts",
     "bench:proposals": "node --env-file-if-exists=.env --import tsx scripts/measure-proposals.ts",
-    "demo:ensure-users": "node --env-file-if-exists=.env --import tsx scripts/ensure-demo-users.ts"
+    "demo:ensure-users": "node --env-file-if-exists=.env --import tsx scripts/ensure-demo-users.ts",
+    "dev:mcp": "node --env-file-if-exists=.env --import tsx apps/mcp/src/server.ts",
+    "mcp:ensure-keycloak": "node --env-file-if-exists=.env --import tsx scripts/ensure-mcp-keycloak.ts",
+    "test:mcp": "node --env-file-if-exists=.env --import tsx --test --test-concurrency=1 tests/mcp-*.test.ts",
+    "mcp:qualify": "node --env-file-if-exists=.env --import tsx scripts/qualify-mcp.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
     "@eslint/js": "10.0.1",
+    "@modelcontextprotocol/client": "2.4.0",
     "@playwright/test": "1.64.1",
     "@types/node": "26.6.6",
     "@types/pg": "8.23.1",

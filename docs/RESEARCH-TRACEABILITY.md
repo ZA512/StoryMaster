@@ -197,6 +197,12 @@ Les définitions et rattachements d’exigences ci-dessus restent inchangés. Le
 
 [Scénarios exacts](spec/lot5-scenarios.json) relient CT-21/22/23/27/28/30/32/34/37/38/41 à leurs tests ; CT-30 est limité à integrated_ai sans client/grant tiers, CT-41 à refus de destination avant egress sans requête réseau réelle. Les variantes MCP ne sont jamais décomptées. [Rapport](LOT-5-REPORT.md) distingue tests applicatifs, HTTP observé, migration remplie, navigateur avec Keycloak, replay des lots antérieurs et CI distante du seul commit réellement observé. [GO-03](GO-03-DECISION-PROPOSAL.md) reste à décider, arrêt avant Lot 6.
 
+## Preuves ciblées du Lot 6 local
+
+Dérogation humaine explicite : Lot 6 avant Lot 5 phase B, sans changement des 150 IDs/priorités/versions/lots principaux. Sources prioritaires : mission Lot 6, PRD, décisions humaines puis ADR-0015 ; aucune exposition publique déduite de la documentation SDK. Les deux générations du protocole sont exercées par le client officiel, avec OAuth Keycloak réel, et les mêmes services que HTTP.
+
+Les exigences OBJ-07, AI-07/08/09, COLLAB-05, SEC-04/05/14, NFR-12 et AI-SEC-01..05 sont rapprochées du catalogue existant et des plafonds serveur, sous réserve du texte exact du PRD ; ce regroupement ne réécrit aucune exigence. CT-17..20, CT-27, CT-30..32, CT-40/41/43 ont une sélection de scénarios propre au Lot 6 et une portée locale explicitée. Voir [scénarios](spec/lot6-scenarios.json), [rapport](LOT-6-REPORT.md) et [contrats](API-CONTRACTS.md). Les tests de métadonnées altérées isolés ne sont pas présentés comme des échanges Keycloak réels. La réception et les résultats finaux restent ceux du rapport.
+
 ## Critères d'acceptation du document
 
 Chaque identifiant PRD apparaît exactement une fois dans la matrice ; tout MUST MVP a un lot dans le plan ; les MUST V1 ne sont pas agrégés aux MUST MVP ; toutes les grandes familles des recherches ont une décision et une justification ; aucune citation `turn…` héritée n'est présentée comme vérifiée.

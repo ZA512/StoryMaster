@@ -25,7 +25,7 @@ export async function reset() {
   await admin.query('DROP SCHEMA public CASCADE; CREATE SCHEMA public');
   await migrate(admin); await migrate(admin);
 }
-export async function person(subject=randomUUID()) {
+export async function person(subject:string=randomUUID()) {
   const user=await identities.signIn({issuer,subject,displayName:'Auteur de test',email:'shared@example.test'},correlation());
   const raw=await sessions.create(user,correlation());
   return {...await sessions.read(raw),raw};

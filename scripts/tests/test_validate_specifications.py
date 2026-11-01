@@ -44,6 +44,27 @@ class ValidatorTests(unittest.TestCase):
         mutate(document)
         path.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n")
 
+    def test_lot6_cannot_promote_default_read(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['DelegationCreate']['properties']['scopes']['default'].append('proposal:write')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot6(oas,self.root)
+
+    def test_lot6_cannot_drop_grant_precondition(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        op=oas['paths']['/delegations/{id}']['put']
+        op['parameters']=[p for p in op['parameters'] if validation.dereference(oas,p)['name']!='If-Match']
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot6(oas,self.root)
+
+    def test_lot6_cannot_drop_provenance_field(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['ExternalProvenance']['required'].remove('grantRevision')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot6(oas,self.root)
+
+    def test_lot6_scenario_needs_exact_oracle(self):
+        self.mutate_json('docs/spec/lot6-scenarios.json',lambda d:d['scenarios'][0].update(oracle=''))
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot6(oas,self.root)
+
     def test_lot4_cannot_approve_with_proposal_write(self):
         oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
         oas['paths']['/projects/{projectId}/proposals/{proposalId}/approve']['post']['x-permission']='proposal.write'

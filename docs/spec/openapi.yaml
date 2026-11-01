@@ -2,9 +2,8 @@ openapi: 3.1.1
 jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 info:
   title: StoryMaster — contrats de spécification
-  version: 0.8.0
-  description: Contrats MVP. Lots 0–4 humains et Lot 5 phase A simulée exécutables ; fournisseurs réels soumis à
-    GO-03, MCP spécifié seulement.
+  version: 0.9.0
+  description: Contrats MVP. Lots 0–4 humains, Lot 5 phase A simulée et Lot 6 MCP local exécutables ; phase B commerciale et exposition publique différées.
 servers:
   - url: http://localhost:3000/api/v1
     description: Docker Compose local seulement
@@ -325,6 +324,7 @@ paths:
           $ref: "#/components/responses/Error500"
         "503":
           $ref: "#/components/responses/Error503"
+      x-lot: 6
   /projects/{projectId}/search:
     parameters:
       - name: projectId
@@ -472,6 +472,14 @@ paths:
             type: integer
             minimum: 1
           required: false
+        - name: includeReferences
+          in: query
+          schema:
+            type: boolean
+            default: false
+          required: false
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
       responses:
         "200":
           description: Résultat autorisé dans le projet
@@ -481,7 +489,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/Entity"
+                    $ref: "#/components/schemas/EntityRead"
                 required:
                   - data
                 additionalProperties: false
@@ -628,7 +636,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/Scene"
+                    $ref: "#/components/schemas/SceneRead"
                 required:
                   - data
                 additionalProperties: false
@@ -669,10 +677,11 @@ paths:
           schema:
             type: integer
             minimum: 1
+          required: false
       x-lot: 1
       security:
         - webSession: []
-      description: Session humaine au Lot 1 ; le mapping MCP reste spécifié, sans adaptateur actif.
+      description: Lecture humaine et déléguée locale sous contrôle applicatif frais. Révision historique facultative.
     patch:
       operationId: sceneUpdate
       summary: sceneUpdate
@@ -9278,6 +9287,473 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/AIBudgetUpdate"
+  /external-clients:
+    get:
+      operationId: externalClientList
+      summary: externalClientList
+      x-lot: 6
+      x-permission: personal.delegation.manage
+      x-owner-bound: true
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters: []
+      responses:
+        "200":
+          description: Délégation personnelle, sans secret OAuth
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ExternalClient"
+                    maxItems: 100
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+  /delegations:
+    get:
+      operationId: delegationList
+      summary: delegationList
+      x-lot: 6
+      x-permission: personal.delegation.manage
+      x-owner-bound: true
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - &a2
+          name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: beforeId
+          in: query
+          schema: &a1
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Délégation personnelle, sans secret OAuth
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/DelegationPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    post:
+      operationId: delegationCreate
+      summary: delegationCreate
+      x-lot: 6
+      x-permission: personal.delegation.manage
+      x-owner-bound: true
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+      responses:
+        "201":
+          description: Délégation personnelle, sans secret OAuth
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Delegation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DelegationCreate"
+  /delegations/{id}:
+    get:
+      operationId: delegationGet
+      summary: delegationGet
+      x-lot: 6
+      x-permission: personal.delegation.manage
+      x-owner-bound: true
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+      responses:
+        "200":
+          description: Délégation personnelle, sans secret OAuth
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Delegation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+    put:
+      operationId: delegationUpdate
+      summary: delegationUpdate
+      x-lot: 6
+      x-permission: personal.delegation.manage
+      x-owner-bound: true
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Délégation personnelle, sans secret OAuth
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Delegation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DelegationUpdate"
+  /delegations/{id}/revoke:
+    post:
+      operationId: delegationRevoke
+      summary: delegationRevoke
+      x-lot: 6
+      x-permission: personal.delegation.manage
+      x-owner-bound: true
+      x-audit: A1
+      security:
+        - webSession: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+        - name: Origin
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: X-CSRF-Token
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 43
+            maxLength: 43
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 200
+        - $ref: "#/components/parameters/ProjectIfMatch"
+      responses:
+        "200":
+          description: Délégation personnelle, sans secret OAuth
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Delegation"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmptyBody"
+  /delegations/{id}/events:
+    get:
+      operationId: delegationEvents
+      summary: delegationEvents
+      x-lot: 6
+      x-permission: personal.delegation.manage
+      x-owner-bound: true
+      x-audit: A0
+      security:
+        - webSession: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+        - *a2
+        - name: beforeRevision
+          in: query
+          schema: &a3
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+      responses:
+        "200":
+          description: Délégation personnelle, sans secret OAuth
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/DelegationEventPage"
+                required:
+                  - data
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/Error400"
+        "401":
+          $ref: "#/components/responses/Error401"
+        "403":
+          $ref: "#/components/responses/Error403"
+        "404":
+          $ref: "#/components/responses/Error404"
+        "409":
+          $ref: "#/components/responses/Error409"
+        "412":
+          $ref: "#/components/responses/Error412"
+        "413":
+          $ref: "#/components/responses/Error413"
+        "415":
+          $ref: "#/components/responses/Error415"
+        "422":
+          $ref: "#/components/responses/Error422"
+        "428":
+          $ref: "#/components/responses/Error428"
+        "429":
+          $ref: "#/components/responses/Error429"
+        "500":
+          $ref: "#/components/responses/Error500"
+        "503":
+          $ref: "#/components/responses/Error503"
 components:
   schemas:
     Id:
@@ -10638,7 +11114,6 @@ components:
                 - human
                 - integrated_ai
                 - external_ai
-                - system
             userId:
               type: string
               minLength: 1
@@ -10691,6 +11166,8 @@ components:
             - type: "null"
         aiProvenance:
           $ref: "#/components/schemas/AIProvenance"
+        externalProvenance:
+          $ref: "#/components/schemas/ExternalProvenance"
       required:
         - id
         - projectId
@@ -10704,6 +11181,26 @@ components:
         - dependencyRevisions
         - createdByActor
       additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              origin:
+                const: external_ai
+          then:
+            required:
+              - externalProvenance
+            properties:
+              createdByActor:
+                properties:
+                  actorType:
+                    const: external_ai
+            not:
+              required:
+                - aiProvenance
+          else:
+            not:
+              required:
+                - externalProvenance
     ResourceRevision:
       type: object
       properties:
@@ -13239,6 +13736,7 @@ components:
       properties:
         items:
           type: array
+          maxItems: 100
           items:
             $ref: "#/components/schemas/InverseReference"
         hasMore:
@@ -14420,6 +14918,7 @@ components:
             - id
             - displayName
           additionalProperties: false
+        externalRequestId: *a1
         aiExecutionId:
           type: string
           format: uuid
@@ -15604,6 +16103,324 @@ components:
         - model
         - simulated
       additionalProperties: false
+    ExternalProvenance:
+      type: object
+      properties:
+        initiatorId: *a1
+        clientId: *a1
+        oauthClientId:
+          type: string
+          maxLength: 200
+        grantId: *a1
+        grantRevision: *a3
+        executionId: *a1
+      required:
+        - initiatorId
+        - clientId
+        - oauthClientId
+        - grantId
+        - grantRevision
+        - executionId
+      additionalProperties: false
+    SceneRead:
+      anyOf:
+        - $ref: "#/components/schemas/Scene"
+        - $ref: "#/components/schemas/SceneRevision"
+    EntityRead:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        projectId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        typeKey:
+          enum:
+            - character
+            - place
+            - event
+        schemaVersion:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          maxLength: 200
+        attributes:
+          type: object
+        summary:
+          type: string
+          maxLength: 4000
+        notes:
+          type: string
+          maxLength: 20000
+        revision:
+          type: integer
+          minimum: 1
+        status:
+          enum:
+            - active
+            - archived
+            - deleted
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        updatedBy:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        moduleEnabled:
+          type: boolean
+        references:
+          $ref: "#/components/schemas/InverseReferencePage"
+      required:
+        - id
+        - projectId
+        - typeKey
+        - schemaVersion
+        - name
+        - attributes
+        - revision
+      additionalProperties: false
+    DelegationCreate:
+      type: object
+      properties:
+        clientId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        projectIds:
+          minItems: 1
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+          uniqueItems: true
+        scopes:
+          default:
+            - projects:read
+            - project:read
+            - proposal:read
+          minItems: 1
+          maxItems: 5
+          type: array
+          items:
+            type: string
+            enum:
+              - projects:read
+              - project:read
+              - proposal:read
+              - proposal:write
+              - proposal:submit
+          uniqueItems: true
+        durationSeconds:
+          default: 3600
+          type: integer
+          minimum: 60
+          maximum: 2592000
+        allowProposals:
+          default: false
+          type: boolean
+      required:
+        - clientId
+        - projectIds
+      additionalProperties: false
+    DelegationUpdate:
+      type: object
+      properties:
+        projectIds:
+          minItems: 1
+          maxItems: 100
+          type: array
+          items:
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+          uniqueItems: true
+        scopes:
+          default:
+            - projects:read
+            - project:read
+            - proposal:read
+          minItems: 1
+          maxItems: 5
+          type: array
+          items:
+            type: string
+            enum:
+              - projects:read
+              - project:read
+              - proposal:read
+              - proposal:write
+              - proposal:submit
+          uniqueItems: true
+        durationSeconds:
+          default: 3600
+          type: integer
+          minimum: 60
+          maximum: 2592000
+        allowProposals:
+          default: false
+          type: boolean
+      required:
+        - projectIds
+      additionalProperties: false
+    ExternalClient:
+      type: object
+      properties:
+        id: *a1
+        oauthClientId:
+          type: string
+          maxLength: 200
+        name:
+          type: string
+          maxLength: 200
+        redirectUris:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 100
+        allowedScopes:
+          type: array
+          items: &a4
+            enum:
+              - projects:read
+              - project:read
+              - proposal:read
+              - proposal:write
+              - proposal:submit
+          maxItems: 100
+        status:
+          enum:
+            - active
+            - disabled
+        revision: *a3
+      required:
+        - id
+        - oauthClientId
+        - name
+        - redirectUris
+        - allowedScopes
+        - status
+        - revision
+      additionalProperties: false
+    Delegation:
+      type: object
+      properties:
+        id: *a1
+        userId: *a1
+        clientId: *a1
+        projectIds:
+          type: array
+          items: *a1
+          maxItems: 100
+        scopes:
+          type: array
+          items: *a4
+          maxItems: 100
+        expiresAt: &a5
+          type: string
+          format: date-time
+        status:
+          enum:
+            - active
+            - revoked
+        revision: *a3
+        createdAt: *a5
+        updatedAt: *a5
+        revokedAt:
+          anyOf:
+            - *a5
+            - type: "null"
+      required:
+        - id
+        - userId
+        - clientId
+        - projectIds
+        - scopes
+        - expiresAt
+        - status
+        - revision
+        - createdAt
+        - updatedAt
+        - revokedAt
+      additionalProperties: false
+    DelegationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Delegation"
+          maxItems: 50
+        hasMore:
+          type: boolean
+        nextBeforeId:
+          anyOf:
+            - *a1
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextBeforeId
+      additionalProperties: false
+    DelegationEvent:
+      type: object
+      properties:
+        id: *a1
+        grantId: *a1
+        revision: *a3
+        action:
+          enum:
+            - grant.created
+            - grant.updated
+            - grant.revoked
+        createdAt: *a5
+        snapshot:
+          $ref: "#/components/schemas/Delegation"
+      required:
+        - id
+        - grantId
+        - revision
+        - action
+        - createdAt
+        - snapshot
+      additionalProperties: false
+    DelegationEventPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DelegationEvent"
+          maxItems: 50
+        hasMore:
+          type: boolean
+        nextBeforeRevision:
+          anyOf:
+            - *a3
+            - type: "null"
+      required:
+        - items
+        - hasMore
+        - nextBeforeRevision
+      additionalProperties: false
   parameters:
     IfMatch:
       name: If-Match
@@ -15663,14 +16480,16 @@ components:
       type: apiKey
       in: cookie
       name: __Host-sm_session
-      description: "Cookie serveur HttpOnly, Secure, SameSite=Lax. En local HTTP seulement : sm_session_local.
-        Origin exact et X-CSRF-Token pour mutation. Identité vérifiée par issuer+subject ; aucun bearer au Lot
-        0."
+      description: "Cookie serveur HttpOnly, Secure, SameSite=Lax. En local HTTP seulement : sm_session_local. Origin exact et X-CSRF-Token pour mutation. Identité vérifiée par issuer+subject ; aucun bearer au Lot 0."
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: OAuth access token
       description: Issuer/aud/client/grant vérifiés ; jamais token IA ni ID token.
+    mcpBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: Keycloak access JWT; local resource audience http://localhost:3500/mcp
   responses:
     Error400:
       description: VALIDATION_FAILED
@@ -15750,3 +16569,9 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
+x-storymaster-delegated-security:
+  scheme: mcpBearer
+  grantHeader: StoryMaster-Grant-Id
+  localOnly: true
+  toolPolicy: mcp-policy.json
+  authorization: human ∩ client ∩ active grant ∩ project ∩ scopes ∩ external ceiling

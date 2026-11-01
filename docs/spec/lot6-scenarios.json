@@ -1,0 +1,71 @@
+{
+  "status": "Qualification locale sans modèle ; résultats effectifs et limites dans LOT-6-REPORT.md, pas une qualification publique.",
+  "scenarios": [
+    {
+      "contractTest": "CT-17",
+      "scope": "mcp_local",
+      "oracle": "Scopes lecture : outil de proposition et mutation canonique HTTP refusés ; tools/list filtré ne suffit pas.",
+      "executableTest": "tests/mcp-network.test.ts"
+    },
+    {
+      "contractTest": "CT-18",
+      "scope": "mcp_local",
+      "oracle": "Auteur délégué : create/set/preview/validate/submit sur les deux versions ; canon inchangé et résultat HTTP normalisé.",
+      "executableTest": "tests/mcp-spike.test.ts"
+    },
+    {
+      "contractTest": "CT-19",
+      "scope": "mcp_local",
+      "oracle": "Outil merge inconnu et HTTP 403 pour une proposition réellement approuvée, sans application canonique.",
+      "executableTest": "tests/mcp-network.test.ts"
+    },
+    {
+      "contractTest": "CT-20",
+      "scope": "mcp_local",
+      "oracle": "Révocation avant/après admission, autorisation fraîche, token valide ne suffit pas et révocation persiste au redémarrage.",
+      "executableTest": "tests/mcp-concurrency.test.ts"
+    },
+    {
+      "contractTest": "CT-27",
+      "scope": "integrated_ai_worker_replay_no_mcp_job",
+      "oracle": "Rejeu des jobs simulés existants ; aucun job ou tâche durable exposé via MCP. Variante worker MCP non applicable, non présentée comme exécutée.",
+      "executableTest": "tests/ai-concurrency.test.ts"
+    },
+    {
+      "contractTest": "CT-30",
+      "scope": "mcp_local",
+      "oracle": "Provenance humain/client OAuth/grant/version/requête et ressources ; proposition MCP revue puis fusionnée humainement au navigateur.",
+      "executableTest": "tests/e2e/lot6.spec.ts"
+    },
+    {
+      "contractTest": "CT-31",
+      "scope": "mcp_local",
+      "oracle": "Curseur lié au client/grant/version/recherche ; autre contexte et version réduite refusés.",
+      "executableTest": "tests/mcp-concurrency.test.ts"
+    },
+    {
+      "contractTest": "CT-32",
+      "scope": "integrated_ai_replay_plus_external_ceiling",
+      "oracle": "Rejeu du plafond IA intégrée ; external_ai testé séparément sur HTTP et cas d’usage directs, sans transformer ce CT en nouveau cas intégré.",
+      "executableTest": "tests/ai-security.test.ts"
+    },
+    {
+      "contractTest": "CT-40",
+      "scope": "mcp_local_plus_crypto_fixture",
+      "oracle": "Keycloak réel : ID token, mauvais humain/client, scope absent, signature altérée, ressource inconnue/modifiée et token révoqué ; issuer/temps/audience isolés aussi par signatures réelles sur fixture AS contrôlée.",
+      "executableTest": "tests/mcp-network.test.ts"
+    },
+    {
+      "contractTest": "CT-41",
+      "scope": "mcp_local_plus_metadata_fixture",
+      "oracle": "Pas de fetch URL narrative ni client URL inconnu ; Keycloak refuse redirect/client non préenregistré. Métadonnées hostiles isolées refusées avant egress par fixture contrôlée.",
+      "executableTest": "tests/mcp-oauth.test.ts"
+    },
+    {
+      "contractTest": "CT-43",
+      "scope": "mcp_local",
+      "oracle": "Taille, profondeur, 101 opérations, pagination excessive, huit admissions PostgreSQL/neuvème 429 et débit avec Retry-After.",
+      "executableTest": "tests/mcp-network.test.ts"
+    }
+  ]
+}

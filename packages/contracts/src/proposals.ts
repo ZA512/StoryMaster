@@ -34,7 +34,7 @@ export const proposalListSchema=z.strictObject({status:z.enum(proposalStates).op
 export type ProposedOperation=z.infer<typeof proposedOperationSchema>;
 export type ProposalDependency=z.infer<typeof proposalDependencySchema>;
 export type ProposalContent=z.infer<typeof proposalCreateSchema>;
-export interface ProposalRevision extends ProposalContent {proposalId:string;projectId:string;proposalRevision:number;contentHash:string;policyVersion:1;createdAt:string;createdBy:{id:string;displayName:string};aiExecutionId?:string}
+export interface ProposalRevision extends ProposalContent {proposalId:string;projectId:string;proposalRevision:number;contentHash:string;policyVersion:1;createdAt:string;createdBy:{id:string;displayName:string};aiExecutionId?:string;externalRequestId?:string}
 export interface ProposalReview {id:string;projectId:string;proposalId:string;proposalRevision:number;contentHash:string;reviewerId:string;reviewerName:string;reviewerRole:string;reviewerMembershipRevision:number;stateVersion:number;decision:'comment'|'request_changes'|'approve'|'reject';comment:string;createdAt:string}
 export type ReviewView=ProposalReview&{validity:'effective'|'invalidated';invalidationReason:string|null};
 export interface ProposalDto extends ProposalHead,ProposalContent {contentHash:string;policyVersion:1;reviews:ReviewView[]}

@@ -1,4 +1,4 @@
-name: Documentation et Lots 0–5 phase A
+name: Documentation et Lots 0–6 locaux sans fournisseur IA
 on:
   push:
   pull_request:
@@ -10,7 +10,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       NEXT_TELEMETRY_DISABLED: '1'
     steps:
@@ -41,7 +41,11 @@ jobs:
         run: |
           cp .env.example .env
           docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait
-      - name: Tests applicatifs PostgreSQL et IA simulée sans clé réelle
+      - name: Navigateur de qualification OAuth sans modèle
+        run: npx playwright install --with-deps chromium
+      - name: Clients Keycloak MCP locaux préenregistrés
+        run: npm run mcp:ensure-keycloak
+      - name: Tests applicatifs PostgreSQL, MCP réel et IA simulée sans clé réelle
         run: npm test
       - name: Qualification préliminaire de contention
         run: npm run bench:contention
@@ -53,10 +57,12 @@ jobs:
         run: npm run bench:collaboration
       - name: Qualification du merge contre autosauvegardes indépendantes
         run: npm run bench:proposals
-      - name: Navigateur avec Keycloak et assistant simulé
+      - name: Activation locale explicite et client MCP sans LLM
         run: |
-          npx playwright install --with-deps chromium
-          npm run test:e2e
+          MCP_ENABLED=true docker compose -f compose.yaml -f compose.test.yaml --profile mcp up -d --wait api web mcp
+          MCP_ENABLED=true npm run mcp:qualify
+      - name: Navigateur avec Keycloak, assistant simulé et délégations
+        run: MCP_ENABLED=true npm run test:e2e
       - name: État des conteneurs en cas d'échec
         if: failure()
         run: docker compose -f compose.yaml -f compose.test.yaml ps -a

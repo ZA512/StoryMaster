@@ -611,6 +611,18 @@ Sources narratives et réponses du simulateur sont non fiables ; noms/arguments 
 
 Transactions courtes et appels hors DB, deadlines y compris adapter ignorant AbortSignal, contrôle de révocation en attente, atomicité budget/transcript/publication/audit, reprise orpheline unknown. Aucun service IA ne peut établir une identité depuis HTTP. Voir [ADR-0014](adr/0014-assistant-integre-et-executions-bornees.md), [GO-03 encore proposé](GO-03-DECISION-PROPOSAL.md).
 
+## Lot 6 local — contrôles exécutables et limites
+
+Le [Lot 6 autorisé](HUMAN-DECISIONS.md) utilise Keycloak local, clients préenregistrés, Code/PKCE S256, redirects exacts, PRM RFC 9728 et challenge Bearer. JWT RS256 vérifié pour issuer, audience URL, type Bearer, subject, azp autorisé, exp/iat/nbf et signature ; introspection à chaque requête, sans cache positif de droits. ID tokens et DPoP sont refusés. Endpoints AS/JWKS/introspection fixes, aucun redirect réseau ni récupération de métadonnées client distante. Resource Indicators expérimental activé ; le client ressource porte l’URL comme clientId pour conserver le contrôle d’audience de l’introspection. [ADR-0015](adr/0015-mcp-local-oauth-et-grants.md).
+
+Intersection effective : humain actif ∩ client actif ∩ grant actif/non expiré ∩ projet accordé ∩ token/client/grant scopes ∩ membership actuel ∩ plafond external_ai. Le header StoryMaster-Grant-Id est un sélecteur, jamais une authentification. ClientInfo, IDs et rôles envoyés dans les arguments ne confèrent rien. Lecture par défaut ; propose/submit demandent un consentement supplémentaire. Aucun canon, membre, secret, conversation privée, review/approve/reject/merge, y compris par HTTP bearer et par appel direct aux services avec une preuve externe. Les anciennes sessions web ne deviennent pas délégations.
+
+Révocation/périmètre/membership sérialisés par Project ; autorisation relue après barrière, avant idempotence et commande. Une commande engagée avant révocation peut finir avant son commit ; les suivantes sont refusées. La révocation distante du token entre introspection et COMMIT n’est pas atomique avec PostgreSQL : la requête suivante réintrospecte. L’ancien grant reste requis lors de la fusion humaine de son origine ; aucun droit retiré ne renaît par un rejeu.
+
+Serveur désactivé par défaut et profile Docker explicite ; seul 127.0.0.1:3500 est publié. Host avec port exact, Origin fermé, 256 Kio en entrée, profondeur 40, 4 Mio en résultat, pages 100, opérations 100, 120 requêtes/minute/IP et huit requêtes simultanées par instance : bornes de qualification locale, aucun quota commercial. Pas de session transport persistante, sampling, tâches ou souscriptions. Les erreurs et journaux omettent tokens, capacités et contenus narratifs. Métadonnées PRM publiques non sensibles ; découverte MCP/outils protégés.
+
+RLS, charge soutenue, rétention/purge des métadonnées d’autorisation, restauration d’une ancienne sauvegarde, rotation de secrets d’exploitation et exposition publique restent à qualifier au Lot 7. Un simple redémarrage ne réactive pas un grant révoqué ; restaurer un état antérieur nécessite une politique de révocations au-delà du snapshot, non prétendue ici. GO-03 commercial reste ouvert.
+
 ## Critères d'acceptation du document
 
 Chaque menace critique a mitigation concrète et scénario vérifiable ; matrice autorisations testable par rôle et canal ; les clients ne fournissent jamais leur propre identité d'autorité ; chaque copie/transfert a une règle d'accès ; résiduels élevés ont décision et lot ; la sécurité ne repose ni sur le prompt ni sur la liste d'outils seule. Les tests spécifiés ne sont pas présentés comme exécutés sur une application absente.

@@ -3,6 +3,7 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY package.json package-lock.json ./
 COPY apps/api/package.json ./apps/api/package.json
+COPY apps/mcp/package.json ./apps/mcp/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/domain/package.json ./packages/domain/package.json
 COPY packages/application/package.json ./packages/application/package.json
@@ -27,3 +28,9 @@ ENV NODE_ENV=production
 USER node
 EXPOSE 3000
 CMD ["npm", "run", "start", "--workspace", "@storymaster/web"]
+
+FROM dependencies AS mcp
+ENV NODE_ENV=production
+USER node
+EXPOSE 3500
+CMD ["node", "--import", "tsx", "apps/mcp/src/server.ts"]

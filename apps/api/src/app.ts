@@ -1,3 +1,7 @@
+import {registerDelegations} from './delegation.ts';
+import {DelegationService,ProjectContextService} from '@storymaster/application';
+import {KeycloakMCPVerifier} from '@storymaster/infrastructure';
+import type {Actor} from '@storymaster/domain';
 import {registerAI} from './ai.ts';
 import {registerProposals} from './proposals.ts';
 import {registerCollaboration,invitationCookie} from './collaboration.ts';
@@ -17,7 +21,7 @@ import { registerEditorial } from './editorial.ts';
 import type {ProviderAdapter} from '@storymaster/application';
 import type { Config } from './config.ts';
 
-declare module 'fastify' { interface FastifyRequest { session:Session|null } }
+declare module 'fastify' { interface FastifyRequest { session:Session|null; externalActor:Actor|null } }
 export async function buildApp(config:Config, options:{logStream?:Writable;rateMax?:number;aiAdapter?:ProviderAdapter;aiWorker?:boolean}={}) {
   const pool=new Pool({connectionString:config.databaseUrl,max:20,connectionTimeoutMillis:5000});
   try{await assertApplicationSchema(pool);}catch(e){await pool.end();throw e;}
@@ -28,28 +32,31 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
   pool.on('error',()=>app.log.warn({code:'DATABASE_CONNECTION_LOST'},'Connexion inactive à la base interrompue'));
   await app.register(cookie);
   await app.register(rateLimit,{max:options.rateMax ?? 300,timeWindow:'1 minute',hook:'preHandler',keyGenerator:req=>req.session?.actor.userId ?? req.ip});
-  app.decorateRequest('session',null);
+  app.decorateRequest('session',null);app.decorateRequest('externalActor',null);
+  const delegations=new DelegationService(db),mcpVerifier=config.mcp?new KeycloakMCPVerifier(config.mcp):null;
   const secure=!config.local, sessionCookie=secure ? '__Host-sm_session' : 'sm_session_local',loginCookie=secure ? '__Host-sm_login' : 'sm_login_local';
   const invitationOptions={origin:config.publicOrigin,local:config.local,seal:(value:string)=>sessions.seal(value),unseal:(value:string)=>sessions.unseal(value)};
   const cookieOptions={path:'/',httpOnly:true,secure,sameSite:'lax' as const};
   app.addHook('onRequest',async(req,reply)=>{
     reply.header('X-Correlation-ID',req.id).header('Cache-Control','private, no-store').header('X-Content-Type-Options','nosniff').header('Referrer-Policy','no-referrer');
     if (req.url.startsWith('/api/')) {
+      if(req.headers.authorization!==undefined){if(!mcpVerifier||!req.headers.authorization.startsWith('Bearer ')||req.headers.authorization.includes(','))throw new AppError('UNAUTHENTICATED','Jeton OAuth non accepté.',401);if(req.headers.origin!==undefined&&req.headers.origin!==config.publicOrigin)throw new AppError('FORBIDDEN','Origine interdite.',403);const grant=req.headers['storymaster-grant-id'];if(typeof grant!=='string')throw new AppError('FORBIDDEN','Délégation requise.',403);req.externalActor=await delegations.bindVerifiedToken(await mcpVerifier.verify(req.headers.authorization.slice(7)),grant,req.id);if(!/^\/api\/v1\/projects(?:\/|$)/.test(req.url.split('?')[0]!))throw new AppError('FORBIDDEN','Ce canal ne peut pas administrer votre compte.',403);return;}
       req.session=await sessions.read(req.cookies[sessionCookie]);
       if (!['GET','HEAD','OPTIONS'].includes(req.method)) {
         if (req.headers.origin!==config.publicOrigin || !sessions.validCsrf(req.session.rawToken,req.headers['x-csrf-token'])) throw new AppError('FORBIDDEN','La vérification de sécurité a échoué. Rechargez la page.',403);
       }
     }
   });
-  app.setErrorHandler((error,req,reply)=>{
+  app.setErrorHandler(async(error,req,reply)=>{
     const known=error instanceof AppError;
     const status=error && typeof error==='object' && 'statusCode' in error ? error.statusCode : undefined;
     const e=known ? error : error instanceof Error && error.name==='ZodError' ? new AppError('VALIDATION_FAILED','Les paramètres de la demande ne sont pas valides.',422) : status===429 ? new AppError('RATE_LIMITED','Trop de demandes. Réessayez dans un instant.',429) : status===400 || status===413 || status===415 ? new AppError('VALIDATION_FAILED','Le corps de la demande n’est pas valide.',status) : new AppError('INTERNAL_ERROR','Une erreur est survenue.',500);
+    if(req.externalActor)await delegations.refusal(req.externalActor,e.code,'http.denied');
     app.log.warn({code:e.code,correlationId:req.id},'Requête refusée ou échouée');
     reply.code(e.status).send({error:{code:e.code,message:e.message,correlationId:req.id,retryable:e.status===503 || e.status===429,...(e.details ? {details:e.details} : {})}});
   });
   app.setNotFoundHandler((req,reply)=>reply.code(404).send({error:{code:'NOT_FOUND',message:'Ressource introuvable.',correlationId:req.id,retryable:false}}));
-  const actor=(req:FastifyRequest)=>{if (!req.session) throw new AppError('UNAUTHENTICATED','Veuillez vous connecter.',401);return req.session.actor;};
+  const actor=(req:FastifyRequest)=>{if(req.externalActor)return req.externalActor;if (!req.session) throw new AppError('UNAUTHENTICATED','Veuillez vous connecter.',401);return req.session.actor;};
   const expected=(req:FastifyRequest)=>{
     const tag=req.headers['if-match'];
     if (!tag) throw new AppError('PRECONDITION_REQUIRED','Une révision est requise.',428);
@@ -117,6 +124,8 @@ export async function buildApp(config:Config, options:{logStream?:Writable;rateM
       reply.header('ETag',`"r${result.revision}"`);return {data:result};
     });
   }
+  registerDelegations(app,delegations,{actor,key,expected});
+  app.get<{Params:{projectId:string}}>('/api/v1/projects/:projectId/context',async r=>({data:await new ProjectContextService(db,config.secret).get(actor(r),r.params.projectId)}));
   const editorial=new EditorialService(db);
   await registerEditorial(app,editorial,{actor,key,expected});
   await registerNarrative(app,new NarrativeService(db,config.secret),editorial,{actor,key,expected});

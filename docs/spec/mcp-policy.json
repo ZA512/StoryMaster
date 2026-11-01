@@ -1,8 +1,8 @@
 {
   "format": "storymaster-mcp-policy",
-  "version": "0.2-proposed",
+  "version": "0.3-local",
   "protocolVersion": "2026-07-28",
-  "status": "Proposée",
+  "status": "Implémentation locale autorisée ; réception humaine attendue",
   "description": "Métadonnées applicatives séparées du format officiel tools/list ; jamais une norme MCP.",
   "tools": [
     {
@@ -395,5 +395,18 @@
         "maxPageSize": 100
       }
     }
-  ]
+  ],
+  "acceptedProtocolVersions": [
+    "2026-07-28",
+    "2025-11-25"
+  ],
+  "sdk": {
+    "server": "2.4.0",
+    "client": "2.4.0",
+    "fastify": "2.0.1",
+    "node": "2.1.2"
+  },
+  "localOnly": true,
+  "enabledByDefault": false,
+  "dynamicClientRegistration": false
 }

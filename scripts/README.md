@@ -38,6 +38,14 @@ La CI doit échouer sur les divergences ; aucune correction automatique ni promo
 
 Les 39 tests de non-régression injectent notamment des erreurs à nombre d'IDs/outils constant, une divergence de PROP-10 par rapport au PRD approuvé, une base obsolète et une approbation non invalidée. Une CI verte ne prouve ni autorisation métier effective, ni transactions PostgreSQL, ni contention, ni compatibilité MCP runtime. B-06/B-07 merge sont désormais exécutés au Lot 4 ; les limites de charge restent explicites dans son rapport. La preuve de consentement humain est enregistrée dans les fiches GO ; le script ne peut pas attester seul de l'identité du décideur.
 
+## Qualification du Lot 6 local
+
+`npm run mcp:ensure-keycloak` configure seulement les trois clients OAuth locaux préenregistrés et leurs scopes ; aucun reset utilisateur/web. `npm run mcp:qualify` utilise le SDK officiel, navigateur de consentement Keycloak et frontières HTTP/MCP réelles, sans modèle. Activation explicite et commandes dans le [README](../README.md). Les deux versions sont testées, tokens en mémoire, aucun secret dans les rapports.
+
+`npm run test:mcp` requiert PostgreSQL/Keycloak locaux et Chromium Playwright ; le port 3500 doit être libre car les tests démarrent leur serveur contre la base `_test`. `mcp-jwt` et `mcp-oauth` sont des tests ciblés sur fixtures contrôlées, distingués du Spike C et des tests réseau Keycloak. Le client CLI mesure connexion authentifiée, lecture/recherche, propositions, révocation et huit lectures concurrentes ; les contrôles sans métier sont chronométrés via GET /mcp authentifié/405, comparés aux métadonnées publiques. Petit échantillon local, pas de SLA.
+
+Le validateur documentaire contrôle désormais aussi routes personnelles, CSRF/CAS, scopes par défaut, provenance, exemples et sélection exacte de scénarios du Lot 6. Les tests de mutation ne prouvent aucune permission produit ; les vrais contrôles sont exercés par les tests applicatifs/navigateur. Les variables `DOCUMENT_PYTHON` permettent de choisir le Python isolé pour les contrats HTTP observés.
+
 ## Critères d'acceptation du document
 
 Installation isolée reproductible ; commande CI sans secret ; erreurs entraînant un code non nul ; contrôles sémantiques démontrés par mutations ; périmètre documentaire clairement séparé des futurs tests applicatifs.

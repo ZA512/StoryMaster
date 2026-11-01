@@ -83,3 +83,12 @@ La revue UX humaine complète, conservation des brouillons après crash/fermetur
 Instruction explicite « Réception du Lot 4 et implémentation du Lot 5 : Assistant IA intégré ». Principes ADR-0013 acceptés (proposition distincte du canon, approbation versionnée, fusion atomique humaine), réception technique avec réserves ; [CI de 9c2df0ba811652a48d1454eea7535f12d423bb71](https://github.com/ZA512/StoryMaster/actions/runs/41291953747) vérifiée terminée avec succès, jobs validate/spike-a. Réserves UX, brouillons en mémoire, contention, RLS, IdP, sauvegardes et exploitation publique maintenues.
 
 GO-03 **non approuvé** : [proposition](GO-03-DECISION-PROPOSAL.md). Phase A seule autorisée : module intégré, chiffrement, contexte, consentement, budgets, simulateurs, UI et tests réels PostgreSQL/navigateur avec clés fictives. Aucune clé réelle, activation fournisseur, donnée narrative sortante ou dépense avant validation explicite du propriétaire et autorisation d’essai borné. Pas de réception finale du Lot 5 ou autorisation du Lot 6 déduite de cette instruction.
+
+
+## Réception du Lot 5 phase A et autorisation du Lot 6 local — 1er novembre 2026
+
+Source : instruction explicite « Réception du Lot 5 phase A et implémentation du Lot 6 MCP local, sans fournisseur IA payant ». Réception technique phase A avec réserves ; [CI 41303083199](https://github.com/ZA512/StoryMaster/actions/runs/41303083199), commit 58ec5a98f3c09de59ae2c2f4511cf5d9ffe9e178, vérifiée terminée avec succès avant développement. Départ Git propre sur ce commit.
+
+Changement de priorité autorisé : terminer et qualifier les parcours humains avant fournisseurs commerciaux. Dérogation explicite à l’ancienne dépendance Lot 5 complet→Lot 6 : MCP local autorisé avec SDK officiel et client de qualification sans LLM ; Lot 5 phase B reste différé, GO-03 non validé. Aucune clé réelle, dépense, inférence externe, installation Ollama/modèle/GPU, publication Internet ou client non préenregistré. Les détails ouverts d’ADR-0008 ne sont pas acceptés globalement ; décisions publiques et durées de production à valider ultérieurement.
+
+Grants projet/scopes/client/humain persistants et révocables, autorisation fraîche et plafond externe imposés. Spike C doit exercer réseau, OAuth, MCP et services communs avant extension complète du catalogue/UI. Future refonte UX préparée dans un document seulement. Les 150 exigences/priorités et huit lots restent inchangés ; réserves héritées maintenues. Arrêt avant Lot 7 et réception humaine du Lot 6 requise.

@@ -1,3 +1,4 @@
+import {PostgresMCPStore} from './mcp.ts';
 import {PostgresAIStore} from './ai.ts';
 import {PostgresProposalStore} from './proposals.ts';
 import { createHash, randomUUID } from 'node:crypto';
@@ -66,11 +67,12 @@ export class PostgresUnitOfWork implements UnitOfWork {
 }
 class PostgresTransaction implements Transaction {
   private lockStarted?: number;
-  readonly ai:PostgresAIStore;readonly proposals:PostgresProposalStore;readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
+  readonly mcp:PostgresMCPStore;readonly ai:PostgresAIStore;readonly proposals:PostgresProposalStore;readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
   private lockMode:'exclusive'|'shared'='exclusive';
-  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.ai=new PostgresAIStore(client);this.proposals=new PostgresProposalStore(client);this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
+  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.mcp=new PostgresMCPStore(client);this.ai=new PostgresAIStore(client);this.proposals=new PostgresProposalStore(client);this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
   finish() { this.editorial.finish();if (this.lockStarted !== undefined) this.observe({name:'project.lock_hold_ms',value:performance.now()-this.lockStarted,mode:this.lockMode}); }
   async assertActor(actor: Actor) {
+    if(actor.type==='external_ai'){await this.mcp.assertActor(actor);return;}
     const result = await this.client.query(`SELECT u.id FROM sessions s JOIN app_users u ON u.id=s.user_id
       WHERE s.token_hash=$1 AND s.user_id=$2 AND s.revoked_at IS NULL AND s.expires_at>clock_timestamp() AND u.status='active' FOR SHARE OF s`,[actor.sessionHash,actor.userId]);
     if (!result.rowCount) throw unauthenticated();
@@ -79,9 +81,9 @@ class PostgresTransaction implements Transaction {
     const result = await this.client.query<ProjectRow>(`SELECT p.*,m.role FROM projects p JOIN project_memberships m ON m.project_id=p.id WHERE p.id=$1 AND m.user_id=$2 AND m.status='active'`,[id,userId]);
     return result.rows[0] ? project(result.rows[0]) : null;
   }
-  async listProjects(userId:string, limit:number, after?: ProjectPosition) {
+  async listProjects(userId:string, limit:number, after?: ProjectPosition,projectIds?:string[]) {
     const result = await this.client.query<ProjectRow>(`SELECT p.*,m.role,p.created_at::text AS cursor_timestamp FROM projects p JOIN project_memberships m ON m.project_id=p.id
-      WHERE m.user_id=$1 AND m.status='active' AND ($3::timestamptz IS NULL OR (p.created_at,p.id)<($3::timestamptz,$4::uuid)) ORDER BY p.created_at DESC,p.id DESC LIMIT $2`,[userId,limit,after?.timestamp ?? null,after?.id ?? null]);
+      WHERE m.user_id=$1 AND m.status='active' AND ($5::uuid[] IS NULL OR p.id=ANY($5)) AND ($3::timestamptz IS NULL OR (p.created_at,p.id)<($3::timestamptz,$4::uuid)) ORDER BY p.created_at DESC,p.id DESC LIMIT $2`,[userId,limit,after?.timestamp ?? null,after?.id ?? null,projectIds??null]);
     return result.rows.map(row => ({project:project(row),position:{timestamp:row.cursor_timestamp,id:row.id}}));
   }
   async lockProject(id:string,mode:'exclusive'|'shared'='exclusive') {
@@ -110,6 +112,8 @@ class PostgresTransaction implements Transaction {
     await this.client.query('INSERT INTO project_revisions(project_id,revision,snapshot,actor_user_id) VALUES ($1,$2,$3,$4)',[p.id,p.revision,JSON.stringify({id,ownerId,name,description,language,visibility,status,revision,createdAt,updatedAt}),actor.userId]);
   }
   async audit(e:AuditEvent) {
+    if(e.actor.type==='external_ai'){await this.client.query('INSERT INTO audit_events(id,project_id,actor_user_id,actor_type,action,resource_id,before_revision,after_revision,correlation_id,external_client_id,external_grant_id,external_request_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[randomUUID(),e.projectId??null,e.actor.userId,e.actor.type,e.action,e.resourceId,e.beforeRevision??null,e.afterRevision??null,e.correlationId,e.actor.clientId,e.actor.grantId,e.actor.executionId]);return;}
+
     if(e.actor.type!=='integrated_ai'){await this.client.query('INSERT INTO audit_events(id,project_id,actor_user_id,actor_type,action,resource_id,before_revision,after_revision,correlation_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),e.projectId??null,e.actor.userId,e.actor.type,e.action,e.resourceId,e.beforeRevision??null,e.afterRevision??null,e.correlationId]);return;}
     await this.client.query('INSERT INTO audit_events(id,project_id,actor_user_id,actor_type,action,resource_id,before_revision,after_revision,correlation_id,ai_execution_id,ai_provider,ai_model) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(SELECT provider FROM ai_executions WHERE id=$10 AND project_id=$2 AND owner_id=$3),(SELECT model FROM ai_executions WHERE id=$10 AND project_id=$2 AND owner_id=$3))',[randomUUID(),e.projectId ?? null,e.actor.userId,e.actor.type,e.action,e.resourceId,e.beforeRevision ?? null,e.afterRevision ?? null,e.correlationId,e.actor.type==='integrated_ai'?e.actor.executionId??null:null]);
   }

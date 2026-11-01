@@ -675,6 +675,20 @@
           "revision": {
             "type": "integer",
             "minimum": 1
+          },
+          "includeReferences": {
+            "type": "boolean",
+            "default": false
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 2000
           }
         },
         "required": [
@@ -688,7 +702,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/$defs/Entity"
+            "$ref": "#/$defs/EntityRead"
           },
           "error": {
             "type": "object",
@@ -850,6 +864,280 @@
               "revision"
             ],
             "additionalProperties": false
+          },
+          "EntityRead": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "projectId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "typeKey": {
+                "enum": [
+                  "character",
+                  "place",
+                  "event"
+                ]
+              },
+              "schemaVersion": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "attributes": {
+                "type": "object"
+              },
+              "summary": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "status": {
+                "enum": [
+                  "active",
+                  "archived",
+                  "deleted"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "createdBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "updatedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "moduleEnabled": {
+                "type": "boolean"
+              },
+              "references": {
+                "$ref": "#/$defs/InverseReferencePage"
+              }
+            },
+            "required": [
+              "id",
+              "projectId",
+              "typeKey",
+              "schemaVersion",
+              "name",
+              "attributes",
+              "revision"
+            ],
+            "additionalProperties": false
+          },
+          "InverseReferencePage": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "maxItems": 100,
+                "items": {
+                  "$ref": "#/$defs/InverseReference"
+                }
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "nextCursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "items",
+              "hasMore",
+              "nextCursor"
+            ],
+            "additionalProperties": false
+          },
+          "InverseReference": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "projectId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "sceneId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "objectId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "referenceType": {
+                "enum": [
+                  "present",
+                  "mentioned",
+                  "point_of_view",
+                  "setting",
+                  "depicts_event"
+                ]
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "target": {
+                "$ref": "#/$defs/NarrativeTarget"
+              },
+              "linkState": {
+                "enum": [
+                  "active",
+                  "target_archived",
+                  "module_disabled",
+                  "removed"
+                ]
+              },
+              "scene": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "chapterId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "manuscriptId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "archived": {
+                    "type": "boolean"
+                  },
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "chapterId",
+                  "manuscriptId",
+                  "archived",
+                  "revision"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "projectId",
+              "sceneId",
+              "objectId",
+              "referenceType",
+              "metadata",
+              "revision",
+              "target",
+              "linkState",
+              "scene"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeTarget": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "name": {
+                "type": "string"
+              },
+              "typeKey": {
+                "enum": [
+                  "character",
+                  "place",
+                  "event"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "active",
+                  "archived"
+                ]
+              },
+              "moduleEnabled": {
+                "type": "boolean"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "typeKey",
+              "status",
+              "moduleEnabled",
+              "revision"
+            ],
+            "additionalProperties": false
           }
         }
       },
@@ -894,7 +1182,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/$defs/Scene"
+            "$ref": "#/$defs/SceneRead"
           },
           "error": {
             "type": "object",
@@ -1177,6 +1465,196 @@
               "contentFormatVersion",
               "content",
               "references"
+            ],
+            "additionalProperties": false
+          },
+          "SceneRead": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Scene"
+              },
+              {
+                "$ref": "#/$defs/SceneRevision"
+              }
+            ]
+          },
+          "SceneRevision": {
+            "type": "object",
+            "properties": {
+              "sceneId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "projectId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "contentFormatVersion": {
+                "const": 1
+              },
+              "author": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "displayName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "displayName"
+                ],
+                "additionalProperties": false
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "changeSetId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "restoredFromRevision": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              },
+              "action": {
+                "type": "string"
+              },
+              "content": {
+                "$ref": "#/$defs/RichDocument"
+              },
+              "contentHash": {
+                "type": "string"
+              },
+              "referenceSnapshotVersion": {
+                "const": 1
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/SceneReference"
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "archived": {
+                    "type": "boolean"
+                  },
+                  "chapterId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "title",
+                  "summary",
+                  "status",
+                  "archived",
+                  "chapterId"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "sceneId",
+              "projectId",
+              "revision",
+              "contentFormatVersion",
+              "author",
+              "createdAt",
+              "changeSetId",
+              "restoredFromRevision",
+              "action",
+              "content",
+              "contentHash",
+              "metadata"
+            ],
+            "additionalProperties": false,
+            "dependentRequired": {
+              "referenceSnapshotVersion": [
+                "references"
+              ],
+              "references": [
+                "referenceSnapshotVersion"
+              ]
+            }
+          },
+          "SceneReference": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "projectId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "sceneId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "objectId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "referenceType": {
+                "enum": [
+                  "present",
+                  "mentioned",
+                  "point_of_view",
+                  "setting",
+                  "depicts_event"
+                ]
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "id",
+              "projectId",
+              "sceneId",
+              "objectId",
+              "referenceType",
+              "revision"
             ],
             "additionalProperties": false
           }
@@ -3549,8 +4027,7 @@
                     "enum": [
                       "human",
                       "integrated_ai",
-                      "external_ai",
-                      "system"
+                      "external_ai"
                     ]
                   },
                   "userId": {
@@ -3631,6 +4108,9 @@
               },
               "aiProvenance": {
                 "$ref": "#/$defs/AIProvenance"
+              },
+              "externalProvenance": {
+                "$ref": "#/$defs/ExternalProvenance"
               }
             },
             "required": [
@@ -3646,7 +4126,44 @@
               "dependencyRevisions",
               "createdByActor"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "origin": {
+                      "const": "external_ai"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "externalProvenance"
+                  ],
+                  "properties": {
+                    "createdByActor": {
+                      "properties": {
+                        "actorType": {
+                          "const": "external_ai"
+                        }
+                      }
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "aiProvenance"
+                    ]
+                  }
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "externalProvenance"
+                    ]
+                  }
+                }
+              }
+            ]
           },
           "RemoveRelation": {
             "type": "object",
@@ -4260,6 +4777,45 @@
               "provider",
               "model",
               "simulated"
+            ],
+            "additionalProperties": false
+          },
+          "ExternalProvenance": {
+            "type": "object",
+            "properties": {
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "clientId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "oauthClientId": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "grantId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "grantRevision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "initiatorId",
+              "clientId",
+              "oauthClientId",
+              "grantId",
+              "grantRevision",
+              "executionId"
             ],
             "additionalProperties": false
           }
@@ -6116,8 +6672,7 @@
                     "enum": [
                       "human",
                       "integrated_ai",
-                      "external_ai",
-                      "system"
+                      "external_ai"
                     ]
                   },
                   "userId": {
@@ -6198,6 +6753,9 @@
               },
               "aiProvenance": {
                 "$ref": "#/$defs/AIProvenance"
+              },
+              "externalProvenance": {
+                "$ref": "#/$defs/ExternalProvenance"
               }
             },
             "required": [
@@ -6213,7 +6771,44 @@
               "dependencyRevisions",
               "createdByActor"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "origin": {
+                      "const": "external_ai"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "externalProvenance"
+                  ],
+                  "properties": {
+                    "createdByActor": {
+                      "properties": {
+                        "actorType": {
+                          "const": "external_ai"
+                        }
+                      }
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "aiProvenance"
+                    ]
+                  }
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "externalProvenance"
+                    ]
+                  }
+                }
+              }
+            ]
           },
           "RemoveRelation": {
             "type": "object",
@@ -6827,6 +7422,45 @@
               "provider",
               "model",
               "simulated"
+            ],
+            "additionalProperties": false
+          },
+          "ExternalProvenance": {
+            "type": "object",
+            "properties": {
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "clientId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "oauthClientId": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "grantId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "grantRevision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "initiatorId",
+              "clientId",
+              "oauthClientId",
+              "grantId",
+              "grantRevision",
+              "executionId"
             ],
             "additionalProperties": false
           }
@@ -8236,8 +8870,7 @@
                     "enum": [
                       "human",
                       "integrated_ai",
-                      "external_ai",
-                      "system"
+                      "external_ai"
                     ]
                   },
                   "userId": {
@@ -8318,6 +8951,9 @@
               },
               "aiProvenance": {
                 "$ref": "#/$defs/AIProvenance"
+              },
+              "externalProvenance": {
+                "$ref": "#/$defs/ExternalProvenance"
               }
             },
             "required": [
@@ -8333,7 +8969,44 @@
               "dependencyRevisions",
               "createdByActor"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "origin": {
+                      "const": "external_ai"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "externalProvenance"
+                  ],
+                  "properties": {
+                    "createdByActor": {
+                      "properties": {
+                        "actorType": {
+                          "const": "external_ai"
+                        }
+                      }
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "aiProvenance"
+                    ]
+                  }
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "externalProvenance"
+                    ]
+                  }
+                }
+              }
+            ]
           },
           "RemoveRelation": {
             "type": "object",
@@ -8947,6 +9620,45 @@
               "provider",
               "model",
               "simulated"
+            ],
+            "additionalProperties": false
+          },
+          "ExternalProvenance": {
+            "type": "object",
+            "properties": {
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "clientId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "oauthClientId": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "grantId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "grantRevision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "initiatorId",
+              "clientId",
+              "oauthClientId",
+              "grantId",
+              "grantRevision",
+              "executionId"
             ],
             "additionalProperties": false
           }
@@ -9717,8 +10429,7 @@
                     "enum": [
                       "human",
                       "integrated_ai",
-                      "external_ai",
-                      "system"
+                      "external_ai"
                     ]
                   },
                   "userId": {
@@ -9799,6 +10510,9 @@
               },
               "aiProvenance": {
                 "$ref": "#/$defs/AIProvenance"
+              },
+              "externalProvenance": {
+                "$ref": "#/$defs/ExternalProvenance"
               }
             },
             "required": [
@@ -9814,7 +10528,44 @@
               "dependencyRevisions",
               "createdByActor"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "origin": {
+                      "const": "external_ai"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "externalProvenance"
+                  ],
+                  "properties": {
+                    "createdByActor": {
+                      "properties": {
+                        "actorType": {
+                          "const": "external_ai"
+                        }
+                      }
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "aiProvenance"
+                    ]
+                  }
+                },
+                "else": {
+                  "not": {
+                    "required": [
+                      "externalProvenance"
+                    ]
+                  }
+                }
+              }
+            ]
           },
           "RemoveRelation": {
             "type": "object",
@@ -10428,6 +11179,45 @@
               "provider",
               "model",
               "simulated"
+            ],
+            "additionalProperties": false
+          },
+          "ExternalProvenance": {
+            "type": "object",
+            "properties": {
+              "initiatorId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "clientId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "oauthClientId": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "grantId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "grantRevision": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "executionId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "initiatorId",
+              "clientId",
+              "oauthClientId",
+              "grantId",
+              "grantRevision",
+              "executionId"
             ],
             "additionalProperties": false
           }

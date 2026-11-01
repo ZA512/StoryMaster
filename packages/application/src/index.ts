@@ -1,3 +1,4 @@
+import type {MCPPort} from './mcp-ports.ts';
 import type {AIPort} from './ai-ports.ts';
 import type {ProposalPort} from './proposal-ports.ts';
 import type {CollaborationPort} from './collaboration-ports.ts';
@@ -10,10 +11,10 @@ import type { Page, ProjectDto } from '@storymaster/contracts';
 
 export interface ProjectPosition { timestamp: string; id: string }
 export interface Transaction {
-  readonly ai:AIPort;readonly proposals:ProposalPort;readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
+  readonly mcp:MCPPort;readonly ai:AIPort;readonly proposals:ProposalPort;readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
   assertActor(actor: Actor): Promise<void>;
   getProject(userId: string, projectId: string): Promise<ProjectWithRole | null>;
-  listProjects(userId: string, limit: number, after?: ProjectPosition): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
+  listProjects(userId: string, limit: number, after?: ProjectPosition,projectIds?:string[]): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
   lockProject(projectId: string,mode?:'exclusive'|'shared'): Promise<void>;
   lockIdempotency(scope: string, key: string): Promise<void>;
   findIdempotency<T=ProjectWithRole>(scope: string, key: string): Promise<{ fingerprint: string; response: T } | null>;
@@ -65,6 +66,7 @@ export class ProjectService {
     });
   }
   async get(actor: Actor, id: string): Promise<ProjectDto> {
+    if(actor.type==='external_ai'){projectId(id);return this.db.transaction(async tx=>{await tx.lockProject(id,'shared');await tx.assertActor(actor);await tx.mcp.assertGrant(actor,id,'project:read');const p=await tx.getProject(actor.userId,id);if(!p)throw notFound();return dto(p);});}
     human(actor); projectId(id);
     return this.db.transaction(async tx => {
       await tx.assertActor(actor);
@@ -74,6 +76,7 @@ export class ProjectService {
     });
   }
   async list(actor: Actor, limit: number, cursor?: string): Promise<Page<ProjectDto>> {
+    if(actor.type==='external_ai'){if(!Number.isInteger(limit)||limit<1||limit>100)throw new AppError('VALIDATION_FAILED','Pagination invalide.',422);return this.db.transaction(async tx=>{const initial=await tx.mcp.assertActor(actor);for(const p of [...initial.grant.projectIds].sort())await tx.lockProject(p,'shared');const {grant:g,client:c,authorization:auth}=await tx.mcp.assertActor(actor);if(![g.scopes,c.allowedScopes,auth.scopes].every(scopes=>scopes.includes('projects:read')))throw new AppError('FORBIDDEN','Lecture des projets non déléguée.',403);const scope=fingerprint([actor.userId,actor.clientId,g.id,g.revision,'projects']),after=cursor?this.decodeCursor(scope,cursor):undefined,rows=await tx.listProjects(actor.userId,limit+1,after,g.projectIds),visible=rows.slice(0,limit),last=visible.at(-1);return {items:visible.map(r=>dto(r.project)),hasMore:rows.length>limit,nextCursor:rows.length>limit&&last?this.encodeCursor(scope,last.position):null};});}
     human(actor);
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new AppError('VALIDATION_FAILED','Pagination invalide.',422);
     const after = cursor ? this.decodeCursor(actor.userId,cursor) : undefined;
@@ -172,3 +175,8 @@ export * from './ai-tools.ts';
 
 export * from './ai-executor.ts';
 export * from './ai-orchestrator.ts';
+
+export * from './mcp-ports.ts';
+
+export * from './delegation.ts';
+export {MCPService,ProjectContextService,mcpToolScopes,MCP_RESULT_BYTES} from './mcp.ts';

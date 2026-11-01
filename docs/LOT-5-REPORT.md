@@ -62,6 +62,10 @@ GO-03 reste proposé : fournisseurs/modèles exacts, BYOK personnel, chiffrement
 
 Réserves héritées maintenues : ergonomie/accessibilité humaine complète, récupération des brouillons après crash, R-CONT-01, RLS non activée, révocation IdP non globale, sauvegardes/restauration/TLS et absence de qualification publique. Le contexte/preview sous barrière peut retarder le verrou exclusif de merge et bloquer des scènes indépendantes ; aucun appel fournisseur sous ce verrou. Une préférence de durée n’effectue aucune purge automatique. Un modèle peut toujours produire une mauvaise intention ; la décision humaine reste essentielle.
 
+## Instruction postérieure — réception phase A et séquencement
+
+Le propriétaire reçoit techniquement la phase A avec réserves, CI verte 58ec5a9 vérifiée, et autorise distinctement le Lot 6 MCP local sans modèle. Cette mission remplace l’arrêt avant Lot 6 mentionné dans le compte rendu initial ; Lot 5 phase B et GO-03 commercial restent différés. Le présent rapport conserve la preuve historique de la phase A et ne déclare aucune intégration fournisseur réelle terminée. [Décisions](HUMAN-DECISIONS.md).
+
 ## Critères d'acceptation du document
 
 Fonctionnalités exécutées et simulation identifiées ; fichiers, migrations et données préservées traçables ; tests réels distingués des spécifications, des futurs appels fournisseur et de la CI distante ; limites et accords GO-03 encore requis explicites ; aucun Lot 6 commencé.
