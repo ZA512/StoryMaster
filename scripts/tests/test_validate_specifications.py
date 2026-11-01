@@ -44,6 +44,31 @@ class ValidatorTests(unittest.TestCase):
         mutate(document)
         path.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n")
 
+    def test_lot4_cannot_approve_with_proposal_write(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['paths']['/projects/{projectId}/proposals/{proposalId}/approve']['post']['x-permission']='proposal.write'
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot4(oas)
+
+    def test_lot4_cannot_drop_state_precondition(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['parameters']['ProposalIfMatch']['schema']['pattern']='^"r[1-9][0-9]*"$'
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot4(oas)
+
+    def test_lot4_cannot_spoof_origin(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['ProposalCreate']['properties']['origin']={'type':'string'}
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot4(oas)
+
+    def test_lot4_cannot_replace_catalog_with_sql(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['Operation']['oneOf'][-1]={'$ref':'#/components/schemas/EmptyBody'}
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot4(oas)
+
+    def test_lot4_durable_mapping_cannot_be_optional(self):
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        oas['components']['schemas']['MergeResult']['required'].remove('temporaryIds')
+        with self.assertRaises(validation.InvalidSpecification): validation.validate_lot4(oas)
+
     def test_current_dossier(self):
         with contextlib.redirect_stdout(io.StringIO()):
             validation.validate_all(self.root)

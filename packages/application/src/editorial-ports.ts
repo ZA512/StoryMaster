@@ -1,6 +1,6 @@
 import type { EditorialNode,EditorialKind,EditorialChange,SceneRevision,Actor } from '@storymaster/domain';
 export interface EditorialPort {
- lockScene(projectId:string,sceneId:string):Promise<void>;
+ lockScene(projectId:string,sceneId:string,mode?:'shared'|'exclusive'):Promise<void>;
  view(projectId:string,manuscriptId?:string):Promise<{nodes:EditorialNode[];revision:number;structureRevision:number}>;
  projectVersions(projectId:string):Promise<{revision:number;structureRevision:number}>;
  touchProject(projectId:string,structure:boolean):Promise<number>;

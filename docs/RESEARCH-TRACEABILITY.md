@@ -215,3 +215,17 @@ La matrice produit et ses 150 identifiants restent inchangés. Réalisation des 
 Les 150 IDs et leurs priorités/versions/lots restent inchangés. OBJ-02, PROJ-06/07, EDIT-09, COLLAB-01/02/04/08 sont reliés à CollaborationService, aux contrats/routes Lot 3, à la migration additive et aux interfaces membres/invitations/discussions. [Rapport Lot 3](LOT-3-REPORT.md) rapproche chaque exigence de ses tests et limites ; [ADR-0012](adr/0012-collaboration-asynchrone-et-ancrages.md) décrit les choix techniques à réceptionner, sans accepter implicitement ADR-0004.
 
 CT-02/06/36/49 sont exercés dans leurs parcours humains de droits, révisions, commentaires et ancrages. CT-20/30/45 ont seulement leurs portions applicables (session/membership frais sous verrou, refus IA directe, idempotence/rollback), sans revendiquer la révocation de grants MCP ni la fusion de propositions. [Sélection déclarative](spec/lot3-scenarios.json) distincte des tests PostgreSQL, HTTP et navigateur effectivement exécutés. Les champs et états sont validés sémantiquement, pas seulement par décompte ; aucune nouvelle exigence V1/V2+ introduite.
+
+
+## Preuves exécutables du Lot 4
+
+OBJ-08 et PROP-01..11, dont PROP-10 MUST approuvé, sont reliés à ProposalService, au catalogue fermé de neuf opérations, aux révisions/avis immuables et au merge transactionnel. Les exigences transversales COLLAB-03, SEC-01/02/03/04/05, NFR-04/09/10 restent vérifiées avec les lots précédents ; performance locale ne vaut pas certification des NFR. Aucun des 150 IDs, texte, priorité, version ou lot principal ne change. Les principes ADR-0012 sont acceptés par l’instruction Lot 4, les autres statuts ne sont pas déduits de cette proximité.
+
+| Exigences | Réalisation | Preuve exécutable |
+|---|---|---|
+| PROP-01/02/03 | Intention multi-objets, attribution/justification et bases exactes | proposals.test.ts, proposals-http.test.ts, lot4.spec.ts |
+| PROP-04/05/06 | Diff riche/structuré, permissions création/fusion et bases revalidées | proposals.test.ts, proposals-concurrency.test.ts, lot4.spec.ts |
+| PROP-07/08/09 | Fusion atomique, historique validations/refus et commentaires de revue | proposals-atomicity.test.ts, proposals-concurrency.test.ts, lot4.spec.ts |
+| PROP-10/11 | Révision après avis/invalidation ; avertissement des relations, scènes et fiches liées à relire | proposals.test.ts, proposals-concurrency.test.ts, lot4.spec.ts |
+
+Le libellé intégral du PRD reste l’autorité ; ce tableau regroupe les preuves et ne réécrit pas les exigences. [Rapport Lot 4](LOT-4-REPORT.md), [sélection déclarative CT exacte](spec/lot4-scenarios.json) et [ADR-0013](adr/0013-moteur-de-propositions-et-fusion.md). CT-29 prouve la clé/corps identique, corps changé et retrait avant rejeu ; CT-33 tue réellement le processus avant/après COMMIT ; CT-45 invalide l’avis après perte des droits ; CT-48 exerce graphe final et références typées. Les variantes assistant/MCP/délégation et outbox sans effet externe ne sont pas comptées comme exécutées. B-06/B-07 merge démontrent intégrité et fraîcheur des droits, la mesure séparée garde le risque de contention ouvert. Aucune fonction IA/V1/V2+ ajoutée.

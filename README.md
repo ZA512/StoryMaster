@@ -1,6 +1,6 @@
 # StoryMaster
 
-Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Lot 2 reçu techniquement avec réserves maintenues ; le **Lot 3** ajoute invitations, membres, discussions et ancrages versionnés. Réception humaine du Lot 3 attendue ; Lot 4 non commencé. [Rapport du Lot 3](docs/LOT-3-REPORT.md) · [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
+Atelier littéraire privé. Le **Lot 0** fournit l’identité OIDC et la gestion des projets ; le **Lot 1** ajoute manuscrits, scènes, éditeur riche, autosave CAS et historique. Lot 1 reçu avec réserves ; le **Lot 2** ajoute bible narrative, liens de scènes, modules et recherche lexicale. Lot 2 reçu techniquement avec réserves maintenues ; le **Lot 3** ajoute invitations, membres, discussions et ancrages versionnés. Lot 3 reçu techniquement avec réserves et CI verte ; le **Lot 4** ajoute les propositions humaines, la revue et la fusion atomique multi-objets. Réception humaine du Lot 4 attendue, arrêt avant Lot 5. [Rapport du Lot 4](docs/LOT-4-REPORT.md) · [Rapport du Lot 3](docs/LOT-3-REPORT.md) · [Rapport du Lot 2](docs/LOT-2-REPORT.md) · [Rapport du Lot 1](docs/LOT-1-REPORT.md) · [Rapport du Lot 0](docs/LOT-0-REPORT.md) · [Décisions approuvées](docs/HUMAN-DECISIONS.md) · [PRD](docs/PRD.md).
 
 ## Démarrage local
 
@@ -11,7 +11,7 @@ cp .env.example .env
 docker compose up -d --build --wait
 ```
 
-Ouvrir **http://localhost:3000** puis « Se connecter ». Comptes de démonstration : **alice** ou **bob**, mot de passe **local-only-storymaster**. Ces identifiants, le realm sans TLS et tous les mots de passe de `.env.example` sont exclusivement locaux. Aucun secret réel n’est fourni. `.env` est ignoré par Git et exclu des images.
+Ouvrir **http://localhost:3000** puis « Se connecter ». Comptes de démonstration : **alice**, **bob** ou **carol**, mot de passe **local-only-storymaster**. Ces identifiants, le realm sans TLS et tous les mots de passe de `.env.example` sont exclusivement locaux. Aucun secret réel n’est fourni. `.env` est ignoré par Git et exclu des images.
 
 Les projets sont persistés dans le volume `postgres_data`. Au premier démarrage, PostgreSQL crée les rôles distincts, Keycloak importe le realm et le conteneur `migrate` applique la migration avant le démarrage de l’API. Une relance rejoue la migration sans réinitialiser les données.
 
@@ -57,6 +57,7 @@ npm run bench:contention
 npm run bench:scenes
 npm run bench:narrative
 npm run bench:collaboration
+npm run bench:proposals
 npx playwright install chromium
 npm run test:e2e
 ```
@@ -87,9 +88,9 @@ Changer les mots de passe `.env` après initialisation ne change pas ceux des r�
 
 ## Organisation
 
-`apps/web` : Next.js/React, transport HTTP et interface. `apps/api` : Fastify et adaptateur OIDC. `packages/domain` : invariants/politique ; `application` : cas d’usage communs ; `contracts` : validation des DTO ; `infrastructure` : PostgreSQL, migrations, sessions et OIDC. Les routes n’accèdent pas directement aux données narratives. Éditeur, scènes, référentiel et collaboration asynchrone utilisent les mêmes services ; assistant IA et serveur MCP restent futurs.
+`apps/web` : Next.js/React, transport HTTP et interface. `apps/api` : Fastify et adaptateur OIDC. `packages/domain` : invariants/politique ; `application` : cas d’usage communs ; `contracts` : validation des DTO ; `infrastructure` : PostgreSQL, migrations, sessions et OIDC. Les routes n’accèdent pas directement aux données narratives. Éditeur, scènes, référentiel, collaboration asynchrone et propositions utilisent les mêmes services ; assistant IA et serveur MCP restent futurs.
 
-Les détails de concurrence, de sécurité, les limites locales et les résultats réellement obtenus figurent dans le rapport. La réception du Lot 3 et toute autorisation du Lot 4 appartiennent au propriétaire.
+Les détails de concurrence, de sécurité, les limites locales et les résultats réellement obtenus figurent dans le rapport. La réception du Lot 4 et toute autorisation du Lot 5 appartiennent au propriétaire ; la CI distante des changements Lot 4 reste à exécuter sur leur commit.
 
 
 ## Laboratoire préalable au Lot 1
@@ -114,4 +115,19 @@ Sous le texte, ouvrir **Discussions de cette scène**, ou sélectionner un passa
 
 Après modification du texte, actualiser les discussions : un passage confirmé peut être surligné uniquement dans la révision correspondante. Un passage ambigu ou absent garde son extrait et sa version d’origine ; aucun nouvel emplacement n’est inventé. Le brouillon doit être enregistré avant création d’une ancre. Les champs non publiés restent en mémoire dans l’onglet ; une fermeture forcée peut les perdre. Les modifications de droits invalident aussi les anciennes invitations en attente liées au membre. Un retrait bloque les nouveaux appels après son commit ; il ne peut effacer un texte déjà reçu par un navigateur.
 
-Migration additive 0005, sans suppression de volume. `bench:collaboration` mesure autosaves/commentaires/administration et lecture d’ancres sur scène longue, exclusivement en base `_test` ; [résultats et limites](docs/measurements/LOT-3-COLLABORATION.md). Pas de CRDT, SMTP, propositions ou serveur MCP. Les réserves des lots précédents restent ouvertes, y compris la qualification publique et la revue UX manuelle.
+Migration additive 0005, sans suppression de volume. `bench:collaboration` mesure autosaves/commentaires/administration et lecture d’ancres sur scène longue, exclusivement en base `_test` ; [résultats et limites](docs/measurements/LOT-3-COLLABORATION.md). Pas de CRDT, SMTP ou serveur MCP. Les propositions sont livrées séparément au Lot 4 ci-dessous. Les réserves des lots précédents restent ouvertes, y compris la qualification publique et la revue UX manuelle.
+
+
+## Proposer, revoir et fusionner — Lot 4
+
+Depuis le projet ou l’atelier, ouvrir **Propositions**. Un auteur ou relecteur peut créer un brouillon, préparer des fiches, relations, références, métadonnées, déplacements et textes de scènes dans la même intention. Le texte proposé possède un éditeur distinct, sans autosauvegarde canonique. Chaque enregistrement des opérations ou de la justification crée une révision immuable et invalide les anciens avis.
+
+**Prévisualiser les changements** affiche les différences riches et structurées, les bases et les erreurs. Au besoin, préparer explicitement une nouvelle révision avec les bases affichées, puis relire avant soumission. Aucun changement canonique n’est effectué par ces actions. Un owner/admin différent du créateur approuve ; l’auto-approbation est réservée à l’owner d’un projet encore individuel. **Approuvé** signifie encore **non appliqué**. **Fusionner cette proposition** demande confirmation et revalide droits, avis, bases et contraintes dans une transaction unique.
+
+Après fusion, le ChangeSet montre attribution, versions et identifiants des créations. Une réponse perdue se réessaie avec la même intention ; le résultat durable est retrouvé sans seconde application. Un conflit conserve l’intention et le brouillon de scène, impose une révision explicite et une nouvelle revue. Rejetées, retirées et fusionnées sont terminales ; **Dupliquer dans un nouveau brouillon** copie l’intention sans avis, avec des bases à revérifier. Les champs non publiés restent dans l’onglet, sans promesse de récupération après fermeture forcée.
+
+Migrations additives **0006/0007** : tables de propositions/ChangeSets puis lecture seule des métadonnées de migrations pour vérifier la compatibilité au démarrage. Les anciennes migrations appliquées sont figées. **Reconstruire aussi le service `migrate`** lors d’une mise à jour : `docker compose -f compose.yaml -f compose.test.yaml up -d --build --wait`. Reconstruire seulement API/web peut laisser une ancienne image de migration ; l’API refuse maintenant un schéma incomplet ou un checksum divergent. Aucun volume à supprimer.
+
+Sur un realm local déjà importé, `npm run demo:ensure-users` crée uniquement le compte Carol manquant, sans modifier les comptes ou mots de passe existants. Il exige APP_ENV=local et l’issuer localhost prévu ; les parcours passent par de vraies sessions Keycloak et invitations, aucun agent simulé. Sur une base neuve, les trois comptes sont importés directement. Alice/Bob/Carol n’ont pas de rôle projet global : les invitations du projet déterminent leurs droits.
+
+`bench:proposals` mesure huit fusions de quatre ressources face à deux auteurs × quarante autosaves indépendants dans la base `_test`. [Résultats et limites](docs/measurements/LOT-4-PROPOSALS.md). Les tests de faute vérifient séparément rollback, attente, révocation, timeout et arrêt du processus avant/après COMMIT. [Inventaire des fichiers](docs/LOT-4-FILES.txt). Aucun assistant, MCP/OAuth délégué ni Lot 5 développé.

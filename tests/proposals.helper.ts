@@ -1,0 +1,12 @@
+import {randomUUID} from 'node:crypto';
+import {ProposalService} from '@storymaster/application';
+import type {ProposalDto,ProposedOperation} from '@storymaster/contracts';
+import type {Actor} from '@storymaster/domain';
+import {db,secret,correlation} from './database.helper.ts';
+import {fixture,editorial,doc} from './editorial.helper.ts';
+import {create,moduleState} from './narrative.helper.ts';
+export const proposals=new ProposalService(db,secret),key=()=>randomUUID();
+export async function proposalFixture(){const f=await fixture(),a=f.owner.actor,p=f.project.id;await moduleState(a,p,'characters',true);await moduleState(a,p,'timeline',true);const character=await create(a,p,'character','Élise'),saved=await editorial.saveScene(a,p,f.s.id,doc('Élise descend du train.'),1,key(),correlation());
+ const operations:ProposedOperation[]=[{operationId:'event',kind:'create_object',tempId:'illness',payload:{typeKey:'event',schemaVersion:1,name:'Premiers symptômes',attributes:{temporalExpression:{kind:'ordinal',position:12}}}},{operationId:'character',kind:'update_object',targetId:character.id,expectedRevision:1,payload:{set:{attributes:{healthSummary:'Fiévreuse.',conditionEventRefs:[{tempId:'illness'}]}}}},{operationId:'scene',kind:'replace_scene_content',targetId:f.s.id,expectedRevision:saved.revision,payload:{contentFormatVersion:1,content:doc('Fiévreuse, Élise descend du train.')}},{operationId:'relation',kind:'create_relation',tempId:'care',payload:{sourceRef:{id:character.id},targetRef:{tempId:'illness'},relationType:'participates_in',attributes:{}}}];
+ let proposal=await proposals.create(a,p,{title:'Introduire une maladie',description:'Intention humaine en quatre opérations.',operations,dependencyRevisions:[]},key(),correlation());const preview=await proposals.preview(a,p,proposal.id,1);proposal=await proposals.setOperations(a,p,proposal.id,{expectedProposalRevision:1,operations,dependencyRevisions:preview.validatedAgainst},1,key(),correlation());return {...f,character,proposal};}
+export async function approve(proposal:ProposalDto,actor:Actor){const submitted=await proposals.action(actor,proposal.projectId,proposal.id,'submit',proposal.proposalRevision,proposal.stateVersion,key(),correlation());return (await proposals.review(actor,proposal.projectId,proposal.id,'approve','Validé humainement.',submitted.proposalRevision,submitted.stateVersion,key(),correlation())).proposal;}

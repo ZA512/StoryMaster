@@ -61,3 +61,10 @@ OpenAPI 0.5.0, nouveaux DTOs et mutations humaines préconditionnées. `module-r
 ## Ajouts Lot 3
 
 OpenAPI 0.6.0 contient les DTOs/corps JSON Schema de collaboration, session humaine vérifiée et seule préparation de lien anonyme sans données. `sync-collaboration-contracts.mjs --check` compare les schémas Zod exécutables, routes et DTOs ; les générateurs précédents préservent ces ajouts. Les 13 outils MCP restent inchangés. [Exemple synthétique](../examples/lot3-http.json), [portions CT applicables](lot3-scenarios.json) et [rapport exécuté](../LOT-3-REPORT.md) distinguent contrats de tests réels ; aucune exécution MCP/propositions revendiquée.
+
+
+## Contrats et validation Lot 4
+
+OpenAPI **0.7.0**, catalogue fermé de neuf opérations typées et 13 outils MCP conservés/synchronisés par `sync-proposal-contracts.mjs --check`. Chaque route Lot 4 est contrôlée : session humaine, Origin/CSRF, idempotence/CAS, rôles et interdiction IA, révisions/hash, version d’appartenance dans l’avis, mapping durable et ChangeSet. Preview et validation restent sans mutation. Les générateurs précédents préservent ces ajouts ; `npm run lint` compare Zod/JSON Schema/DTOs/HTTP/MCP et le registre.
+
+Cinq mutations supplémentaires portent le total à **39 tests documentaires** : approbation avec permission de préparation, retrait de la précondition d’état, origine falsifiable, substitution du catalogue par SQL et mapping durable optionnel sont refusés. Les scénarios déclaratifs [Lot 4](../spec/lot4-scenarios.json) sont distincts des tests PostgreSQL/HTTP/navigateur réellement exécutés. Les enveloppes HTTP humaines des fixtures sont alignées sur Origin/CSRF/idempotence ; leurs variantes IA/MCP restent futures. B-06/B-07 merge et CT-33 sont exécutés dans l’application, sans revendiquer la délégation ou une outbox absente. [Rapport](../LOT-4-REPORT.md).

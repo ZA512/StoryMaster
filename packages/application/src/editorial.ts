@@ -1,7 +1,8 @@
-import {getNarrativeObject,checkDependencies,assertModuleEnabled,requireActive} from './narrative.ts';
+import {requireEditorialActive,validateSceneMetadata,validateReferenceChange} from './canonical-rules.ts';
+import {checkDependencies} from './narrative.ts';
 import {withProject} from './project-access.ts';
 import { randomUUID } from 'node:crypto';
-import { AppError,notFound,referenceAccepts } from '@storymaster/domain';
+import { AppError,notFound } from '@storymaster/domain';
 import type { Actor,EditorialKind,EditorialNode,NarrativePermission,ProjectWithRole,RichDocument,SceneRevision,SceneReference,StoredSceneReference } from '@storymaster/domain';
 import { normalizeDocument,emptyDocument,canonicalDocumentStats,DocumentError,fromDoc } from '@storymaster/editor';
 import { markdownExport } from '@storymaster/editor/markdown';
@@ -24,7 +25,7 @@ export class EditorialService {
  }
  private async get(tx:Transaction,kind:EditorialKind,p:string,id:string){uuid(id);const n=await tx.editorial.get(kind,p,id);if(!n)throw notFound();return n;}
  private async parent(tx:Transaction,kind:EditorialKind,p:string,id:string){const k=parentKind[kind];if(k==='project'){if(id!==p)throw notFound();return {kind:k,id,structureRevision:(await tx.editorial.projectVersions(p)).structureRevision};}const n=await this.get(tx,k,p,id);await this.active(tx,n);return {kind:k,id,structureRevision:n.structureRevision};}
- private async active(tx:Transaction,n:EditorialNode){if(n.archived)throw new AppError('INVALID_STATE_TRANSITION','Cet élément est archivé.',409);if(n.kind==='chapter'){const m=await this.get(tx,'manuscript',n.projectId,n.parentId);await this.active(tx,m);}if(n.kind==='scene'){const c=await this.get(tx,'chapter',n.projectId,n.parentId);await this.active(tx,c);}}
+ private async active(tx:Transaction,n:EditorialNode){return requireEditorialActive(tx,n);}
  private async manuscript(tx:Transaction,n:EditorialNode){if(n.kind==='manuscript')return n;const chapter=n.kind==='chapter' ? n : await this.get(tx,'chapter',n.projectId,n.parentId);return this.get(tx,'manuscript',n.projectId,chapter.parentId);}
  private async replay<T>(tx:Transaction,actor:Actor,p:string,action:string,resource:string,key:string,input:unknown):Promise<{scope:string;hash:string;response:T|null}>{
   if(typeof key!=='string'||key.length<8||key.length>200)throw invalid('Clé d’idempotence invalide.');
@@ -69,7 +70,7 @@ export class EditorialService {
   }
   if(set.status!==undefined){if(kind!=='scene')throw invalid('Le statut rédactionnel appartient à une scène.');const m=await this.manuscript(tx,old);if(!m.writingStatuses.includes(set.status))throw invalid('Statut rédactionnel inconnu.');}
   const next={...old,title:set.title?.trim()??old.title,summary:set.summary??old.summary,status:set.status??old.status,writingStatuses:set.writingStatuses??old.writingStatuses,revision:old.revision+1,updatedAt:new Date().toISOString()};
-  if(!next.title||next.title.length>200||/[\r\n]/.test(next.title)||next.summary.length>4000)throw invalid('Titre ou résumé invalide.');
+  if(!next.title||next.title.length>200||/[\r\n]/.test(next.title)||next.summary.length>4000)throw invalid('Titre ou résumé invalide.');if(next.kind==='scene')await validateSceneMetadata(tx,next);
   await tx.editorial.update(next);await this.record(tx,actor,next,kind+'.updated',corr,old);const response=await this.ack(tx,next);await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;
  });}
  async archive(actor:Actor,p:string,kind:EditorialKind,id:string,archived:boolean,revision:number,key:string,corr:string){return this.context(actor,p,'narrative.archive',async tx=>{
@@ -108,12 +109,9 @@ export class EditorialService {
  async replaceReferences(actor:Actor,p:string,id:string,input:SceneReferencesInput,revision:number,key:string,corr:string):Promise<SceneSaveAck>{return this.context(actor,p,'narrative.write',async tx=>{
   if(input.references.some(r=>Object.keys(r.metadata).length))throw new AppError('VALIDATION_FAILED','Métadonnées de référence non prises en charge.',422);
   uuid(id);await tx.editorial.lockScene(p,id);const old=await this.get(tx,'scene',p,id);await this.active(tx,old);const replay=await this.replay<SceneSaveAck>(tx,actor,p,'scene.references',id,key,{input,revision});if(replay.response)return replay.response;expected(old.revision,revision);
-  const stored=await tx.narrative.storedReferences(p,id),active=stored.filter(r=>r.status==='active'),semantic=(r:SceneReference)=>r.objectId+'|'+r.referenceType,newKeys=input.references.map(r=>r.objectRef.id+'|'+r.referenceType);
-  if(new Set(newKeys).size!==newKeys.length)throw invalid('Une référence apparaît plusieurs fois.');if(input.references.filter(r=>r.referenceType==='point_of_view').length>1)throw invalid('Une scène possède au plus un point de vue structuré.');
+  const stored=await tx.narrative.storedReferences(p,id),active=stored.filter(r=>r.status==='active'),semantic=(r:SceneReference)=>r.objectId+'|'+r.referenceType;
   await checkDependencies(tx,p,[...active.map(r=>r.objectId),...input.references.map(r=>r.objectRef.id)],input.dependencyRevisions);
-  const removed=active.filter(r=>!newKeys.includes(semantic(r))),added=input.references.filter(r=>!active.some(a=>semantic(a)===r.objectRef.id+'|'+r.referenceType));
-  for(const r of removed){const target=await getNarrativeObject(tx,p,r.objectId,true);await assertModuleEnabled(tx,p,target.typeKey);}
-  for(const r of added){const target=await getNarrativeObject(tx,p,r.objectRef.id,true);await assertModuleEnabled(tx,p,target.typeKey);requireActive(target);if(!referenceAccepts(r.referenceType,target.typeKey))throw invalid('Le type de référence ne correspond pas à cette fiche.');}
+  const {removed,added}=await validateReferenceChange(tx,p,active,input.references);
   if(!removed.length&&!added.length){const snapshot=await tx.editorial.revision(p,id,old.revision),response={id,revision:old.revision,contentHash:old.contentHash!,wordCount:old.wordCount,updatedAt:old.updatedAt,changeSetId:snapshot!.changeSetId};await tx.saveIdempotency(replay.scope,key,replay.hash,response);return response;}
   // Retirer avant d’ajouter permet le changement atomique de POV sans violer l’unicité partielle.
   for(const r of removed)await tx.narrative.putReference({...r,status:'removed',revision:r.revision+1},false);

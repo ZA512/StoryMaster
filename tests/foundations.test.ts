@@ -14,7 +14,7 @@ const code=(expected:string)=>(error:unknown)=>error instanceof AppError && erro
 
 test('migrations rejouables, empreinte protégée, rôle applicatif non privilégié',async()=>{
   await migrate(admin);
-  assert.equal((await admin.query('SELECT count(*) FROM schema_migrations')).rows[0].count,'5');
+  assert.equal((await admin.query('SELECT count(*) FROM schema_migrations')).rows[0].count,'7');
   const role=(await pool.query('SELECT rolsuper,rolcreaterole,rolcreatedb,rolbypassrls FROM pg_roles WHERE rolname=current_user')).rows[0];
   assert.deepEqual(Object.values(role),[false,false,false,false]);
   await assert.rejects(pool.query('DELETE FROM audit_events'),{code:'42501'});
@@ -195,4 +195,7 @@ test('rôle modifié pendant attente du verrou : autorisation relue après barri
     await assert.rejects(pending,code('FORBIDDEN'));
     assert.equal((await projects.get(owner.actor,p.id)).revision,1);
   } finally {await blocker.query('ROLLBACK');blocker.release();}
+});
+test('démarrage : schéma attendu vérifié en lecture seule par le rôle applicatif',async()=>{
+ const {assertApplicationSchema}=await import('@storymaster/infrastructure');await assertApplicationSchema(pool);const row=(await admin.query('SELECT checksum FROM schema_migrations WHERE name=$1',['0007-schema-readiness'])).rows[0];try{await admin.query("UPDATE schema_migrations SET checksum='incorrect' WHERE name=$1",['0007-schema-readiness']);await assert.rejects(assertApplicationSchema(pool),/Schéma applicatif incomplet/);}finally{await admin.query('UPDATE schema_migrations SET checksum=$2 WHERE name=$1',['0007-schema-readiness',row.checksum]);}await assertApplicationSchema(pool);
 });

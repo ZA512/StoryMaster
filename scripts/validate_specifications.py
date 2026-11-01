@@ -510,6 +510,56 @@ def validate_lot3(oas, root=None):
 
 
 
+def validate_lot4(oas, root=None):
+    base='/projects/{projectId}/proposals'
+    one=base+'/{proposalId}'
+    expected={'proposalList':(base,'get'),'proposalCreate':(base,'post'),'proposalGet':(one,'get'),'proposalUpdate':(one,'patch'),'proposalSetOperations':(one+'/operations','put'),'proposalPreview':(one+'/preview','post'),'proposalValidate':(one+'/validate','post'),'proposalSubmit':(one+'/submit','post'),'proposalWithdraw':(one+'/withdraw','post'),'proposalMarkConflicted':(one+'/mark_conflicted','post'),'proposalReview':(one+'/reviews','post'),'proposalApprove':(one+'/approve','post'),'proposalReject':(one+'/reject','post'),'proposalMerge':(one+'/merge','post'),'proposalRevisions':(one+'/revisions','get'),'proposalRevision':(one+'/revisions/{revision}','get'),'proposalHistory':(one+'/history','get'),'proposalChangeSet':('/projects/{projectId}/change-sets/{changeSetId}','get')}
+    for oid,(path,method) in expected.items():
+        op=oas['paths'].get(path,{}).get(method,{})
+        require(op.get('operationId')==oid and op.get('x-lot')==4,'Lot 4 : opération attendue '+oid)
+        require(op.get('security')==[{'webSession':[]}],'Lot 4 : session humaine obligatoire '+oid)
+        params={p['name']:p for p in [dereference(oas,p) for p in op.get('parameters',[])]}
+        if method!='get':
+            for name in ['Origin','X-CSRF-Token']:
+                require(params.get(name,{}).get('required') is True,'Lot 4 : '+name+' requis '+oid)
+            if oid not in ['proposalPreview','proposalValidate']:
+                require(params.get('Idempotency-Key',{}).get('required') is True,'Lot 4 : idempotence requise '+oid)
+            if oid not in ['proposalCreate','proposalPreview','proposalValidate']:
+                require(params.get('If-Match',{}).get('required') is True and params['If-Match']['schema'].get('pattern')=='^"p[1-9][0-9]*-s[1-9][0-9]*"$','Lot 4 : versions contenu/état distinctes '+oid)
+        if oid in ['proposalPreview','proposalValidate']:
+            require(op.get('x-audit')=='A0','Lot 4 : preview sans écriture '+oid)
+        if oid in ['proposalApprove','proposalReject','proposalMerge']:
+            require(op.get('x-permission')=={'proposalApprove':'proposal.approve','proposalReject':'proposal.reject','proposalMerge':'proposal.merge'}[oid],'Lot 4 : contrôle humain de décision '+oid)
+    schemas=oas['components']['schemas']
+    for name in ['ProposalCreate','ProposalSetOperations','ProposalUpdate','ProposalAction','ProposalApprove','ProposalReject','ProposalReview']:
+        schema=schemas[name]
+        require(schema.get('additionalProperties') is False,'Lot 4 : corps fermé '+name)
+        require(not ({'origin','createdByActor','actorType','userId','role','grantId'} & set(schema['properties'])),'Lot 4 : identité serveur '+name)
+    require(set(schemas['ProposalUpdate']['properties']['set']['properties'])=={'title','description'},'Lot 4 : contenu révisable explicite')
+    require(schemas['ProposalCreate']['properties']['operations']['maxItems']==100,'Lot 4 : opérations bornées')
+    names=['CreateObject','UpdateObject','ArchiveObject','CreateRelation','UpdateRelation','RemoveRelation','ReplaceSceneContent','UpdateSceneMetadata','MoveScene']
+    require(schemas['Operation']['oneOf']==[{'$ref':'#/components/schemas/'+name} for name in names],'Lot 4 : catalogue fermé de neuf opérations')
+    for name in names:
+        schema=schemas[name]
+        require(schema.get('additionalProperties') is False and schema['properties']['payload'].get('additionalProperties') is False,'Lot 4 : opération typée fermée '+name)
+        require('operationId' in schema['required'],'Lot 4 : identité opération '+name)
+        if name in ['CreateObject','CreateRelation']:
+            require('tempId' in schema['required'] and 'targetId' not in schema['properties'],'Lot 4 : tempId de création '+name)
+        else:
+            require({'targetId','expectedRevision'} <= set(schema['required']),'Lot 4 : bases de ressource '+name)
+    require(schemas['ReplaceSceneContent']['properties']['payload']['properties']['content']=={'$ref':'#/components/schemas/RichDocument'},'Lot 4 : document riche validé')
+    for name in ['ProposalRevision','MergeResult']:
+        require('proposalRevision' in schemas[name]['required'],'Lot 4 : révision exacte '+name)
+    require({'contentHash','policyVersion'} <= set(schemas['ProposalRevision']['required']),'Lot 4 : contenu immuable identifié')
+    require({'temporaryIds','resourceRevisions','changeSetId','stateVersion'} <= set(schemas['MergeResult']['required']),'Lot 4 : résultat durable complet')
+    require({'reviewerMembershipRevision','stateVersion','contentHash','validity'} <= set(schemas['Review']['properties']),'Lot 4 : avis lié au contenu et aux droits')
+    if root is not None:
+        scenarios=load_json(root/'docs/spec/lot4-scenarios.json')['scenarios']
+        require({s['contractTest'] for s in scenarios}=={f'CT-{n:02}' for n in [7,8,9,10,11,12,13,14,15,16,29,33,45,48]},'Lot 4 : sélection exacte des portions de contrat')
+        for scenario in scenarios:
+            require(scenario['scope'] in ['human','partial'] and (root/scenario['executableTest']).is_file(),'Lot 4 : preuve exécutable et portée '+scenario['contractTest'])
+
+
 def validate_contracts(root):
     oas = load_yaml(root / "docs/spec/openapi.yaml")
     check_references(oas, "OpenAPI")  # Avant le validateur pour interdire tout fetch implicite.
@@ -522,6 +572,7 @@ def validate_contracts(root):
     validate_lot1(oas)
     validate_lot2(oas, root)
     validate_lot3(oas, root)
+    validate_lot4(oas, root)
     operations_schema = load_json(root / "docs/spec/operations.schema.json")
     for name, definition in operations_schema["$defs"].items():
         require(name in oas["components"]["schemas"] and

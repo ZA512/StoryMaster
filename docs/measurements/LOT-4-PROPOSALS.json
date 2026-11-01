@@ -1,0 +1,55 @@
+{
+  "environment": {
+    "date": "2026-11-01T02:08:00.262Z",
+    "node": "v26.8.1",
+    "postgres": "PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "cpu": "AMD Ryzen 5 3600X 6-Core Processor",
+    "memoryGiB": 31.251102447509766,
+    "poolMax": 24
+  },
+  "methodology": "Vrais services et PostgreSQL locale _test ; sessions humaines synthétiques, sans transport HTTP/IdP. Même projet : 8 fusions successives de 4 ressources, chacune préparée/revue sur bases actuelles, contre 2 auteurs × 40 autosaves de scènes indépendantes (~25 k caractères). Aucun retry automatique ni erreur masquée. Les barrières déterministes B-06/B-07 et fautes sont testées séparément.",
+  "results": {
+    "merges": 8,
+    "autosaves": 80,
+    "elapsedMs": 1200.279756,
+    "successfulCommandsPerSecond": 73.31624111804149,
+    "mergeMs": {
+      "samples": 8,
+      "p50": 17.243,
+      "p95": 672.234,
+      "p99": 672.234,
+      "max": 672.234
+    },
+    "autosaveMs": {
+      "samples": 80,
+      "p50": 18.215,
+      "p95": 22.687,
+      "p99": 38.255,
+      "max": 38.255
+    },
+    "projectExclusiveWaitMs": {
+      "samples": 8,
+      "p50": 0.15,
+      "p95": 648.771,
+      "p99": 648.771,
+      "max": 648.771
+    },
+    "projectExclusiveHoldMs": {
+      "samples": 8,
+      "p50": 16.573,
+      "p95": 22.59,
+      "p99": 22.59,
+      "max": 22.59
+    },
+    "projectSharedWaitMs": {
+      "samples": 120,
+      "p50": 0.183,
+      "p95": 0.465,
+      "p99": 4.098,
+      "max": 22.623
+    },
+    "errors": [],
+    "retries": 0,
+    "integrity": "8 ChangeSets uniques, chacun 4 événements ; scène ciblée r10/personnage r9 ; deux scènes autosave r41 avec contenu, hashes et snapshots exacts ; mappings durables au rejeu"
+  }
+}

@@ -86,7 +86,9 @@
     "method": "POST",
     "path": "/api/v1/projects/prj_demo/proposals",
     "headers": {
-      "Idempotency-Key": "create-maladie-01"
+      "Idempotency-Key": "create-maladie-01",
+      "Origin": "http://localhost:3000",
+      "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
     },
     "body": {
       "title": "Introduire la maladie d’Élise sur le quai",
@@ -293,7 +295,11 @@
   "previewRequest": {
     "method": "POST",
     "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/preview",
-    "headers": {},
+    "headers": {
+      "Origin": "http://localhost:3000",
+      "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc",
+      "Idempotency-Key": "fixture-req-237"
+    },
     "body": {
       "expectedProposalRevision": 1
     }
@@ -549,7 +555,9 @@
         "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/submit",
         "headers": {
           "If-Match": "\"p1-s1\"",
-          "Idempotency-Key": "submit-maladie-01"
+          "Idempotency-Key": "submit-maladie-01",
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
         },
         "body": {
           "expectedProposalRevision": 1
@@ -566,7 +574,9 @@
         "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/approve",
         "headers": {
           "If-Match": "\"p1-s2\"",
-          "Idempotency-Key": "approve-maladie-01"
+          "Idempotency-Key": "approve-maladie-01",
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
         },
         "body": {
           "expectedProposalRevision": 1
@@ -583,7 +593,9 @@
         "path": "/api/v1/projects/prj_demo/proposals/prp_maladie/merge",
         "headers": {
           "If-Match": "\"p1-s3\"",
-          "Idempotency-Key": "merge-maladie-01"
+          "Idempotency-Key": "merge-maladie-01",
+          "Origin": "http://localhost:3000",
+          "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
         },
         "body": {
           "expectedProposalRevision": 1

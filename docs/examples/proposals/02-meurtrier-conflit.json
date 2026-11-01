@@ -67,7 +67,9 @@
     "method": "POST",
     "path": "/api/v1/projects/prj_demo/proposals",
     "headers": {
-      "Idempotency-Key": "create-meurtre-01"
+      "Idempotency-Key": "create-meurtre-01",
+      "Origin": "http://localhost:3000",
+      "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
     },
     "body": {
       "title": "Rendre le trajet du meurtrier possible",
@@ -173,7 +175,9 @@
     "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/submit",
     "headers": {
       "If-Match": "\"p1-s1\"",
-      "Idempotency-Key": "submit-meurtre-01"
+      "Idempotency-Key": "submit-meurtre-01",
+      "Origin": "http://localhost:3000",
+      "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
     },
     "body": {
       "expectedProposalRevision": 1
@@ -185,7 +189,9 @@
       "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/approve",
       "headers": {
         "If-Match": "\"p1-s2\"",
-        "Idempotency-Key": "approve-meurtre-01"
+        "Idempotency-Key": "approve-meurtre-01",
+        "Origin": "http://localhost:3000",
+        "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
       },
       "body": {
         "expectedProposalRevision": 1
@@ -239,7 +245,9 @@
       "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/merge",
       "headers": {
         "If-Match": "\"p1-s3\"",
-        "Idempotency-Key": "merge-meurtre-01"
+        "Idempotency-Key": "merge-meurtre-01",
+        "Origin": "http://localhost:3000",
+        "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
       },
       "body": {
         "expectedProposalRevision": 1
@@ -279,7 +287,10 @@
     "method": "PUT",
     "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/operations",
     "headers": {
-      "If-Match": "\"p1-s3\""
+      "If-Match": "\"p1-s3\"",
+      "Origin": "http://localhost:3000",
+      "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc",
+      "Idempotency-Key": "fixture-req-946"
     },
     "body": {
       "expectedProposalRevision": 1,
@@ -343,7 +354,9 @@
       "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/submit",
       "headers": {
         "If-Match": "\"p2-s4\"",
-        "Idempotency-Key": "submit-meurtre-02"
+        "Idempotency-Key": "submit-meurtre-02",
+        "Origin": "http://localhost:3000",
+        "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
       },
       "body": {
         "expectedProposalRevision": 2
@@ -359,7 +372,9 @@
       "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/merge",
       "headers": {
         "If-Match": "\"p2-s5\"",
-        "Idempotency-Key": "merge-meurtre-early"
+        "Idempotency-Key": "merge-meurtre-early",
+        "Origin": "http://localhost:3000",
+        "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
       },
       "body": {
         "expectedProposalRevision": 2
@@ -374,7 +389,9 @@
       "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/approve",
       "headers": {
         "If-Match": "\"p2-s5\"",
-        "Idempotency-Key": "approve-meurtre-02"
+        "Idempotency-Key": "approve-meurtre-02",
+        "Origin": "http://localhost:3000",
+        "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
       },
       "body": {
         "expectedProposalRevision": 2
@@ -390,7 +407,9 @@
       "path": "/api/v1/projects/prj_demo/proposals/prp_meurtre/merge",
       "headers": {
         "If-Match": "\"p2-s6\"",
-        "Idempotency-Key": "merge-meurtre-02"
+        "Idempotency-Key": "merge-meurtre-02",
+        "Origin": "http://localhost:3000",
+        "X-CSRF-Token": "ccccccccccccccccccccccccccccccccccccccccccc"
       },
       "body": {
         "expectedProposalRevision": 2

@@ -1,3 +1,4 @@
+import type {ProposalPort} from './proposal-ports.ts';
 import type {CollaborationPort} from './collaboration-ports.ts';
 import type {NarrativePort} from './narrative-ports.ts';
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
@@ -8,7 +9,7 @@ import type { Page, ProjectDto } from '@storymaster/contracts';
 
 export interface ProjectPosition { timestamp: string; id: string }
 export interface Transaction {
-  readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
+  readonly proposals:ProposalPort;readonly collaboration:CollaborationPort;readonly editorial:EditorialPort;readonly narrative:NarrativePort;
   assertActor(actor: Actor): Promise<void>;
   getProject(userId: string, projectId: string): Promise<ProjectWithRole | null>;
   listProjects(userId: string, limit: number, after?: ProjectPosition): Promise<{ project: ProjectWithRole; position: ProjectPosition }[]>;
@@ -157,3 +158,6 @@ export * from './narrative.ts';
 export * from './collaboration-ports.ts';
 
 export * from './collaboration.ts';
+
+export * from './proposal-ports.ts';
+export * from './proposals.ts';

@@ -1048,3 +1048,19 @@ Manuscript → Chapter → Scene sont des tables privées au projet, reliées pa
 [ADR-0011](adr/0011-referentiel-narratif-et-references.md) et [registre v1](spec/module-registry.v1.json) précisent les trois types intégrés, champs typés et catalogue exact sans connaissances/faits V1. NarrativeObject/Relation et ModuleActivation ont révisions, snapshots append-only et provenance. Les modules sont initialement off avec provenance système ; owner/admin les configure. Les liens entre types contrôlent dynamiquement les modules des extrémités, sans dépendance dure arbitraire.
 
 Les références de scène ont identité stable, type et tombstone lors du retrait. Réajouter le même couple objet/type réactive son identité avec une nouvelle révision. Scene porte la révision métier unique ; snapshot du texte et des références atomique, anciens snapshots sans références conservés dans leur ancien format. Les liens vers objets archivés/modules off sont affichés inactifs et conservés. Unknown/ordinal reste indépendant de l’ordre de lecture. Aucune suppression destructive ni migration implicite de schéma.
+
+
+## Modèle exécuté au Lot 4
+
+ChangeProposal devient `change_proposals` : identité/créateur/origine immuables, `proposalRevision` pour le contenu et `stateVersion` pour les actions/avis. ProposalRevision contient titre, justification, opérations ordonnées et dépendances explicites, hash canonique et policyVersion=1. Toute modification de ces données crée r+1 et revient en draft ; aucun ancien contenu n’est écrasé. États et transitions de §22 conservés, duplication explicite pour une nouvelle intention terminale.
+
+ProposalReview est append-only, liée à proposition/révision/hash et à la révision d’appartenance du réviseur au moment de l’avis. La validité est recalculée sur les droits actuels : retrait, rétrogradation ou retrait/réintégration invalident l’ancien avis. Une demande de révision invalide les approbations antérieures ; la révision suivante requiert une nouvelle soumission et approbation. Une ancienne auto-approbation cesse d’être effective si le projet n’est plus individuel.
+
+Les neuf ProposedOperation du catalogue restent fermées. Les créations doivent précéder l’usage des tempId, uniquement dans les champs de référence typés. Preview retourne des symboles stables sans réservation ; merge alloue les UUID puis conserve le mapping dans un résultat durable. Texte libre jamais substitué. Les bases portent cibles et dépendances : modules par ID/révision d’activation, chapitres par structureRevision, manuscrits par revision, extrémités/parents par revision. Les opérations complémentaires texte/métadonnées/déplacement sur la même scène partagent une base et produisent une seule révision ; deux opérations du même kind sur la même cible sont refusées.
+
+Un `proposal_change_sets` unique par proposition fusionnée regroupe les `proposal_change_events` avant/après, opérations et révisions ; les historiques/snapshots existants gardent leurs formats et leurs liens internes. La fusion ne remplace pas les événements directs des Lots 1/2 : elle les groupe et les attribue dans la même transaction. Le compteur éditorial est publié une seule fois. Un merge rejoué relit le résultat durable même après expiration de l’idempotence ordinaire et redémarrage, après contrôle des droits actuels.
+
+Détails [ADR-0013](adr/0013-moteur-de-propositions-et-fusion.md), [preuves](LOT-4-REPORT.md). Aucun agrégat de délégation IA/MCP ou de branche n’est activé dans ce lot.
+
+
+La prévisualisation signale les impacts structurels potentiels des fiches modifiées : relations, scènes et fiches liées avant/après à relire, sans diagnostic sémantique ni écriture supplémentaire. Ce contrôle soutient PROP-11 et ne prétend pas résoudre automatiquement la cohérence narrative.

@@ -1,0 +1,6 @@
+'use client';
+import {useEffect,useRef} from 'react';
+import {Editor} from '@tiptap/core';
+import {extensions} from '@storymaster/editor';
+import type {RichDocument} from '@storymaster/domain';
+export function ProposedEditor({initial,onChange}:{initial:RichDocument;onChange:(doc:RichDocument)=>void}){const host=useRef<HTMLDivElement>(null),instance=useRef<Editor|null>(null),change=useRef(onChange);change.current=onChange;useEffect(()=>{if(!host.current)return;const editor=new Editor({element:host.current,extensions:extensions(),content:initial,injectCSS:false,editorProps:{attributes:{role:'textbox','aria-label':'Texte proposé','aria-multiline':'true',tabindex:'0'}},onUpdate:({editor})=>change.current(editor.getJSON() as RichDocument)});instance.current=editor;return()=>{instance.current=null;editor.destroy();};},[]);return <div className="proposed-editor"><div role="toolbar" aria-label="Mise en forme proposée">{[['Gras','bold'],['Italique','italic'],['Barré','strike']].map(([label,mark])=><button key={mark} type="button" className="text-button" onClick={()=>instance.current?.chain().focus().toggleMark(mark!).run()}>{label}</button>)}</div><div ref={host}/><p className="muted">Ce texte appartient à la proposition. Il ne déclenche aucune sauvegarde du manuscrit.</p></div>;}

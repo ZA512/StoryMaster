@@ -2,7 +2,7 @@ export const roles = ['owner', 'admin', 'author', 'reviewer', 'reader'] as const
 export type Role = typeof roles[number];
 export type ActorType = 'human' | 'integrated_ai' | 'external_ai' | 'system';
 export interface Actor { type: ActorType; userId: string; sessionHash: string; clientId?: string; grantId?: string }
-export type ErrorCode = 'MODULE_DISABLED' | 'UNAUTHENTICATED' | 'FORBIDDEN' | 'NOT_FOUND' | 'VALIDATION_FAILED' | 'REVISION_CONFLICT' | 'PRECONDITION_REQUIRED' | 'IDEMPOTENCY_KEY_REUSED' | 'INVALID_STATE_TRANSITION' | 'RATE_LIMITED' | 'TEMPORARILY_UNAVAILABLE' | 'INTERNAL_ERROR';
+export type ErrorCode = 'PROPOSAL_CONFLICT' | 'MODULE_DISABLED' | 'UNAUTHENTICATED' | 'FORBIDDEN' | 'NOT_FOUND' | 'VALIDATION_FAILED' | 'REVISION_CONFLICT' | 'PRECONDITION_REQUIRED' | 'IDEMPOTENCY_KEY_REUSED' | 'INVALID_STATE_TRANSITION' | 'RATE_LIMITED' | 'TEMPORARILY_UNAVAILABLE' | 'INTERNAL_ERROR';
 export class AppError extends Error {
   constructor(public code: ErrorCode, message: string, public status: number, public details?: Record<string, unknown>) { super(message); }
 }
@@ -55,3 +55,5 @@ export interface EditorialChange {id:string;projectId:string;resourceId:string;k
 export * from './narrative.ts';
 
 export * from './collaboration.ts';
+
+export * from './proposals.ts';

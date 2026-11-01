@@ -63,3 +63,10 @@ OpenAPI 0.5.0 et catalogue de 13 outils MCP synchronisés, registre v1 rapproch�
 ## Extension de validation Lot 3
 
 OpenAPI 0.6.0, composants de collaboration synchronisés aux Zod/DTOs, catalogue MCP conservé sans nouvel outil. Vérification du mapping de chaque opération Lot 3, session humaine et préparation anonyme sans exposition de données, CSRF/Origin/idempotence/CAS, exclusion owner, identité destinataire serveur et absence de hash dans les réponses. Positions actuelles nulles pour ambiguous/orphaned, origine obligatoire. Cinq mutations supplémentaires portent le total documentaire à 34. Exemples synthétiques distincts des 34 réponses HTTP réelles observées et conformes. Les scénarios CT-02/06/20/30/36/45/49 ne revendiquent que leurs portions de collaboration humaine ; propositions et délégation MCP restent non exécutées. Voir [rapport Lot 3](LOT-3-REPORT.md).
+
+
+## Contrats et validation Lot 4
+
+OpenAPI **0.7.0**, catalogue fermé de neuf opérations typées et 13 outils MCP conservés/synchronisés par `sync-proposal-contracts.mjs --check`. Chaque route Lot 4 est contrôlée : session humaine, Origin/CSRF, idempotence/CAS, rôles et interdiction IA, révisions/hash, version d’appartenance dans l’avis, mapping durable et ChangeSet. Preview et validation restent sans mutation. Les générateurs précédents préservent ces ajouts ; `npm run lint` compare Zod/JSON Schema/DTOs/HTTP/MCP et le registre.
+
+Cinq mutations supplémentaires portent le total à **39 tests documentaires** : approbation avec permission de préparation, retrait de la précondition d’état, origine falsifiable, substitution du catalogue par SQL et mapping durable optionnel sont refusés. Les scénarios déclaratifs [Lot 4](spec/lot4-scenarios.json) sont distincts des tests PostgreSQL/HTTP/navigateur réellement exécutés. Les enveloppes HTTP humaines des fixtures sont alignées sur Origin/CSRF/idempotence ; leurs variantes IA/MCP restent futures. B-06/B-07 merge et CT-33 sont exécutés dans l’application, sans revendiquer la délégation ou une outbox absente. [Rapport](LOT-4-REPORT.md).

@@ -19,7 +19,7 @@ export class PostgresEditorialStore implements EditorialPort {
  private sceneLockStarted?:number;
  constructor(private client:PoolClient,private observe:(metric:Metric)=>void=()=>{}){}
  finish(){if(this.sceneLockStarted!==undefined)this.observe({name:'scene.lock_hold_ms',mode:'exclusive',value:performance.now()-this.sceneLockStarted});}
- async lockScene(projectId:string,sceneId:string){const start=performance.now();await this.client.query('SELECT id FROM scenes WHERE project_id=$1 AND id=$2 FOR UPDATE',[projectId,sceneId]);this.sceneLockStarted=performance.now();this.observe({name:'scene.lock_wait_ms',mode:'exclusive',value:this.sceneLockStarted-start});}
+ async lockScene(projectId:string,sceneId:string,mode:'shared'|'exclusive'='exclusive'){const start=performance.now();await this.client.query('SELECT id FROM scenes WHERE project_id=$1 AND id=$2 FOR '+(mode==='shared'?'SHARE':'UPDATE'),[projectId,sceneId]);this.sceneLockStarted=performance.now();this.observe({name:'scene.lock_wait_ms',mode:'exclusive',value:this.sceneLockStarted-start});}
  // All rows and the publication clock come from one PostgreSQL statement/snapshot.
  async view(projectId:string,manuscriptId?:string){
   const r=(await this.client.query(`WITH m AS (SELECT * FROM manuscripts WHERE project_id=$1 AND ($2::uuid IS NULL OR id=$2)),

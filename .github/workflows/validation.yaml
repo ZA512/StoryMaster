@@ -1,4 +1,4 @@
-name: Documentation et Lots 0–3
+name: Documentation et Lots 0–4
 on:
   push:
   pull_request:
@@ -51,6 +51,8 @@ jobs:
         run: npm run bench:narrative
       - name: Collaboration, autosaves et administration concurrentes
         run: npm run bench:collaboration
+      - name: Qualification du merge contre autosauvegardes indépendantes
+        run: npm run bench:proposals
       - name: Navigateur
         run: |
           npx playwright install --with-deps chromium

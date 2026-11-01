@@ -1,3 +1,4 @@
+import {PostgresProposalStore} from './proposals.ts';
 import { createHash, randomUUID } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import { readFile,readdir } from 'node:fs/promises';
@@ -28,6 +29,10 @@ export async function migrate(pool: pg.Pool): Promise<void> {
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
   finally { client.release(); }
+}
+export async function assertApplicationSchema(pool:pg.Pool):Promise<void>{
+ const directory=new URL('../migrations/',import.meta.url),expected=(await readdir(directory)).filter(f=>/^\d{4}-[a-z0-9-]+\.sql$/.test(f)).sort(),applied=new Map((await pool.query<{name:string;checksum:string}>('SELECT name,checksum FROM schema_migrations')).rows.map(r=>[r.name,r.checksum]));
+ for(const file of expected)if(applied.get(file.slice(0,-4))!==sha256(await readFile(new URL(file,directory),'utf8')))throw Error('Schéma applicatif incomplet ou modifié. Reconstruire et exécuter le service migrate avant l’API.');
 }
 interface ProjectRow extends QueryResultRow {
   id:string; owner_id:string; name:string; description:string; language:string; visibility:'private'; status:'active'|'archived'; revision:string;
@@ -60,9 +65,9 @@ export class PostgresUnitOfWork implements UnitOfWork {
 }
 class PostgresTransaction implements Transaction {
   private lockStarted?: number;
-  readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
+  readonly proposals:PostgresProposalStore;readonly collaboration:PostgresCollaborationStore;readonly editorial:PostgresEditorialStore;readonly narrative:PostgresNarrativeStore;
   private lockMode:'exclusive'|'shared'='exclusive';
-  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
+  constructor(private client: PoolClient, private observe: (metric: Metric) => void) {this.proposals=new PostgresProposalStore(client);this.collaboration=new PostgresCollaborationStore(client);this.editorial=new PostgresEditorialStore(client,observe);this.narrative=new PostgresNarrativeStore(client);}
   finish() { this.editorial.finish();if (this.lockStarted !== undefined) this.observe({name:'project.lock_hold_ms',value:performance.now()-this.lockStarted,mode:this.lockMode}); }
   async assertActor(actor: Actor) {
     const result = await this.client.query(`SELECT u.id FROM sessions s JOIN app_users u ON u.id=s.user_id

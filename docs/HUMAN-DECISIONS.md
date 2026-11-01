@@ -63,3 +63,16 @@ ADR-0005 accepté pour le principe relationnel hybride, propriétés typées et 
 Instruction explicite du propriétaire « Réception du Lot 2 et implémentation du Lot 3 : Collaboration asynchrone ». Le Lot 2 est reçu techniquement avec réserves maintenues : CI de son commit à vérifier, revue ergonomique manuelle incomplète, brouillons en mémoire, contention/performance seulement locales et absence de qualification publique. La [CI de 6a5864165e7db1fedfc8e10fbe96f2bb0323289d](https://github.com/ZA512/StoryMaster/actions/runs/41231438707) a été vérifiée terminée avec succès avant implémentation du Lot 3 ; ce résultat ne qualifie pas la future CI du Lot 3. Les réserves de réception restent ouvertes conformément à l’instruction, sans fermeture automatique.
 
 Le Lot 3 complet est autorisé : invitations par lien et email IdP vérifié, membres/rôles/retrait/départ hors owner, commentaires et ancrages conservateurs. Pas de transfert implicite d’owner, SMTP, coédition, IA, propositions ou MCP. Aucun autre ADR proposé n’est accepté par proximité. Arrêt avant Lot 4 pour réception humaine.
+
+## Réception technique du Lot 3 et autorisation du Lot 4 — 31 octobre 2026
+
+Instruction explicite « Réception du Lot 3 et implémentation complète du Lot 4 : Moteur de propositions ». Réception technique avec réserves documentées ; principes ADR-0012 acceptés : invitations sécurisées, révocation transactionnelle, discussions hors canon, ancrages conservateurs. Clôture définitive conditionnée à CI verte du commit 41762fb760a6d10a377542cb70a6c055f16cb2cd, encore en cours lors de la vérification initiale, puis [vérifiée terminée avec succès](https://github.com/ZA512/StoryMaster/actions/runs/41243880880), jobs validate et spike-a. Ce constat ne clôt pas les autres réserves. Aucune réserve UX, brouillons en mémoire, performances locales ou exploitation publique clôturée par cette autorisation.
+
+Lot 4 complet autorisé : propositions humaines versionnées, revue/approbation et fusion multi-objets atomique. Les autres ADR proposés restent tels quels. Aucun assistant, MCP/OAuth délégué ou CRDT introduit ; arrêt avant Lot 5 pour réception humaine.
+
+
+## Présentation à réception du Lot 4 — 1er novembre 2026
+
+[Rapport de réalisation](LOT-4-REPORT.md), [ADR-0013 d’exécution](adr/0013-moteur-de-propositions-et-fusion.md) et [mesures B](measurements/LOT-4-PROPOSALS.md) présentés au propriétaire. La réception du Lot 4 reste à décider après revue des parcours multi-objets et conflictuels ; cet ajout n’enregistre aucun accord nouveau. Choix à examiner : preview avec verrous partagés ciblés, base explicite sans rebase automatique, invalidation par version d’appartenance, résultat durable par proposition et limites locales de la barrière exclusive. L’atomicité et les interdictions IA restent des invariants déjà imposés, pas des options à rouvrir.
+
+La revue UX humaine complète, conservation des brouillons après crash/fermeture, R-CONT-01, enveloppe de charge et exploitation publique restent ouverts. La CI du commit Lot 4 doit encore être exécutée ; le seul succès distant observé pendant cette mission concerne le commit Lot 3. Aucune autorisation du Lot 5 n’est déduite de la réception technique proposée.

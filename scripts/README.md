@@ -36,7 +36,7 @@ La CI doit échouer sur les divergences ; aucune correction automatique ni promo
 
 ## Risques et questions ouvertes
 
-Les 34 tests de non-régression injectent notamment des erreurs à nombre d'IDs/outils constant, une divergence de PROP-10 par rapport au PRD approuvé, une base obsolète et une approbation non invalidée. Une CI verte ne prouve ni autorisation métier effective, ni transactions PostgreSQL, ni contention, ni compatibilité MCP runtime. Le spike B complet demeure à réaliser ; la mesure préliminaire sur métadonnées est dans le rapport du Lot 0. La preuve de consentement humain est enregistrée dans les fiches GO ; le script ne peut pas attester seul de l'identité du décideur.
+Les 39 tests de non-régression injectent notamment des erreurs à nombre d'IDs/outils constant, une divergence de PROP-10 par rapport au PRD approuvé, une base obsolète et une approbation non invalidée. Une CI verte ne prouve ni autorisation métier effective, ni transactions PostgreSQL, ni contention, ni compatibilité MCP runtime. B-06/B-07 merge sont désormais exécutés au Lot 4 ; les limites de charge restent explicites dans son rapport. La preuve de consentement humain est enregistrée dans les fiches GO ; le script ne peut pas attester seul de l'identité du décideur.
 
 ## Critères d'acceptation du document
 
@@ -62,3 +62,19 @@ Voir le [README racine](../README.md) et le [rapport Lot 0](../docs/LOT-0-REPORT
 `sync-collaboration-contracts.mjs` synchronise schémas Zod, DTOs et routes OpenAPI 0.6.0 ; `--check` est exécuté par lint. Le validateur documentaire contrôle chaque route attendue, session/Origin/CSRF/idempotence/CAS, rôles fermés, DTO sans hash et positions incertaines nulles. Cinq mutations supplémentaires testent ces garde-fous à décompte constant ; 34 tests documentaires au total. Les 34 réponses réellement observées du test HTTP Lot 3 sont validées séparément sans imprimer leur contenu.
 
 `npm run bench:collaboration` vise exclusivement la base `_test` protégée par verrou de suite. Il mesure 64 autosaves, 32 réponses, 8 changements d’état, 8 changements de rôle et 24 lectures sur un même projet, puis 20 lectures d’ancre sur une scène d’environ 940 k caractères. Vérifications exactes révisions/hashes/snapshots/attribution ; aucun retry masqué. Sortie locale `artifacts/local/collaboration-qualification.json`, [mesures versionnées](../docs/measurements/LOT-3-COLLABORATION.md). Ne pas exécuter pendant le test navigateur de redémarrage.
+
+
+## Contrats et validation Lot 4
+
+OpenAPI **0.7.0**, catalogue fermé de neuf opérations typées et 13 outils MCP conservés/synchronisés par `sync-proposal-contracts.mjs --check`. Chaque route Lot 4 est contrôlée : session humaine, Origin/CSRF, idempotence/CAS, rôles et interdiction IA, révisions/hash, version d’appartenance dans l’avis, mapping durable et ChangeSet. Preview et validation restent sans mutation. Les générateurs précédents préservent ces ajouts ; `npm run lint` compare Zod/JSON Schema/DTOs/HTTP/MCP et le registre.
+
+Cinq mutations supplémentaires portent le total à **39 tests documentaires** : approbation avec permission de préparation, retrait de la précondition d’état, origine falsifiable, substitution du catalogue par SQL et mapping durable optionnel sont refusés. Les scénarios déclaratifs [Lot 4](../docs/spec/lot4-scenarios.json) sont distincts des tests PostgreSQL/HTTP/navigateur réellement exécutés. Les enveloppes HTTP humaines des fixtures sont alignées sur Origin/CSRF/idempotence ; leurs variantes IA/MCP restent futures. B-06/B-07 merge et CT-33 sont exécutés dans l’application, sans revendiquer la délégation ou une outbox absente. [Rapport](../docs/LOT-4-REPORT.md).
+
+
+## Reproduction transactionnelle et conservation Lot 4
+
+`npm run bench:proposals` utilise uniquement la base `_test`, les vrais services et le rôle applicatif limité. Huit fusions × quatre ressources face à 80 autosaves indépendants ; latences, attente/détention, erreurs/retries et vérifications exactes sont écrites dans `artifacts/local/proposal-qualification.json`. Les barrières B-06/B-07 et injections d’échec appartiennent aux tests séparés ; ne pas les remplacer par un benchmark. Exécuter PostgreSQL/benchmarks avant `npm run test:e2e`, qui redémarre les services.
+
+Avant une migration de la base principale, `node --env-file-if-exists=.env --import tsx scripts/capture-project-data.ts artifacts/local/avant.json` capture en lecture seule compteurs/empreintes de 22 tables préexistantes, sans exporter de texte. Après migration, remplacer le chemin de sortie et ajouter `artifacts/local/avant.json` en second argument : le script compare les lignes complètes. Suspendre les écritures applicatives pendant cette comparaison. Il ne réinitialise aucune donnée. Les empreintes enregistrées au Lot 4 prouvent les migrations, pas l’immutabilité après les nouveaux projets créés par les parcours navigateur.
+
+Reconstruire ensemble `migrate api web`, ou employer Compose `up -d --build --wait`. `demo:ensure-users` ne crée que Carol si absent dans le realm local prévu, sans modifier les utilisateurs existants ni divulguer le jeton d’administration. Aucun secret de démonstration ne vaut pour un déploiement public.

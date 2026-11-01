@@ -78,7 +78,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 **Tâches (ordre proposé) :** Initialiser dépôt/CI/environnement reproductible ; cas d’usage d’identité OIDC et sessions ; Project, Membership et autorisation commune ; schémas/erreurs/CAS/idempotence et audit minimal ; rôle DB sans privilèges globaux ; stratégie transaction/verrou projet ; tests de refus et données fictives.
 
-**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis Lot 2 autorisé par une instruction distincte ; arrêt avant Lot 4 après autorisation explicite du Lot 3.
+**Livrables :** Contrats v1, environnement démarrable, projet privé créable, contrôle d’accès commun et journal minimal. Réalisation et preuves : [rapport du Lot 0](LOT-0-REPORT.md). Réception du Lot 0 et CI confirmées ; Lot 1 autorisé par l’instruction du 31 octobre 2026, puis Lots 2, 3 et 4 autorisés par instructions distinctes ; arrêt avant Lot 5 après réception du moteur de propositions.
 
 **Risques :** Divergence adaptateurs, mauvaise identité email, secret en CI, décision IdP tardive.
 
@@ -154,7 +154,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 ### Lot 3 — Collaboration asynchrone
 
-**État :** implémentation autorisée le 31 octobre 2026 après CI verte de 6a58641 ; réalisation et preuves dans le [rapport Lot 3](LOT-3-REPORT.md), choix dans [ADR-0012](adr/0012-collaboration-asynchrone-et-ancrages.md). Réception humaine attendue ; toutes réserves héritées du Lot 2 restent ouvertes. Aucun Lot 4 autorisé.
+**État :** implémentation autorisée le 31 octobre 2026 après CI verte de 6a58641 ; réalisation et preuves dans le [rapport Lot 3](LOT-3-REPORT.md), choix dans [ADR-0012](adr/0012-collaboration-asynchrone-et-ancrages.md). Réception technique et principes ADR-0012 acceptés par l’instruction Lot 4 ; CI verte de 41762fb vérifiée. Réserves UX, brouillons, qualification locale et exploitation publique maintenues. Lot 4 autorisé séparément.
 
 **Objectif :** Faire contribuer auteurs et relecteurs sans écrasement.
 
@@ -183,6 +183,8 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 
 ### Lot 4 — Propositions
+
+**État :** implémentation complète autorisée le 31 octobre 2026 après réception technique du Lot 3 ; réalisation et preuves dans [LOT-4-REPORT](LOT-4-REPORT.md), choix [ADR-0013](adr/0013-moteur-de-propositions-et-fusion.md), [mesures](measurements/LOT-4-PROPOSALS.md). Réception humaine attendue ; aucun Lot 5 autorisé.
 
 **Objectif :** Examiner et fusionner une intention multi-objets atomique.
 
@@ -296,7 +298,7 @@ AC-01..12 reprennent le PRD sans en changer le sens. Les suivants complètent se
 
 ## Prototypes techniques et état d’exécution
 
-Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-REPORT.md), ADR-0007 accepté et Lot 1 explicitement autorisé. B-01..05 et B-07 autosave sont exécutés sur PostgreSQL ; B-06 et la variante B-07 pendant merge restent au Lot 4, C non exécuté. Voir [rapport Lot 1](LOT-1-REPORT.md).
+Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-REPORT.md), ADR-0007 accepté et Lot 1 explicitement autorisé. B-01..05 et B-07 autosave sont exécutés sur PostgreSQL ; B-06 et B-07 merge sont désormais exécutés au Lot 4 avec barrières, rollback, révocation et timeout réel. C non exécuté. Voir [rapport Lot 1](LOT-1-REPORT.md).
 
 | Spike | Hypothèse / question | Protocole et métriques | Résultat attendu | Go / no-go |
 |---|---|---|---|---|
@@ -306,7 +308,7 @@ Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-R
 
 ### Complément obligatoire du spike B — scènes indépendantes et contention
 
-**Statut :** premières mesures Lot 0 sur métadonnées, puis B-01..05 et B-07 autosave exécutés au Lot 1, [mesures et limites](measurements/LOT-1-CONTENTION.md). B-06 et la variante B-07 pendant merge restent futurs. Le protocole initial ci-dessous est conservé ; l’[ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md) explique pourquoi B-02 avec barrière partagée permet désormais le commit indépendant avant libération de T1. **Références :** risque R-CONT-01 de l'architecture, ADR-0003 et fiche GO-01. Hypothèse à éprouver : le verrou projet conserve l'intégrité mais peut empêcher un débit suffisant dès que plusieurs auteurs enregistrent des scènes distinctes.
+**Statut :** premières mesures Lot 0 sur métadonnées, puis B-01..05 et B-07 autosave exécutés au Lot 1, [mesures et limites](measurements/LOT-1-CONTENTION.md). B-06 commit/rollback et B-07 merge/révocation/timeout exécutés au Lot 4 ; [résultats et limites](measurements/LOT-4-PROPOSALS.md). Le protocole initial ci-dessous est conservé ; l’[ADR-0010](adr/0010-atelier-ecriture-et-concurrence.md) explique pourquoi B-02 avec barrière partagée permet désormais le commit indépendant avant libération de T1. **Références :** risque R-CONT-01 de l'architecture, ADR-0003 et fiche GO-01. Hypothèse à éprouver : le verrou projet conserve l'intégrité mais peut empêcher un débit suffisant dès que plusieurs auteurs enregistrent des scènes distinctes.
 
 | Cas | Écritures et synchronisation proposées | Oracle d'intégrité / objectif de mesure |
 |---|---|---|
@@ -322,7 +324,7 @@ Les protocoles initiaux restent ci-dessous. Le [Spike A est exécuté](SPIKE-A-R
 
 **Protocole :** synchroniser les transactions par barrières explicites du harness et observer les locks ; ne pas ordonner les tests à l'aide de sleeps. Conserver les horaires demande/acquisition/commit et résultats par opération. Mesurer attente et détention séparément ; publier aussi erreurs, retries et taux de sauvegardes confirmées, pour qu'un p95 apparemment bon ne masque pas les échecs. Répéter les cas après rollback et après réponse de commit perdue avec les mêmes clés.
 
-**Go/no-go :** intégrité obligatoire dans tous les cas (zéro perte confirmée, zéro application partielle, zéro doublon, révocations respectées). La performance n'est qualifiée que sur une enveloppe déclarée : retour d'enregistrement/erreur selon NFR-04, lectures/recherche selon NFR-02/03, avec temps d'attente inclus et erreurs publiées. Si les scènes indépendantes ne respectent pas les cibles sous cette charge, ou si une famine/latence non bornée apparaît, **NO-GO pour généraliser cette granularité** : rapport de contention, option plus fine étudiée et ADR-0003 révisé avant Lot 4. Sans enveloppe ni mesures, résultat « non qualifié », jamais « GO par défaut ».
+**Go/no-go :** intégrité obligatoire dans tous les cas (zéro perte confirmée, zéro application partielle, zéro doublon, révocations respectées). La performance n'est qualifiée que sur une enveloppe déclarée : retour d'enregistrement/erreur selon NFR-04, lectures/recherche selon NFR-02/03, avec temps d'attente inclus et erreurs publiées. Si les scènes indépendantes ne respectent pas les cibles sous cette charge, ou si une famine/latence non bornée apparaît, **NO-GO pour généraliser cette granularité** : rapport de contention, option plus fine étudiée et ADR-0003 révisé avant généralisation du moteur de propositions. Sans enveloppe ni mesures, résultat « non qualifié », jamais « GO par défaut ».
 
 Les preuves de spike sont versées dans un rapport ultérieur avec versions exactes, environnement, corpus, commandes, mesures et décision ADR. Si NO-GO, réviser le contrat/ADR avant développement du lot concerné ; jamais contourner la sécurité pour réussir une démonstration.
 

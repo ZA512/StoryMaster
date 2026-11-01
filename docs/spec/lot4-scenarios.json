@@ -1,0 +1,89 @@
+{
+  "status": "Scénarios déclaratifs ; preuves réelles et limites dans LOT-4-REPORT.md",
+  "scenarios": [
+    {
+      "contractTest": "CT-07",
+      "scope": "partial",
+      "oracle": "Création humaine multi-objets sans canon ; variante déléguée IA/MCP non exécutée.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-08",
+      "scope": "human",
+      "oracle": "Prévisualisation répétée sans mutation, bases et mapping symbolique.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-09",
+      "scope": "human",
+      "oracle": "Validation actuelle, dépendances et graphes finaux.",
+      "executableTest": "tests/proposals-concurrency.test.ts"
+    },
+    {
+      "contractTest": "CT-10",
+      "scope": "human",
+      "oracle": "Dépendances/tempId/types invalides : aucun canon appliqué.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-11",
+      "scope": "human",
+      "oracle": "Approbation humaine liée à révision, hash, appartenance et état.",
+      "executableTest": "tests/proposals-http.test.ts"
+    },
+    {
+      "contractTest": "CT-12",
+      "scope": "human",
+      "oracle": "Nouvelle justification/opérations invalide les anciens avis.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-13",
+      "scope": "partial",
+      "oracle": "Fusion humaine atomique des ressources ; pas d’effet externe, donc aucune outbox à consommer.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-14",
+      "scope": "partial",
+      "oracle": "Rollback sur neuf points, snapshots/audit/ChangeSet inclus ; variante outbox sans effet externe non applicable.",
+      "executableTest": "tests/proposals-atomicity.test.ts"
+    },
+    {
+      "contractTest": "CT-15",
+      "scope": "human",
+      "oracle": "Résultat/mapping durables après commit perdu, clés ordinaires expirées et rejeu.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-16",
+      "scope": "human",
+      "oracle": "Modules désactivés, cibles modifiées et graphes invalides refusés.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-29",
+      "scope": "human",
+      "oracle": "Même création K/B sans doublon ; K/B2 refusée ; rejeu après retrait inaccessible.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-33",
+      "scope": "partial",
+      "oracle": "Processus applicatif réellement tué avant/après COMMIT, état complet et mapping récupéré ; aucune outbox sans effet externe.",
+      "executableTest": "tests/proposals-atomicity.test.ts"
+    },
+    {
+      "contractTest": "CT-45",
+      "scope": "human",
+      "oracle": "Approbateur rétrogradé/retiré : avis conservé mais invalidé, fusion owner refusée.",
+      "executableTest": "tests/proposals.test.ts"
+    },
+    {
+      "contractTest": "CT-48",
+      "scope": "human",
+      "oracle": "Ordre final acyclique validé sous barrière, contraintes concurrentes et bases.",
+      "executableTest": "tests/proposals-concurrency.test.ts"
+    }
+  ]
+}

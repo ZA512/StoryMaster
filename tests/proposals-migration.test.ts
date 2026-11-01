@@ -1,0 +1,16 @@
+import {test,after} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createHash,randomUUID} from 'node:crypto';
+import {migrate} from '@storymaster/infrastructure';
+import {exclusiveTestDatabase,admin,close,correlation} from './database.helper.ts';
+import {fixture,editorial,doc} from './editorial.helper.ts';
+import {moduleState,create,setRefs,reference} from './narrative.helper.ts';
+import {collaboration,inviteMember} from './collaboration.helper.ts';
+import {proposals,key} from './proposals.helper.ts';
+after(close);
+test('migration 0005 remplie vers 0006 : scènes, graphes, commentaires, ancres, invitations et historiques inchangés',async()=>{
+ await exclusiveTestDatabase();await admin.query('DROP SCHEMA public CASCADE; CREATE SCHEMA public');await admin.query('CREATE TABLE schema_migrations(name text PRIMARY KEY,checksum text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())');for(const name of ['0001-foundations','0002-editorial','0003-editorial-clock','0004-narrative','0005-collaboration']){const sql=await readFile(new URL('../packages/infrastructure/migrations/'+name+'.sql',import.meta.url),'utf8');await admin.query(sql);await admin.query('INSERT INTO schema_migrations(name,checksum) VALUES($1,$2)',[name,createHash('sha256').update(sql).digest('hex')]);}
+ const f=await fixture(),a=f.owner.actor,p=f.project.id;await editorial.saveScene(a,p,f.s.id,doc('Le phare ancien.'),1,key(),correlation());await moduleState(a,p,'characters',true);const n=await create(a,p,'character','Élise avant Lot 4');await setRefs(a,p,f.s.id,[reference(n,'present')]);const {b}=await inviteMember(f),thread=await collaboration.createThread(b.actor,p,{targetType:'scene',targetId:f.s.id,body:'Discussion antérieure',anchor:{sceneRevision:3,from:1,to:3,quote:'Le'}},key(),correlation());await collaboration.reply(a,p,thread.id,'Réponse conservée',1,key(),correlation());await collaboration.invite(a,p,{email:'pending@example.test',role:'author'},key(),correlation());await moduleState(a,p,'characters',false);
+ const tables=['projects','project_memberships','scenes','scene_revisions','editorial_changes','narrative_objects','narrative_revisions','scene_references','module_activations','invitations','comment_threads','comments','text_anchors','collaboration_revisions','audit_events'],capture=async()=>{const values:unknown[]=[];for(const table of tables)values.push((await admin.query(`SELECT to_jsonb(t) AS value FROM ${table} t ORDER BY to_jsonb(t)::text`)).rows);return values;},before=await capture();await migrate(admin);await migrate(admin);assert.deepEqual(await capture(),before);assert.equal((await collaboration.thread(b.actor,p,thread.id)).comments.items.length,2);assert.equal((await collaboration.thread(b.actor,p,thread.id)).thread.anchorResolution!.state,'valid');const c=await proposals.create(a,p,{title:'Nouvelle capacité après migration',description:'Sans toucher l’ancien canon',operations:[],dependencyRevisions:[]},randomUUID(),correlation());assert.equal(c.status,'draft');assert.deepEqual(await capture(),[...before.slice(0,-1),(await admin.query('SELECT to_jsonb(t) AS value FROM audit_events t ORDER BY to_jsonb(t)::text')).rows]);
+});

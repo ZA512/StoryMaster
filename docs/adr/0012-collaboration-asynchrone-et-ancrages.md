@@ -1,6 +1,6 @@
 # ADR-0012 — Collaboration asynchrone et ancrages conservateurs
 
-**Statut :** mise en œuvre du Lot 3 autorisé, réception attendue. **Date :** 31 octobre 2026. **Références :** [décisions](../HUMAN-DECISIONS.md), [ADR-0003](0003-propositions-transactionnelles.md), [ADR-0010](0010-atelier-ecriture-et-concurrence.md), [ADR-0011](0011-referentiel-narratif-et-references.md), [plan](../IMPLEMENTATION-PLAN.md).
+**Statut :** principes acceptés et Lot 3 reçu techniquement avec réserves par instruction explicite du 31 octobre 2026 ; CI de 41762fb verte, réserves UX/exploitation maintenues. **Date :** 31 octobre 2026. **Références :** [décisions](../HUMAN-DECISIONS.md), [ADR-0003](0003-propositions-transactionnelles.md), [ADR-0010](0010-atelier-ecriture-et-concurrence.md), [ADR-0011](0011-referentiel-narratif-et-references.md), [plan](../IMPLEMENTATION-PLAN.md).
 
 ## Invitations et appartenance
 

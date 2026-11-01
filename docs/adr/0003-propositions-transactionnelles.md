@@ -128,3 +128,12 @@ Le verrou exclusif par projet reste **provisoire**, à mesurer ; seule l’oblig
 ## Adaptation mesurée du Lot 1 — 31 octobre 2026
 
 L’[ADR-0010](0010-atelier-ecriture-et-concurrence.md) précise la barrière : les sauvegardes/restaurations du texte d’une seule scène prennent Project partagé puis Scene exclusif ; structure, métadonnées, archivage et futurs traitements multi-objets restent exclusifs au projet. Les verrous des seules scènes ne remplacent pas la frontière projet. Le [rapport Lot 1](../LOT-1-REPORT.md) compare les deux stratégies sur PostgreSQL avec contrôle de contenu/snapshots, conflits légitimes et révocations. Cette adaptation du verrou provisoire est autorisée par la mission Lot 1 ; elle ne valide pas les propositions encore absentes.
+
+
+## Exécution du Lot 4 — 1er novembre 2026
+
+[ADR-0013](0013-moteur-de-propositions-et-fusion.md) matérialise le moteur autorisé : validations canoniques partagées avec les commandes directes, prévisualisation sous barrière partagée et verrous partagés sur scènes ciblées, merge exclusif projet avec droits relus, état final validé et transaction unique. L’approbation est liée au contenu exact et à la version d’appartenance ; le résultat unique par proposition conserve IDs et mapping au-delà des clés temporaires. Aucun effet externe dans ce lot, donc pas d’outbox artificielle.
+
+B-06 est exécuté avec barrières PostgreSQL : autosaves B/C indépendants attendent pendant fusion A/personnage/événement/relation, puis commitent chacun en r+1 après commit ou rollback du merge. B-07 force rétrogradation/retrait du fusionneur pendant attente, timeout réel et retry même clé. Neuf points de faute, processus tué avant/après COMMIT et perte de réponse démontrent zéro application partielle. [Rapport](../LOT-4-REPORT.md), [mesures](../measurements/LOT-4-PROPOSALS.md).
+
+Le verrou reste **provisoire** : une rafale locale réussie ne prouve ni absence de famine ni capacité distante/soutenue. Les merges exclusifs bloquent aussi des scènes indépendantes. Réexamen avant généralisation si l’enveloppe retenue ne respecte pas les cibles ; aucune baisse de l’intégrité pour masquer la contention. Ces preuves techniques ne remplacent pas la réception humaine du Lot 4 et n’acceptent aucun autre ADR proposé.

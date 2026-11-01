@@ -1,0 +1,185 @@
+{
+  "date": "2026-10-31T22:11:41.782Z",
+  "method": "Snapshot PostgreSQL REPEATABLE READ READ ONLY ; lignes complètes triées, SHA-256 de leur JSON ; aucun texte exporté",
+  "tables": {
+    "projects": {
+      "count": 120,
+      "digest": "827fe7391c18fccbc800be352064176feff3dfe9e1f0681f36fc98d90e550af3"
+    },
+    "project_memberships": {
+      "count": 156,
+      "digest": "d455fcd53a28fa20192a5b535f678214f7733e597c3d3f40f96eafd1eec9a6d8"
+    },
+    "project_revisions": {
+      "count": 175,
+      "digest": "67658aebe5d08c46da96da6a968fe0cb0ed5bcd90624593d7b566bcec2611aa9"
+    },
+    "manuscripts": {
+      "count": 104,
+      "digest": "10bdd91a4502fee1ad3a7e9dc968e1f873aba8a760baa54d5281bc7a3c7f571b"
+    },
+    "chapters": {
+      "count": 115,
+      "digest": "784318303eb7daa7944c8c13f90e3281dca16a395f60335aa0c518c6d288fc88"
+    },
+    "scenes": {
+      "count": 161,
+      "digest": "dd65592258a583c6f9cc6b5dd2d695a2adc4abe72194478e78b1be262ed56324"
+    },
+    "scene_revisions": {
+      "count": 446,
+      "digest": "3a146df77439f0d70117cb0ef82baf092a03703b1ad1c691e0855e2d82359bb9"
+    },
+    "editorial_changes": {
+      "count": 665,
+      "digest": "abafcf172bed6890c5e55d82136be3cc98f98b78ccc4d9b35fd53e5a1eae5d51"
+    },
+    "editorial_clocks": {
+      "count": 120,
+      "digest": "8a52ee2515a96297ece921e53bda30c9e90fe3bebb86228d7abc077218805059"
+    },
+    "narrative_objects": {
+      "count": 63,
+      "digest": "cd33e12ba5c6c17247eab18d7f7061e2bacc9b2a5fae61025c9837bf03870801"
+    },
+    "narrative_relations": {
+      "count": 8,
+      "digest": "53fe6c3df4e9ba120a855a2bae7f4a7db20fdaf1f6854b3bcdb5f2af097317af"
+    },
+    "scene_references": {
+      "count": 39,
+      "digest": "8ced5b0a7583317940d078596e83302de20aceadeaeb2d2fcacbb4f2797e1ae9"
+    },
+    "narrative_revisions": {
+      "count": 574,
+      "digest": "1a27d2f851fdcd353b82603e8f724291a595873bc92fb1d78875e61dae90ba47"
+    },
+    "narrative_changes": {
+      "count": 574,
+      "digest": "e2e9300bdbca376cc8cbf887913a41d3eaab6e787682e3f1558f2da9cf2b1c81"
+    },
+    "module_activations": {
+      "count": 360,
+      "digest": "11dd272f31c58b5ccde59d9949b0d556f0dc1c4fb1f0067836a76f14c4660d0d"
+    },
+    "invitations": {
+      "count": 13,
+      "digest": "cb340792b70c0fcef53156b32dc32414707b744e5574b4a870cd920807ebcdd0"
+    },
+    "comment_threads": {
+      "count": 13,
+      "digest": "c62ed27dbe379140578a35ec5a339b702ac555fbef037ccd2a92ddb9c14ab707"
+    },
+    "comments": {
+      "count": 20,
+      "digest": "559ef935eb0b60ca4eaaabab54969f33df42ac489069cedd4da0bcb81e191fd8"
+    },
+    "text_anchors": {
+      "count": 6,
+      "digest": "55eab422249367011f81542dd519e1b016a24f5d6a7072c1a3517dbbdf5d0aab"
+    },
+    "collaboration_revisions": {
+      "count": 232,
+      "digest": "c5cdcccea71dd8f3b80ee69e2a4557210381e5dc73c11e44ce18bed2a01adae5"
+    },
+    "collaboration_clocks": {
+      "count": 120,
+      "digest": "c545291266f1299e49e2d48b9c6aefd83477a32c222912872543a24a3615a8da"
+    },
+    "audit_events": {
+      "count": 1514,
+      "digest": "c114c6bd689f422cddf48135c316d8f3c292bf2141530718680364731ca27c8e"
+    }
+  },
+  "before": {
+    "projects": {
+      "count": 120,
+      "digest": "827fe7391c18fccbc800be352064176feff3dfe9e1f0681f36fc98d90e550af3"
+    },
+    "project_memberships": {
+      "count": 156,
+      "digest": "d455fcd53a28fa20192a5b535f678214f7733e597c3d3f40f96eafd1eec9a6d8"
+    },
+    "project_revisions": {
+      "count": 175,
+      "digest": "67658aebe5d08c46da96da6a968fe0cb0ed5bcd90624593d7b566bcec2611aa9"
+    },
+    "manuscripts": {
+      "count": 104,
+      "digest": "10bdd91a4502fee1ad3a7e9dc968e1f873aba8a760baa54d5281bc7a3c7f571b"
+    },
+    "chapters": {
+      "count": 115,
+      "digest": "784318303eb7daa7944c8c13f90e3281dca16a395f60335aa0c518c6d288fc88"
+    },
+    "scenes": {
+      "count": 161,
+      "digest": "dd65592258a583c6f9cc6b5dd2d695a2adc4abe72194478e78b1be262ed56324"
+    },
+    "scene_revisions": {
+      "count": 446,
+      "digest": "3a146df77439f0d70117cb0ef82baf092a03703b1ad1c691e0855e2d82359bb9"
+    },
+    "editorial_changes": {
+      "count": 665,
+      "digest": "abafcf172bed6890c5e55d82136be3cc98f98b78ccc4d9b35fd53e5a1eae5d51"
+    },
+    "editorial_clocks": {
+      "count": 120,
+      "digest": "8a52ee2515a96297ece921e53bda30c9e90fe3bebb86228d7abc077218805059"
+    },
+    "narrative_objects": {
+      "count": 63,
+      "digest": "cd33e12ba5c6c17247eab18d7f7061e2bacc9b2a5fae61025c9837bf03870801"
+    },
+    "narrative_relations": {
+      "count": 8,
+      "digest": "53fe6c3df4e9ba120a855a2bae7f4a7db20fdaf1f6854b3bcdb5f2af097317af"
+    },
+    "scene_references": {
+      "count": 39,
+      "digest": "8ced5b0a7583317940d078596e83302de20aceadeaeb2d2fcacbb4f2797e1ae9"
+    },
+    "narrative_revisions": {
+      "count": 574,
+      "digest": "1a27d2f851fdcd353b82603e8f724291a595873bc92fb1d78875e61dae90ba47"
+    },
+    "narrative_changes": {
+      "count": 574,
+      "digest": "e2e9300bdbca376cc8cbf887913a41d3eaab6e787682e3f1558f2da9cf2b1c81"
+    },
+    "module_activations": {
+      "count": 360,
+      "digest": "11dd272f31c58b5ccde59d9949b0d556f0dc1c4fb1f0067836a76f14c4660d0d"
+    },
+    "invitations": {
+      "count": 13,
+      "digest": "cb340792b70c0fcef53156b32dc32414707b744e5574b4a870cd920807ebcdd0"
+    },
+    "comment_threads": {
+      "count": 13,
+      "digest": "c62ed27dbe379140578a35ec5a339b702ac555fbef037ccd2a92ddb9c14ab707"
+    },
+    "comments": {
+      "count": 20,
+      "digest": "559ef935eb0b60ca4eaaabab54969f33df42ac489069cedd4da0bcb81e191fd8"
+    },
+    "text_anchors": {
+      "count": 6,
+      "digest": "55eab422249367011f81542dd519e1b016a24f5d6a7072c1a3517dbbdf5d0aab"
+    },
+    "collaboration_revisions": {
+      "count": 232,
+      "digest": "c5cdcccea71dd8f3b80ee69e2a4557210381e5dc73c11e44ce18bed2a01adae5"
+    },
+    "collaboration_clocks": {
+      "count": 120,
+      "digest": "c545291266f1299e49e2d48b9c6aefd83477a32c222912872543a24a3615a8da"
+    },
+    "audit_events": {
+      "count": 1514,
+      "digest": "c114c6bd689f422cddf48135c316d8f3c292bf2141530718680364731ca27c8e"
+    }
+  },
+  "allOriginalDataUnchanged": true
+}
