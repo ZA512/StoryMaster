@@ -16,9 +16,11 @@ export class AIOrchestrator {
  readonly tools:AIToolExecutor;
  constructor(readonly service:AIAssistantService,private provider:ProviderAdapter){if(!provider.simulated||provider.id!==aiProvider)throw Error('GO-03 requis : seuls les simulateurs locaux sont activables.');this.tools=new AIToolExecutor(service);}
  async runOne(){const pending=await this.service.pending();if(!pending)return false;await this.run(pending.projectId,pending.ownerId,pending.id);return true;}
- async run(p:string,u:string,id:string,externalAbort?:AbortController){let actor:Actor|undefined;try{const claim=await this.service.claim(p,u,id,this.workerId);if(!claim)return;actor=claim.actor;}catch{await this.service.finish(p,u,id,'cancelled','ACCESS_REVOKED','Exécution non démarrée : accès, session, configuration ou consentement retiré.',false);return;}
-  const control=externalAbort??new AbortController();let stopReason:'access'|'deadline'|'shutdown'|null=null,checking=false;const started=Date.now();
-  const watchdog=setInterval(()=>{if(checking||control.signal.aborted)return;checking=true;void this.service.runtime(actor!,p,async(_tx,e)=>{if(Date.now()-started>e.policy.durationMs){stopReason='deadline';control.abort();}}).catch(()=>{stopReason='access';control.abort();}).finally(()=>{checking=false;});},150);watchdog.unref();
+ async run(p:string,u:string,id:string,externalAbort?:AbortController){let actor:Actor|undefined,deadline=Infinity;try{const claim=await this.service.claim(p,u,id,this.workerId);if(!claim)return;actor=claim.actor;deadline=Date.parse(claim.execution.startedAt!)+claim.execution.policy.durationMs;}catch{await this.service.finish(p,u,id,'cancelled','ACCESS_REVOKED','Exécution non démarrée : accès, session, configuration ou consentement retiré.',false);return;}
+  const control=externalAbort??new AbortController();let stopReason:'access'|'deadline'|'shutdown'|null=null,checking=false;
+  // The persistent authorization guard also rejects an expired execution. A late
+  // watchdog must classify that deadline without replacing an earlier stop reason.
+  const watchdog=setInterval(()=>{if(checking||control.signal.aborted)return;checking=true;void this.service.runtime(actor!,p,async()=>{if(Date.now()>=deadline&&!control.signal.aborted){stopReason='deadline';control.abort();}}).catch(()=>{if(control.signal.aborted)return;stopReason=Date.now()>=deadline?'deadline':'access';control.abort();}).finally(()=>{checking=false;});},150);watchdog.unref();
   try{
    for(;;){if(control.signal.aborted)throw new ProviderFailure('before_send','cancelled');
     const request=await this.service.runtime(actor,p,async(tx,e,plan)=>{
@@ -32,7 +34,7 @@ export class AIOrchestrator {
     },true);
     let secret:string,response:ProviderResponse;
     try{secret=await this.service.credentialForCall(actor,p);}catch(e){await this.service.confirmNotSent(p,u,id);throw e;}
-    const timeout=setTimeout(()=>{stopReason='deadline';control.abort();},Math.max(1,request.context.policy.durationMs-(Date.now()-started)));timeout.unref();
+    const timeout=setTimeout(()=>{if(!control.signal.aborted){stopReason='deadline';control.abort();}},Math.max(1,deadline-Date.now()));timeout.unref();
     let removeAbort=()=>{};
     try{if(control.signal.aborted)throw new ProviderFailure('before_send','cancelled');const aborted=new Promise<never>((_resolve,reject)=>{const abort=()=>reject(new ProviderFailure('after_send','cancelled'));control.signal.addEventListener('abort',abort,{once:true});removeAbort=()=>control.signal.removeEventListener('abort',abort);});const raw=await Promise.race([this.provider.generate(request,secret,control.signal),aborted]),parsed=responseSchema.safeParse(raw);if(!parsed.success||JSON.stringify(raw).includes(secret)||Buffer.byteLength(JSON.stringify(raw))>request.maxOutputTokens*16)throw new ProviderFailure('after_send','malformed');response=parsed.data;
      if(response.usage.inputTokens>request.inputTokenUpperBound||response.usage.outputTokens>request.maxOutputTokens)throw new ProviderFailure('after_send','malformed');

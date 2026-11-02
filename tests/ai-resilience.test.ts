@@ -37,3 +37,15 @@ test('révision IA d’une intention approuvée : ancien avis invalidé, nouvell
 test('fournisseur ignorant AbortSignal : durée bornée, late response ignorée et aucun retry',async()=>{
  const f=await aiFixture(),q=await queued(f,{intent:'discuss',limits:{durationMs:200}}),release=Promise.withResolvers<ProviderResponse>();let calls=0;const runner=orchestrator(scripted(async()=>{calls++;return release.promise;}));const timeout=Promise.withResolvers<void>(),timer=setTimeout(()=>timeout.reject(Error('Orchestrateur non borné')),3000);try{await Promise.race([runner.runOne(),timeout.promise]);const e=await assistant.getExecution(f.owner.actor,f.project.id,q.execution.id);assert.equal(e.status,'unknown');assert.equal(e.costState,'unknown');release.resolve({text:'Réponse trop tardive à ignorer',citations:[],toolCalls:[],usage:{inputTokens:10,outputTokens:10},providerRequestId:'late'});await Promise.resolve();assert.equal((await assistant.detail(f.owner.actor,f.project.id,q.conversation.id)).messages.filter(m=>m.role==='assistant').length,0);assert.equal(calls,1);}finally{clearTimeout(timer);release.resolve({text:'',citations:[],toolCalls:[],usage:{inputTokens:0,outputTokens:0},providerRequestId:'stop'});}
 });
+
+test('contrôle retardé après échéance : expiration distincte d’une révocation, coût inconnu et aucune réponse tardive',async t=>{
+ const f=await aiFixture(),q=await queued(f,{intent:'discuss',limits:{durationMs:1000}}),release=Promise.withResolvers<ProviderResponse>(),realNow=Date.now;let calls=0;
+ const runner=orchestrator(scripted(async()=>{calls++;t.mock.method(Date,'now',()=>realNow()+2000);return release.promise;}));
+ try{
+  await runner.runOne();const e=await assistant.getExecution(f.owner.actor,f.project.id,q.execution.id);
+  assert.equal(calls,1);assert.equal(e.status,'unknown');assert.equal(e.errorCode,'TIMEOUT');assert.equal(e.costState,'unknown');assert.equal(e.cancelRequested,false);
+  release.resolve(normal({callNumber:1} as ProviderRequest));await Promise.resolve();
+  assert.equal((await assistant.detail(f.owner.actor,f.project.id,q.conversation.id)).messages.filter(m=>m.role==='assistant').length,0);
+  assert.equal((await assistant.budget(f.owner.actor,f.project.id)).reserved.calls,q.execution.reserved.calls);assert.equal(await runner.runOne(),false);
+ }finally{release.resolve({text:'',citations:[],toolCalls:[],usage:{inputTokens:0,outputTokens:0},providerRequestId:'stop'});t.mock.restoreAll();}
+});

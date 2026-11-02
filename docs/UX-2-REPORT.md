@@ -14,7 +14,7 @@ La poignée permet un vrai drag avant/après une carte et vers les emplacements 
 
 ## Conservation et concurrence
 
-La commande existante `POST /projects/{projectId}/scenes/{sceneId}/move` est réutilisée avec son contrat réel, décrit dans ADR-0020. Le corps contient expectedRevision, targetParentId, beforeId et les deux préconditions structurelles ; aucun nouvel endpoint, If-Match fictif ou position numérique n’est introduit. Le service prend toujours sa barrière de projet, relit l’autorisation et applique la mutation atomique avec snapshots/audit/idempotence. Aucune migration ou logique serveur n’a été modifiée.
+La commande existante `POST /projects/{projectId}/scenes/{sceneId}/move` est réutilisée avec son contrat réel, décrit dans ADR-0020. Le corps contient expectedRevision, targetParentId, beforeId et les deux préconditions structurelles ; aucun nouvel endpoint, If-Match fictif ou position numérique n’est introduit. Le service prend toujours sa barrière de projet, relit l’autorisation et applique la mutation atomique avec snapshots/audit/idempotence. Aucune migration, commande métier de déplacement ou règle d’autorisation n’a été modifiée. La qualification finale a nécessité la correction limitée du classement des expirations IA décrite ci-dessous.
 
 Le déplacement conserve identité, JSON riche, références et discussions. Il crée la nouvelle révision Scene prévue par le modèle réalisé ; l’ordre est protégé par les versions de chapitre, sans provoquer de révision textuelle des voisins. Le déplacement attend l’autosave en vol et les générations ultérieures déjà saisies. Une confirmation structurelle fait avancer la base connue d’un buffer propre sans réinitialiser Tiptap. Les lectures au texte identique préservent son instance ; une lecture ancienne ne fait pas reculer une base. Brouillons sales et conflits restent protégés.
 
@@ -36,7 +36,7 @@ La [galerie avant/après et états](../artifacts/ux12-2026-11-02/INDEX.html) ras
 |---|---|
 | Construction Docker web de production | Réussie ; image servie en loopback |
 | TypeScript, lint et contrôles de frontières/générateurs | Réussis |
-| `DOCUMENT_PYTHON="$PWD/.venv/bin/python" npm test` | 281 réussis, 0 échec, 1 test optionnel de restauration non lancé dans cette commande |
+| `DOCUMENT_PYTHON="$PWD/.venv/bin/python" npm test` | 282 réussis, 0 échec, 1 test optionnel de restauration non lancé dans cette commande |
 | Navigateur de production, Lots 1/2/3/7 + UX-1/1B/2 | 34 parcours distincts réussis, dont les 12 nouveaux UX-2 ; vraie restauration isolée et archive exportée contrôlées dans Lot 7 |
 | Reprise d’une longue scène après initialisation | 5 répétitions ciblées réussies, après les 34 parcours ; aucune assertion d’ordre ou de contenu assouplie |
 | Validateur documentaire et ses tests | JSON/Schema/OpenAPI/MCP, 150 exigences, priorités/lots/liens : succès ; 54 tests Python réussis |
@@ -54,6 +54,8 @@ La première passe UX-2 a révélé quatre échecs : doublon de formulaire de re
 Une régression de style héritait du footer des cartes de projets : tailles et séparateurs sont désormais bornés aux cartes de scène. Les résumés de chapitre sont bornés visuellement sans petit ascenseur parasite. Une relecture de métadonnées ou l’état occupé pouvait remonter inutilement l’éditeur : continuité de montage et préservation des buffers propres au texte identique corrigées et testées. Les formulaires gardent leur révision préparée, même après arrivée d’une modification distante.
 
 Les deux CI de préparation UX-1B ont chacune passé 34/35 parcours : [c78c7bb](https://github.com/ZA512/StoryMaster/actions/runs/41517914305) a révélé le test de concentration non adapté ; [6541944](https://github.com/ZA512/StoryMaster/actions/runs/41521411721) a révélé une course d’initialisation du défilement. Le mode de concentration est rejoint par son menu ; l’éditeur annonce son état occupé jusqu’à la fin de l’initialisation/restauration, que le test attend avant de simuler un défilement. Ces CI échouées ne sont pas assimilées à des CI vertes. Le résultat distant de livraison est vérifié après push sur le SHA final et fourni dans le compte rendu ; [exécutions main](https://github.com/ZA512/StoryMaster/actions?query=branch%3Amain).
+
+La première CI UX-2 [b4336e6](https://github.com/ZA512/StoryMaster/actions/runs/41543425524) a arrêté les tests applicatifs sur la résilience IA existante, avant la campagne navigateur. Le watchdog relisait l’autorisation après la durée maximale et confondait son refus avec une révocation ; un callback tardif pouvait aussi remplacer la cause d’arrêt. La correction utilise l’échéance persistée à l’admission et ne remplace plus une cause d’arrêt déjà fixée. Aucune autorisation n’est relâchée, aucune réponse tardive publiée, aucun coût inconnu libéré. Un nouveau test PostgreSQL avec horloge applicative contrôlée reproduit exactement « cancelled au lieu de unknown » sur l’ancien code et passe sur le correctif ; les 16 scénarios de résilience passent, puis la suite applicative complète passe à nouveau (282 réussis, 1 test optionnel non lancé). TypeScript, lint et validation documentaire repassent également. Cette régression de qualification reste distincte des cartes et n’active aucun fournisseur réel.
 
 ## Limites et réception humaine
 
