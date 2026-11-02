@@ -3,6 +3,10 @@ import {useEffect,useRef,useState} from 'react';
 import type {EditorialKind} from '@storymaster/domain';
 import type {WorkshopLayout} from './workspace-state';
 const names={manuscript:'un manuscrit',chapter:'un chapitre',scene:'une scène'};
+export function InlineRename({title,busy,onCancel,onSave}:{title:string;busy:boolean;onCancel:()=>void;onSave:(title:string)=>Promise<void>}) {
+ const [value,setValue]=useState(title),[error,setError]=useState('');
+ return <form className="inline-create inline-node-rename" aria-label={'Renommer '+title} onSubmit={e=>{e.preventDefault();setError('');void onSave(value.trim()).catch(e=>setError((e as Error).message));}}><label>Nouveau titre<input autoFocus required maxLength={200} value={value} disabled={busy} onFocus={e=>e.currentTarget.select()} onChange={e=>setValue(e.target.value)} onKeyDown={e=>{if(e.key==='Escape'&&!busy){e.stopPropagation();onCancel();}}}/></label>{error&&<p role="alert">{error}</p>}<div><button className="text-button" disabled={busy||!value.trim()}>Enregistrer le titre</button><button type="button" className="text-button" disabled={busy} onClick={onCancel}>Annuler</button></div></form>;
+}
 export function InlineCreate({kind,busy,onCancel,onCreate}:{kind:EditorialKind;busy:boolean;onCancel:()=>void;onCreate:(title:string)=>Promise<void>}) {
  const [title,setTitle]=useState(''),[error,setError]=useState(''),input=useRef<HTMLInputElement>(null);
  useEffect(()=>{input.current?.focus();},[]);

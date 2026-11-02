@@ -34,9 +34,9 @@ class ValidatorTests(unittest.TestCase):
         shutil.copytree(ROOT / "tests", self.root / "tests")
         # Documentation may link to source files; keep those targets in the fixture,
         # without copying build outputs, dependencies or local configuration.
-        for directory in ("apps", "packages"):
+        for directory in ("apps", "packages", "artifacts"):
             shutil.copytree(ROOT / directory, self.root / directory,
-                            ignore=shutil.ignore_patterns("node_modules", ".next", ".env*", "*.tsbuildinfo"))
+                            ignore=shutil.ignore_patterns("node_modules", ".next", ".env*", "*.tsbuildinfo", "local"))
         shutil.copy2(ROOT / "AGENTS.md", self.root / "AGENTS.md")
         shutil.copy2(ROOT / "README.md", self.root / "README.md")
         shutil.copytree(ROOT / ".github", self.root / ".github")

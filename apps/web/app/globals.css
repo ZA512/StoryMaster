@@ -203,3 +203,68 @@
 }
 .atelier .outline-panel .muted,.atelier .chapter summary small{color:var(--ink)}
 .atelier .scene-link small{color:var(--ink)}
+
+/* UX-1B: one application bar, with secondary actions in the native top layer. */
+.atelier-topbar{display:flex;align-items:center;gap:12px;flex:none;min-height:52px;padding:8px 18px;border-bottom:1px solid var(--line);background:var(--panel);z-index:8}
+.atelier-topbar .brand-link{padding:0;flex:none}
+.atelier-topbar .brand{font-size:19px}
+.atelier-project{font-size:13px;font-weight:600;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:300px;min-width:80px;margin:0}
+.atelier-main-tools,.atelier-layout-tools{display:flex;align-items:center;gap:6px;flex:none;font-size:12px}
+.atelier-main-tools>a{padding:6px 8px}
+.atelier-layout-tools{margin-left:auto}
+.atelier-topbar .workshop-button{padding:4px 9px;min-height:32px}
+.atelier-search{white-space:nowrap}
+.action-menu{display:inline-flex;flex:none;align-items:center}
+.menu-trigger.compact{min-width:32px;padding:3px 6px;letter-spacing:1px;background:transparent;border-color:transparent}
+.action-menu-panel{position:fixed;inset:auto;margin:0;width:244px;max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px);overflow:auto;padding:6px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:7px;box-shadow:0 10px 32px #0003;font:13px/1.5 var(--sans)}
+.action-menu-panel>button,.action-menu-panel>a{display:block;text-align:left;width:100%;border:0;border-radius:4px;background:transparent;color:var(--ink);font:inherit;padding:8px 10px;min-height:34px;text-decoration:none}
+.action-menu-panel>button:hover,.action-menu-panel>a:hover{background:var(--cream)}
+.action-menu-panel :focus-visible{outline-offset:-2px}
+.action-menu-panel .menu-caption{display:block;color:var(--muted);font-size:11px;padding:8px 10px;margin:0}
+.action-menu-panel .preferences{padding:0 10px;margin:0;max-height:none;position:static;width:auto;box-shadow:none;overflow:visible}
+.action-menu-panel .workshop-layout-options{padding:0 10px}
+.action-menu-panel .workshop-layout-options>div{position:static;width:auto;max-width:none;padding:0;box-shadow:none;border:0}
+.action-menu-panel .workshop-layout-options label{font-size:12px}
+.atelier .outline-panel{padding:12px 12px 24px}
+.atelier .outline-panel h2{font:600 11px var(--sans);text-transform:uppercase;letter-spacing:.8px;margin:0}
+.atelier .outline-panel .section-line{margin-bottom:6px}
+.atelier .outline-panel select{font-size:12px;padding:7px;min-height:36px}
+.atelier .outline-panel>.check-label{font-size:10px;margin:7px 0}
+.atelier .outline-manuscript{display:flex;align-items:center;justify-content:space-between;padding:0 0 8px;margin:0 0 6px}
+.atelier .outline-manuscript .muted{font-size:10px;color:var(--ink)}
+.atelier .chapter{position:relative;margin:5px 0}
+.atelier .chapter summary{padding:9px 34px 9px 2px;min-height:40px;font-size:12px}
+.atelier .chapter summary small{display:none}
+.chapter-menu{position:absolute;right:0;top:3px}
+.atelier .chapter li{display:flex;align-items:center;flex-wrap:wrap;padding:2px 2px 2px 8px;gap:2px}
+.atelier .chapter li .scene-link{flex:1;min-width:0;text-align:left;font-size:12px;padding:7px 3px}
+.atelier .chapter li .scene-link small{font-size:10px;font-weight:400;color:var(--ink)}
+.atelier .inline-node-rename{width:100%;flex:none}
+.atelier .writing-desk{padding:16px clamp(20px,2.5vw,42px) 40px}
+.atelier .scene-heading{gap:4px;margin:0 auto 12px}
+.atelier .scene-heading h2{font-size:clamp(25px,2.2vw,32px);margin:0 0 4px}
+.atelier .scene-heading .eyebrow{margin-bottom:5px;letter-spacing:1.2px}
+.atelier .scene-meta{gap:8px 12px;font-size:10px}
+.atelier .save-state{background:transparent;padding:0;border:0;font-size:10px}
+.atelier .save-state.clean,.atelier .save-state.saved{color:var(--green)}
+.atelier .save-state.dirty,.atelier .save-state.saving{color:var(--ink)}
+.atelier .save-state.error,.atelier .save-state.conflict{background:var(--cream);color:var(--error);padding:2px 6px}
+.atelier .editor-toolbar{top:-16px;padding:3px;gap:2px;flex-wrap:wrap}
+.atelier .editor-toolbar button{min-height:28px;padding:4px 7px}
+.atelier .editor-toolbar .action-menu-panel button{font-size:12px;min-height:34px;text-align:left}
+.atelier .editor-toolbar .action-menu-panel{z-index:20}
+.atelier .selection-tools button{padding:4px 0}
+.atelier .manuscript-paper{margin-top:8px;padding:24px 26px;border:0;background:var(--paper);box-shadow:none}
+[data-theme=dark] .atelier .manuscript-paper{background:var(--paper)}
+.atelier .tiptap>p:first-child{margin-top:0}
+.atelier .recent-scenes{margin:0 auto 10px;padding:0 0 5px;max-width:800px;flex-wrap:nowrap;overflow:auto;scrollbar-width:thin}
+.atelier .recent-scenes button{white-space:nowrap;font-size:10px;padding:4px 7px}
+.workshop-inspector{padding:12px 16px}
+.inspector-tabs{margin:10px 0 14px;padding-bottom:10px}
+.workshop-inspector h3{font-size:21px;margin:8px 0}
+.workshop-inspector .context-summary{margin:8px 0 12px}
+.context-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.workshop-inspector .context-actions .text-button{padding:4px 0}
+.workshop-inspector .draft-recovery-info summary{font-size:10px;color:var(--muted);padding:8px 0}
+@media(max-width:1100px){.atelier-topbar .brand>span{display:none}.atelier-project{max-width:220px}.atelier-topbar{gap:8px;padding:8px 12px}}
+@media(max-width:760px){.atelier-topbar{flex-wrap:wrap;gap:6px;padding:6px 10px}.atelier-project{max-width:calc(100% - 110px);flex:1}.atelier-main-tools{order:2}.atelier-layout-tools{order:3;flex:1;margin:0}.atelier-search{order:4}.atelier-topbar>.action-menu{margin-left:auto}.atelier .writing-desk{padding:14px 16px 32px}.atelier .editor-toolbar{top:-14px}.atelier .manuscript-paper{padding:18px 8px}.atelier .editor-toolbar .menu-trigger{font-size:10px}}

@@ -1,0 +1,47 @@
+[
+  {
+    "file": "apres-1000x720.jpg",
+    "bytes": 79891,
+    "sha256": "e5dde32c19ed23731c6776d2a25773138f32a5710c1eb59357c921dfcbd64510"
+  },
+  {
+    "file": "apres-1280x720.jpg",
+    "bytes": 99554,
+    "sha256": "cb114bdddd106009e426051c0abf03ed278151cea078ed26c42a0788839cf0b0"
+  },
+  {
+    "file": "apres-1440x900.jpg",
+    "bytes": 128135,
+    "sha256": "29ed9beb005e1ac362682baeaaa29fe3f0084437f684a7f1b8ee9fcc569f112d"
+  },
+  {
+    "file": "apres-1920x1080.jpg",
+    "bytes": 138782,
+    "sha256": "3543f6008f5282eb972fe80acf1ece050cec98b44862927ac4eb2f90634674b6"
+  },
+  {
+    "file": "avant-1000x720.jpg",
+    "bytes": 75627,
+    "sha256": "1374d96ff6fea93735239c61393589587096be58c5f921775f53ab444f94a513"
+  },
+  {
+    "file": "avant-1280x720.jpg",
+    "bytes": 87336,
+    "sha256": "401369534549177a9d1270647e484265f42e71a80d597f7cc5b4157050acbf86"
+  },
+  {
+    "file": "avant-1440x900.jpg",
+    "bytes": 116849,
+    "sha256": "0cc2b0284773687a52e6ffb573a9ccd3d56232e99840304fbdfa47f6368fd455"
+  },
+  {
+    "file": "avant-1920x1080.jpg",
+    "bytes": 147030,
+    "sha256": "87e549d02847c51fcd35421dfc21ec4902a039946bbe2586031345b97f4dd9c1"
+  },
+  {
+    "file": "concentration-1280x720.jpg",
+    "bytes": 78257,
+    "sha256": "022e0178925f86c859368abae5ccf3e28c11b00ba82921d1bf9aa011a1638423"
+  }
+]

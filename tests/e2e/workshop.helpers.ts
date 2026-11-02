@@ -31,3 +31,16 @@ export async function loginLocal(page:Page,user='alice') {
  }
  throw Error('Connexion locale refusée après attente bornée.');
 }
+
+export async function workshopAction(page:Page,title:string,action:string){
+ await page.getByRole('button',{name:'Actions pour '+title,exact:true}).click();
+ await page.getByRole('button',{name:action,exact:true}).click();
+}
+export async function concentration(page:Page){
+ await page.getByRole('button',{name:'Disposition',exact:true}).click();
+ await page.getByRole('button',{name:'Mode concentration',exact:true}).click();
+}
+export async function openPreferences(page:Page){
+ const account=page.getByRole('button',{name:'Compte',exact:true});if(await account.count())await account.click();
+ await page.getByText('Préférences d’affichage',{exact:true}).click();
+}

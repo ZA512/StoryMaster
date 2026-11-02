@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import type {Page} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import {createInline,showInspector,loginLocal} from './workshop.helpers.ts';
+import {createInline,showInspector,concentration,openPreferences,loginLocal} from './workshop.helpers.ts';
 async function setup(page:Page){
  await loginLocal(page);
  const me=(await(await page.request.get('/api/v1/me')).json()).data;
@@ -17,7 +17,7 @@ test('UX-1 : création inline au clavier, panneaux, lecture en regard, renommage
  const editor=page.getByRole('textbox',{name:'Texte de la scène',exact:true});await expect(editor).toBeFocused();await editor.fill('Les mots demeurent dans le manuscrit.');await expect(page.locator('.save-state')).toHaveText('Enregistré');const a=new URL(page.url()).searchParams.get('scene')!;
  await page.getByRole('button',{name:'+ Ajouter une scène',exact:true}).click();await createInline(page,'Le chemin');await expect(editor).toBeFocused();await editor.fill('Une seconde scène à consulter.');await expect(page.locator('.save-state')).toHaveText('Enregistré');const b=new URL(page.url()).searchParams.get('scene')!;
  await page.getByRole('navigation',{name:'Scènes récentes'}).getByRole('button',{name:'La porte',exact:true}).click();await expect(editor).toHaveText('Les mots demeurent dans le manuscrit.');
- const editorBefore=await editor.elementHandle();await page.getByRole('button',{name:'Mode concentration',exact:true}).click();await expect(page.getByRole('complementary',{name:'Plan du projet'})).not.toBeVisible();await page.keyboard.press('Escape');expect(await editor.elementHandle()).toBeTruthy();expect(await editor.evaluate((el,old)=>el===old,editorBefore)).toBe(true);
+ const editorBefore=await editor.elementHandle();await concentration(page);await expect(page.getByRole('complementary',{name:'Plan du projet'})).not.toBeVisible();await page.keyboard.press('Escape');expect(await editor.elementHandle()).toBeTruthy();expect(await editor.evaluate((el,old)=>el===old,editorBefore)).toBe(true);
  const separator=page.getByRole('separator',{name:'Largeur du plan',exact:true});await separator.focus();await separator.press('ArrowRight');await expect(separator).toHaveAttribute('aria-valuenow','272');
  await showInspector(page,'En regard');await page.getByLabel('Scène à consulter',{exact:true}).selectOption(b);await expect(page.getByRole('region',{name:'Scène en regard'})).toContainText('Une seconde scène à consulter.');await editor.fill('Texte principal conservé, même pendant la consultation.');await expect(page.locator('.save-state')).toHaveText('Enregistré');
  await page.getByRole('button',{name:'Renommer La porte',exact:true}).click();await page.getByLabel('Titre de la scène',{exact:true}).fill('Une nouvelle porte');await page.getByRole('button',{name:'Enregistrer le titre',exact:true}).click();await expect(page.locator('.scene-heading h2')).toHaveText('Une nouvelle porte');
@@ -39,7 +39,7 @@ test('UX-1 : une sélection locale périmée ou interprojet ne révèle aucun co
 });
 test('UX-1 : clavier et contrastes des panneaux/palette en modes clair et sombre',async({page})=>{
  test.setTimeout(120000);page.setDefaultTimeout(15000);const f=await setup(page),m=await f.write(f.base+'/manuscripts',{title:'Livre accessible',expectedStructureRevision:1}),c=await f.write(f.base+'/manuscripts/'+m.id+'/chapters',{title:'Chapitre accessible',expectedStructureRevision:1}),s=await f.write(f.base+'/chapters/'+c.id+'/scenes',{title:'Scène accessible',expectedStructureRevision:1});await page.goto(f.path+'?scene='+s.id);await expect(page.getByRole('textbox',{name:'Texte de la scène'})).toBeVisible();
- for(const theme of ['light','dark']){await page.getByText('Préférences d’affichage',{exact:true}).click();await page.getByLabel('Apparence',{exact:true}).selectOption(theme);await page.getByText('Préférences d’affichage',{exact:true}).click();await showInspector(page);const violations=(await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze()).violations;expect(violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)}))).toEqual([]);await page.keyboard.press('Control+k');expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze()).violations).toEqual([]);await page.keyboard.press('Escape');}
+ for(const theme of ['light','dark']){await openPreferences(page);await page.getByLabel('Apparence',{exact:true}).selectOption(theme);await page.getByText('Préférences d’affichage',{exact:true}).click();await page.keyboard.press('Escape');await showInspector(page);const violations=(await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze()).violations;expect(violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)}))).toEqual([]);await page.keyboard.press('Control+k');expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze()).violations).toEqual([]);await page.keyboard.press('Escape');}
 });
 
 test('UX-1 : un changement de scène restaure le défilement après le chargement du document',async({page})=>{
