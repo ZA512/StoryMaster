@@ -52,3 +52,11 @@ test('Lot 2 : ACK texte conserve les références ; relecture tardive conserve b
 test('sélection de références en mémoire : navigation entre scènes et relecture gardent le formulaire, sans bloquer le flush texte',async()=>{
  const manager=new DraftManager({save:async(id,r)=>ack(id,r.expectedRevision+1),read:async id=>scene(id)},10000),pending={view:{sceneId:'A',sceneRevision:1,items:[]},items:[]};manager.load(scene());manager.setReferenceDraft('A',pending);assert.equal(manager.hasPending(),true);assert.equal(await manager.flushAll(),true);manager.load(scene('B'));manager.activate('B');assert.deepEqual(manager.get('A')!.referenceDraft,pending);manager.load(scene('A',3));assert.deepEqual(manager.get('A')!.referenceDraft,pending);manager.setReferenceDraft('A',undefined);manager.activate('B');assert.equal(manager.get('A'),undefined);manager.dispose();
 });
+
+test('UX-2 : confirmation de déplacement et métadonnées inchangées préservent buffer, génération et epoch',()=>{
+ const manager=new DraftManager({save:async(id,r)=>ack(id,r.expectedRevision+1),read:async()=>scene()},10000);const original=manager.load(scene()),epoch=original.loadEpoch;
+ assert.equal(manager.acknowledgeMove('A',1,2),true);assert.equal(manager.get('A'),original);assert.equal(original.baseRevision,2);assert.equal(original.loadEpoch,epoch);
+ manager.load({...scene('A',3),title:'Titre relu',chapterId:'Autre chapitre'});assert.equal(manager.get('A'),original);assert.equal(original.loadEpoch,epoch);assert.equal(original.baseRevision,3);
+ manager.load(scene('A',2,'Ancienne réponse'));assert.equal(original.baseRevision,3);assert.deepEqual(original.content,doc('Initial'));
+ assert.equal(manager.acknowledgeMove('A',2,3),false);manager.edit('A',doc('Brouillon'));assert.equal(manager.acknowledgeMove('A',3,4),false);assert.equal(original.baseRevision,3);manager.dispose();
+});

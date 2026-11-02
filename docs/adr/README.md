@@ -18,15 +18,16 @@ Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style
 | ADR-0009 | [Socle exécutable Lot 0](0009-socle-executable-lot-0.md) | Mise en œuvre GO-00..02 |
 | ADR-0008 | [Identité déléguée, autorisation et politiques par défaut](0008-identite-delegation-et-politiques.md) | Proposée |
 | ADR-0010 | [Atelier et barrière des écritures de texte](0010-atelier-ecriture-et-concurrence.md) | Mise en œuvre Lot 1 ; reçu avec réserves |
-
 | ADR-0011 | [Référentiel narratif et références de scènes](0011-referentiel-narratif-et-references.md) | Mise en œuvre Lot 2 ; reçu techniquement avec réserves |
-
 | ADR-0012 | [Collaboration asynchrone et ancrages conservateurs](0012-collaboration-asynchrone-et-ancrages.md) | Principes acceptés ; Lot 3 reçu techniquement avec réserves |
-
 | ADR-0013 | [Moteur de propositions et fusion atomique](0013-moteur-de-propositions-et-fusion.md) | Principes acceptés ; réception technique Lot 4 avec réserves et CI verte |
 | ADR-0014 | [Assistant intégré et exécutions bornées](0014-assistant-integre-et-executions-bornees.md) | Phase A autorisée ; GO-03 et réception finale attendus |
-
 | ADR-0015 | [MCP local, OAuth et délégations persistantes](0015-mcp-local-oauth-et-grants.md) | Réalisation locale autorisée ; réception Lot 6 attendue ; public/dynamique différés |
+| ADR-0016 | [Sauvegardes, restauration et époque](0016-sauvegardes-restauration-et-epoque.md) | Réalisation locale ; GO-04 ouvert |
+| ADR-0017 | [Récupération locale des brouillons](0017-recuperation-locale-des-brouillons.md) | Coffre différé ; choix humain de mémoire seule |
+| ADR-0018 | [Contention des archives](0018-contention-des-archives.md) | Proposition ; réserve R-CONT-01 maintenue |
+| ADR-0019 | [Atelier et navigation contextuelle](0019-atelier-persistant-et-navigation-contextuelle.md) | Tranche UX-1 réalisée ; réception UX attendue |
+| ADR-0020 | [Cartes et déplacements contrôlés](0020-cartes-et-deplacements-controles.md) | Mission UX-2 autorisée ; réception humaine attendue |
 
 ## Décisions proposées et alternatives
 

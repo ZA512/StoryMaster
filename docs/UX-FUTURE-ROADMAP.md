@@ -35,3 +35,7 @@ Aucune bibliothèque de glisser-déposer, canvas ou framework UI lourd ajoutée.
 ## Critères d'acceptation du document
 
 Grands parcours, gestes, accessibilité, charge cognitive, propositions et historiques inventoriés ; opportunités distinguées des décisions ; commandes et identités préservées ; aucune direction graphique, dépendance lourde ou fonction future imposée.
+
+## Suivi UX-1B et UX-2
+
+La mission distincte du 2 novembre autorise la compacité puis les cartes et le glisser-déposer. [UX-1B](UX-1B-REPORT.md), [UX-2](UX-2-REPORT.md) et [ADR-0020](adr/0020-cartes-et-deplacements-controles.md) précisent la réalisation, les dépendances ajoutées et les limites ; les anciens paragraphes « aucune bibliothèque DnD » décrivent le Lot 6. Cela ne réceptionne pas l’ergonomie, ne clôt pas les brouillons après crash ou les réserves de sécurité, et n’autorise pas UX-3/4.

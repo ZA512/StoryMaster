@@ -199,3 +199,7 @@ Aucun changement des 150 exigences, du PRD, de leurs priorités ou des contrats 
 ## UX-1B puis UX-2 — instruction du 2 novembre 2026
 
 Mission explicite : simplifier l’atelier, puis cartes et glisser-déposer sur les scènes existantes ; arrêt après UX-2 pour réception humaine. [Rapport UX-1B](UX-1B-REPORT.md) : une barre, menus de premier plan, même éditeur, métriques et captures comparables. EDIT-01/02/03/05/06/10, UX-01/02/03/04/06/08/09 restent les références, sans modifier les 150 exigences, 100 MUST, priorités ou cibles. Brouillons mémoire maintenus ; aucune autorisation IA réelle, exposition publique, RLS, purge ou restauration principale. Les anciens paragraphes annonçant cartes futures décrivent leur date de livraison, pas une interdiction de la mission nouvelle.
+
+## Résultat UX-2 — cartes sur le plan canonique
+
+[Rapport UX-2](UX-2-REPORT.md) et [ADR-0020](adr/0020-cartes-et-deplacements-controles.md) : mêmes IDs/plan/commandes, source serveur unique, avant/après/début/fin/chapitre vide, inverse CAS, reprise idempotente et refus de rôle. Le contrat effectivement réalisé emploie expectedRevision et deux versions de chapitre dans le corps ; Scene garde sa révision commune texte/métadonnées. Aucun nouveau contrat ou sens de révision n’est inventé depuis la mission. Une relecture ne rebase pas un formulaire préparé, et un déplacement ne remonte pas inutilement l’éditeur. Les 150 exigences, leurs priorités et les 100 MUST sont conservés. Réception ergonomique humaine attendue, arrêt après UX-2.

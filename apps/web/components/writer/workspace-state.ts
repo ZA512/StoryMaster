@@ -13,11 +13,13 @@ function clamp(n: unknown, min: number, max: number, fallback: number) {return t
 export const layoutKey = (userId: string) => 'storymaster.workshop.layout.v1.'+userId;
 export const selectionKey = (userId: string, projectId: string) => 'storymaster.workshop.scene.v1.'+userId+'.'+projectId;
 export function parseSceneId(value: string | null) {return value && /^[a-f0-9-]{36}$/i.test(value) ? value : '';}
-export interface WorkshopSession {recent: string[]; scroll: Map<string,number>; expanded: Map<string,boolean>; planScroll: number}
+export interface WorkshopSession {recent: string[]; scroll: Map<string,number>; expanded: Map<string,boolean>; planScroll: number;boards:Map<string,{left:number;columns:Map<string,number>}>}
 const sessions = new Map<string,WorkshopSession>();
 export function workshopSession(userId:string,projectId:string) {
  const key=userId+'/'+projectId;
  let session=sessions.get(key);
- if(!session){session={recent:[],scroll:new Map(),expanded:new Map(),planScroll:0};sessions.set(key,session);}
+ if(!session){session={recent:[],scroll:new Map(),expanded:new Map(),planScroll:0,boards:new Map()};sessions.set(key,session);}
  return session;
 }
+
+export function boardSession(session:WorkshopSession,manuscriptId:string){let board=session.boards.get(manuscriptId);if(!board){board={left:0,columns:new Map()};session.boards.set(manuscriptId,board);}return board;}

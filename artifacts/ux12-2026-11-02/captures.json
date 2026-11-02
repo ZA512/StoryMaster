@@ -2,46 +2,134 @@
   {
     "file": "apres-1000x720.jpg",
     "bytes": 79891,
+    "width": 1000,
+    "height": 720,
     "sha256": "e5dde32c19ed23731c6776d2a25773138f32a5710c1eb59357c921dfcbd64510"
   },
   {
     "file": "apres-1280x720.jpg",
     "bytes": 99554,
+    "width": 1280,
+    "height": 720,
     "sha256": "cb114bdddd106009e426051c0abf03ed278151cea078ed26c42a0788839cf0b0"
   },
   {
     "file": "apres-1440x900.jpg",
     "bytes": 128135,
+    "width": 1440,
+    "height": 900,
     "sha256": "29ed9beb005e1ac362682baeaaa29fe3f0084437f684a7f1b8ee9fcc569f112d"
   },
   {
     "file": "apres-1920x1080.jpg",
     "bytes": 138782,
+    "width": 1919,
+    "height": 1080,
     "sha256": "3543f6008f5282eb972fe80acf1ece050cec98b44862927ac4eb2f90634674b6"
+  },
+  {
+    "file": "atelier-final.jpg",
+    "bytes": 100132,
+    "width": 1280,
+    "height": 720,
+    "sha256": "72d4814fa68eba1ae548e652e6bbd40a689e03653ac1a8d930c9551f1d1bdb68"
   },
   {
     "file": "avant-1000x720.jpg",
     "bytes": 75627,
+    "width": 1000,
+    "height": 720,
     "sha256": "1374d96ff6fea93735239c61393589587096be58c5f921775f53ab444f94a513"
   },
   {
     "file": "avant-1280x720.jpg",
     "bytes": 87336,
+    "width": 1280,
+    "height": 720,
     "sha256": "401369534549177a9d1270647e484265f42e71a80d597f7cc5b4157050acbf86"
   },
   {
     "file": "avant-1440x900.jpg",
     "bytes": 116849,
+    "width": 1440,
+    "height": 900,
     "sha256": "0cc2b0284773687a52e6ffb573a9ccd3d56232e99840304fbdfa47f6368fd455"
   },
   {
     "file": "avant-1920x1080.jpg",
     "bytes": 147030,
+    "width": 1919,
+    "height": 1080,
     "sha256": "87e549d02847c51fcd35421dfc21ec4902a039946bbe2586031345b97f4dd9c1"
+  },
+  {
+    "file": "cartes-1000x720.jpg",
+    "bytes": 79140,
+    "width": 1000,
+    "height": 720,
+    "sha256": "23e605cda2e2239013d01e8fc569665a83dd1cb600cf1a711da30cc92a8ec086"
+  },
+  {
+    "file": "cartes-1280x720.jpg",
+    "bytes": 93901,
+    "width": 1280,
+    "height": 720,
+    "sha256": "458ca3b529a35af6da20910ed66bee14a079cfdcd15b71f3924b160d98f2af8b"
+  },
+  {
+    "file": "cartes-1440x900.jpg",
+    "bytes": 99590,
+    "width": 1440,
+    "height": 900,
+    "sha256": "e4e91ee87a9378bfc0f7b559fedcaf4715298c76b9e1dbc9b661f7e7f1887e03"
+  },
+  {
+    "file": "cartes-1920x1080.jpg",
+    "bytes": 108250,
+    "width": 1919,
+    "height": 1080,
+    "sha256": "2ba2fc135c0b2c226222ef3491f6522e4c96dc637372be8ecf0f08d772a2383b"
+  },
+  {
+    "file": "cartes-demonstration.jpg",
+    "bytes": 97250,
+    "width": 1280,
+    "height": 720,
+    "sha256": "3c535ecda9aa4ab800216a76682dcd00ddbbfa64ce8d6947ad0957f8f77d4d3e"
+  },
+  {
+    "file": "choix-destination.png",
+    "bytes": 97210,
+    "width": 1280,
+    "height": 720,
+    "sha256": "7fb0780d08d2f4da38d330720ce95a5855e3c12c109e183f5d6c0a7cd5f4e36e"
   },
   {
     "file": "concentration-1280x720.jpg",
     "bytes": 78257,
+    "width": 1280,
+    "height": 720,
     "sha256": "022e0178925f86c859368abae5ccf3e28c11b00ba82921d1bf9aa011a1638423"
+  },
+  {
+    "file": "conflit-reel.png",
+    "bytes": 85747,
+    "width": 1280,
+    "height": 720,
+    "sha256": "d5fe971095f5866e77c914e5d12ea1b289152b16f31e762c79d4c7689e4dadd9"
+  },
+  {
+    "file": "deplacement-confirme.png",
+    "bytes": 81910,
+    "width": 1280,
+    "height": 720,
+    "sha256": "16ffebe70c97bf8ad023a4e6657f290828537672fa76daea910782d12acaee56"
+  },
+  {
+    "file": "drag-reel.png",
+    "bytes": 81655,
+    "width": 1280,
+    "height": 720,
+    "sha256": "cb4b624e334e24df1bd928a931e33c48a4c11b5d5915ecfb55d4f48d45f1ece7"
   }
 ]

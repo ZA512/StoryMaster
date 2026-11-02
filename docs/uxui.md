@@ -2,7 +2,7 @@
 
 > **Suivi du 2 novembre 2026 :** première tranche UX-1 implémentée et qualifiée localement, décrite dans [UX-1-REPORT.md](UX-1-REPORT.md). Le propriétaire demande explicitement de garder les brouillons en mémoire ; UX-1.5 reste différé. Les phases suivantes et la direction graphique finale ne sont pas réceptionnées par la présence de ce document. Les références `turn…` ci-dessous sont issues du document fourni : elles ne constituent pas des URLs de sources revérifiées dans le dépôt.
 
-> **Mission suivante autorisée :** UX-1B (compacité) puis UX-2 (cartes et déplacements), arrêt après UX-2 pour réception humaine. [Résultat UX-1B](UX-1B-REPORT.md). Les objectifs utilisateurs restent à mesurer.
+> **Suivi de la mission UX-1B + UX-2 :** [compacité réalisée et mesurée](UX-1B-REPORT.md), puis [cartes et déplacements qualifiés localement](UX-2-REPORT.md). Les trois vues gardent le même atelier ; contrat et reprise sont précisés par [ADR-0020](adr/0020-cartes-et-deplacements-controles.md). Arrêt après UX-2 pour réception humaine ; objectifs de temps toujours à mesurer, CI distante distincte de la qualification locale.
 
 ## Executive summary
 

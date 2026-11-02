@@ -29,10 +29,20 @@ export class DraftManager {
  load(scene:SceneDto,force=false){
   const old=this.states.get(scene.id);
   if(old&&!force&&(old.request||old.generation!==old.savedGeneration||old.phase==='conflict'))return old;
-  if(old&&!force&&old.baseRevision===scene.revision)return old;
+  if(old&&!force&&old.baseRevision>=scene.revision)return old;
+  if(old&&!force&&JSON.stringify(old.content)===JSON.stringify(scene.content)){
+   old.baseRevision=scene.revision;old.references=scene.references;old.wordCount=scene.wordCount;old.phase='clean';old.error=null;old.remote=null;this.notify();return old;
+  }
   if(old)this.cancelTimer(old);
   const state:DraftState={sceneId:scene.id,projectId:scene.projectId,content:scene.content,references:scene.references,baseRevision:scene.revision,generation:0,savedGeneration:0,referenceDraft:old?.referenceDraft,phase:'clean',error:null,remote:null,wordCount:scene.wordCount,loadEpoch:(old?.loadEpoch??0)+1,active:true,request:null,timer:null};
   this.states.set(scene.id,state);this.notify();return state;
+ }
+ // A confirmed structural command preserves this exact text and its references.
+ // Advance only a clean buffer at the expected base; never reset editor history.
+ acknowledgeMove(id:string,expectedRevision:number,nextRevision:number){
+  const s=this.states.get(id);
+  if(!s||s.baseRevision!==expectedRevision||nextRevision!==expectedRevision+1||s.request||s.generation!==s.savedGeneration||s.phase==='conflict')return false;
+  s.baseRevision=nextRevision;this.notify();return true;
  }
  edit(id:string,content:RichDocument){const s=this.states.get(id);if(!s)return;s.content=content;s.generation++;
   const previous=s.phase;if(s.phase!=='conflict'&&s.phase!=='error')s.phase=s.request?.running?'saving':'dirty';

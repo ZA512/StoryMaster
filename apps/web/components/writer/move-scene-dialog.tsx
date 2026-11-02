@@ -1,0 +1,17 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import type {EditorialOutline} from '@storymaster/contracts';
+import {chapterFor,prepareSceneMove,sceneIn} from './scene-move-intent';
+import type {SceneMoveIntent} from './scene-move-intent';
+export interface MoveSelection {sceneId:string;snapshot:EditorialOutline;targetId?:string;beforeId?:string|null}
+export function MoveSceneDialog({selection,onClose,onMove}:{selection:MoveSelection;onClose:()=>void;onMove:(intent:SceneMoveIntent)=>void}) {
+ const {snapshot,sceneId}=selection,scene=sceneIn(snapshot,sceneId),source=scene&&chapterFor(snapshot,scene.parentId),manuscript=snapshot.manuscripts.find(m=>m.id===source?.parentId),dialog=useRef<HTMLDialogElement>(null);
+ const [targetId,setTargetId]=useState(selection.targetId??source?.id??''),[placement,setPlacement]=useState<'start'|'end'|'before'|'after'>(selection.beforeId?'before':'end'),[sibling,setSibling]=useState(selection.beforeId??''),[error,setError]=useState('');
+ useEffect(()=>{dialog.current?.showModal();return()=>{const id=sceneId;requestAnimationFrame(()=>{document.querySelector<HTMLElement>(`[data-card-id="${id}"] .card-title`)?.focus({preventScroll:true});});};},[sceneId]);
+ const target=chapterFor(snapshot,targetId),siblings=target?.scenes.filter(s=>s.id!==sceneId)??[],choices=siblings.filter(s=>!s.archived);
+ return <dialog ref={dialog} className="move-scene-dialog" aria-labelledby="move-scene-title" onCancel={e=>{e.preventDefault();onClose();}}><h2 id="move-scene-title">Déplacer « {scene?.title??'Scène'} »</h2><p className="muted">Le texte, les références et les discussions restent attachés à cette scène.</p>{error&&<p className="notice error" role="alert">{error}</p>}<form onSubmit={e=>{e.preventDefault();try{const index=siblings.findIndex(s=>s.id===sibling),beforeId=placement==='end'?null:placement==='start'?siblings[0]?.id??null:placement==='before'?sibling:siblings[index+1]?.id??null;if((placement==='before'||placement==='after')&&index<0)throw Error('Choisissez une scène de repère.');const intent=prepareSceneMove(snapshot,sceneId,targetId,beforeId,crypto.randomUUID());if(!intent){setError('La scène est déjà à cet emplacement.');return;}onMove(intent);}catch(e){setError((e as Error).message);}}}>
+ <label>Chapitre de destination<select autoFocus value={targetId} onChange={e=>{setTargetId(e.target.value);setSibling('');setError('');}}>{manuscript?.chapters.filter(c=>!c.archived).map(c=><option key={c.id} value={c.id}>{manuscript.title} / {c.title}</option>)}</select></label>
+ <label>Emplacement<select value={placement} onChange={e=>{setPlacement(e.target.value as typeof placement);setError('');}}><option value="start">Au début du chapitre</option><option value="end">À la fin du chapitre</option><option value="before" disabled={!choices.length}>Avant une scène</option><option value="after" disabled={!choices.length}>Après une scène</option></select></label>
+ {(placement==='before'||placement==='after')&&<label>Scène de repère<select required value={sibling} onChange={e=>{setSibling(e.target.value);setError('');}}><option value="">Choisir une scène…</option>{choices.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}</select></label>}
+ <p>Départ : {source?.title}. Le déplacement attendra la confirmation du serveur.</p><div className="form-actions"><button type="button" className="text-button" onClick={onClose}>Annuler</button><button className="button">Déplacer</button></div></form></dialog>;
+}
