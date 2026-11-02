@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-11-02T06:43:43.690659+00:00",
+  "sourceCommit": "99a08701f7fede4f7a3293894e5179ff04d8b81b",
+  "scope": "Vérification du dossier de captures, sans validation exhaustive du produit.",
+  "screenshots": 100,
+  "sections": 14,
+  "nativeOverviewScreenshots": 10,
+  "validImages": 100,
+  "uniqueImages": 100,
+  "matchingImageMetadataAndSHA256": true,
+  "localHTMLReferencesChecked": 203,
+  "exampleExportZipCRC": "passed",
+  "galleryUI": {
+    "exportsFilter": "4 / 100 captures",
+    "viewerNavigation": "074 → 075",
+    "initialViewRestored": "10 / 100 captures",
+    "consoleWarningsOrErrors": 0
+  },
+  "appearance": "Réglages existants conservés ; ordinateur uniquement.",
+  "applicationCodeModified": false
+}

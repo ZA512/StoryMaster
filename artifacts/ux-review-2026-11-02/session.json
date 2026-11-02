@@ -1,0 +1,10 @@
+{
+  "projectUrl": "http://localhost:3000/projets/0f66def9-3087-4a34-aea9-d42a2a09c36f",
+  "firstSceneUrl": "http://localhost:3000/projets/0f66def9-3087-4a34-aea9-d42a2a09c36f/ecriture?scene=1730b200-e44c-4ec5-a843-341a9bab551f",
+  "eliseUrl": "http://localhost:3000/projets/0f66def9-3087-4a34-aea9-d42a2a09c36f/bible/7217f414-ee96-47e0-9cbb-ab03663c8f59",
+  "proposalUrl": "http://localhost:3000/projets/0f66def9-3087-4a34-aea9-d42a2a09c36f/propositions/91932998-a1d5-4b81-88d4-9331d4e28e69",
+  "conversationUrl": "http://localhost:3000/projets/0f66def9-3087-4a34-aea9-d42a2a09c36f/assistant/cbbd7aa4-29a7-4891-83aa-06c61060abe8",
+  "exportUrl": "http://localhost:3000/projets/0f66def9-3087-4a34-aea9-d42a2a09c36f/exports",
+  "account": "alice (démonstration)",
+  "display": "réglages initiaux conservés ; ordinateur uniquement"
+}

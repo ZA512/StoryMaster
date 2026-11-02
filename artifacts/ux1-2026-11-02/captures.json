@@ -1,0 +1,17 @@
+[
+  {
+    "file": "01-atelier.jpg",
+    "bytes": 87133,
+    "sha256": "50814ef79958c7932cbfced739e4ddb85e0cb184b85c8196b5f82ef8dbd67878"
+  },
+  {
+    "file": "02-fiche-contextuelle.jpg",
+    "bytes": 93190,
+    "sha256": "6c717aa1c549a7b2db8f1ebc027bd99cebcee282850319f3d457d990c7eaaac9"
+  },
+  {
+    "file": "03-concentration.jpg",
+    "bytes": 66348,
+    "sha256": "850f1a7b8599e02b57717153514d97805c7183ebf6ebcc257301ae9fd9664acd"
+  }
+]
