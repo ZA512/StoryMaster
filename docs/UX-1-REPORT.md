@@ -33,7 +33,7 @@ La suite UX entre dans la CI existante via `npm run test:e2e`. Les tests de donn
 | `npm run typecheck` | Succès |
 | `npm run lint` et générateurs `--check` | Succès ; frontières et contrats conservés |
 | `validate_specifications.py` | Succès : JSON, schémas, OpenAPI/MCP, 150 exigences, priorités, lots, scénarios et liens |
-| Tests du validateur Python | 53 tests réussis |
+| Tests du validateur Python | 54 tests réussis |
 | `npm test` sur PostgreSQL/HTTP/MCP réels et IA simulée | 278 réussis, aucun échec, 1 test de restauration optionnel non lancé dans cette commande |
 | Navigateur de production, Lot 1 et UX-1 | 5 parcours éditeur puis 5 parcours UX-1 réussis |
 | Navigateur, bible Lot 2 | 3 parcours réussis, dont concurrence texte/références et lecteur |
@@ -46,7 +46,7 @@ Soit **19 parcours navigateur distincts qualifiés localement**, exécutés par 
 
 Anomalies corrigées : focus demandé avant la création effective de ProseMirror ; contraste des compteurs et statuts du plan ; remise à zéro du défilement lors du chargement d’une scène puis défilement déclenché par le focus ; clé UI d’une intention confirmée conservée inutilement. Les parcours de test attendent la navigation effective après création d’une fiche et respectent `Retry-After` lors d’une connexion refusée. Les limites serveur ne sont pas assouplies.
 
-Une première passe a échoué faute d’environnement Python de validation ; les dépendances épinglées ont été installées dans `.venv`, puis la suite a été rejouée avec `DOCUMENT_PYTHON`. Un redémarrage de la machine a interrompu des commandes et supprimé les journaux temporaires ; les validations reprises sont conservées dans `artifacts/local/ux1-qualification/`. Les premiers échecs de démarrage/débit ne sont pas comptés comme réussites. Le test PostgreSQL optionnel est distingué de la restauration isolée effectivement passée dans le navigateur Lot 7.
+Une première passe a échoué faute d’environnement Python de validation ; les dépendances épinglées ont été installées dans `.venv`, puis la suite a été rejouée avec `DOCUMENT_PYTHON`. Un redémarrage de la machine a interrompu des commandes et supprimé les journaux temporaires ; les validations reprises sont conservées dans `artifacts/local/ux1-qualification/`. Les premiers échecs de démarrage/débit ne sont pas comptés comme réussites. La première CI a détecté que la copie de test du dossier documentaire omettait les sources applicatives liées par le nouveau rapport ; la fixture inclut désormais apps/packages sans dépendances, sorties de build ou configuration locale, avec un test de lien source cassé. Le validateur conserve ses contrôles de liens. Le test PostgreSQL optionnel est distingué de la restauration isolée effectivement passée dans le navigateur Lot 7.
 
 ## Réception et suite
 

@@ -32,6 +32,11 @@ class ValidatorTests(unittest.TestCase):
         shutil.copytree(ROOT / "scripts", self.root / "scripts",
                         ignore=shutil.ignore_patterns("__pycache__"))
         shutil.copytree(ROOT / "tests", self.root / "tests")
+        # Documentation may link to source files; keep those targets in the fixture,
+        # without copying build outputs, dependencies or local configuration.
+        for directory in ("apps", "packages"):
+            shutil.copytree(ROOT / directory, self.root / directory,
+                            ignore=shutil.ignore_patterns("node_modules", ".next", ".env*", "*.tsbuildinfo"))
         shutil.copy2(ROOT / "AGENTS.md", self.root / "AGENTS.md")
         shutil.copy2(ROOT / "README.md", self.root / "README.md")
         shutil.copytree(ROOT / ".github", self.root / ".github")
@@ -137,6 +142,13 @@ class ValidatorTests(unittest.TestCase):
         oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
         oas['paths']['/projects/{projectId}/ai/conversations/{conversationId}']['get']['x-owner-bound']=False
         with self.assertRaises(validation.InvalidSpecification): validation.validate_lot5(oas)
+
+    def test_document_source_link_must_resolve_in_fixture(self):
+        target = self.root / "apps/web/components/writer/writer.tsx"
+        self.assertTrue(target.is_file())
+        target.unlink()
+        with self.assertRaisesRegex(validation.InvalidSpecification, "lien local absent"):
+            validation.validate_documents(self.root, validation.validate_requirements(self.root))
 
     def test_current_dossier(self):
         with contextlib.redirect_stdout(io.StringIO()):
