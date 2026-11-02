@@ -35,13 +35,13 @@ Même scène fictive « La lettre sous la porte », même compte, thème sombre 
 
 - Construction Docker web de production, TypeScript et lint/générateurs de contrats : réussis.
 - Validation JSON/Schema/OpenAPI/MCP, exigences, priorités, lots et liens : réussie ; 54 tests du validateur documentaire réussis.
-- 15 parcours navigateur distincts qualifiés localement : cinq Lot 1, cinq UX-1, trois UX-1B, un parcours à deux comptes Lot 3 et un parcours intégré assistant/revue Lot 5. La suite ciblée de 12 a passé intégralement, puis le nouveau test de grossissement et les deux parcours transverses ont passé avec les trois UX-1B.
+- 16 parcours navigateur distincts qualifiés localement : cinq Lot 1, cinq UX-1, trois UX-1B, un parcours à deux comptes Lot 3 et un parcours intégré assistant/revue Lot 5, puis un parcours concurrent texte/références Lot 2. La suite ciblée de 12 a passé intégralement, puis le nouveau test de grossissement et les deux parcours transverses ont passé avec les trois UX-1B.
 - Même nœud éditorial et undo après masquage des panneaux/concentration, brouillon en erreur réseau conservé puis enregistré explicitement ; riche, longue scène, réponse perdue/tardive, conflit, lecteur, historique, restauration, ordre et exports déjà couverts par les tests Lot 1.
 - Quatre tailles, menus non coupés, navigation au clavier, absence de débordement global et contrôle axe clair/sombre. Grossissement visuel Chromium à facteur 2 via CDP, puis reflow à 640 × 450 CSS et accès aux commandes vérifiés. Cela ne vaut pas audit humain de lecteurs d’écran ni qualification de tous les zooms de tous les navigateurs. Le raccourci de zoom du navigateur intégré n’a eu aucun effet mesurable ; il n’est pas compté comme un zoom testé.
 
 La première passe navigateur a détecté trois échecs de contraste liés aux deux compteurs du plan et au statut de sauvegarde : couleurs corrigées, puis suites rejouées. Un import de test manquant a été corrigé après échec TypeScript. Aucun échec n’est compté comme réussite. Les tests documentaires incluent les cibles de captures liées, sans sorties locales ni dépendances.
 
-CI distante : la CI de référence est verte ; celle du commit UX-1B est observée après push, son SHA et son résultat sont fournis dans le compte rendu et la suite du rapport. Les journaux locaux se trouvent dans `artifacts/local/ux1b-*.log` ; ils ne constituent pas une preuve de CI.
+CI distante : [premier passage UX-1B sur c78c7bb](https://github.com/ZA512/StoryMaster/actions/runs/41517914305) : tous les contrôles statiques, applicatifs, restauration, benchmarks et Spike A verts ; 34/35 parcours navigateur réussis. Le test Lot 2 texte/références cherchait encore le mode concentration hors du menu Disposition. Son accès a été adapté, sans changer ses assertions de conflit/conservation, puis le parcours a passé sur la production UX-1B locale. La CI du correctif reste à observer après push ; aucun ancien succès n’est assimilé à cette preuve. Les journaux locaux se trouvent dans `artifacts/local/ux1b-*.log` ; ils ne constituent pas une preuve de CI.
 
 ## Limites et avis humain attendu
 
