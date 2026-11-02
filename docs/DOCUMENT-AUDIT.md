@@ -189,3 +189,9 @@ Les brouillons persistants chiffrés sont différés conformément à l’altern
 ## Correctifs de clôture du Lot 7
 
 Une passe de charge supplémentaire a révélé une lecture du témoin scellé avant le COMMIT : revalidation courte de la paire exacte, sans rejeu métier, avec refus durable conservé ; ADR-0016 et test PostgreSQL déterministe complétés. La première CI sur 07c8efa a échoué sur l’annulation IA simulée (26/27 navigateur). Le conflit CAS d’annulation est désormais actualisé et expliqué à l’humain ; le test force ce conflit et exige un second clic. Les échecs ne sont pas présentés comme succès. Consommation CPU/RSS du processus de benchmark ajoutée, mesures après correction distinctes des précédentes et d’une passe avec construction Docker simultanée. Aucun changement des exigences, migration appliquée ou décision produit durable.
+
+## Première tranche UX-1 — 2 novembre 2026
+
+Le propriétaire ajoute [uxui.md](uxui.md) et demande d’avancer dessus. La tranche commence par l’atelier : panneaux, navigation, créations inline, inspecteur et palette, sans avancer cartes, arcs ou graphe. Il choisit ensuite explicitement de garder les brouillons en mémoire : ADR-0017 et la réserve après crash restent ouverts. [ADR-0019](adr/0019-atelier-persistant-et-navigation-contextuelle.md) décrit préférences/IDs persistés et état de navigation en mémoire ; le [rapport](UX-1-REPORT.md) distingue réalisation, tests et réception.
+
+Aucun changement des 150 exigences, du PRD, de leurs priorités ou des contrats métier. Les citations `turn…` du document utilisateur ne sont pas assimilées à des sources revérifiées ; son lien sandbox non portable est remplacé par l’emplacement local du dossier de captures. Main et travail utilisateur préservés, sans branche/PR. Aucune modification significative des consignes AGENTS.

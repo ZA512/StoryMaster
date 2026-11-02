@@ -104,3 +104,7 @@ Réserves héritées : R-CONT-01, brouillons en mémoire après crash, RLS, rév
 ## Présentation du Lot 7 à réception — aucun accord enregistré
 
 Le [rapport](LOT-7-REPORT.md), la [matrice des preuves](MVP-EVIDENCE-MATRIX.md), [GO-04 proposé](GO-04-DECISION-PROPOSAL.md) et les ADR-0016/0017/0018 sont soumis au propriétaire. Restauration isolée et protection contre la résurrection d’accès réellement éprouvées ; réception locale encore humaine. SEC-07 reste MUST non satisfait et exige un arbitrage TLS/certificats/issuer avant de déclarer tous les MUST MVP réalisés. Réserve de saisie non confirmée maintenue selon ADR-0017 ; ordonnanceur/purges non activés. Ces documents ne valent ni acceptation des nouveaux ADR ni GO-04/GO-03. Aucun écrasement principal ou nouveau chantier futur n’est autorisé par cette présentation.
+
+## UX-1 — 2 novembre 2026
+
+Source : demande du propriétaire « j’ai rajouté un doc uxui.md, tu peux avancer dessus ». Démarrage par la première tranche UX-1, sans accepter automatiquement les phases avancées, tous les ADR ou la direction graphique finale. Le propriétaire répond à la proposition de coffre facultatif : **« Garder les brouillons en mémoire pour le moment »**. Aucun coffre persistant, aucune durée locale ni phrase secrète configurés. Limite après interruption maintenue. [Rapport](UX-1-REPORT.md) et [ADR-0019](adr/0019-atelier-persistant-et-navigation-contextuelle.md). Réception de la tranche et poursuite ultérieure restent distinctes.

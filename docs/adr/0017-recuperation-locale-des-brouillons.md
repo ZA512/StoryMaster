@@ -29,3 +29,7 @@ Accepter le maintien temporaire de la réserve ou autoriser le coffre avec phras
 ## Critères d'acceptation du document
 
 Avant clôture future : tests fermeture/crash, nouvelle session, phrase erronée, quota, expiration, changement d’utilisateur, conflit serveur, réponse perdue et CAS ; revue de confidentialité du profil navigateur. Les spécifications de ces tests ne sont pas présentées comme exécutées.
+
+## Choix du propriétaire — 2 novembre 2026
+
+Pendant la préparation UX-1, le propriétaire choisit explicitement « Garder les brouillons en mémoire pour le moment » après présentation du coffre facultatif et de ses modalités. Aucun coffre, TTL local ni persistance narrative n’est activé. L’atelier conserve l’avertissement de perte possible des textes non confirmés après interruption. Cette décision n’accepte pas l’implémentation du coffre proposé et ne clôt pas la réserve. [Rapport UX-1](../UX-1-REPORT.md).

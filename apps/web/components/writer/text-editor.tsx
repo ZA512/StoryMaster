@@ -8,12 +8,12 @@ const commentHighlightKey=new PluginKey<DecorationSet>('storymaster-comment-high
 import {extensions,safeUrl} from '@storymaster/editor';
 import type {RichDocument} from '@storymaster/domain';
 import type {DraftManager} from './drafts';
-export function TextEditor({manager,sceneId,epoch,editable,onCount,onComment,highlight}:{manager:DraftManager;sceneId:string;epoch:number;editable:boolean;onCount:(doc:RichDocument,generation:number)=>void;onComment?:(range:{from:number;to:number;quote:string})=>void;highlight?:PassageHighlight|null}){
- const host=useRef<HTMLDivElement>(null),instance=useRef<Editor|null>(null),count=useRef(onCount);
- const [toolbar,setToolbar]=useState(0),[linkError,setLinkError]=useState('');count.current=onCount;
+export function TextEditor({manager,sceneId,epoch,editable,onCount,onComment,highlight,onReady}:{manager:DraftManager;sceneId:string;epoch:number;editable:boolean;onCount:(doc:RichDocument,generation:number)=>void;onComment?:(range:{from:number;to:number;quote:string})=>void;highlight?:PassageHighlight|null;onReady?:(target:HTMLElement)=>void}){
+ const host=useRef<HTMLDivElement>(null),instance=useRef<Editor|null>(null),count=useRef(onCount),ready=useRef(onReady);
+ const [toolbar,setToolbar]=useState(0),[linkError,setLinkError]=useState('');count.current=onCount;ready.current=onReady;
  useEffect(()=>{
   const state=manager.get(sceneId);if(!host.current||!state)return;
-  const editor=new Editor({element:host.current,extensions:extensions(),content:state.content,editable,injectCSS:false,editorProps:{attributes:{tabindex:'0',role:'textbox','aria-label':'Texte de la scène','aria-multiline':'true','aria-readonly':String(!editable),spellcheck:'true'}},onUpdate:({editor})=>{if(!editor.isEditable)return;const content=editor.getJSON() as RichDocument;manager.edit(sceneId,content);count.current(content,manager.get(sceneId)!.generation);},onSelectionUpdate:()=>setToolbar(v=>v+1)});
+  const editor=new Editor({element:host.current,extensions:extensions(),content:state.content,editable,injectCSS:false,editorProps:{attributes:{tabindex:'0',role:'textbox','aria-label':'Texte de la scène','aria-multiline':'true','aria-readonly':String(!editable),spellcheck:'true'}},onUpdate:({editor})=>{if(!editor.isEditable)return;const content=editor.getJSON() as RichDocument;manager.edit(sceneId,content);count.current(content,manager.get(sceneId)!.generation);},onCreate:({editor})=>ready.current?.(editor.view.dom),onSelectionUpdate:()=>setToolbar(v=>v+1)});
   editor.registerPlugin(new Plugin<DecorationSet>({key:commentHighlightKey,state:{init:()=>DecorationSet.empty,apply:(tr,old)=>{const range=tr.getMeta(commentHighlightKey) as PassageHighlight|null|undefined;if(range!==undefined)return range?DecorationSet.create(tr.doc,[Decoration.inline(range.from,range.to,{class:'comment-highlight'})]):DecorationSet.empty;return tr.docChanged?DecorationSet.empty:old;}},props:{decorations:state=>commentHighlightKey.getState(state)}}));
   instance.current=editor;return()=>{instance.current=null;editor.destroy();};
  },[sceneId,epoch,manager]);
