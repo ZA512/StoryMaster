@@ -1,0 +1,293 @@
+{
+  "date": "2026-11-03",
+  "unaltered": true,
+  "reviewProjectId": "3fdeca23-c9c5-4e10-bd32-a8404f68f2b0",
+  "images": [
+    {
+      "file": "apres-fiche-1000x720.jpg",
+      "caption": "apres fiche 1000x720",
+      "width": 985,
+      "height": 709,
+      "bytes": 48171,
+      "sha256": "194ed0b933cf7164b242139ddc4593ea94ea2e46567df61af3596b9a9865d11a",
+      "viewportRequested": [
+        1000,
+        720
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "apres-fiche-1280x720.jpg",
+      "caption": "apres fiche 1280x720",
+      "width": 1280,
+      "height": 720,
+      "bytes": 55467,
+      "sha256": "3701dfeb19ca4d1a5ed3176d3842d82418770e2482de1a94088328b3bd55b527",
+      "viewportRequested": [
+        1280,
+        720
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "apres-fiche-1440x900.jpg",
+      "caption": "apres fiche 1440x900",
+      "width": 1440,
+      "height": 900,
+      "bytes": 72736,
+      "sha256": "a9ab0c33e19d286c24be9d8d3d69282e49396f97afc6e1b4ede17a61118be67f",
+      "viewportRequested": [
+        1440,
+        900
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "apres-fiche-1920x1080.jpg",
+      "caption": "apres fiche 1920x1080",
+      "width": 1919,
+      "height": 1080,
+      "bytes": 93020,
+      "sha256": "eb2eb6f85a62dc2e5fa22efdd229b1d45e69796000c14b08c7e6cd2970ce9ea2",
+      "viewportRequested": [
+        1920,
+        1080
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "avant-fiche-1000x720.jpg",
+      "caption": "avant fiche 1000x720",
+      "width": 985,
+      "height": 709,
+      "bytes": 53634,
+      "sha256": "0fc68d392f1109d30cec0842560a8375189fbfd426586d4cb1e6229fac209ebf",
+      "viewportRequested": [
+        1000,
+        720
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "avant-fiche-1280x720.jpg",
+      "caption": "avant fiche 1280x720",
+      "width": 1265,
+      "height": 712,
+      "bytes": 56110,
+      "sha256": "2068d1befc4fbe4b9d52460667a67cb5e164132c01eec841b454b2a4e7ec0569",
+      "viewportRequested": [
+        1280,
+        720
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "avant-fiche-1440x900.jpg",
+      "caption": "avant fiche 1440x900",
+      "width": 1425,
+      "height": 891,
+      "bytes": 66705,
+      "sha256": "92499a5349347f94fb35413b4f38efb32b4c400cc53c4e9e85f1fe2fb1abf0e4",
+      "viewportRequested": [
+        1440,
+        900
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "avant-fiche-1920x1080.jpg",
+      "caption": "avant fiche 1920x1080",
+      "width": 1905,
+      "height": 1072,
+      "bytes": 81125,
+      "sha256": "4fee373663ea68c68f355c24be4038a233e8a2a60a0af5ad68bb010c9e3afb6b",
+      "viewportRequested": [
+        1920,
+        1080
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "bible-personnages.jpg",
+      "caption": "La Bible et les huit personnages de revue",
+      "width": 1425,
+      "height": 891,
+      "bytes": 81818,
+      "sha256": "60d99351de9bbce1ecf3bdf03b66109cbadafbdf43388423d12588ecd3f56837",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "conflit-relation.png",
+      "caption": "Deux auteurs : base périmée et saisie conservée",
+      "width": 1280,
+      "height": 720,
+      "bytes": 43822,
+      "sha256": "a2b6f655e5ef19743680b025219998a2938609a5cc7ad445cd3af4e5e7624809",
+      "viewportRequested": null,
+      "source": "Playwright — incident simulé"
+    },
+    {
+      "file": "creation-rapide.jpg",
+      "caption": "Création rapide : seul le nom est requis",
+      "width": 1425,
+      "height": 891,
+      "bytes": 71915,
+      "sha256": "f0f18c35af6395de5c179428a6f867260f4af2c9d7e2854df92316af08284798",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "fiche-approfondi.jpg",
+      "caption": "Approfondi : sections et informations facultatives",
+      "width": 1425,
+      "height": 891,
+      "bytes": 67873,
+      "sha256": "3c95f497e928514d197d766d165881d66eb06d6ffd85bb7feb9ba9ecf23294e4",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "fiche-complet.jpg",
+      "caption": "Complet : passé, voix, motivations et traçabilité",
+      "width": 1425,
+      "height": 891,
+      "bytes": 60548,
+      "sha256": "3b0ac5d0e1c5343eb9362275a2835c6a7767e52fcbb3ffe7982f901c42baa929",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "fiche-essentiel.jpg",
+      "caption": "Essentiel : synthèse de la fiche unique",
+      "width": 1440,
+      "height": 900,
+      "bytes": 72884,
+      "sha256": "7b05c006ae356db9294fc2d8d7308a1b727b67dd16d6d08198c4cbbf5825f223",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "graphe-1000x720.jpg",
+      "caption": "graphe 1000x720",
+      "width": 985,
+      "height": 709,
+      "bytes": 52665,
+      "sha256": "7f25f6cfef7b82dd9344fbac6062c12d0c0fad43d41ea70806711ff5c1077881",
+      "viewportRequested": [
+        1000,
+        720
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "graphe-1280x720.jpg",
+      "caption": "graphe 1280x720",
+      "width": 1280,
+      "height": 720,
+      "bytes": 61193,
+      "sha256": "a5cfa1a94878a9186bfc18d1f7bbb07260265800408a7f9ae1f5e2a74d28fbe6",
+      "viewportRequested": [
+        1280,
+        720
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "graphe-1440x900.jpg",
+      "caption": "graphe 1440x900",
+      "width": 1440,
+      "height": 900,
+      "bytes": 73669,
+      "sha256": "5dee1e82028453316a09322d74f140993eeecf0cda55c6b7e13a365917b1cc47",
+      "viewportRequested": [
+        1440,
+        900
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "graphe-1920x1080.jpg",
+      "caption": "graphe 1920x1080",
+      "width": 1919,
+      "height": 1080,
+      "bytes": 114124,
+      "sha256": "4a8b334cf7fa88de5ce7b639628b466640772cc0a525e8021d194a3e3e0fe367",
+      "viewportRequested": [
+        1920,
+        1080
+      ],
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "graphe-depuis-atelier.jpg",
+      "caption": "La carte depuis l’atelier, sans quitter la scène",
+      "width": 1440,
+      "height": 900,
+      "bytes": 70643,
+      "sha256": "f08d3493f226d48dcd9fe38eac4e6f45fcf45a684a1e679095d659c51278ab76",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "graphe-expansion.jpg",
+      "caption": "Expansion jusqu’à Jeanne, sans parenté inférée",
+      "width": 1440,
+      "height": 900,
+      "bytes": 68940,
+      "sha256": "68281350cbe63d2089d7435096a63772bad880c9ff19d958e7dfaee162f9ce3b",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "inspecteur-personnage.jpg",
+      "caption": "Le personnage dans l’inspecteur, manuscrit enregistré conservé",
+      "width": 1440,
+      "height": 900,
+      "bytes": 77694,
+      "sha256": "2e6b837b8ebadb03e01df7fd7d148c492ac41e609a4dffad5e1a92ae628169d5",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "parente-detail.jpg",
+      "caption": "Lecture inverse et nature biologique de la parenté",
+      "width": 1425,
+      "height": 891,
+      "bytes": 57205,
+      "sha256": "370c56f72045b7a8ed00afd5dcbe1da01fd2d3bb12fcd570e4d2c01123d99b1a",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "relation-edition.jpg",
+      "caption": "Édition contextuelle — aucun changement enregistré pour cette capture",
+      "width": 1425,
+      "height": 891,
+      "bytes": 51044,
+      "sha256": "1e4692328db5fe47ce4b3b0be80d09abfdb01df131a94afedb1920593de5c2de",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "relations-liste.jpg",
+      "caption": "Liste équivalente, sens et qualifications explicites",
+      "width": 1440,
+      "height": 900,
+      "bytes": 80757,
+      "sha256": "d752c4ebe0ee268be220479b0f3906eb8e3eb094adc61ff5ee637b276f0e115f",
+      "viewportRequested": null,
+      "source": "Capture native du navigateur — données synthétiques"
+    },
+    {
+      "file": "reponse-inconnue.png",
+      "caption": "Réponse perdue après commit : reprise explicite de la même demande",
+      "width": 1280,
+      "height": 720,
+      "bytes": 51619,
+      "sha256": "0da5dda31d4979b17e95a7eb5a1907c8143b53c807ffde519a67ff499d11cd95",
+      "viewportRequested": null,
+      "source": "Playwright — incident simulé"
+    }
+  ]
+}

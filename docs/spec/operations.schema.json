@@ -278,6 +278,14 @@
             "$ref": "#/$defs/ObjectRef"
           },
           "maxItems": 100
+        },
+        "background": {
+          "type": "string",
+          "maxLength": 20000
+        },
+        "speakingStyle": {
+          "type": "string",
+          "maxLength": 4000
         }
       },
       "additionalProperties": false
@@ -400,8 +408,16 @@
               ]
             },
             "schemaVersion": {
-              "type": "number",
-              "const": 1
+              "anyOf": [
+                {
+                  "type": "number",
+                  "const": 1
+                },
+                {
+                  "type": "number",
+                  "const": 2
+                }
+              ]
             },
             "name": {
               "type": "string",
@@ -436,10 +452,14 @@
                 "properties": {
                   "typeKey": {
                     "const": "character"
+                  },
+                  "schemaVersion": {
+                    "const": 1
                   }
                 },
                 "required": [
-                  "typeKey"
+                  "typeKey",
+                  "schemaVersion"
                 ]
               },
               "then": {
@@ -516,11 +536,108 @@
               "if": {
                 "properties": {
                   "typeKey": {
-                    "const": "place"
+                    "const": "character"
+                  },
+                  "schemaVersion": {
+                    "const": 2
                   }
                 },
                 "required": [
-                  "typeKey"
+                  "typeKey",
+                  "schemaVersion"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "attributes": {
+                    "type": "object",
+                    "properties": {
+                      "aliases": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "description": {
+                        "type": "string",
+                        "maxLength": 20000
+                      },
+                      "narrativeRole": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "motivations": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "goals": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "conflicts": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "traits": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "healthSummary": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "conditionEventRefs": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/ObjectRef"
+                        },
+                        "maxItems": 100
+                      },
+                      "background": {
+                        "type": "string",
+                        "maxLength": 20000
+                      },
+                      "speakingStyle": {
+                        "type": "string",
+                        "maxLength": 4000
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "typeKey": {
+                    "const": "place"
+                  },
+                  "schemaVersion": {
+                    "const": 1
+                  }
+                },
+                "required": [
+                  "typeKey",
+                  "schemaVersion"
                 ]
               },
               "then": {
@@ -565,10 +682,14 @@
                 "properties": {
                   "typeKey": {
                     "const": "event"
+                  },
+                  "schemaVersion": {
+                    "const": 1
                   }
                 },
                 "required": [
-                  "typeKey"
+                  "typeKey",
+                  "schemaVersion"
                 ]
               },
               "then": {
@@ -626,6 +747,28 @@
                   }
                 }
               }
+            },
+            {
+              "if": {
+                "properties": {
+                  "typeKey": {
+                    "enum": [
+                      "place",
+                      "event"
+                    ]
+                  }
+                },
+                "required": [
+                  "typeKey"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "schemaVersion": {
+                    "const": 1
+                  }
+                }
+              }
             }
           ]
         }
@@ -672,6 +815,18 @@
             "set": {
               "type": "object",
               "properties": {
+                "schemaVersion": {
+                  "anyOf": [
+                    {
+                      "type": "number",
+                      "const": 1
+                    },
+                    {
+                      "type": "number",
+                      "const": 2
+                    }
+                  ]
+                },
                 "name": {
                   "type": "string",
                   "maxLength": 200
@@ -855,7 +1010,12 @@
                 "knows",
                 "located_in",
                 "participates_in",
-                "precedes"
+                "precedes",
+                "parent_of",
+                "sibling_of",
+                "ally_of",
+                "rival_of",
+                "mentor_of"
               ]
             },
             "attributes": {
@@ -864,6 +1024,24 @@
                 "description": {
                   "type": "string",
                   "maxLength": 4000
+                },
+                "parentage": {
+                  "type": "string",
+                  "enum": [
+                    "unspecified",
+                    "biological",
+                    "adoptive",
+                    "social",
+                    "guardianship"
+                  ]
+                },
+                "parentRole": {
+                  "type": "string",
+                  "enum": [
+                    "parent",
+                    "father",
+                    "mother"
+                  ]
                 }
               },
               "additionalProperties": false
@@ -875,7 +1053,49 @@
             "relationType",
             "attributes"
           ],
-          "additionalProperties": false
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "relationType": {
+                    "const": "parent_of"
+                  }
+                },
+                "required": [
+                  "relationType"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "attributes": {
+                    "$ref": "#/$defs/NarrativeParentAttributes"
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "relationType": {
+                    "not": {
+                      "const": "parent_of"
+                    }
+                  }
+                },
+                "required": [
+                  "relationType"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "attributes": {
+                    "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                  }
+                }
+              }
+            }
+          ]
         }
       },
       "required": [
@@ -927,7 +1147,12 @@
                     "knows",
                     "located_in",
                     "participates_in",
-                    "precedes"
+                    "precedes",
+                    "parent_of",
+                    "sibling_of",
+                    "ally_of",
+                    "rival_of",
+                    "mentor_of"
                   ]
                 },
                 "attributes": {
@@ -936,6 +1161,24 @@
                     "description": {
                       "type": "string",
                       "maxLength": 4000
+                    },
+                    "parentage": {
+                      "type": "string",
+                      "enum": [
+                        "unspecified",
+                        "biological",
+                        "adoptive",
+                        "social",
+                        "guardianship"
+                      ]
+                    },
+                    "parentRole": {
+                      "type": "string",
+                      "enum": [
+                        "parent",
+                        "father",
+                        "mother"
+                      ]
                     }
                   },
                   "additionalProperties": false
@@ -1276,6 +1519,50 @@
           "$ref": "#/$defs/MoveScene"
         }
       ]
+    },
+    "NarrativeParentAttributes": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "parentage": {
+          "default": "unspecified",
+          "type": "string",
+          "enum": [
+            "unspecified",
+            "biological",
+            "adoptive",
+            "social",
+            "guardianship"
+          ]
+        },
+        "parentRole": {
+          "default": "parent",
+          "type": "string",
+          "enum": [
+            "parent",
+            "father",
+            "mother"
+          ]
+        }
+      },
+      "required": [
+        "parentage",
+        "parentRole"
+      ],
+      "additionalProperties": false
+    },
+    "NarrativeLegacyRelationAttributes": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

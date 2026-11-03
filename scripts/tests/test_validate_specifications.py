@@ -49,6 +49,21 @@ class ValidatorTests(unittest.TestCase):
         mutate(document)
         path.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n")
 
+    def test_ux3_parentage_cannot_become_symmetric(self):
+        self.mutate_json('docs/spec/module-registry.v2.json', lambda d:d['relationRules']['parent_of'].update(symmetric=True))
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaisesRegex(validation.InvalidSpecification, 'sens et cycles'): validation.validate_lot2(oas,self.root)
+
+    def test_ux3_historical_definition_cannot_be_replaced(self):
+        self.mutate_json('docs/spec/module-registry.v2.json', lambda d:d['definitions'][0].update(version=9))
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaisesRegex(validation.InvalidSpecification, 'historiques'): validation.validate_lot2(oas,self.root)
+
+    def test_ux3_qualifier_enum_drift_preserves_counts(self):
+        self.mutate_json('docs/spec/module-registry.v2.json', lambda d:d['relationAttributeSchemas']['parent_of']['properties']['parentage']['enum'].__setitem__(0,'inferred'))
+        oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
+        with self.assertRaisesRegex(validation.InvalidSpecification, 'attributs de relation'): validation.validate_lot2(oas,self.root)
+
     def test_lot7_cannot_make_download_public(self):
         oas=validation.load_yaml(self.root/'docs/spec/openapi.yaml')
         oas['paths']['/projects/{projectId}/exports/{jobId}/download']['get']['security']=[]

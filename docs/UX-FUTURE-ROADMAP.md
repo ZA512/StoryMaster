@@ -39,3 +39,7 @@ Grands parcours, gestes, accessibilité, charge cognitive, propositions et histo
 ## Suivi UX-1B et UX-2
 
 La mission distincte du 2 novembre autorise la compacité puis les cartes et le glisser-déposer. [UX-1B](UX-1B-REPORT.md), [UX-2](UX-2-REPORT.md) et [ADR-0020](adr/0020-cartes-et-deplacements-controles.md) précisent la réalisation, les dépendances ajoutées et les limites ; les anciens paragraphes « aucune bibliothèque DnD » décrivent le Lot 6. Cela ne réceptionne pas l’ergonomie, ne clôt pas les brouillons après crash ou les réserves de sécurité, et n’autorise pas UX-3/4.
+
+## Suivi UX-3
+
+Mission distincte du 3 novembre : fiches progressives, cinq relations character typées, inverse unique, graphe React Flow/Dagre chargé à la demande et liste accessible. [ADR-0021](adr/0021-fiches-progressives-et-relations-narratives.md), [rapport](UX-3-REPORT.md). L’ancienne mention « pas d’UX-3 » décrit la portée de la mission précédente. L’implémentation ne réceptionne pas l’ergonomie et n’autorise pas UX-4/5. Arcs, connaissances/croyances, temporalité des relations et positions persistantes restent des décisions futures distinctes.

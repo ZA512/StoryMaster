@@ -28,6 +28,7 @@ Les cinq ADR initiaux sont préservés et complétés. ADR-0001 compare le style
 | ADR-0018 | [Contention des archives](0018-contention-des-archives.md) | Proposition ; réserve R-CONT-01 maintenue |
 | ADR-0019 | [Atelier et navigation contextuelle](0019-atelier-persistant-et-navigation-contextuelle.md) | Tranche UX-1 réalisée ; réception UX attendue |
 | ADR-0020 | [Cartes et déplacements contrôlés](0020-cartes-et-deplacements-controles.md) | Mission UX-2 autorisée ; réception humaine attendue |
+| ADR-0021 | [Fiches progressives et relations narratives](0021-fiches-progressives-et-relations-narratives.md) | Mission UX-3 autorisée ; implémentation et réception en cours |
 
 ## Décisions proposées et alternatives
 

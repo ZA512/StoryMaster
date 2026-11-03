@@ -1,0 +1,153 @@
+{
+  "date": "2026-11-03T07:31:37.856572+00:00",
+  "sourceBaseline": "febf35d9dc8f7c011504c2587b503e3824059403",
+  "scope": "UX-3 local, réception humaine attendue ; aucun modèle commercial ni appel facturable",
+  "checks": {
+    "documentation": {
+      "command": ".venv/bin/python scripts/validate_specifications.py",
+      "success": true,
+      "validatorTests": 57
+    },
+    "application": {
+      "command": "DOCUMENT_PYTHON=.venv/bin/python npm test",
+      "tests": 300,
+      "passed": 299,
+      "failed": 0,
+      "skipped": 1,
+      "skipReason": "La restauration physique est exécutée séparément."
+    },
+    "physicalRecovery": {
+      "actual": true,
+      "physical": true,
+      "mainUnchanged": true,
+      "ux3ProfileAndParentageRestored": true,
+      "network": "none",
+      "ports": [],
+      "tablesVerified": 55,
+      "rowsVerified": 247,
+      "constraintsVerified": 829,
+      "restoreMs": 6842.639326999999,
+      "backupBytes": 151735923,
+      "nativeVerified": true,
+      "oldSessionRejected": true,
+      "oldGrantRejectedAfterQuarantine": true,
+      "freshHumanSessionQualified": true
+    },
+    "browser": {
+      "globalPass": {
+        "passed": 57,
+        "failed": 1,
+        "total": 58
+      },
+      "replayedAfterFix": {
+        "ux3Passed": 11,
+        "methods": "10 réussites dans le rejeu UX-3 puis geste graphique adapté au bouton accessible et réussi séparément. Les échecs intermédiaires ne sont pas comptés comme succès.",
+        "finalGraphPass": {
+          "passed": 5,
+          "failed": 0,
+          "covers": [
+            "geste et annulation",
+            "liste au clavier et restauration",
+            "acquittement après démontage",
+            "charge bornée",
+            "atelier, liens parallèles et expansion en direct"
+          ]
+        }
+      }
+    },
+    "typescript": true,
+    "lintAndGenerators": true,
+    "productionBuild": true,
+    "historicalMeasurements": [
+      "contention",
+      "scenes",
+      "narrative",
+      "collaboration",
+      "proposals",
+      "recovery"
+    ],
+    "spikeA": {
+      "typescript": true,
+      "postgresqlTests": true,
+      "measurements": true,
+      "browserPassed": 3
+    },
+    "mcpLocalNoModel": {
+      "protocols": [
+        "2026-07-28",
+        "2025-11-25"
+      ],
+      "tools": 13,
+      "qualified": true,
+      "restoredDisabled": true
+    }
+  },
+  "preservation": {
+    "requirements": 150,
+    "mustMvp": 100,
+    "prdUnchanged": true,
+    "registryV1Unchanged": true,
+    "migrations": [
+      15,
+      16
+    ],
+    "unchangedTablesAfter15ExcludingExplicitModuleUpgrade": 50,
+    "unchangedOriginalColumnsAllTablesAfter16": 54,
+    "noMainResetOrRestore": true
+  },
+  "load": {
+    "date": "2026-11-03T07:38:34.766Z",
+    "characters": 72,
+    "relations": 201,
+    "samples": 12,
+    "read20Ms": {
+      "median": 10.80211699999927,
+      "p95": 15.35209400000167
+    },
+    "initialGraph21Nodes20EdgesMs": 198.6187659999996,
+    "readRequests": 3,
+    "displayedNodes": 60,
+    "displayedEdges": 59,
+    "pageLimit": 20,
+    "nodeLimit": 60,
+    "edgeLimit": 200,
+    "pageBudget": 30,
+    "errors": [],
+    "scope": "Installation locale réelle, navigateur Chromium, données synthétiques ; aucune extrapolation de SLA."
+  },
+  "bundle": {
+    "module": "components/narrative/relation-workspace.tsx -> ./relations-graph",
+    "files": [
+      {
+        "path": "static/css/aab0c6b4e643c3cf.css",
+        "bytes": 15702,
+        "gzipBytes": 2658
+      },
+      {
+        "path": "static/chunks/6b3bb038.f3d7ba5545620f78.js",
+        "bytes": 74564,
+        "gzipBytes": 21932
+      },
+      {
+        "path": "static/chunks/9238.37675db72f209437.js",
+        "bytes": 145417,
+        "gzipBytes": 49552
+      },
+      {
+        "path": "static/chunks/8282.9390c7f96a6ec400.js",
+        "bytes": 5605,
+        "gzipBytes": 2547
+      }
+    ],
+    "totalBytes": 241288,
+    "totalGzipBytes": 76689
+  },
+  "ci": {
+    "authoritativeSource": "GitHub Actions sur le SHA publié ; résultat réellement observé dans le compte rendu final de la mission."
+  },
+  "humanReception": {
+    "ergonomics": false,
+    "timingTargetsMeasured": false,
+    "ux4Started": false
+  }
+}

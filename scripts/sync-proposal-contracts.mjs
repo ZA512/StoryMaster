@@ -8,7 +8,10 @@ const ref=n=>({'$ref':'#/components/schemas/'+n}),id={type:'string',format:'uuid
 const names=['CreateObject','UpdateObject','ArchiveObject','CreateRelation','UpdateRelation','RemoveRelation','ReplaceSceneContent','UpdateSceneMetadata','MoveScene'];
 for(const [i,option]of c.proposedOperationSchema.options.entries())s[names[i]]=json(option);
 for(const name of ['UpdateObject','UpdateRelation','UpdateSceneMetadata'])s[name].properties.payload.properties.set.minProperties=1;
-s.CreateObject.properties.payload.allOf=['character','place','event'].map((type,i)=>({if:{properties:{typeKey:{const:type}},required:['typeKey']},then:{properties:{attributes:structuredClone(s[['CharacterAttributes','PlaceAttributes','EventAttributes'][i]])}}}));
+const variants=[['character',1,'CharacterAttributesV1'],['character',2,'CharacterAttributesV2'],['place',1,'PlaceAttributesV1'],['event',1,'EventAttributesV1']];
+s.CreateObject.properties.payload.allOf=variants.map(([type,version,_name])=>({if:{properties:{typeKey:{const:type},schemaVersion:{const:version}},required:['typeKey','schemaVersion']},then:{properties:{attributes:structuredClone(s[type==='character'?(version===1?'ProposedCharacterAttributesV1':'CharacterAttributes'):type==='place'?'PlaceAttributes':'EventAttributes'])}}}));
+s.CreateObject.properties.payload.allOf.push({if:{properties:{typeKey:{enum:['place','event']}},required:['typeKey']},then:{properties:{schemaVersion:{const:1}}}});
+s.CreateRelation.properties.payload.allOf=[{if:{properties:{relationType:{const:'parent_of'}},required:['relationType']},then:{properties:{attributes:ref('NarrativeParentAttributes')}}},{if:{properties:{relationType:{not:{const:'parent_of'}}},required:['relationType']},then:{properties:{attributes:ref('NarrativeLegacyRelationAttributes')}}}];
 s.ReplaceSceneContent.properties.payload.properties.content=ref('RichDocument');
 s.Operation={oneOf:names.map(ref)};
 for(const [name,schema]of Object.entries({ProposalCreate:c.proposalCreateSchema,ProposalSetOperations:c.proposalSetOperationsSchema,ProposalUpdate:c.proposalUpdateSchema,ProposalAction:c.proposalActionSchema,ProposalApprove:c.proposalApproveSchema,ProposalReject:c.proposalRejectSchema,ProposalReview:c.proposalReviewSchema})){s[name]=json(schema);if(s[name].properties.operations)s[name].properties.operations.items=ref('Operation');}

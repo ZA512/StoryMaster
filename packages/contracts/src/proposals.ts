@@ -1,18 +1,19 @@
 import {z} from 'zod';
-import {characterAttributesSchema,placeAttributesSchema,eventAttributesSchema} from './narrative.ts';
+import {characterAttributesSchema,characterAttributesV2Schema,placeAttributesSchema,eventAttributesSchema,relationAttributesSchema} from './narrative.ts';
 import {proposalStates,narrativeTypes,relationTypes,referenceTypes} from '@storymaster/domain';
 import type {ProposalHead} from '@storymaster/domain';
 const id=z.string().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/),revision=z.number().int().min(1).max(Number.MAX_SAFE_INTEGER),text=(n:number)=>z.string().max(n).refine(s=>s.isWellFormed()&&!s.includes('\u0000')),title=text(200).refine(s=>!!s.trim()&&!/[\r\n]/.test(s));
 export const proposalRefSchema=z.union([z.strictObject({id}),z.strictObject({tempId:id})]);
 export const proposalCharacterAttributesSchema=characterAttributesSchema.extend({conditionEventRefs:z.array(proposalRefSchema).max(100).optional()});
 export const proposalPlaceAttributesSchema=placeAttributesSchema.extend({parentPlaceRef:proposalRefSchema.nullable().optional()});
-export function parseProposedCreateAttributes(type:string,attributes:unknown){return (type==='character'?proposalCharacterAttributesSchema:type==='place'?proposalPlaceAttributesSchema:eventAttributesSchema).parse(attributes);}
+export const proposalCharacterAttributesV2Schema=characterAttributesV2Schema.extend({conditionEventRefs:z.array(proposalRefSchema).max(100).optional()});
+export function parseProposedCreateAttributes(type:string,attributes:unknown,version:1|2=1){if(version===2&&type!=='character')throw Error('Schéma v2 réservé aux personnages.');return (type==='character'?(version===2?proposalCharacterAttributesV2Schema:proposalCharacterAttributesSchema):type==='place'?proposalPlaceAttributesSchema:eventAttributesSchema).parse(attributes);}
 export const proposalDependencySchema=z.strictObject({resourceType:z.enum(['object','scene','chapter','manuscript','relation','module']),resourceId:id,revision});
-const reason={reason:text(4000).optional()},existing={operationId:id,targetId:id,expectedRevision:revision,...reason},creation={operationId:id,tempId:id,...reason},empty=z.strictObject({}),attrs=z.record(z.string(),z.unknown()),relationAttrs=z.strictObject({description:text(4000).optional()});
-const objectSet=z.strictObject({name:title.optional(),summary:text(4000).optional(),notes:text(20000).optional(),attributes:attrs.optional()}).refine(v=>Object.keys(v).length>0);
+const reason={reason:text(4000).optional()},existing={operationId:id,targetId:id,expectedRevision:revision,...reason},creation={operationId:id,tempId:id,...reason},empty=z.strictObject({}),attrs=z.record(z.string(),z.unknown()),relationAttrs=relationAttributesSchema;
+const objectSet=z.strictObject({schemaVersion:z.union([z.literal(1),z.literal(2)]).optional(),name:title.optional(),summary:text(4000).optional(),notes:text(20000).optional(),attributes:attrs.optional()}).refine(v=>Object.keys(v).length>0);
 export const proposedReferenceSchema=z.strictObject({objectRef:proposalRefSchema,referenceType:z.enum(referenceTypes),metadata:empty.optional()});
 export const proposedOperationSchema=z.discriminatedUnion('kind',[
- z.strictObject({...creation,kind:z.literal('create_object'),payload:z.strictObject({typeKey:z.enum(narrativeTypes),schemaVersion:z.literal(1),name:title,summary:text(4000).optional(),notes:text(20000).optional(),attributes:attrs})}),
+ z.strictObject({...creation,kind:z.literal('create_object'),payload:z.strictObject({typeKey:z.enum(narrativeTypes),schemaVersion:z.union([z.literal(1),z.literal(2)]),name:title,summary:text(4000).optional(),notes:text(20000).optional(),attributes:attrs})}),
  z.strictObject({...existing,kind:z.literal('update_object'),payload:z.strictObject({set:objectSet})}),
  z.strictObject({...existing,kind:z.literal('archive_object'),payload:empty}),
  z.strictObject({...creation,kind:z.literal('create_relation'),payload:z.strictObject({sourceRef:proposalRefSchema,targetRef:proposalRefSchema,relationType:z.enum(relationTypes),attributes:relationAttrs})}),

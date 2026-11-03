@@ -112,3 +112,7 @@ Source : demande du propriétaire « j’ai rajouté un doc uxui.md, tu peux ava
 ## Mission UX-1B puis UX-2 — 2 novembre 2026
 
 Le propriétaire autorise explicitement la simplification de l’atelier existant puis le tableau de cartes et les déplacements des scènes, sur main uniquement, avec commits, captures, tests et CI. Les brouillons non confirmés restent en mémoire ; aucun coffre narratif persistant dans le navigateur. L’instruction impose l’arrêt après UX-2 pour demander une réception humaine. [Rapport UX-1B](UX-1B-REPORT.md), [rapport UX-2](UX-2-REPORT.md), [ADR-0020](adr/0020-cartes-et-deplacements-controles.md). Cette autorisation de réaliser ne vaut ni réception ergonomique ni validation d’UX-3/4, GO-03, GO-04, SEC-07 ou RLS.
+
+## Mission UX-3 — 3 novembre 2026
+
+Instruction explicite « UX-3 : Fiches de personnages progressives et relations visuelles » puis autorisation de continuer : audit/ADR-0021, fiches uniques à trois profondeurs, relations familiales typées, graphe et liste équivalente, qualification, captures, commits/push main et CI. Cela avance cette portée limitée malgré la généalogie spécialisée envisagée en V2+ ; aucun changement des exigences ou priorités. Les brouillons restent en mémoire conformément au choix antérieur. Réception humaine d’UX-3 et acceptation ergonomique de l’ADR restent à décider séparément ; arrêt avant UX-4/5. Les objectifs 60/30/10 secondes sont des cibles humaines non mesurées par les tests automatisés. GO-03/04, SEC-07, RLS et contention ne sont pas levés par cette mission.

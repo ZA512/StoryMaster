@@ -1,0 +1,567 @@
+{
+  "registryVersion": 2,
+  "definitions": [
+    {
+      "key": "characters",
+      "version": 1,
+      "typeKeys": [
+        "character"
+      ],
+      "dependencies": [],
+      "schemas": {
+        "character": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "aliases": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              }
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 20000
+            },
+            "narrativeRole": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "motivations": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "goals": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "conflicts": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "traits": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "healthSummary": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "conditionEventRefs": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "checksum": "9053dc3ae4217bea287c33fbc563cfb348ad29909ba6bde7dcc9a3be68e5111a"
+    },
+    {
+      "key": "places",
+      "version": 1,
+      "typeKeys": [
+        "place"
+      ],
+      "dependencies": [],
+      "schemas": {
+        "place": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "maxLength": 20000
+            },
+            "category": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "characteristics": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "parentPlaceRef": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "checksum": "ff1fb7a04f4ad2dcc6723f8a902c589716f408e50f0d60503b2ef9919941ab5a"
+    },
+    {
+      "key": "timeline",
+      "version": 1,
+      "typeKeys": [
+        "event"
+      ],
+      "dependencies": [],
+      "schemas": {
+        "event": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "maxLength": 20000
+            },
+            "chronologyPosition": {
+              "type": "number",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "temporalExpression": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "unknown"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "ordinal"
+                    },
+                    "position": {
+                      "type": "number",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "position"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "checksum": "13a157be73ba0e99a60d72ec04ea1ade9979bcf3e5f82ea3adfc3980bbc55f94"
+    },
+    {
+      "key": "characters",
+      "version": 2,
+      "typeKeys": [
+        "character"
+      ],
+      "dependencies": [],
+      "schemas": {
+        "character": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "aliases": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              }
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 20000
+            },
+            "narrativeRole": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "motivations": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "goals": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "conflicts": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "traits": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 1000
+              }
+            },
+            "healthSummary": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "conditionEventRefs": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "background": {
+              "type": "string",
+              "maxLength": 20000
+            },
+            "speakingStyle": {
+              "type": "string",
+              "maxLength": 4000
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "checksum": "11c4ca07aa5259bee89e355ed8bdc8d1d7e1281c83d378b9ebb2fc5767164446"
+    }
+  ],
+  "relationRules": {
+    "related_to": {
+      "sources": [
+        "character",
+        "place",
+        "event"
+      ],
+      "targets": [
+        "character",
+        "place",
+        "event"
+      ],
+      "symmetric": true,
+      "acyclic": false,
+      "singleTarget": false
+    },
+    "knows": {
+      "sources": [
+        "character"
+      ],
+      "targets": [
+        "character"
+      ],
+      "symmetric": false,
+      "acyclic": false,
+      "singleTarget": false
+    },
+    "located_in": {
+      "sources": [
+        "character",
+        "event"
+      ],
+      "targets": [
+        "place"
+      ],
+      "symmetric": false,
+      "acyclic": false,
+      "singleTarget": true
+    },
+    "participates_in": {
+      "sources": [
+        "character"
+      ],
+      "targets": [
+        "event"
+      ],
+      "symmetric": false,
+      "acyclic": false,
+      "singleTarget": false
+    },
+    "precedes": {
+      "sources": [
+        "event"
+      ],
+      "targets": [
+        "event"
+      ],
+      "symmetric": false,
+      "acyclic": true,
+      "singleTarget": false
+    },
+    "parent_of": {
+      "sources": [
+        "character"
+      ],
+      "targets": [
+        "character"
+      ],
+      "symmetric": false,
+      "acyclic": true,
+      "singleTarget": false
+    },
+    "sibling_of": {
+      "sources": [
+        "character"
+      ],
+      "targets": [
+        "character"
+      ],
+      "symmetric": true,
+      "acyclic": false,
+      "singleTarget": false
+    },
+    "ally_of": {
+      "sources": [
+        "character"
+      ],
+      "targets": [
+        "character"
+      ],
+      "symmetric": true,
+      "acyclic": false,
+      "singleTarget": false
+    },
+    "rival_of": {
+      "sources": [
+        "character"
+      ],
+      "targets": [
+        "character"
+      ],
+      "symmetric": true,
+      "acyclic": false,
+      "singleTarget": false
+    },
+    "mentor_of": {
+      "sources": [
+        "character"
+      ],
+      "targets": [
+        "character"
+      ],
+      "symmetric": false,
+      "acyclic": false,
+      "singleTarget": false
+    }
+  },
+  "relationAttributeSchemas": {
+    "related_to": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "knows": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "located_in": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "participates_in": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "precedes": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "parent_of": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "parentage": {
+          "default": "unspecified",
+          "type": "string",
+          "enum": [
+            "unspecified",
+            "biological",
+            "adoptive",
+            "social",
+            "guardianship"
+          ]
+        },
+        "parentRole": {
+          "default": "parent",
+          "type": "string",
+          "enum": [
+            "parent",
+            "father",
+            "mother"
+          ]
+        }
+      },
+      "required": [
+        "parentage",
+        "parentRole"
+      ],
+      "additionalProperties": false
+    },
+    "sibling_of": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "ally_of": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "rival_of": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    },
+    "mentor_of": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "referenceTypes": [
+    "present",
+    "mentioned",
+    "point_of_view",
+    "setting",
+    "depicts_event"
+  ]
+}

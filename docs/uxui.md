@@ -2,6 +2,8 @@
 
 > **Suivi du 2 novembre 2026 :** première tranche UX-1 implémentée et qualifiée localement, décrite dans [UX-1-REPORT.md](UX-1-REPORT.md). Le propriétaire demande explicitement de garder les brouillons en mémoire ; UX-1.5 reste différé. Les phases suivantes et la direction graphique finale ne sont pas réceptionnées par la présence de ce document. Les références `turn…` ci-dessous sont issues du document fourni : elles ne constituent pas des URLs de sources revérifiées dans le dépôt.
 
+> **Suivi UX-3 :** fiches progressives, parentés typées, carte interactive et liste équivalente réalisées ; [rapport](UX-3-REPORT.md), [ADR-0021](adr/0021-fiches-progressives-et-relations-narratives.md). Réception humaine et objectifs de temps encore à vérifier ; arrêt avant UX-4/5.
+
 > **Suivi de la mission UX-1B + UX-2 :** [compacité réalisée et mesurée](UX-1B-REPORT.md), puis [cartes et déplacements qualifiés localement](UX-2-REPORT.md). Les trois vues gardent le même atelier ; contrat et reprise sont précisés par [ADR-0020](adr/0020-cartes-et-deplacements-controles.md). Arrêt après UX-2 pour réception humaine ; objectifs de temps toujours à mesurer, CI distante distincte de la qualification locale.
 
 ## Executive summary
@@ -311,3 +313,7 @@ La recommandation centrale est donc de **ne pas lancer une “refonte graphique�
 ## Critères d'acceptation du document
 
 Distinguer les phases proposées de leur réalisation et de leur réception humaine ; préserver la hiérarchie du PRD et les invariants métier ; suivre le périmètre réellement livré et les validations dans UX-1-REPORT.md. Les citations héritées doivent être retrouvées sous forme d’URLs vérifiables avant de servir de preuve externe. Les objectifs de temps et de satisfaction restent à mesurer avec les utilisateurs.
+
+## Mission UX-3 — 3 novembre 2026
+
+Instruction distincte du propriétaire : fiches progressives, relations typées et graphe, depuis main febf35d dont la CI est verte. [ADR-0021](adr/0021-fiches-progressives-et-relations-narratives.md), [rapport de qualification](UX-3-REPORT.md). Trois profondeurs d’une même fiche, édition contextuelle et brouillons mémoire ; véritables liens de parenté, inverse unique et liste équivalente au graphe. Pas d’UX-4/5, de schémas libres ou de réception ergonomique inventée. Les objectifs humains restent à mesurer après livraison.

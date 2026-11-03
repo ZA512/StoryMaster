@@ -802,7 +802,10 @@
               },
               "schemaVersion": {
                 "type": "integer",
-                "minimum": 1
+                "enum": [
+                  1,
+                  2
+                ]
               },
               "name": {
                 "type": "string",
@@ -889,7 +892,10 @@
               },
               "schemaVersion": {
                 "type": "integer",
-                "minimum": 1
+                "enum": [
+                  1,
+                  2
+                ]
               },
               "name": {
                 "type": "string",
@@ -1137,6 +1143,260 @@
               "moduleEnabled",
               "revision"
             ],
+            "additionalProperties": false
+          },
+          "CharacterAttributesV1": {
+            "type": "object",
+            "properties": {
+              "aliases": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "narrativeRole": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "motivations": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "goals": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "conflicts": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "traits": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "healthSummary": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "conditionEventRefs": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "CharacterAttributesV2": {
+            "type": "object",
+            "properties": {
+              "aliases": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "narrativeRole": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "motivations": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "goals": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "conflicts": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "traits": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "healthSummary": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "conditionEventRefs": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "background": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "speakingStyle": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
+            "additionalProperties": false
+          },
+          "PlaceAttributesV1": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "category": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "characteristics": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "parentPlaceRef": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "EventAttributesV1": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "chronologyPosition": {
+                "type": "number",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "temporalExpression": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "unknown"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "ordinal"
+                      },
+                      "position": {
+                        "type": "number",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "position"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
             "additionalProperties": false
           }
         }
@@ -1812,7 +2072,18 @@
               },
               "relationType": {
                 "type": "string",
-                "maxLength": 80
+                "enum": [
+                  "related_to",
+                  "knows",
+                  "located_in",
+                  "participates_in",
+                  "precedes",
+                  "parent_of",
+                  "sibling_of",
+                  "ally_of",
+                  "rival_of",
+                  "mentor_of"
+                ]
               },
               "attributes": {
                 "type": "object"
@@ -1870,7 +2141,49 @@
               "relationType",
               "revision"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "relationType": {
+                      "const": "parent_of"
+                    }
+                  },
+                  "required": [
+                    "relationType"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "attributes": {
+                      "$ref": "#/$defs/NarrativeParentAttributes"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "relationType": {
+                      "not": {
+                        "const": "parent_of"
+                      }
+                    }
+                  },
+                  "required": [
+                    "relationType"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "attributes": {
+                      "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "RelationPage": {
             "type": "object",
@@ -1940,6 +2253,50 @@
               "moduleEnabled",
               "revision"
             ],
+            "additionalProperties": false
+          },
+          "NarrativeParentAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "parentage": {
+                "default": "unspecified",
+                "type": "string",
+                "enum": [
+                  "unspecified",
+                  "biological",
+                  "adoptive",
+                  "social",
+                  "guardianship"
+                ]
+              },
+              "parentRole": {
+                "default": "parent",
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "father",
+                  "mother"
+                ]
+              }
+            },
+            "required": [
+              "parentage",
+              "parentRole"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeLegacyRelationAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
             "additionalProperties": false
           }
         }
@@ -2092,7 +2449,10 @@
               },
               "schemaVersion": {
                 "type": "integer",
-                "minimum": 1
+                "enum": [
+                  1,
+                  2
+                ]
               },
               "name": {
                 "type": "string",
@@ -2180,6 +2540,260 @@
               "nextCursor",
               "hasMore"
             ],
+            "additionalProperties": false
+          },
+          "CharacterAttributesV1": {
+            "type": "object",
+            "properties": {
+              "aliases": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "narrativeRole": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "motivations": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "goals": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "conflicts": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "traits": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "healthSummary": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "conditionEventRefs": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "CharacterAttributesV2": {
+            "type": "object",
+            "properties": {
+              "aliases": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "narrativeRole": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "motivations": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "goals": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "conflicts": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "traits": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "healthSummary": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "conditionEventRefs": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "background": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "speakingStyle": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
+            "additionalProperties": false
+          },
+          "PlaceAttributesV1": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "category": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "characteristics": {
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "parentPlaceRef": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "EventAttributesV1": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 20000
+              },
+              "chronologyPosition": {
+                "type": "number",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "temporalExpression": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "unknown"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "ordinal"
+                      },
+                      "position": {
+                        "type": "number",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "position"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
             "additionalProperties": false
           }
         }
@@ -2350,8 +2964,16 @@
                     ]
                   },
                   "schemaVersion": {
-                    "type": "number",
-                    "const": 1
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 1
+                      },
+                      {
+                        "type": "number",
+                        "const": 2
+                      }
+                    ]
                   },
                   "name": {
                     "type": "string",
@@ -2386,10 +3008,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -2466,11 +3092,108 @@
                     "if": {
                       "properties": {
                         "typeKey": {
-                          "const": "place"
+                          "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 2
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "aliases": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 200
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "narrativeRole": {
+                              "type": "string",
+                              "maxLength": 200
+                            },
+                            "motivations": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "goals": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "conflicts": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "traits": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "healthSummary": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "conditionEventRefs": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/$defs/ObjectRef"
+                              },
+                              "maxItems": 100
+                            },
+                            "background": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "speakingStyle": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "const": "place"
+                        },
+                        "schemaVersion": {
+                          "const": 1
+                        }
+                      },
+                      "required": [
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -2515,10 +3238,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "event"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -2573,6 +3300,28 @@
                             }
                           },
                           "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "enum": [
+                            "place",
+                            "event"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "typeKey"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": 1
                         }
                       }
                     }
@@ -2689,7 +3438,12 @@
                       "knows",
                       "located_in",
                       "participates_in",
-                      "precedes"
+                      "precedes",
+                      "parent_of",
+                      "sibling_of",
+                      "ally_of",
+                      "rival_of",
+                      "mentor_of"
                     ]
                   },
                   "attributes": {
@@ -2698,6 +3452,24 @@
                       "description": {
                         "type": "string",
                         "maxLength": 4000
+                      },
+                      "parentage": {
+                        "type": "string",
+                        "enum": [
+                          "unspecified",
+                          "biological",
+                          "adoptive",
+                          "social",
+                          "guardianship"
+                        ]
+                      },
+                      "parentRole": {
+                        "type": "string",
+                        "enum": [
+                          "parent",
+                          "father",
+                          "mother"
+                        ]
                       }
                     },
                     "additionalProperties": false
@@ -2709,7 +3481,49 @@
                   "relationType",
                   "attributes"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "const": "parent_of"
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeParentAttributes"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "not": {
+                            "const": "parent_of"
+                          }
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             },
             "required": [
@@ -3017,6 +3831,18 @@
                   "set": {
                     "type": "object",
                     "properties": {
+                      "schemaVersion": {
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 1
+                          },
+                          {
+                            "type": "number",
+                            "const": 2
+                          }
+                        ]
+                      },
                       "name": {
                         "type": "string",
                         "maxLength": 200
@@ -3097,7 +3923,12 @@
                           "knows",
                           "located_in",
                           "participates_in",
-                          "precedes"
+                          "precedes",
+                          "parent_of",
+                          "sibling_of",
+                          "ally_of",
+                          "rival_of",
+                          "mentor_of"
                         ]
                       },
                       "attributes": {
@@ -3106,6 +3937,24 @@
                           "description": {
                             "type": "string",
                             "maxLength": 4000
+                          },
+                          "parentage": {
+                            "type": "string",
+                            "enum": [
+                              "unspecified",
+                              "biological",
+                              "adoptive",
+                              "social",
+                              "guardianship"
+                            ]
+                          },
+                          "parentRole": {
+                            "type": "string",
+                            "enum": [
+                              "parent",
+                              "father",
+                              "mother"
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -3292,6 +4141,50 @@
                 "additionalProperties": false
               }
             ]
+          },
+          "NarrativeParentAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "parentage": {
+                "default": "unspecified",
+                "type": "string",
+                "enum": [
+                  "unspecified",
+                  "biological",
+                  "adoptive",
+                  "social",
+                  "guardianship"
+                ]
+              },
+              "parentRole": {
+                "default": "parent",
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "father",
+                  "mother"
+                ]
+              }
+            },
+            "required": [
+              "parentage",
+              "parentRole"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeLegacyRelationAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
+            "additionalProperties": false
           }
         }
       },
@@ -3453,8 +4346,16 @@
                     ]
                   },
                   "schemaVersion": {
-                    "type": "number",
-                    "const": 1
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 1
+                      },
+                      {
+                        "type": "number",
+                        "const": 2
+                      }
+                    ]
                   },
                   "name": {
                     "type": "string",
@@ -3489,10 +4390,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -3569,11 +4474,108 @@
                     "if": {
                       "properties": {
                         "typeKey": {
-                          "const": "place"
+                          "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 2
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "aliases": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 200
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "narrativeRole": {
+                              "type": "string",
+                              "maxLength": 200
+                            },
+                            "motivations": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "goals": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "conflicts": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "traits": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "healthSummary": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "conditionEventRefs": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/$defs/ObjectRef"
+                              },
+                              "maxItems": 100
+                            },
+                            "background": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "speakingStyle": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "const": "place"
+                        },
+                        "schemaVersion": {
+                          "const": 1
+                        }
+                      },
+                      "required": [
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -3618,10 +4620,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "event"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -3676,6 +4682,28 @@
                             }
                           },
                           "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "enum": [
+                            "place",
+                            "event"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "typeKey"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": 1
                         }
                       }
                     }
@@ -3792,7 +4820,12 @@
                       "knows",
                       "located_in",
                       "participates_in",
-                      "precedes"
+                      "precedes",
+                      "parent_of",
+                      "sibling_of",
+                      "ally_of",
+                      "rival_of",
+                      "mentor_of"
                     ]
                   },
                   "attributes": {
@@ -3801,6 +4834,24 @@
                       "description": {
                         "type": "string",
                         "maxLength": 4000
+                      },
+                      "parentage": {
+                        "type": "string",
+                        "enum": [
+                          "unspecified",
+                          "biological",
+                          "adoptive",
+                          "social",
+                          "guardianship"
+                        ]
+                      },
+                      "parentRole": {
+                        "type": "string",
+                        "enum": [
+                          "parent",
+                          "father",
+                          "mother"
+                        ]
                       }
                     },
                     "additionalProperties": false
@@ -3812,7 +4863,49 @@
                   "relationType",
                   "attributes"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "const": "parent_of"
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeParentAttributes"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "not": {
+                            "const": "parent_of"
+                          }
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             },
             "required": [
@@ -4372,6 +5465,18 @@
                   "set": {
                     "type": "object",
                     "properties": {
+                      "schemaVersion": {
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 1
+                          },
+                          {
+                            "type": "number",
+                            "const": 2
+                          }
+                        ]
+                      },
                       "name": {
                         "type": "string",
                         "maxLength": 200
@@ -4452,7 +5557,12 @@
                           "knows",
                           "located_in",
                           "participates_in",
-                          "precedes"
+                          "precedes",
+                          "parent_of",
+                          "sibling_of",
+                          "ally_of",
+                          "rival_of",
+                          "mentor_of"
                         ]
                       },
                       "attributes": {
@@ -4461,6 +5571,24 @@
                           "description": {
                             "type": "string",
                             "maxLength": 4000
+                          },
+                          "parentage": {
+                            "type": "string",
+                            "enum": [
+                              "unspecified",
+                              "biological",
+                              "adoptive",
+                              "social",
+                              "guardianship"
+                            ]
+                          },
+                          "parentRole": {
+                            "type": "string",
+                            "enum": [
+                              "parent",
+                              "father",
+                              "mother"
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -4817,6 +5945,50 @@
               "grantRevision",
               "executionId"
             ],
+            "additionalProperties": false
+          },
+          "NarrativeParentAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "parentage": {
+                "default": "unspecified",
+                "type": "string",
+                "enum": [
+                  "unspecified",
+                  "biological",
+                  "adoptive",
+                  "social",
+                  "guardianship"
+                ]
+              },
+              "parentRole": {
+                "default": "parent",
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "father",
+                  "mother"
+                ]
+              }
+            },
+            "required": [
+              "parentage",
+              "parentRole"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeLegacyRelationAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
             "additionalProperties": false
           }
         }
@@ -4995,8 +6167,16 @@
                     ]
                   },
                   "schemaVersion": {
-                    "type": "number",
-                    "const": 1
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 1
+                      },
+                      {
+                        "type": "number",
+                        "const": 2
+                      }
+                    ]
                   },
                   "name": {
                     "type": "string",
@@ -5031,10 +6211,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -5111,11 +6295,108 @@
                     "if": {
                       "properties": {
                         "typeKey": {
-                          "const": "place"
+                          "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 2
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "aliases": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 200
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "narrativeRole": {
+                              "type": "string",
+                              "maxLength": 200
+                            },
+                            "motivations": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "goals": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "conflicts": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "traits": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "healthSummary": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "conditionEventRefs": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/$defs/ObjectRef"
+                              },
+                              "maxItems": 100
+                            },
+                            "background": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "speakingStyle": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "const": "place"
+                        },
+                        "schemaVersion": {
+                          "const": 1
+                        }
+                      },
+                      "required": [
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -5160,10 +6441,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "event"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -5218,6 +6503,28 @@
                             }
                           },
                           "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "enum": [
+                            "place",
+                            "event"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "typeKey"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": 1
                         }
                       }
                     }
@@ -5334,7 +6641,12 @@
                       "knows",
                       "located_in",
                       "participates_in",
-                      "precedes"
+                      "precedes",
+                      "parent_of",
+                      "sibling_of",
+                      "ally_of",
+                      "rival_of",
+                      "mentor_of"
                     ]
                   },
                   "attributes": {
@@ -5343,6 +6655,24 @@
                       "description": {
                         "type": "string",
                         "maxLength": 4000
+                      },
+                      "parentage": {
+                        "type": "string",
+                        "enum": [
+                          "unspecified",
+                          "biological",
+                          "adoptive",
+                          "social",
+                          "guardianship"
+                        ]
+                      },
+                      "parentRole": {
+                        "type": "string",
+                        "enum": [
+                          "parent",
+                          "father",
+                          "mother"
+                        ]
                       }
                     },
                     "additionalProperties": false
@@ -5354,7 +6684,49 @@
                   "relationType",
                   "attributes"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "const": "parent_of"
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeParentAttributes"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "not": {
+                            "const": "parent_of"
+                          }
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             },
             "required": [
@@ -5662,6 +7034,18 @@
                   "set": {
                     "type": "object",
                     "properties": {
+                      "schemaVersion": {
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 1
+                          },
+                          {
+                            "type": "number",
+                            "const": 2
+                          }
+                        ]
+                      },
                       "name": {
                         "type": "string",
                         "maxLength": 200
@@ -5742,7 +7126,12 @@
                           "knows",
                           "located_in",
                           "participates_in",
-                          "precedes"
+                          "precedes",
+                          "parent_of",
+                          "sibling_of",
+                          "ally_of",
+                          "rival_of",
+                          "mentor_of"
                         ]
                       },
                       "attributes": {
@@ -5751,6 +7140,24 @@
                           "description": {
                             "type": "string",
                             "maxLength": 4000
+                          },
+                          "parentage": {
+                            "type": "string",
+                            "enum": [
+                              "unspecified",
+                              "biological",
+                              "adoptive",
+                              "social",
+                              "guardianship"
+                            ]
+                          },
+                          "parentRole": {
+                            "type": "string",
+                            "enum": [
+                              "parent",
+                              "father",
+                              "mother"
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -5937,6 +7344,50 @@
                 "additionalProperties": false
               }
             ]
+          },
+          "NarrativeParentAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "parentage": {
+                "default": "unspecified",
+                "type": "string",
+                "enum": [
+                  "unspecified",
+                  "biological",
+                  "adoptive",
+                  "social",
+                  "guardianship"
+                ]
+              },
+              "parentRole": {
+                "default": "parent",
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "father",
+                  "mother"
+                ]
+              }
+            },
+            "required": [
+              "parentage",
+              "parentRole"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeLegacyRelationAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
+            "additionalProperties": false
           }
         }
       },
@@ -6098,8 +7549,16 @@
                     ]
                   },
                   "schemaVersion": {
-                    "type": "number",
-                    "const": 1
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 1
+                      },
+                      {
+                        "type": "number",
+                        "const": 2
+                      }
+                    ]
                   },
                   "name": {
                     "type": "string",
@@ -6134,10 +7593,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -6214,11 +7677,108 @@
                     "if": {
                       "properties": {
                         "typeKey": {
-                          "const": "place"
+                          "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 2
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "aliases": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 200
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "narrativeRole": {
+                              "type": "string",
+                              "maxLength": 200
+                            },
+                            "motivations": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "goals": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "conflicts": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "traits": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "healthSummary": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "conditionEventRefs": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/$defs/ObjectRef"
+                              },
+                              "maxItems": 100
+                            },
+                            "background": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "speakingStyle": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "const": "place"
+                        },
+                        "schemaVersion": {
+                          "const": 1
+                        }
+                      },
+                      "required": [
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -6263,10 +7823,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "event"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -6321,6 +7885,28 @@
                             }
                           },
                           "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "enum": [
+                            "place",
+                            "event"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "typeKey"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": 1
                         }
                       }
                     }
@@ -6437,7 +8023,12 @@
                       "knows",
                       "located_in",
                       "participates_in",
-                      "precedes"
+                      "precedes",
+                      "parent_of",
+                      "sibling_of",
+                      "ally_of",
+                      "rival_of",
+                      "mentor_of"
                     ]
                   },
                   "attributes": {
@@ -6446,6 +8037,24 @@
                       "description": {
                         "type": "string",
                         "maxLength": 4000
+                      },
+                      "parentage": {
+                        "type": "string",
+                        "enum": [
+                          "unspecified",
+                          "biological",
+                          "adoptive",
+                          "social",
+                          "guardianship"
+                        ]
+                      },
+                      "parentRole": {
+                        "type": "string",
+                        "enum": [
+                          "parent",
+                          "father",
+                          "mother"
+                        ]
                       }
                     },
                     "additionalProperties": false
@@ -6457,7 +8066,49 @@
                   "relationType",
                   "attributes"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "const": "parent_of"
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeParentAttributes"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "not": {
+                            "const": "parent_of"
+                          }
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             },
             "required": [
@@ -7017,6 +8668,18 @@
                   "set": {
                     "type": "object",
                     "properties": {
+                      "schemaVersion": {
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 1
+                          },
+                          {
+                            "type": "number",
+                            "const": 2
+                          }
+                        ]
+                      },
                       "name": {
                         "type": "string",
                         "maxLength": 200
@@ -7097,7 +8760,12 @@
                           "knows",
                           "located_in",
                           "participates_in",
-                          "precedes"
+                          "precedes",
+                          "parent_of",
+                          "sibling_of",
+                          "ally_of",
+                          "rival_of",
+                          "mentor_of"
                         ]
                       },
                       "attributes": {
@@ -7106,6 +8774,24 @@
                           "description": {
                             "type": "string",
                             "maxLength": 4000
+                          },
+                          "parentage": {
+                            "type": "string",
+                            "enum": [
+                              "unspecified",
+                              "biological",
+                              "adoptive",
+                              "social",
+                              "guardianship"
+                            ]
+                          },
+                          "parentRole": {
+                            "type": "string",
+                            "enum": [
+                              "parent",
+                              "father",
+                              "mother"
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -7462,6 +9148,50 @@
               "grantRevision",
               "executionId"
             ],
+            "additionalProperties": false
+          },
+          "NarrativeParentAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "parentage": {
+                "default": "unspecified",
+                "type": "string",
+                "enum": [
+                  "unspecified",
+                  "biological",
+                  "adoptive",
+                  "social",
+                  "guardianship"
+                ]
+              },
+              "parentRole": {
+                "default": "parent",
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "father",
+                  "mother"
+                ]
+              }
+            },
+            "required": [
+              "parentage",
+              "parentRole"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeLegacyRelationAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
             "additionalProperties": false
           }
         }
@@ -8296,8 +10026,16 @@
                     ]
                   },
                   "schemaVersion": {
-                    "type": "number",
-                    "const": 1
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 1
+                      },
+                      {
+                        "type": "number",
+                        "const": 2
+                      }
+                    ]
                   },
                   "name": {
                     "type": "string",
@@ -8332,10 +10070,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -8412,11 +10154,108 @@
                     "if": {
                       "properties": {
                         "typeKey": {
-                          "const": "place"
+                          "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 2
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "aliases": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 200
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "narrativeRole": {
+                              "type": "string",
+                              "maxLength": 200
+                            },
+                            "motivations": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "goals": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "conflicts": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "traits": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "healthSummary": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "conditionEventRefs": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/$defs/ObjectRef"
+                              },
+                              "maxItems": 100
+                            },
+                            "background": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "speakingStyle": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "const": "place"
+                        },
+                        "schemaVersion": {
+                          "const": 1
+                        }
+                      },
+                      "required": [
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -8461,10 +10300,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "event"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -8519,6 +10362,28 @@
                             }
                           },
                           "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "enum": [
+                            "place",
+                            "event"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "typeKey"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": 1
                         }
                       }
                     }
@@ -8635,7 +10500,12 @@
                       "knows",
                       "located_in",
                       "participates_in",
-                      "precedes"
+                      "precedes",
+                      "parent_of",
+                      "sibling_of",
+                      "ally_of",
+                      "rival_of",
+                      "mentor_of"
                     ]
                   },
                   "attributes": {
@@ -8644,6 +10514,24 @@
                       "description": {
                         "type": "string",
                         "maxLength": 4000
+                      },
+                      "parentage": {
+                        "type": "string",
+                        "enum": [
+                          "unspecified",
+                          "biological",
+                          "adoptive",
+                          "social",
+                          "guardianship"
+                        ]
+                      },
+                      "parentRole": {
+                        "type": "string",
+                        "enum": [
+                          "parent",
+                          "father",
+                          "mother"
+                        ]
                       }
                     },
                     "additionalProperties": false
@@ -8655,7 +10543,49 @@
                   "relationType",
                   "attributes"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "const": "parent_of"
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeParentAttributes"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "not": {
+                            "const": "parent_of"
+                          }
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             },
             "required": [
@@ -9215,6 +11145,18 @@
                   "set": {
                     "type": "object",
                     "properties": {
+                      "schemaVersion": {
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 1
+                          },
+                          {
+                            "type": "number",
+                            "const": 2
+                          }
+                        ]
+                      },
                       "name": {
                         "type": "string",
                         "maxLength": 200
@@ -9295,7 +11237,12 @@
                           "knows",
                           "located_in",
                           "participates_in",
-                          "precedes"
+                          "precedes",
+                          "parent_of",
+                          "sibling_of",
+                          "ally_of",
+                          "rival_of",
+                          "mentor_of"
                         ]
                       },
                       "attributes": {
@@ -9304,6 +11251,24 @@
                           "description": {
                             "type": "string",
                             "maxLength": 4000
+                          },
+                          "parentage": {
+                            "type": "string",
+                            "enum": [
+                              "unspecified",
+                              "biological",
+                              "adoptive",
+                              "social",
+                              "guardianship"
+                            ]
+                          },
+                          "parentRole": {
+                            "type": "string",
+                            "enum": [
+                              "parent",
+                              "father",
+                              "mother"
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -9660,6 +11625,50 @@
               "grantRevision",
               "executionId"
             ],
+            "additionalProperties": false
+          },
+          "NarrativeParentAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "parentage": {
+                "default": "unspecified",
+                "type": "string",
+                "enum": [
+                  "unspecified",
+                  "biological",
+                  "adoptive",
+                  "social",
+                  "guardianship"
+                ]
+              },
+              "parentRole": {
+                "default": "parent",
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "father",
+                  "mother"
+                ]
+              }
+            },
+            "required": [
+              "parentage",
+              "parentRole"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeLegacyRelationAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
             "additionalProperties": false
           }
         }
@@ -9855,8 +11864,16 @@
                     ]
                   },
                   "schemaVersion": {
-                    "type": "number",
-                    "const": 1
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 1
+                      },
+                      {
+                        "type": "number",
+                        "const": 2
+                      }
+                    ]
                   },
                   "name": {
                     "type": "string",
@@ -9891,10 +11908,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -9971,11 +11992,108 @@
                     "if": {
                       "properties": {
                         "typeKey": {
-                          "const": "place"
+                          "const": "character"
+                        },
+                        "schemaVersion": {
+                          "const": 2
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "type": "object",
+                          "properties": {
+                            "aliases": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 200
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "narrativeRole": {
+                              "type": "string",
+                              "maxLength": 200
+                            },
+                            "motivations": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "goals": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "conflicts": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "traits": {
+                              "maxItems": 100,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 1000
+                              }
+                            },
+                            "healthSummary": {
+                              "type": "string",
+                              "maxLength": 4000
+                            },
+                            "conditionEventRefs": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/$defs/ObjectRef"
+                              },
+                              "maxItems": 100
+                            },
+                            "background": {
+                              "type": "string",
+                              "maxLength": 20000
+                            },
+                            "speakingStyle": {
+                              "type": "string",
+                              "maxLength": 4000
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "const": "place"
+                        },
+                        "schemaVersion": {
+                          "const": 1
+                        }
+                      },
+                      "required": [
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -10020,10 +12138,14 @@
                       "properties": {
                         "typeKey": {
                           "const": "event"
+                        },
+                        "schemaVersion": {
+                          "const": 1
                         }
                       },
                       "required": [
-                        "typeKey"
+                        "typeKey",
+                        "schemaVersion"
                       ]
                     },
                     "then": {
@@ -10078,6 +12200,28 @@
                             }
                           },
                           "additionalProperties": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "typeKey": {
+                          "enum": [
+                            "place",
+                            "event"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "typeKey"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "schemaVersion": {
+                          "const": 1
                         }
                       }
                     }
@@ -10194,7 +12338,12 @@
                       "knows",
                       "located_in",
                       "participates_in",
-                      "precedes"
+                      "precedes",
+                      "parent_of",
+                      "sibling_of",
+                      "ally_of",
+                      "rival_of",
+                      "mentor_of"
                     ]
                   },
                   "attributes": {
@@ -10203,6 +12352,24 @@
                       "description": {
                         "type": "string",
                         "maxLength": 4000
+                      },
+                      "parentage": {
+                        "type": "string",
+                        "enum": [
+                          "unspecified",
+                          "biological",
+                          "adoptive",
+                          "social",
+                          "guardianship"
+                        ]
+                      },
+                      "parentRole": {
+                        "type": "string",
+                        "enum": [
+                          "parent",
+                          "father",
+                          "mother"
+                        ]
                       }
                     },
                     "additionalProperties": false
@@ -10214,7 +12381,49 @@
                   "relationType",
                   "attributes"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "const": "parent_of"
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeParentAttributes"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "relationType": {
+                          "not": {
+                            "const": "parent_of"
+                          }
+                        }
+                      },
+                      "required": [
+                        "relationType"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "attributes": {
+                          "$ref": "#/$defs/NarrativeLegacyRelationAttributes"
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             },
             "required": [
@@ -10774,6 +12983,18 @@
                   "set": {
                     "type": "object",
                     "properties": {
+                      "schemaVersion": {
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 1
+                          },
+                          {
+                            "type": "number",
+                            "const": 2
+                          }
+                        ]
+                      },
                       "name": {
                         "type": "string",
                         "maxLength": 200
@@ -10854,7 +13075,12 @@
                           "knows",
                           "located_in",
                           "participates_in",
-                          "precedes"
+                          "precedes",
+                          "parent_of",
+                          "sibling_of",
+                          "ally_of",
+                          "rival_of",
+                          "mentor_of"
                         ]
                       },
                       "attributes": {
@@ -10863,6 +13089,24 @@
                           "description": {
                             "type": "string",
                             "maxLength": 4000
+                          },
+                          "parentage": {
+                            "type": "string",
+                            "enum": [
+                              "unspecified",
+                              "biological",
+                              "adoptive",
+                              "social",
+                              "guardianship"
+                            ]
+                          },
+                          "parentRole": {
+                            "type": "string",
+                            "enum": [
+                              "parent",
+                              "father",
+                              "mother"
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -11219,6 +13463,50 @@
               "grantRevision",
               "executionId"
             ],
+            "additionalProperties": false
+          },
+          "NarrativeParentAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "parentage": {
+                "default": "unspecified",
+                "type": "string",
+                "enum": [
+                  "unspecified",
+                  "biological",
+                  "adoptive",
+                  "social",
+                  "guardianship"
+                ]
+              },
+              "parentRole": {
+                "default": "parent",
+                "type": "string",
+                "enum": [
+                  "parent",
+                  "father",
+                  "mother"
+                ]
+              }
+            },
+            "required": [
+              "parentage",
+              "parentRole"
+            ],
+            "additionalProperties": false
+          },
+          "NarrativeLegacyRelationAttributes": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 4000
+              }
+            },
             "additionalProperties": false
           }
         }

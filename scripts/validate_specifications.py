@@ -423,7 +423,7 @@ def validate_lot2(oas, root=None):
                 require('dependencyRevisions' in body['required'],'Lot 2 : bases des cibles obligatoires '+oid)
     require(oas['paths'][base+'/modules/{moduleKey}']['patch']['x-permission']=='project.admin','Lot 2 : administration module réservée')
     schemas=oas['components']['schemas']
-    require(schemas['NarrativeCreate']['properties']['schemaVersion'].get('const')==1,'Lot 2 : version typée obligatoire')
+    require({x.get('const') for x in schemas['NarrativeCreate']['properties']['schemaVersion'].get('anyOf',[])}=={1,2},'UX-3 : versions typées 1 et 2 explicites')
     refs=schemas['SceneReferencesReplace']['properties']['references']['items']
     require(refs['properties']['metadata'].get('additionalProperties') is False and not refs['properties']['metadata']['properties'],'Lot 2 : métadonnées fermées')
     require({'referenceSnapshotVersion','references'}.issubset(schemas['SceneRevision']['properties']),'Lot 2 : snapshot références requis')
@@ -443,6 +443,26 @@ def validate_lot2(oas, root=None):
                 Draft202012Validator.check_schema(schema)
                 name={'character':'CharacterAttributesV1','place':'PlaceAttributesV1','event':'EventAttributesV1'}[type_key]
                 require({k:v for k,v in schema.items() if k!='$schema'}==schemas[name],'Lot 2 : registre et OpenAPI divergents '+type_key)
+        current=load_json(root/'docs/spec/module-registry.v2.json')
+        require(current['registryVersion']==2,'UX-3 : registre v2 explicite')
+        require(set(current['relationRules'])==set(registry['relationRules'])|{'parent_of','sibling_of','ally_of','rival_of','mentor_of'},'UX-3 : catalogue exact de relations')
+        for key in ['parent_of','sibling_of','ally_of','rival_of','mentor_of']:
+            rule=current['relationRules'][key]
+            require(rule['sources']==['character'] and rule['targets']==['character'] and not rule['singleTarget'],'UX-3 : extrémités et cardinalité '+key)
+            require(rule['symmetric']==(key in ['sibling_of','ally_of','rival_of']) and rule['acyclic']==(key=='parent_of'),'UX-3 : sens et cycles '+key)
+        for key in current['relationRules']:
+            attrs=current['relationAttributeSchemas'][key]
+            Draft202012Validator.check_schema(attrs)
+            name='NarrativeParentAttributes' if key=='parent_of' else 'NarrativeLegacyRelationAttributes'
+            require({k:v for k,v in attrs.items() if k!='$schema'}==schemas[name],'UX-3 : attributs de relation/OpenAPI divergents '+key)
+        require(all(d in current['definitions'] for d in registry['definitions']),'UX-3 : définitions historiques v1 conservées')
+        require(len(current['definitions'])==4,'UX-3 : trois anciennes définitions et character v2')
+        latest=next((d for d in current['definitions'] if d['key']=='characters' and d['version']==2),None)
+        require(latest is not None,'UX-3 : schéma personnage v2 absent')
+        body={k:v for k,v in latest.items() if k!='checksum'}
+        digest=hashlib.sha256(json.dumps(body,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+        require(digest==latest['checksum'],'UX-3 : checksum personnage v2')
+        require({k:v for k,v in latest['schemas']['character'].items() if k!='$schema'}==schemas['CharacterAttributesV2'],'UX-3 : schéma v2 et OpenAPI divergents')
         scenarios=load_json(root/'docs/spec/lot2-scenarios.json')
         require(scenarios['status']=='Scénarios déclaratifs ; preuves exécutées dans LOT-2-REPORT.md','Lot 2 : ne pas prétendre exécuter les scénarios')
         ids={x['contractTest'] for x in scenarios['scenarios']}
